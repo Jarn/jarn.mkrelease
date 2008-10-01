@@ -10,7 +10,7 @@ python = "python2.4"
 distbase = "jarn.com:/home/psol/dist"
 distdefault = "public"
 
-usage = """Usage: mkrelease [-CTSDK] [-d dist-location] [svn-url|svn-sandbox]
+usage = """Usage: mkrelease [-CTSDK] [-z] [-d dist-location] [svn-url|svn-sandbox]
 
 Release an sdist egg.
 
@@ -20,6 +20,8 @@ Options:
   -S                Do not scp the release tarball to dist-location.
   -D                Dry-run; equivalent to -CTS.
   -K                Keep the temporary build directory.
+
+  -z                Create .zip archive instead of the default .tar.gz.
 
   -d dist-location  A full scp destination specification.
                     There is a shortcut for Jarn use: If the location does not
@@ -59,6 +61,7 @@ class ReleaseMaker(object):
         self.skiptag = False
         self.skipscp = False
         self.keeptemp = False
+        self.format = 'gztar'
         self.distlocation = "%s/%s" % (distbase, distdefault)
         self.directory = "."
 
@@ -102,7 +105,7 @@ class ReleaseMaker(object):
 
     def get_options(self):
         try:
-            options, args = getopt.getopt(sys.argv[1:], "CDKSTd:h")
+            options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hz")
         except getopt.GetoptError, e:
             self.err_exit('%s\n\n%s' % (e.msg.capitalize(), usage))
 
@@ -118,6 +121,8 @@ class ReleaseMaker(object):
                 self.skipscp = True
             elif name == 'K':
                 self.keeptemp = True
+            elif name == 'z':
+                self.format = 'zip'
             elif name == 'd':
                 self.distlocation = value
                 if not self.has_host(value):
@@ -159,6 +164,8 @@ class ReleaseMaker(object):
         checkout = join(tempname, 'checkout')
         trunkurl = self.trunkurl
         distlocation = self.distlocation
+        format = self.format
+        python = python
         try:
             system('svn export "%(trunkurl)s" "%(checkout)s"' % locals())
 
@@ -174,7 +181,7 @@ class ReleaseMaker(object):
                 self.assert_tagurl(tagurl)
                 system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
 
-            rc = system('"%(python)s" setup.py sdist' % dict(python=python))
+            rc = system('"%(python)s" setup.py sdist --formats=%s(format)s' % locals())
             if not self.skipscp and rc == 0:
                 system('scp dist/* "%(distlocation)s"' % locals())
         finally:

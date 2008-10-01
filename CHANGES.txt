@@ -1,3 +1,9 @@
+0.2
+---
+
+- Add -z option to create .zip archives instead of the default .tar.gz.
+  [stefan]
+
 0.1 2008-10-01
 --------------
 
