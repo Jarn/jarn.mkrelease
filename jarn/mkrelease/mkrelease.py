@@ -56,6 +56,7 @@ def pipe(cmd):
 class ReleaseMaker(object):
 
     def __init__(self):
+        self.python = python
         self.dryrun = False
         self.skipcheckin = False
         self.skiptag = False
@@ -150,8 +151,9 @@ class ReleaseMaker(object):
             self.trunkurl = pipe("svn info | grep ^URL")[5:]
             self.assert_trunkurl(self.trunkurl)
 
-            name = pipe("%(python)s setup.py --name" % dict(python=python))
-            version = pipe("%(python)s setup.py --version" % dict(python=python))
+            python = self.python
+            name = pipe("%(python)s setup.py --name" % locals())
+            version = pipe("%(python)s setup.py --version" % locals())
 
             print 'Releasing', name, version
             print self.trunkurl
@@ -165,14 +167,14 @@ class ReleaseMaker(object):
         trunkurl = self.trunkurl
         distlocation = self.distlocation
         format = self.format
-        python = python
+        python = self.python
         try:
             system('svn export "%(trunkurl)s" "%(checkout)s"' % locals())
 
             self.assert_package(checkout)
             os.chdir(checkout)
-            name = pipe("%(python)s setup.py --name" % dict(python=python))
-            version = pipe("%(python)s setup.py --version" % dict(python=python))
+            name = pipe("%(python)s setup.py --name" % locals())
+            version = pipe("%(python)s setup.py --version" % locals())
 
             print 'Releasing', name, version
 
@@ -181,7 +183,7 @@ class ReleaseMaker(object):
                 self.assert_tagurl(tagurl)
                 system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
 
-            rc = system('"%(python)s" setup.py sdist --formats=%s(format)s' % locals())
+            rc = system('"%(python)s" setup.py sdist --formats=%(format)s' % locals())
             if not self.skipscp and rc == 0:
                 system('scp dist/* "%(distlocation)s"' % locals())
         finally:
