@@ -56,15 +56,14 @@ def pipe(cmd):
 class ReleaseMaker(object):
 
     def __init__(self):
-        self.python = python
-        self.dryrun = False
         self.skipcheckin = False
         self.skiptag = False
         self.skipscp = False
         self.keeptemp = False
-        self.format = 'gztar'
         self.distlocation = "%s/%s" % (distbase, distdefault)
         self.directory = "."
+        self.python = python
+        self.format = 'gztar'
 
     def err_exit(self, msg, rc=1):
         print >>sys.stderr, msg
@@ -112,14 +111,14 @@ class ReleaseMaker(object):
 
         for name, value in options:
             name = name[1:]
-            if name == 'D':
-                self.dryrun = True
-            elif name == 'C':
+            if name == 'C':
                 self.skipcheckin = True
             elif name == 'T':
                 self.skiptag = True
             elif name == 'S':
                 self.skipscp = True
+            elif name == 'D':
+                self.skipcheckin = self.skiptag = self.skipscp = True
             elif name == 'K':
                 self.keeptemp = True
             elif name == 'z':
@@ -132,9 +131,6 @@ class ReleaseMaker(object):
                 self.err_exit(usage, 0)
             else:
                 self.err_exit(usage)
-
-        if self.dryrun:
-            self.skipcheckin = self.skiptag = self.skipscp = True
 
         if args:
             self.directory = args[0]
@@ -166,8 +162,8 @@ class ReleaseMaker(object):
         checkout = join(tempname, 'checkout')
         trunkurl = self.trunkurl
         distlocation = self.distlocation
-        format = self.format
         python = self.python
+        format = self.format
         try:
             system('svn export "%(trunkurl)s" "%(checkout)s"' % locals())
 
