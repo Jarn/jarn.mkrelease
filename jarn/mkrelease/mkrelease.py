@@ -61,7 +61,7 @@ class ReleaseMaker(object):
         self.skipscp = False
         self.keeptemp = False
         self.distlocation = "%s/%s" % (distbase, distdefault)
-        self.directory = "."
+        self.directory = os.curdir
         self.python = python
         self.format = 'gztar'
 
