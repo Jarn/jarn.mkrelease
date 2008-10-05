@@ -15,7 +15,7 @@ usage = """Usage: mkrelease [-CTSDK] [-z] [-d dist-location] [svn-url|svn-sandbo
 Release an sdist egg.
 
 Options:
-  -C                Do not checkin CHANGES.txt and setup.py.
+  -C                Do not checkin CHANGES.txt, setup.py, and version.txt.
   -T                Do not tag the release in subversion.
   -S                Do not scp the release tarball to dist-location.
   -D                Dry-run; equivalent to -CTS.
@@ -136,18 +136,20 @@ class ReleaseMaker(object):
             self.directory = args[0]
 
     def get_package_url(self):
-        if self.is_svnurl(self.directory):
-            self.trunkurl = self.directory
+        directory = self.directory
+        python = self.python
+
+        if self.is_svnurl(directory):
+            self.trunkurl = directory
             self.assert_trunkurl(self.trunkurl)
         else:
-            self.directory = abspath(self.directory)
-            self.assert_checkout(self.directory)
-            self.assert_package(self.directory)
-            os.chdir(self.directory)
+            directory = abspath(directory)
+            self.assert_checkout(directory)
+            self.assert_package(directory)
+            os.chdir(directory)
             self.trunkurl = pipe("svn info | grep ^URL")[5:]
             self.assert_trunkurl(self.trunkurl)
 
-            python = self.python
             name = pipe("%(python)s setup.py --name" % locals())
             version = pipe("%(python)s setup.py --version" % locals())
 
@@ -155,7 +157,8 @@ class ReleaseMaker(object):
             print self.trunkurl
 
             if not self.skipcheckin:
-                system('svn ci -m"Prepare %(name)s %(version)s." CHANGES.txt setup.py' % locals())
+                version_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]version\.txt$' -print" % locals())
+                system('svn ci -m"Prepare %(name)s %(version)s." CHANGES.txt setup.py %(version_txt)s' % locals())
 
     def make_release(self):
         tempname = tempfile.mkdtemp(prefix='release')
