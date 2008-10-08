@@ -189,11 +189,11 @@ class ReleaseMaker(object):
                 self.assert_tagurl(tagurl)
                 system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
 
-            rc = system('"%(python)s" setup.py sdist --formats=%(format)s' % locals())
-            if not self.skipscp and rc == 0:
-                if self.pypi:
-                    system('"%(python)s" setup.py register upload' % locals())
-                else:
+            if not self.skipscp and self.pypi:
+                system('"%(python)s" setup.py sdist --formats=%(format)s register upload' % locals())
+            else:
+                rc = system('"%(python)s" setup.py sdist --formats=%(format)s' % locals())
+                if not self.skipscp and rc == 0:
                     system('scp dist/* "%(distlocation)s"' % locals())
         finally:
             if not self.keeptemp:

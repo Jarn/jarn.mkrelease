@@ -1,6 +1,8 @@
 0.7
 ---
 
+- Fix PyPI upload which must happen on the same command line as sdist.
+  [stefan]
 
 0.6 2008-10-08
 --------------
