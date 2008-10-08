@@ -1,6 +1,8 @@
 0.4
 ---
 
+- Add -p option for uploading to PyPI instead of dist-location.
+  [stefan]
 
 0.3 2008-10-06
 --------------

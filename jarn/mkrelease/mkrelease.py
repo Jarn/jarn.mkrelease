@@ -10,7 +10,7 @@ python = "python2.4"
 distbase = "jarn.com:/home/psol/dist"
 distdefault = "public"
 
-usage = """Usage: mkrelease [-CTSDK] [-z] [-d dist-location] [svn-url|svn-sandbox]
+usage = """Usage: mkrelease [-CTSDK] [-z] [-d dist-location|-p] [svn-url|svn-sandbox]
 
 Release an sdist egg.
 
@@ -27,6 +27,8 @@ Options:
                     There is a shortcut for Jarn use: If the location does not
                     contain a host part, %(distbase)s is prepended.
                     Defaults to %(distdefault)s (%(distbase)s/%(distdefault)s).
+
+  -p                Upload to PyPI.
 
   svn-url           A URL with protocol svn, svn+ssh, http, https, or file.
   svn-sandbox       A local directory; defaults to the current working directory.
@@ -60,6 +62,7 @@ class ReleaseMaker(object):
         self.skiptag = False
         self.skipscp = False
         self.keeptemp = False
+        self.pypi = False
         self.distlocation = "%s/%s" % (distbase, distdefault)
         self.directory = os.curdir
         self.python = python
@@ -105,7 +108,7 @@ class ReleaseMaker(object):
 
     def get_options(self):
         try:
-            options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hz")
+            options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hpz")
         except getopt.GetoptError, e:
             self.err_exit('%s\n\n%s' % (e.msg.capitalize(), usage))
 
@@ -123,6 +126,8 @@ class ReleaseMaker(object):
                 self.keeptemp = True
             elif name == 'z':
                 self.format = 'zip'
+            elif name == 'p':
+                self.pypi = True
             elif name == 'd':
                 self.distlocation = value
                 if not self.has_host(value):
@@ -184,7 +189,10 @@ class ReleaseMaker(object):
 
             rc = system('"%(python)s" setup.py sdist --formats=%(format)s' % locals())
             if not self.skipscp and rc == 0:
-                system('scp dist/* "%(distlocation)s"' % locals())
+                if self.pypi:
+                    system('"%(python)s" setup.py register upload' % locals())
+                else:
+                    system('scp dist/* "%(distlocation)s"' % locals())
         finally:
             if not self.keeptemp:
                 shutil.rmtree(tempname)
