@@ -1,6 +1,10 @@
 0.4
 ---
 
+- Use svn checkout instead of svn export because it makes a difference
+  to setuptools.
+  [stefan]
+
 - Add -p option for uploading to PyPI instead of dist-location.
   [stefan]
 

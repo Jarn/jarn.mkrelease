@@ -173,7 +173,7 @@ class ReleaseMaker(object):
         python = self.python
         format = self.format
         try:
-            system('svn export "%(trunkurl)s" "%(checkout)s"' % locals())
+            system('svn co "%(trunkurl)s" "%(checkout)s"' % locals())
 
             self.assert_package(checkout)
             os.chdir(checkout)
