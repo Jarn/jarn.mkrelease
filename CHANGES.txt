@@ -1,3 +1,9 @@
+0.5 2008-10-08
+--------------
+
+- Also locate and checkin HISTORY.txt to support ZopeSkel'ed eggs.
+  [stefan]
+
 0.4 2008-10-08
 --------------
 
