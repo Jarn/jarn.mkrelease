@@ -1,5 +1,5 @@
-0.4
----
+0.4 2008-10-08
+--------------
 
 - Use svn checkout instead of svn export because it makes a difference
   to setuptools.
