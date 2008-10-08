@@ -15,7 +15,7 @@ usage = """Usage: mkrelease [-CTSDK] [-z] [-d dist-location|-p] [svn-url|svn-san
 Release an sdist egg.
 
 Options:
-  -C                Do not checkin CHANGES.txt, setup.py, and version.txt.
+  -C                Do not checkin release-relevant files from the sandbox.
   -T                Do not tag the release in subversion.
   -S                Do not scp the release tarball to dist-location.
   -D                Dry-run; equivalent to -CTS.
@@ -162,8 +162,10 @@ class ReleaseMaker(object):
             print self.trunkurl
 
             if not self.skipcheckin:
+                changes_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]CHANGES\.txt$' -print" % locals())
+                history_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]HISTORY\.txt$' -print" % locals())
                 version_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]version\.txt$' -print" % locals())
-                system('svn ci -m"Prepare %(name)s %(version)s." CHANGES.txt setup.py %(version_txt)s' % locals())
+                system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
 
     def make_release(self):
         tempname = tempfile.mkdtemp(prefix='release')
