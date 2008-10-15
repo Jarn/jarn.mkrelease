@@ -1,6 +1,8 @@
 0.8
 ---
 
+- Lift restriction where only svn trunk could be released.
+  [stefan]
 
 0.7 2008-10-09
 --------------
