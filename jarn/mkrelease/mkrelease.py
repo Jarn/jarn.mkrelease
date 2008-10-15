@@ -89,20 +89,21 @@ class ReleaseMaker(object):
             self.err_exit("Not eggified (no setup.py found): %(dir)s" % locals())
 
     def assert_trunkurl(self, url):
-        if not url.endswith('/trunk'):
-            self.err_exit("URL must point to trunk: %(url)s" % locals())
+        parts = url.split('/')
+        if parts[-1] != 'trunk' and parts[-2] not in ('branches', 'tags'):
+            self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
 
     def assert_tagurl(self, url):
         if system('svn ls "%(url)s" 2>/dev/null' % locals()) == 0:
             self.err_exit('Tag exists: %(url)s' % locals())
 
     def make_tagurl(self, url, tag):
-        url = url.split('/')
-        if url[-1] == 'trunk':
-            url = url[:-1]
-        elif url[-2] in ('branches', 'tags'):
-            url = url[:-2]
-        return '/'.join(url + ['tags', tag])
+        parts = url.split('/')
+        if parts[-1] == 'trunk':
+            parts = parts[:-1]
+        elif parts[-2] in ('branches', 'tags'):
+            parts = parts[:-2]
+        return '/'.join(parts + ['tags', tag])
 
     def is_svnurl(self, url):
         return (url.startswith('svn://') or
@@ -192,8 +193,8 @@ class ReleaseMaker(object):
 
             print 'Releasing', name, version
 
-            tagurl = self.make_tagurl(trunkurl, version)
             if not self.skiptag:
+                tagurl = self.make_tagurl(trunkurl, version)
                 self.assert_tagurl(tagurl)
                 system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
 
