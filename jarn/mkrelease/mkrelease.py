@@ -96,6 +96,14 @@ class ReleaseMaker(object):
         if system('svn ls "%(url)s" 2>/dev/null' % locals()) == 0:
             self.err_exit('Tag exists: %(url)s' % locals())
 
+    def make_tagurl(self, url, tag):
+        url = url.split('/')
+        if url[-1] == 'trunk':
+            url = url[:-1]
+        elif url[-2] in ('branches', 'tags'):
+            url = url[:-2]
+        return '/'.join(url + ['tags', tag])
+
     def is_svnurl(self, url):
         return (url.startswith('svn://') or
                 url.startswith('svn+ssh://') or
@@ -184,7 +192,7 @@ class ReleaseMaker(object):
 
             print 'Releasing', name, version
 
-            tagurl = '%s/tags/%s' % (trunkurl.rsplit('/', 1)[0], version)
+            tagurl = self.make_tagurl(trunkurl, version)
             if not self.skiptag:
                 self.assert_tagurl(tagurl)
                 system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
