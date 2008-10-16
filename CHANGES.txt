@@ -1,6 +1,8 @@
-0.9
----
+0.9 Unreleased
+--------------
 
+- Add -v option to print the script version.
+  [stefan]
 
 0.8 2008-10-16
 --------------
