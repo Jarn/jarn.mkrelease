@@ -1,4 +1,4 @@
-0.9 Unreleased
+0.9 2008-10-16
 --------------
 
 - Add -v option to print the script version.
