@@ -10,7 +10,7 @@ python = "python2.4"
 distbase = "jarn.com:/home/psol/dist"
 distdefault = "public"
 
-version = "mkrelease 0.9"
+version = "mkrelease 0.10"
 usage = """Usage: mkrelease [-CTSDK] [-z] [-d dist-location|-p] [svn-url|svn-sandbox]
 
 Release an sdist egg.
@@ -120,7 +120,7 @@ class ReleaseMaker(object):
         try:
             options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hpvz")
         except getopt.GetoptError, e:
-            self.err_exit('%s\n\n%s' % (e.msg.capitalize(), usage))
+            self.err_exit('%s\n\n%s' % (e.msg, usage))
 
         for name, value in options:
             name = name[1:]
