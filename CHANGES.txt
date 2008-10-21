@@ -1,4 +1,4 @@
-0.10 Unreleased
+0.10 2008-10-21
 ---------------
 
 - Don't capitalize GetOptError messages.
