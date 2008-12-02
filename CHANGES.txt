@@ -1,6 +1,8 @@
 0.11 Unreleased
 ---------------
 
+- Add setup.cfg to list of files we check in.
+  [stefan]
 
 0.10 2008-10-21
 ---------------

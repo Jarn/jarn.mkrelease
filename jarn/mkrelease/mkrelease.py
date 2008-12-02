@@ -171,13 +171,14 @@ class ReleaseMaker(object):
             version = pipe("%(python)s setup.py --version" % locals())
 
             print 'Releasing', name, version
-            print self.trunkurl
+            print 'URL:', self.trunkurl
 
             if not self.skipcheckin:
                 changes_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]CHANGES\.txt$' -print" % locals())
                 history_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]HISTORY\.txt$' -print" % locals())
                 version_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]version\.txt$' -print" % locals())
-                system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
+                system('svn ci -m"Prepare %(name)s %(version)s." setup.py setup.cfg '
+                       '%(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
 
     def make_release(self):
         tempname = tempfile.mkdtemp(prefix='release')
