@@ -10,7 +10,7 @@ python = "python2.4"
 distbase = "jarn.com:/home/psol/dist"
 distdefault = "public"
 
-version = "mkrelease 0.11"
+version = "mkrelease 0.12"
 usage = """Usage: mkrelease [-CTSDK] [-z] [-d dist-location|-p] [svn-url|svn-sandbox]
 
 Release an sdist egg.

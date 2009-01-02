@@ -1,5 +1,5 @@
-0.12 (Unreleased)
------------------
+0.12 2009-01-02
+---------------
 
 - setup.cfg may not exit.
   [stefan]
