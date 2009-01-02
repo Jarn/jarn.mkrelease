@@ -174,10 +174,11 @@ class ReleaseMaker(object):
             print 'URL:', self.trunkurl
 
             if not self.skipcheckin:
+                setup_cfg = pipe(r"find %(directory)s -maxdepth 1 -iregex '.*[/\\:]setup\.cfg$' -print" % locals())
                 changes_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]CHANGES\.txt$' -print" % locals())
                 history_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]HISTORY\.txt$' -print" % locals())
                 version_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]version\.txt$' -print" % locals())
-                system('svn ci -m"Prepare %(name)s %(version)s." setup.py setup.cfg '
+                system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(setup_cfg)s '
                        '%(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
 
     def make_release(self):
