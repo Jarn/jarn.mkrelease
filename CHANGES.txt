@@ -1,5 +1,5 @@
-0.13 (Unreleased)
------------------
+0.13 2009-01-05
+---------------
 
 - Stop execution when the checkin step fails.
   [stefan]
