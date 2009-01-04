@@ -178,8 +178,11 @@ class ReleaseMaker(object):
                 changes_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]CHANGES\.txt$' -print" % locals())
                 history_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]HISTORY\.txt$' -print" % locals())
                 version_txt = pipe(r"find %(directory)s -iregex '.*[/\\:]version\.txt$' -print" % locals())
-                system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(setup_cfg)s '
-                       '%(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
+
+                rc = system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(setup_cfg)s '
+                            '%(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
+                if rc != 0:
+                    self.err_exit('Checkin step failed')
 
     def make_release(self):
         tempname = tempfile.mkdtemp(prefix='release')

@@ -1,11 +1,13 @@
 0.13 (Unreleased)
 -----------------
 
+- Stop execution when the checkin step fails.
+  [stefan]
 
 0.12 2009-01-02
 ---------------
 
-- setup.cfg may not exit.
+- setup.cfg may not exist.
   [stefan]
 
 0.11 2008-12-02
