@@ -11,7 +11,9 @@ distbase = "jarn.com:/home/psol/dist"
 distdefault = "public"
 
 version = "mkrelease 0.14"
-usage = """Usage: mkrelease [-CTSDK] [-z] [-d dist-location|-p] [svn-url|svn-sandbox]
+usage = """\
+Usage: mkrelease [-CTSDK] [-z] [-d dist-location] [svn-url|svn-sandbox]
+       mkrelease [-CTSDK] [-z] [-p [-s [-i identity]]] [svn-url|svn-sandbox]
 
 Release an sdist egg.
 
@@ -29,15 +31,18 @@ Options:
                     contain a host part, %(distbase)s is prepended.
                     Defaults to %(distdefault)s (%(distbase)s/%(distdefault)s).
 
-  -p                Upload to PyPI.
+  -p                Upload the release to PyPI.
+  -s                Sign the release tarball with GnuPG.
+  -i identity       The GnuPG identity to sign with.
 
   svn-url           A URL with protocol svn, svn+ssh, http, https, or file.
-  svn-sandbox       A local directory; defaults to the current working directory.
+  svn-sandbox       A local directory; defaults to the current working
+                    directory.
 
 Examples:
-  mkrelease -d nordic https://svn.jarn.com/customers/nordic/nordic.content/trunk
+  mkrelease -d nordic https://svn.jarn.com/customers/nordic/nordic.theme/trunk
 
-  mkrelease -d nordic src/nordic.content
+  mkrelease -d nordic src/nordic.theme
 
   cd src/jarn.somepackage
   mkrelease
@@ -71,7 +76,8 @@ class ReleaseMaker(object):
         self.distlocation = "%s/%s" % (distbase, distdefault)
         self.directory = os.curdir
         self.python = python
-        self.format = 'gztar'
+        self.sdistflags = []
+        self.uploadflags = []
 
     def err_exit(self, msg, rc=1):
         print >>sys.stderr, msg
@@ -122,7 +128,7 @@ class ReleaseMaker(object):
 
     def get_options(self):
         try:
-            options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hpvz")
+            options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hi:psvz")
         except getopt.GetoptError, e:
             self.err_exit('%s\n\n%s' % (e.msg, usage))
 
@@ -139,13 +145,17 @@ class ReleaseMaker(object):
             elif name == 'K':
                 self.keeptemp = True
             elif name == 'z':
-                self.format = 'zip'
-            elif name == 'p':
-                self.pypi = True
+                self.sdistflags.append('--formats=zip')
             elif name == 'd':
                 self.distlocation = value
                 if not self.has_host(value):
                     self.distlocation = '%s/%s' % (distbase, value)
+            elif name == 'p':
+                self.pypi = True
+            elif name == 's':
+                self.uploadflags.append('--sign')
+            elif name == 'i':
+                self.uploadflags.append('--identity=%s' % value)
             elif name == 'v':
                 self.err_exit(version, 0)
             elif name == 'h':
@@ -185,7 +195,7 @@ class ReleaseMaker(object):
                 rc = system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(setup_cfg)s '
                             '%(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
                 if rc != 0:
-                    self.err_exit('Checkin step failed')
+                    self.err_exit('Checkin failed')
 
     def make_release(self):
         tempname = tempfile.mkdtemp(prefix='release')
@@ -193,9 +203,13 @@ class ReleaseMaker(object):
         trunkurl = self.trunkurl
         distlocation = self.distlocation
         python = self.python
-        format = self.format
+        sdistflags = ' '.join(self.sdistflags)
+        uploadflags = ' '.join(self.uploadflags)
+
         try:
-            system('svn co "%(trunkurl)s" "%(checkout)s"' % locals())
+            rc = system('svn co "%(trunkurl)s" "%(checkout)s"' % locals())
+            if rc != 0:
+                self.err_exit('Checkout failed')
 
             self.assert_package(checkout)
             os.chdir(checkout)
@@ -207,14 +221,19 @@ class ReleaseMaker(object):
             if not self.skiptag:
                 tagurl = self.make_tagurl(trunkurl, version)
                 self.assert_tagurl(tagurl)
-                system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
+                rc = system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
+                if rc != 0:
+                    self.err_exit('Tag failed')
 
             if not self.skipscp and self.pypi:
-                system('"%(python)s" setup.py sdist --formats=%(format)s register upload' % locals())
+                rc = system('"%(python)s" setup.py sdist %(sdistflags)s register upload %(uploadflags)s' % locals())
             else:
-                rc = system('"%(python)s" setup.py sdist --formats=%(format)s' % locals())
+                rc = system('"%(python)s" setup.py sdist %(sdistflags)s' % locals())
                 if not self.skipscp and rc == 0:
-                    system('scp dist/* "%(distlocation)s"' % locals())
+                    rc = system('scp dist/* "%(distlocation)s"' % locals())
+
+            if rc != 0:
+                self.err_exit('Release failed')
         finally:
             if not self.keeptemp:
                 shutil.rmtree(tempname)

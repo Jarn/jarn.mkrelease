@@ -1,6 +1,7 @@
 ::
 
-  Usage: mkrelease [-CTSDK] [-z] [-d dist-location|-p] [svn-url|svn-sandbox]
+  Usage: mkrelease [-CTSDK] [-z] [-d dist-location] [svn-url|svn-sandbox]
+         mkrelease [-CTSDK] [-z] [-p [-s [-i identity]]] [svn-url|svn-sandbox]
 
   Release an sdist egg.
 
@@ -18,15 +19,18 @@
                       contain a host part, jarn.com:/home/psol/dist is prepended.
                       Defaults to public (jarn.com:/home/psol/dist/public).
 
-    -p                Upload to PyPI.
+    -p                Upload the release to PyPI.
+    -s                Sign the release tarball with GnuPG.
+    -i identity       The GnuPG identity to sign with.
 
     svn-url           A URL with protocol svn, svn+ssh, http, https, or file.
-    svn-sandbox       A local directory; defaults to the current working directory.
+    svn-sandbox       A local directory; defaults to the current working
+                      directory.
 
   Examples:
-    mkrelease -d nordic https://svn.jarn.com/customers/nordic/nordic.content/trunk
+    mkrelease -d nordic https://svn.jarn.com/customers/nordic/nordic.theme/trunk
 
-    mkrelease -d nordic src/nordic.content
+    mkrelease -d nordic src/nordic.theme
 
     cd src/jarn.somepackage
     mkrelease

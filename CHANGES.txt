@@ -1,6 +1,11 @@
 0.14 (Unreleased)
 -----------------
 
+- Add -s and -i options for signing PyPI uploads with GnuPG.
+  [stefan]
+
+- Stop execution after any failing step.
+  [stefan]
 
 0.13 2009-01-05
 ---------------
