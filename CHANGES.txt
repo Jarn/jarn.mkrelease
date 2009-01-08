@@ -1,5 +1,5 @@
-0.14 (Unreleased)
------------------
+0.14 2009-01-08
+---------------
 
 - Add -s and -i options for signing PyPI uploads with GnuPG.
   [stefan]
