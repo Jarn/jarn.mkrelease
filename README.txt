@@ -27,10 +27,24 @@
     svn-sandbox       A local directory; defaults to the current working
                       directory.
 
-  Examples:
-    mkrelease -d nordic https://svn.jarn.com/customers/nordic/nordic.theme/trunk
+  Configuration:
+    You can set global default options in ~/.mkrelease or
+    /etc/jarn.mkrelease.conf.
 
-    mkrelease -d nordic src/nordic.theme
+    The configuration file consists of sections, led by a "[section]" header and
+    followed by "name = value" entries.
+
+    The [default] section has the following options:
+
+      python            The python executable to use, defaults to python2.4.
+      distbase          The value prepended if dist-location contains no host
+                        part.
+      distdefault       The default value for dist-location.
+
+  Examples:
+    mkrelease -d foobar https://svn.jarn.com/customers/foobar/foobar.theme/trunk
+
+    mkrelease -d foobar src/foobar.theme
 
     cd src/jarn.somepackage
     mkrelease
