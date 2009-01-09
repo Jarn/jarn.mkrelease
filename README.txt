@@ -17,7 +17,7 @@
     -d dist-location  A full scp destination specification.
                       There is a shortcut for Jarn use: If the location does not
                       contain a host part, jarn.com:/home/psol/dist is prepended.
-                      Defaults to jarn.com:/home/psol/dist/public.
+                      Defaults to public (jarn.com:/home/psol/dist/public).
 
     -p                Upload the release to PyPI.
     -s                Sign the release tarball with GnuPG.
@@ -27,24 +27,10 @@
     svn-sandbox       A local directory; defaults to the current working
                       directory.
 
-  Configuration:
-    You can set global default options in ~/.mkrelease or
-    /etc/jarn.mkrelease.conf.
-
-    The configuration file consists of sections, led by a "[section]" header and
-    followed by "name = value" entries.
-
-    The [default] section has the following options:
-
-      python            The python executable to use, defaults to python2.4.
-      distbase          The value prepended if dist-location contains no host
-                        part.
-      distdefault       The default value for dist-location.
-
   Examples:
-    mkrelease -d foobar https://svn.jarn.com/customers/foobar/foobar.theme/trunk
+    mkrelease -d nordic https://svn.jarn.com/customers/nordic/nordic.theme/trunk
 
-    mkrelease -d foobar src/foobar.theme
+    mkrelease -d nordic src/nordic.theme
 
     cd src/jarn.somepackage
     mkrelease
