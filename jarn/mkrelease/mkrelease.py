@@ -3,12 +3,9 @@ import os
 import getopt
 import tempfile
 import shutil
+from ConfigParser import SafeConfigParser
 
 from os.path import abspath, join, exists, isdir, isfile
-
-python = "python2.4"
-distbase = "jarn.com:/home/psol/dist"
-distdefault = "public"
 
 version = "mkrelease 0.15"
 usage = """\
@@ -29,7 +26,7 @@ Options:
   -d dist-location  A full scp destination specification.
                     There is a shortcut for Jarn use: If the location does not
                     contain a host part, %(distbase)s is prepended.
-                    Defaults to %(distdefault)s (%(distbase)s/%(distdefault)s).
+                    Defaults to %(distlocation)s.
 
   -p                Upload the release to PyPI.
   -s                Sign the release tarball with GnuPG.
@@ -46,7 +43,7 @@ Examples:
 
   cd src/jarn.somepackage
   mkrelease
-""" % locals()
+"""
 
 
 def system(cmd):
@@ -68,16 +65,26 @@ def find(dir, regex, maxdepth=1000):
 class ReleaseMaker(object):
 
     def __init__(self):
+        self.options = self.get_options()
+        self.distbase = self.options['distbase']
+        self.distdefault = self.options['distdefault']
         self.skipcheckin = False
         self.skiptag = False
         self.skipscp = False
         self.keeptemp = False
         self.pypi = False
-        self.distlocation = "%s/%s" % (distbase, distdefault)
+        if not self.has_host(self.distdefault):
+            self.distlocation = "%s/%s" % (self.distbase, self.distdefault)
+        else:
+            self.distlocation = self.distdefault
         self.directory = os.curdir
-        self.python = python
+        self.python = self.options['python']
         self.sdistflags = []
         self.uploadflags = []
+        self.usage = usage % dict(
+            distbase = self.distbase,
+            distlocation = self.distlocation,
+        )
 
     def err_exit(self, msg, rc=1):
         print >>sys.stderr, msg
@@ -127,10 +134,27 @@ class ReleaseMaker(object):
         return (location.find(':') > 0)
 
     def get_options(self):
+        options = dict(
+            distbase = "jarn.com:/home/psol/dist",
+            distdefault = "public",
+            python = "python2.4",
+        )
+        globalpath = os.path.join('/', 'etc', 'jarn.mkrelease.conf')
+        globalpath = os.path.normpath(globalpath)
+        userpath = os.path.join('~', '.mkrelease')
+        userpath = os.path.expanduser(userpath)
+        userpath = os.path.normpath(userpath)
+        config = SafeConfigParser()
+        config.read([globalpath, userpath])
+        if config.has_section('defaults'):
+            options.update(dict(config.items('defaults')))
+        return options
+
+    def get_arguments(self):
         try:
             options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hi:psvz")
         except getopt.GetoptError, e:
-            self.err_exit('%s\n\n%s' % (e.msg, usage))
+            self.err_exit('%s\n\n%s' % (e.msg, self.usage))
 
         for name, value in options:
             name = name[1:]
@@ -159,9 +183,9 @@ class ReleaseMaker(object):
             elif name == 'v':
                 self.err_exit(version, 0)
             elif name == 'h':
-                self.err_exit(usage, 0)
+                self.err_exit(self.usage, 0)
             else:
-                self.err_exit(usage)
+                self.err_exit(self.usage)
 
         if args:
             self.directory = args[0]
@@ -239,7 +263,7 @@ class ReleaseMaker(object):
                 shutil.rmtree(tempname)
 
     def run(self):
-        self.get_options()
+        self.get_arguments()
         self.get_package_url()
         self.make_release()
         print 'done'

@@ -17,7 +17,7 @@
     -d dist-location  A full scp destination specification.
                       There is a shortcut for Jarn use: If the location does not
                       contain a host part, jarn.com:/home/psol/dist is prepended.
-                      Defaults to public (jarn.com:/home/psol/dist/public).
+                      Defaults to jarn.com:/home/psol/dist/public.
 
     -p                Upload the release to PyPI.
     -s                Sign the release tarball with GnuPG.

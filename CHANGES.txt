@@ -1,6 +1,9 @@
 0.15 (Unreleased)
 -----------------
 
+- Added configurability through config files in /etc/jarn.mkrelease.conf and
+  ~/.mkrelease.
+  [fschulze]
 
 0.14 2009-01-08
 ---------------
