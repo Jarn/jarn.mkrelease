@@ -61,7 +61,7 @@ def pipe(cmd):
         p.close()
 
 
-def find(dir, regex, maxdepth=1000):
+def find(dir, regex, maxdepth=999):
     return pipe("find %(dir)s -maxdepth %(maxdepth)s -iregex '%(regex)s' -print" % locals())
 
 
@@ -188,10 +188,10 @@ class ReleaseMaker(object):
             print 'URL:', self.trunkurl
 
             if not self.skipcheckin:
-                setup_cfg = find(directory, r'.*[/\\:]setup\.cfg$', maxdepth=1)
-                changes_txt = find(directory, r'.*[/\\:]CHANGES\.txt$')
-                history_txt = find(directory, r'.*[/\\:]HISTORY\.txt$')
-                version_txt = find(directory, r'.*[/\\:]version\.txt$')
+                setup_cfg = find(directory, r'.*[/\\:]setup[.]cfg$', maxdepth=1)
+                changes_txt = find(directory, r'.*[/\\:]CHANGES[.]txt$')
+                history_txt = find(directory, r'.*[/\\:]HISTORY[.]txt$')
+                version_txt = find(directory, r'.*[/\\:]version[.]txt$')
                 rc = system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(setup_cfg)s '
                             '%(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
                 if rc != 0:
