@@ -104,10 +104,6 @@ class ReleaseMaker(object):
         if parts[-1] != 'trunk' and parts[-2] not in ('branches', 'tags'):
             self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
 
-    def assert_tagurl(self, url):
-        if system('svn ls "%(url)s" 2>/dev/null' % locals()) == 0:
-            self.err_exit('Tag exists: %(url)s' % locals())
-
     def make_tagurl(self, url, tag):
         parts = url.split('/')
         if parts[-1] == 'trunk':
@@ -220,7 +216,6 @@ class ReleaseMaker(object):
 
             if not self.skiptag:
                 tagurl = self.make_tagurl(trunkurl, version)
-                self.assert_tagurl(tagurl)
                 rc = system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
                 if rc != 0:
                     self.err_exit('Tag failed')
