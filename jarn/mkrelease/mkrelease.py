@@ -3,8 +3,9 @@ import os
 import getopt
 import tempfile
 import shutil
+import ConfigParser
 
-from os.path import abspath, join, exists, isdir, isfile
+from os.path import abspath, join, exists, isdir, isfile, expanduser
 
 python = "python2.4"
 distbase = "jarn.com:/home/psol/dist"
@@ -27,9 +28,9 @@ Options:
   -z                Create .zip archive instead of the default .tar.gz.
 
   -d dist-location  A full scp destination specification.
-                    There is a shortcut for Jarn use: If the location does not
+                    There is a shortcut here: If the location does not
                     contain a host part, %(distbase)s is prepended.
-                    Defaults to %(distdefault)s (%(distbase)s/%(distdefault)s).
+                    Defaults to %(distlocation)s.
 
   -p                Upload the release to PyPI.
   -s                Sign the release tarball with GnuPG.
@@ -46,7 +47,7 @@ Examples:
 
   cd src/jarn.somepackage
   mkrelease
-""" % locals()
+"""
 
 
 def system(cmd):
@@ -65,19 +66,39 @@ def find(dir, regex, maxdepth=999):
     return pipe("find %(dir)s -maxdepth %(maxdepth)s -iregex '%(regex)s' -print" % locals())
 
 
+class Defaults(object):
+
+    def __init__(self):
+        self.parser = ConfigParser.ConfigParser()
+        self.parser.read(('/etc/mkrelease.conf', expanduser('~/.mkrelease')))
+        self.python = self.get('defaults', 'python', python)
+        self.distbase = self.get('defaults', 'distbase', distbase)
+        self.distdefault = self.get('defaults', 'distdefault', distdefault)
+
+    def get(self, section, key, default=None):
+        if self.parser.has_option(section, key):
+            return self.parser.get(section, key)
+        return default
+
+
 class ReleaseMaker(object):
 
     def __init__(self):
+        self.defaults = Defaults()
         self.skipcheckin = False
         self.skiptag = False
         self.skipscp = False
         self.keeptemp = False
         self.pypi = False
-        self.distlocation = "%s/%s" % (distbase, distdefault)
+        self.distbase = self.defaults.distbase
+        self.distdefault = self.defaults.distdefault
+        self.distlocation = self.make_distlocation(self.distbase, self.distdefault)
         self.directory = os.curdir
-        self.python = python
+        self.python = self.defaults.python
         self.sdistflags = []
         self.uploadflags = []
+        self.version = version
+        self.usage = usage % self.__dict__
 
     def err_exit(self, msg, rc=1):
         print >>sys.stderr, msg
@@ -104,6 +125,11 @@ class ReleaseMaker(object):
         if parts[-1] != 'trunk' and parts[-2] not in ('branches', 'tags'):
             self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
 
+    def make_distlocation(self, base, location):
+        if base and location.find(':') < 0:
+            return '%s/%s' % (base, location)
+        return location
+
     def make_tagurl(self, url, tag):
         parts = url.split('/')
         if parts[-1] == 'trunk':
@@ -119,14 +145,11 @@ class ReleaseMaker(object):
                 url.startswith('https://') or
                 url.startswith('file://'))
 
-    def has_host(self, location):
-        return (location.find(':') > 0)
-
     def get_options(self):
         try:
             options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hi:psvz")
         except getopt.GetoptError, e:
-            self.err_exit('%s\n\n%s' % (e.msg, usage))
+            self.err_exit('%s\n\n%s' % (e.msg, self.usage))
 
         for name, value in options:
             name = name[1:]
@@ -143,9 +166,7 @@ class ReleaseMaker(object):
             elif name == 'z':
                 self.sdistflags.append('--formats=zip')
             elif name == 'd':
-                self.distlocation = value
-                if not self.has_host(value):
-                    self.distlocation = '%s/%s' % (distbase, value)
+                self.distlocation = self.make_distlocation(self.distbase, value)
             elif name == 'p':
                 self.pypi = True
             elif name == 's':
@@ -153,11 +174,11 @@ class ReleaseMaker(object):
             elif name == 'i':
                 self.uploadflags.append('--identity=%s' % value)
             elif name == 'v':
-                self.err_exit(version, 0)
+                self.err_exit(self.version, 0)
             elif name == 'h':
-                self.err_exit(usage, 0)
+                self.err_exit(self.usage, 0)
             else:
-                self.err_exit(usage)
+                self.err_exit(self.usage)
 
         if args:
             self.directory = args[0]

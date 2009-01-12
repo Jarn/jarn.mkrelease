@@ -1,6 +1,8 @@
 0.15 (Unreleased)
 -----------------
 
+- Support for reading default options from a config file.
+  [fschulze, stefan]
 
 0.14 2009-01-08
 ---------------
