@@ -27,10 +27,7 @@ Options:
 
   -z                Create .zip archive instead of the default .tar.gz.
 
-  -d dist-location  A full scp destination specification.
-                    There is a shortcut here: If the location does not
-                    contain a host part, %(distbase)s is prepended.
-                    Defaults to %(distlocation)s.
+  -d dist-location  An scp destination specification.
 
   -p                Upload the release to PyPI.
   -s                Sign the release tarball with GnuPG.
@@ -40,14 +37,23 @@ Options:
   svn-sandbox       A local directory; defaults to the current working
                     directory.
 
-Examples:
-  mkrelease -d nordic https://svn.jarn.com/customers/nordic/nordic.theme/trunk
+Files:
+  /etc/mkrelease    Global configuration file.
+  ~/.mkrelease      Per user configuration file.
 
-  mkrelease -d nordic src/nordic.theme
+  The configuration file consists of sections, led by a "[section]" header
+  and followed by "name = value" entries.
 
-  cd src/jarn.somepackage
-  mkrelease
-"""
+  The [defaults] section has the following options:
+
+  python            The Python executable used; defaults to python2.4.
+  distbase          The value prepended if dist-location does not contain a
+                    host part; defaults to %(distbase)s.
+  distdefault       The default value for dist-location.
+
+  The [aliases] section may be used to define short names for (one or more)
+  dist-locations.
+""" % locals()
 
 
 def system(cmd):
@@ -70,10 +76,16 @@ class Defaults(object):
 
     def __init__(self):
         self.parser = ConfigParser.ConfigParser()
-        self.parser.read(('/etc/mkrelease.conf', expanduser('~/.mkrelease')))
+        self.parser.read(('/etc/mkrelease', expanduser('~/.mkrelease')))
+
         self.python = self.get('defaults', 'python', python)
         self.distbase = self.get('defaults', 'distbase', distbase)
         self.distdefault = self.get('defaults', 'distdefault', distdefault)
+
+        self.aliases = {}
+        if self.parser.has_section('aliases'):
+            for key, value in self.parser.items('aliases'):
+                self.aliases[key] = value.split()
 
     def get(self, section, key, default=None):
         if self.parser.has_option(section, key):
@@ -90,15 +102,14 @@ class ReleaseMaker(object):
         self.skipscp = False
         self.keeptemp = False
         self.pypi = False
+        self.python = self.defaults.python
         self.distbase = self.defaults.distbase
         self.distdefault = self.defaults.distdefault
-        self.distlocation = self.make_distlocation(self.distbase, self.distdefault)
+        self.aliases = self.defaults.aliases
+        self.distlocation = self.make_distlocation(self.distdefault)
         self.directory = os.curdir
-        self.python = self.defaults.python
         self.sdistflags = []
         self.uploadflags = []
-        self.version = version
-        self.usage = usage % self.__dict__
 
     def err_exit(self, msg, rc=1):
         print >>sys.stderr, msg
@@ -125,11 +136,6 @@ class ReleaseMaker(object):
         if parts[-1] != 'trunk' and parts[-2] not in ('branches', 'tags'):
             self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
 
-    def make_distlocation(self, base, location):
-        if base and location.find(':') < 0:
-            return '%s/%s' % (base, location)
-        return location
-
     def make_tagurl(self, url, tag):
         parts = url.split('/')
         if parts[-1] == 'trunk':
@@ -137,6 +143,13 @@ class ReleaseMaker(object):
         elif parts[-2] in ('branches', 'tags'):
             parts = parts[:-2]
         return '/'.join(parts + ['tags', tag])
+
+    def make_distlocation(self, location):
+        if location in self.aliases:
+            return self.aliases[location]
+        if location.find(':') < 0 and self.distbase:
+            return ['%s/%s' % (self.distbase, location)]
+        return [location]
 
     def is_svnurl(self, url):
         return (url.startswith('svn://') or
@@ -149,7 +162,7 @@ class ReleaseMaker(object):
         try:
             options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hi:psvz")
         except getopt.GetoptError, e:
-            self.err_exit('%s\n\n%s' % (e.msg, self.usage))
+            self.err_exit('%s\n\n%s' % (e.msg, usage))
 
         for name, value in options:
             name = name[1:]
@@ -166,7 +179,7 @@ class ReleaseMaker(object):
             elif name == 'z':
                 self.sdistflags.append('--formats=zip')
             elif name == 'd':
-                self.distlocation = self.make_distlocation(self.distbase, value)
+                self.distlocation = self.make_distlocation(value)
             elif name == 'p':
                 self.pypi = True
             elif name == 's':
@@ -174,11 +187,11 @@ class ReleaseMaker(object):
             elif name == 'i':
                 self.uploadflags.append('--identity=%s' % value)
             elif name == 'v':
-                self.err_exit(self.version, 0)
+                self.err_exit(version, 0)
             elif name == 'h':
-                self.err_exit(self.usage, 0)
+                self.err_exit(usage, 0)
             else:
-                self.err_exit(self.usage)
+                self.err_exit(usage)
 
         if args:
             self.directory = args[0]
@@ -246,7 +259,10 @@ class ReleaseMaker(object):
             else:
                 rc = system('"%(python)s" setup.py sdist %(sdistflags)s' % locals())
                 if not self.skipscp and rc == 0:
-                    rc = system('scp dist/* "%(distlocation)s"' % locals())
+                    for location in self.distlocation:
+                        rc = system('scp dist/* "%(location)s"' % locals())
+                        if rc != 0:
+                            self.err_exit('Scp failed')
 
             if rc != 0:
                 self.err_exit('Release failed')
