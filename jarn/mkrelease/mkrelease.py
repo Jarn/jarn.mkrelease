@@ -140,13 +140,6 @@ class ReleaseMaker(object):
             parts = parts[:-2]
         return '/'.join(parts + ['tags', tag])
 
-    def make_distlocation(self, location):
-        if location in self.aliases:
-            return self.aliases[location]
-        if location.find(':') < 0 and self.distbase:
-            return ['%s/%s' % (self.distbase, location)]
-        return [location]
-
     def is_svnurl(self, url):
         return (url.startswith('svn://') or
                 url.startswith('svn+ssh://') or
@@ -157,6 +150,13 @@ class ReleaseMaker(object):
     def find(self, dir, name, maxdepth=999):
         regex = r'.*[/\\:]%s$' % name.replace('.', '[.]')
         return pipe("find %(dir)s -maxdepth %(maxdepth)s -iregex '%(regex)s' -print" % locals())
+
+    def make_distlocation(self, location):
+        if location in self.aliases:
+            return self.aliases[location]
+        if location.find(':') < 0 and self.distbase:
+            return ['%s/%s' % (self.distbase, location)]
+        return [location]
 
     def get_options(self):
         try:
