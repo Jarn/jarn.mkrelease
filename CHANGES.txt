@@ -1,5 +1,5 @@
-0.16 (Unreleased)
------------------
+0.16 2009-01-13
+---------------
 
 - Fold regex construction into find and make find a method.
   [stefan]
