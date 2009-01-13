@@ -14,10 +14,7 @@
 
     -z                Create .zip archive instead of the default .tar.gz.
 
-    -d dist-location  A full scp destination specification.
-                      There is a shortcut for Jarn use: If the location does not
-                      contain a host part, jarn.com:/home/psol/dist is prepended.
-                      Defaults to public (jarn.com:/home/psol/dist/public).
+    -d dist-location  An scp destination specification.
 
     -p                Upload the release to PyPI.
     -s                Sign the release tarball with GnuPG.
@@ -27,11 +24,20 @@
     svn-sandbox       A local directory; defaults to the current working
                       directory.
 
-  Examples:
-    mkrelease -d nordic https://svn.jarn.com/customers/nordic/nordic.theme/trunk
+  Files:
+    /etc/mkrelease    Global configuration file.
+    ~/.mkrelease      Per user configuration file.
 
-    mkrelease -d nordic src/nordic.theme
+    The configuration file consists of sections, led by a "[section]" header
+    and followed by "name = value" entries.
 
-    cd src/jarn.somepackage
-    mkrelease
+    The [defaults] section has the following options:
+
+    python            The Python executable used; defaults to python2.4.
+    distbase          The value prepended if dist-location does not contain a
+                      host part; defaults to jarn.com:/home/psol/dist.
+    distdefault       The default value for dist-location.
+
+    The [aliases] section may be used to define short names for (one or more)
+    dist-locations.
 

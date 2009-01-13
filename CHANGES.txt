@@ -1,8 +1,13 @@
 0.16 (Unreleased)
 -----------------
 
+- Fold regex construction into find and make find a method.
+  [stefan]
 
-0.15 2009-01-14
+- Update README.txt.
+  [stefan]
+
+0.15 2009-01-13
 ---------------
 
 - Support for reading default options from a config file.
