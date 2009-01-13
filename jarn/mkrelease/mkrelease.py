@@ -68,10 +68,6 @@ def pipe(cmd):
         p.close()
 
 
-def find(dir, regex, maxdepth=999):
-    return pipe("find %(dir)s -maxdepth %(maxdepth)s -iregex '%(regex)s' -print" % locals())
-
-
 class Defaults(object):
 
     def __init__(self):
@@ -158,6 +154,10 @@ class ReleaseMaker(object):
                 url.startswith('https://') or
                 url.startswith('file://'))
 
+    def find(self, dir, name, maxdepth=999):
+        regex = r'.*[/\\:]%s$' % name.replace('.', '[.]')
+        return pipe("find %(dir)s -maxdepth %(maxdepth)s -iregex '%(regex)s' -print" % locals())
+
     def get_options(self):
         try:
             options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hi:psvz")
@@ -218,10 +218,10 @@ class ReleaseMaker(object):
             print 'URL:', self.trunkurl
 
             if not self.skipcheckin:
-                setup_cfg = find(directory, r'.*[/\\:]setup[.]cfg$', maxdepth=1)
-                changes_txt = find(directory, r'.*[/\\:]CHANGES[.]txt$')
-                history_txt = find(directory, r'.*[/\\:]HISTORY[.]txt$')
-                version_txt = find(directory, r'.*[/\\:]version[.]txt$')
+                setup_cfg = self.find(directory, 'setup.cfg', maxdepth=1)
+                changes_txt = self.find(directory, 'CHANGES.txt')
+                history_txt = self.find(directory, 'HISTORY.txt')
+                version_txt = self.find(directory, 'version.txt')
                 rc = system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(setup_cfg)s '
                             '%(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
                 if rc != 0:
