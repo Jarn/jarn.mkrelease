@@ -46,10 +46,11 @@ Files:
 
   The [defaults] section has the following options:
 
-  python            The Python executable used; defaults to python2.4.
+  python            The Python executable used; defaults to %(python)s.
   distbase          The value prepended if dist-location does not contain a
                     host part; defaults to %(distbase)s.
-  distdefault       The default value for dist-location.
+  distdefault       The default value for dist-location; defaults to
+                    %(distbase)s/%(distdefault)s.
 
   The [aliases] section may be used to define short names for (one or more)
   dist-locations.
