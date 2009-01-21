@@ -69,25 +69,30 @@ def pipe(cmd):
         p.close()
 
 
+def find(dir, name, maxdepth=999):
+    regex = r'.*[/\\:]%s$' % name.replace('.', '[.]')
+    return pipe("find %(dir)s -maxdepth %(maxdepth)s -iregex '%(regex)s' -print" % locals())
+
+
 class Defaults(object):
 
     def __init__(self):
         self.parser = ConfigParser.ConfigParser()
         self.parser.read(('/etc/mkrelease', expanduser('~/.mkrelease')))
 
-        self.python = self.get('defaults', 'python', python)
-        self.distbase = self.get('defaults', 'distbase', distbase)
-        self.distdefault = self.get('defaults', 'distdefault', distdefault)
+        def get(section, key, default=None):
+            if self.parser.has_option(section, key):
+                return self.parser.get(section, key)
+            return default
+
+        self.python = get('defaults', 'python', python)
+        self.distbase = get('defaults', 'distbase', distbase)
+        self.distdefault = get('defaults', 'distdefault', distdefault)
 
         self.aliases = {}
         if self.parser.has_section('aliases'):
             for key, value in self.parser.items('aliases'):
                 self.aliases[key] = value.split()
-
-    def get(self, section, key, default=None):
-        if self.parser.has_option(section, key):
-            return self.parser.get(section, key)
-        return default
 
 
 class ReleaseMaker(object):
@@ -99,14 +104,14 @@ class ReleaseMaker(object):
         self.skipscp = False
         self.keeptemp = False
         self.pypi = False
+        self.sdistflags = []
+        self.uploadflags = []
+        self.directory = os.curdir
         self.python = self.defaults.python
         self.distbase = self.defaults.distbase
         self.distdefault = self.defaults.distdefault
         self.aliases = self.defaults.aliases
         self.distlocation = self.make_distlocation(self.distdefault)
-        self.directory = os.curdir
-        self.sdistflags = []
-        self.uploadflags = []
 
     def err_exit(self, msg, rc=1):
         print >>sys.stderr, msg
@@ -147,10 +152,6 @@ class ReleaseMaker(object):
                 url.startswith('http://') or
                 url.startswith('https://') or
                 url.startswith('file://'))
-
-    def find(self, dir, name, maxdepth=999):
-        regex = r'.*[/\\:]%s$' % name.replace('.', '[.]')
-        return pipe("find %(dir)s -maxdepth %(maxdepth)s -iregex '%(regex)s' -print" % locals())
 
     def make_distlocation(self, location):
         if location in self.aliases:
@@ -219,10 +220,10 @@ class ReleaseMaker(object):
             print 'URL:', self.trunkurl
 
             if not self.skipcheckin:
-                setup_cfg = self.find(directory, 'setup.cfg', maxdepth=1)
-                changes_txt = self.find(directory, 'CHANGES.txt')
-                history_txt = self.find(directory, 'HISTORY.txt')
-                version_txt = self.find(directory, 'version.txt')
+                setup_cfg = find(directory, 'setup.cfg', maxdepth=1)
+                changes_txt = find(directory, 'CHANGES.txt')
+                history_txt = find(directory, 'HISTORY.txt')
+                version_txt = find(directory, 'version.txt')
                 rc = system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(setup_cfg)s '
                             '%(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
                 if rc != 0:
