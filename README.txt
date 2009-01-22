@@ -36,7 +36,8 @@
     python            The Python executable used; defaults to python2.4.
     distbase          The value prepended if dist-location does not contain a
                       host part; defaults to jarn.com:/home/psol/dist.
-    distdefault       The default value for dist-location.
+    distdefault       The default value for dist-location; defaults to
+                      jarn.com:/home/psol/dist/public.
 
     The [aliases] section may be used to define short names for (one or more)
     dist-locations.
