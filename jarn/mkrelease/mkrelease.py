@@ -106,7 +106,7 @@ class ReleaseMaker(object):
         self.distbase = self.defaults.distbase
         self.distdefault = self.defaults.distdefault
         self.aliases = self.defaults.aliases
-        self.distlocation = self.make_distlocation(self.distdefault)
+        self.distlocation = self.get_location(self.distdefault)
 
     def err_exit(self, msg, rc=1):
         print >>sys.stderr, msg
@@ -133,13 +133,20 @@ class ReleaseMaker(object):
         if parts[-1] != 'trunk' and parts[-2] not in ('branches', 'tags'):
             self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
 
-    def make_tagurl(self, url, tag):
+    def get_tagurl(self, url, tag):
         parts = url.split('/')
         if parts[-1] == 'trunk':
             parts = parts[:-1]
         elif parts[-2] in ('branches', 'tags'):
             parts = parts[:-2]
         return '/'.join(parts + ['tags', tag])
+
+    def get_location(self, location):
+        if location in self.aliases:
+            return self.aliases[location]
+        if location.find(':') < 0 and self.distbase:
+            return ['%s/%s' % (self.distbase, location)]
+        return [location]
 
     def is_svnurl(self, url):
         return (url.startswith('svn://') or
@@ -151,13 +158,6 @@ class ReleaseMaker(object):
     def find_file(self, dir, name, maxdepth=999):
         regex = r'.*[/\\:]%s$' % name.replace('.', '[.]')
         return pipe("find %(dir)s -maxdepth %(maxdepth)s -iregex '%(regex)s' -print" % locals())
-
-    def make_distlocation(self, location):
-        if location in self.aliases:
-            return self.aliases[location]
-        if location.find(':') < 0 and self.distbase:
-            return ['%s/%s' % (self.distbase, location)]
-        return [location]
 
     def get_options(self):
         try:
@@ -180,7 +180,7 @@ class ReleaseMaker(object):
             elif name == 'z':
                 self.sdistflags.append('--formats=zip')
             elif name == 'd':
-                self.distlocation = self.make_distlocation(value)
+                self.distlocation = self.get_location(value)
             elif name == 'p':
                 self.pypi = True
             elif name == 's':
@@ -250,7 +250,7 @@ class ReleaseMaker(object):
             print 'Releasing', name, version
 
             if not self.skiptag:
-                tagurl = self.make_tagurl(trunkurl, version)
+                tagurl = self.get_tagurl(trunkurl, version)
                 rc = system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
                 if rc != 0:
                     self.err_exit('Tag failed')
