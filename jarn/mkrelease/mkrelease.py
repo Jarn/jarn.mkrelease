@@ -3,6 +3,7 @@ import os
 import getopt
 import tempfile
 import shutil
+import urlparse
 import ConfigParser
 
 from os.path import abspath, join, exists, isdir, isfile, expanduser
@@ -129,17 +130,23 @@ class ReleaseMaker(object):
             self.err_exit("Not eggified (no setup.py found): %(dir)s" % locals())
 
     def assert_trunkurl(self, url):
-        parts = url.split('/')
-        if parts[-1] != 'trunk' and parts[-2] not in ('branches', 'tags'):
+        parts, layout = url.split('/'), self.get_layout(url)
+        if parts[-1] != layout[0] and parts[-2] not in layout[1:]:
             self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
 
     def get_tagurl(self, url, tag):
-        parts = url.split('/')
-        if parts[-1] == 'trunk':
+        parts, layout = url.split('/'), self.get_layout(url)
+        if parts[-1] == layout[0]:
             parts = parts[:-1]
-        elif parts[-2] in ('branches', 'tags'):
+        elif parts[-2] in layout[1:]:
             parts = parts[:-2]
-        return '/'.join(parts + ['tags', tag])
+        return '/'.join(parts + [layout[2], tag])
+
+    def get_layout(self, url):
+        host = urlparse.urlparse(url)[1].split('@')[-1].lower()
+        if host == 'codespeak.net':
+            return ('trunk', 'branch', 'tag')
+        return ('trunk', 'branches', 'tags')
 
     def get_location(self, location):
         if location in self.aliases:
