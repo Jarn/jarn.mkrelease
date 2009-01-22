@@ -14,8 +14,8 @@ distdefault = "public"
 
 version = "mkrelease 0.17"
 usage = """\
-Usage: mkrelease [-CTSDK] [-z] [-d dist-location] [svn-url|svn-sandbox]
-       mkrelease [-CTSDK] [-z] [-p [-s [-i identity]]] [svn-url|svn-sandbox]
+Usage: mkrelease [-CTSDK] [-cz] [-d dist-location] [svn-url|svn-sandbox]
+       mkrelease [-CTSDK] [-cz] [-p [-s [-i identity]]] [svn-url|svn-sandbox]
 
 Release an sdist egg.
 
@@ -26,7 +26,8 @@ Options:
   -D                Dry-run; equivalent to -CTS.
   -K                Keep the temporary build directory.
 
-  -z                Create .zip archive instead of the default .tar.gz.
+  -c                Assume a codespeak-style repository layout.
+  -z                Create a zip archive instead of the default tar.gz.
 
   -d dist-location  An scp destination specification.
 
@@ -103,6 +104,7 @@ class ReleaseMaker(object):
         self.sdistflags = []
         self.uploadflags = []
         self.directory = os.curdir
+        self.layout = ('trunk', 'branches', 'tags')
         self.python = self.defaults.python
         self.distbase = self.defaults.distbase
         self.distdefault = self.defaults.distdefault
@@ -130,23 +132,17 @@ class ReleaseMaker(object):
             self.err_exit("Not eggified (no setup.py found): %(dir)s" % locals())
 
     def assert_trunkurl(self, url):
-        parts, layout = url.split('/'), self.get_layout(url)
-        if parts[-1] != layout[0] and parts[-2] not in layout[1:]:
+        parts = url.split('/')
+        if parts[-1] != self.layout[0] and parts[-2] not in self.layout[1:]:
             self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
 
     def get_tagurl(self, url, tag):
-        parts, layout = url.split('/'), self.get_layout(url)
-        if parts[-1] == layout[0]:
+        parts = url.split('/')
+        if parts[-1] == self.layout[0]:
             parts = parts[:-1]
-        elif parts[-2] in layout[1:]:
+        elif parts[-2] in self.layout[1:]:
             parts = parts[:-2]
-        return '/'.join(parts + [layout[2], tag])
-
-    def get_layout(self, url):
-        host = urlparse.urlparse(url)[1].split('@')[-1].lower()
-        if host == 'codespeak.net':
-            return ('trunk', 'branch', 'tag')
-        return ('trunk', 'branches', 'tags')
+        return '/'.join(parts + [self.layout[2], tag])
 
     def get_location(self, location):
         if location in self.aliases:
@@ -168,35 +164,37 @@ class ReleaseMaker(object):
 
     def get_options(self):
         try:
-            options, args = getopt.getopt(sys.argv[1:], "CDKSTd:hi:psvz")
+            options, args = getopt.getopt(sys.argv[1:], 'CDKSTcd:hi:psvz',
+                                          ('help', 'version', 'codespeak'))
         except getopt.GetoptError, e:
             self.err_exit('%s\n\n%s' % (e.msg, usage))
 
         for name, value in options:
-            name = name[1:]
-            if name == 'C':
+            if name == '-C':
                 self.skipcheckin = True
-            elif name == 'T':
+            elif name == '-T':
                 self.skiptag = True
-            elif name == 'S':
+            elif name == '-S':
                 self.skipscp = True
-            elif name == 'D':
+            elif name == '-D':
                 self.skipcheckin = self.skiptag = self.skipscp = True
-            elif name == 'K':
+            elif name == '-K':
                 self.keeptemp = True
-            elif name == 'z':
+            elif name in ('-c', '--codespeak'):
+                self.layout = ('trunk', 'branch', 'tag')
+            elif name == '-z':
                 self.sdistflags.append('--formats=zip')
-            elif name == 'd':
+            elif name == '-d':
                 self.distlocation = self.get_location(value)
-            elif name == 'p':
+            elif name == '-p':
                 self.pypi = True
-            elif name == 's':
+            elif name == '-s':
                 self.uploadflags.append('--sign')
-            elif name == 'i':
+            elif name == '-i':
                 self.uploadflags.append('--identity=%s' % value)
-            elif name == 'v':
+            elif name in ('-v', '--version'):
                 self.err_exit(version, 0)
-            elif name == 'h':
+            elif name in ('-h', '--help'):
                 self.err_exit(usage, 0)
             else:
                 self.err_exit(usage)

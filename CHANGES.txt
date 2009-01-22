@@ -1,7 +1,8 @@
 0.17 (Unreleased)
 -----------------
 
-- Codespeak uses 'branch' and 'tag' instead of 'branches' and 'tags'.
+- Add -c option to enable codespeak support. The codespeak.net repository
+  uses 'branch' and 'tag' instead of 'branches' and 'tags'.
   [gotcha, stefan]
 
 0.16 2009-01-13

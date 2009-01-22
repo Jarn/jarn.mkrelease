@@ -1,7 +1,7 @@
 ::
 
-  Usage: mkrelease [-CTSDK] [-z] [-d dist-location] [svn-url|svn-sandbox]
-         mkrelease [-CTSDK] [-z] [-p [-s [-i identity]]] [svn-url|svn-sandbox]
+  Usage: mkrelease [-CTSDK] [-cz] [-d dist-location] [svn-url|svn-sandbox]
+         mkrelease [-CTSDK] [-cz] [-p [-s [-i identity]]] [svn-url|svn-sandbox]
 
   Release an sdist egg.
 
@@ -12,7 +12,8 @@
     -D                Dry-run; equivalent to -CTS.
     -K                Keep the temporary build directory.
 
-    -z                Create .zip archive instead of the default .tar.gz.
+    -c                Assume a codespeak-style repository layout.
+    -z                Create a zip archive instead of the default tar.gz.
 
     -d dist-location  An scp destination specification.
 
