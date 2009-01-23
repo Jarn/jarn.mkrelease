@@ -3,7 +3,6 @@ import os
 import getopt
 import tempfile
 import shutil
-import urlparse
 import ConfigParser
 
 from os.path import abspath, join, exists, isdir, isfile, expanduser
