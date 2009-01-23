@@ -157,7 +157,7 @@ class ReleaseMaker(object):
                 url.startswith('https://') or
                 url.startswith('file://'))
 
-    def find_file(self, dir, name, maxdepth=999):
+    def find(self, dir, name, maxdepth=999):
         regex = r'.*[/\\:]%s$' % name.replace('.', '[.]')
         return pipe("find %(dir)s -maxdepth %(maxdepth)s -iregex '%(regex)s' -print" % locals())
 
@@ -223,10 +223,10 @@ class ReleaseMaker(object):
             print 'URL:', self.trunkurl
 
             if not self.skipcheckin:
-                setup_cfg = self.find_file(directory, 'setup.cfg', maxdepth=1)
-                changes_txt = self.find_file(directory, 'CHANGES.txt')
-                history_txt = self.find_file(directory, 'HISTORY.txt')
-                version_txt = self.find_file(directory, 'version.txt')
+                setup_cfg = self.find(directory, 'setup.cfg', maxdepth=1)
+                changes_txt = self.find(directory, 'CHANGES.txt')
+                history_txt = self.find(directory, 'HISTORY.txt')
+                version_txt = self.find(directory, 'version.txt')
                 rc = system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(setup_cfg)s '
                             '%(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
                 if rc != 0:
