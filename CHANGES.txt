@@ -1,5 +1,5 @@
-0.17 (Unreleased)
------------------
+0.17 2009-01-23
+---------------
 
 - Add -c option to enable codespeak support. The codespeak.net repository
   uses 'branch' and 'tag' instead of 'branches' and 'tags'.
