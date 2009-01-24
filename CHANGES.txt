@@ -1,6 +1,8 @@
 0.18 Unreleased
 ---------------
 
+- Rid unused imports and locals.
+  [stefan]
 
 0.17 2009-01-23
 ---------------
