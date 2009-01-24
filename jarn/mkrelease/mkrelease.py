@@ -236,7 +236,6 @@ class ReleaseMaker(object):
         tempname = tempfile.mkdtemp(prefix='release')
         checkout = join(tempname, 'checkout')
         trunkurl = self.trunkurl
-        distlocation = self.distlocation
         python = self.python
         sdistflags = ' '.join(self.sdistflags)
         uploadflags = ' '.join(self.uploadflags)
