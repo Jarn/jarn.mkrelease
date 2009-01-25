@@ -5,11 +5,12 @@ version = '0.18'
 setup(name='jarn.mkrelease',
       version=version,
       description='Release sdist eggs.',
-      long_description="",
+      long_description=open('README.txt').read() + '\n' +
+                       open('CHANGES.txt').read(),
       classifiers=[
           'Programming Language :: Python',
       ],
-      keywords='',
+      keywords='release sdist eggs',
       author='Jarn AS',
       author_email='info@jarn.com',
       url='http://www.jarn.com/',

@@ -1,3 +1,12 @@
+==============
+jarn.mkrelease
+==============
+------------------
+Release sdist eggs
+------------------
+
+Introduction
+============
 ::
 
   Usage: mkrelease [-CTSDK] [-cz] [-d dist-location] [svn-url|svn-sandbox]
