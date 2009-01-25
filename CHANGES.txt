@@ -4,14 +4,17 @@ Changelog
 0.18 - Unreleased
 -----------------
 
-- Rid unused imports and locals, polish docs.
+- Include README.txt and CHANGES.txt in long_description.
+  [stefan]
+
+- Rid unused imports and locals.
   [stefan]
 
 0.17 - 2009-01-23
 -----------------
 
 - Add -c option to enable codespeak support. The codespeak.net repository
-  uses `branch` and `tag` instead of `branches` and `tags`.
+  uses ``branch`` and ``tag`` instead of ``branches`` and ``tags``.
   [gotcha, stefan]
 
 0.16 - 2009-01-13
