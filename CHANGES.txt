@@ -1,18 +1,21 @@
-0.18 Unreleased
----------------
+Changelog
+=========
+
+0.18 - Unreleased
+-----------------
 
 - Rid unused imports and locals.
   [stefan]
 
-0.17 2009-01-23
----------------
+0.17 - 2009-01-23
+-----------------
 
 - Add -c option to enable codespeak support. The codespeak.net repository
-  uses 'branch' and 'tag' instead of 'branches' and 'tags'.
+  uses `branch` and `tag` instead of `branches` and `tags`.
   [gotcha, stefan]
 
-0.16 2009-01-13
----------------
+0.16 - 2009-01-13
+-----------------
 
 - Fold regex construction into find and make find a method.
   [stefan]
@@ -20,14 +23,14 @@
 - Update README.txt.
   [stefan]
 
-0.15 2009-01-13
----------------
+0.15 - 2009-01-13
+-----------------
 
 - Support for reading default options from a config file.
   [fschulze, stefan]
 
-0.14 2009-01-08
----------------
+0.14 - 2009-01-08
+-----------------
 
 - Add -s and -i options for signing PyPI uploads with GnuPG.
   [stefan]
@@ -35,62 +38,62 @@
 - Stop execution after any failing step.
   [stefan]
 
-0.13 2009-01-05
----------------
+0.13 - 2009-01-05
+-----------------
 
 - Stop execution when the checkin step fails.
   [stefan]
 
-0.12 2009-01-02
----------------
+0.12 - 2009-01-02
+-----------------
 
 - setup.cfg may not exist.
   [stefan]
 
-0.11 2008-12-02
----------------
+0.11 - 2008-12-02
+-----------------
 
 - Add setup.cfg to list of files we check in.
   [stefan]
 
-0.10 2008-10-21
----------------
+0.10 - 2008-10-21
+-----------------
 
 - Don't capitalize GetOptError messages.
   [stefan]
 
-0.9 2008-10-16
---------------
+0.9 - 2008-10-16
+----------------
 
 - Add -v option to print the script version.
   [stefan]
 
-0.8 2008-10-16
---------------
+0.8 - 2008-10-16
+----------------
 
 - Lift restriction where only svn trunk could be released.
   [stefan]
 
-0.7 2008-10-09
---------------
+0.7 - 2008-10-09
+----------------
 
 - Fix PyPI upload which must happen on the same command line as sdist.
   [stefan]
 
-0.6 2008-10-08
---------------
+0.6 - 2008-10-08
+----------------
 
 - Update README.txt.
   [stefan]
 
-0.5 2008-10-08
---------------
+0.5 - 2008-10-08
+----------------
 
 - Also locate and checkin HISTORY.txt to support ZopeSkel'ed eggs.
   [stefan]
 
-0.4 2008-10-08
---------------
+0.4 - 2008-10-08
+----------------
 
 - Use svn checkout instead of svn export because it makes a difference
   to setuptools.
@@ -99,19 +102,21 @@
 - Add -p option for uploading to PyPI instead of dist-location.
   [stefan]
 
-0.3 2008-10-06
---------------
+0.3 - 2008-10-06
+----------------
 
 - Also locate and checkin version.txt.
   [stefan]
 
-0.2 2008-10-01
---------------
+0.2 - 2008-10-01
+----------------
 
-- Add -z option to create .zip archives instead of the default .tar.gz.
+- Add -z option to create zip archives instead of the default tar.gz.
   [stefan]
 
-0.1 2008-10-01
---------------
+0.1 - 2008-10-01
+----------------
 
 - Initial release
+  [stefan]
+
