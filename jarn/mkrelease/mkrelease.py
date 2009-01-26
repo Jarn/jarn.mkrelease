@@ -11,7 +11,7 @@ python = "python2.4"
 distbase = "jarn.com:/home/psol/dist"
 distdefault = "public"
 
-version = "mkrelease 0.18"
+version = "mkrelease 0.19"
 usage = """\
 Usage: mkrelease [-CTSDK] [-cz] [-d dist-location] [svn-url|svn-sandbox]
        mkrelease [-CTSDK] [-cz] [-p [-s [-i identity]]] [svn-url|svn-sandbox]
