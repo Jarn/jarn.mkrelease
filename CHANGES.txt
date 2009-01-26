@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.18 - Unreleased
+0.18 - 2009-01-26
 -----------------
 
 - Include README.txt and CHANGES.txt in long_description.
