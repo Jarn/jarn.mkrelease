@@ -31,7 +31,7 @@ Options
     Keep the temporary build directory.
 
 -c
-    Assume a codespeak-style repository layout.
+    Assume a codespeak.net-style repository layout.
 
 -z
     Create a zip archive instead of the default tar.gz.
