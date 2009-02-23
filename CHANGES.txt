@@ -1,9 +1,11 @@
 Changelog
 =========
 
-0.19 - Unreleased
+0.19 - 2009-02-23
 -----------------
 
+- Absolute-ize the temp directory path.
+  [stefan]
 
 0.18 - 2009-01-26
 -----------------
