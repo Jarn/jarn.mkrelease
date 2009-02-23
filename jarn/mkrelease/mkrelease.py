@@ -233,7 +233,7 @@ class ReleaseMaker(object):
                     self.err_exit('Checkin failed')
 
     def make_release(self):
-        tempname = tempfile.mkdtemp(prefix='release')
+        tempname = abspath(tempfile.mkdtemp(prefix='release'))
         checkout = join(tempname, 'checkout')
         trunkurl = self.trunkurl
         python = self.python
