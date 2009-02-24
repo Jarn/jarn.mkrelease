@@ -233,20 +233,19 @@ class ReleaseMaker(object):
                     self.err_exit('Checkin failed')
 
     def make_release(self):
-        tempname = abspath(tempfile.mkdtemp(prefix='release'))
-        checkout = join(tempname, 'checkout')
+        tempname = abspath(tempfile.mkdtemp(prefix='release-'))
         trunkurl = self.trunkurl
         python = self.python
         sdistflags = ' '.join(self.sdistflags)
         uploadflags = ' '.join(self.uploadflags)
 
         try:
-            rc = system('svn co "%(trunkurl)s" "%(checkout)s"' % locals())
+            rc = system('svn co "%(trunkurl)s" "%(tempname)s"' % locals())
             if rc != 0:
                 self.err_exit('Checkout failed')
 
-            self.assert_package(checkout)
-            os.chdir(checkout)
+            self.assert_package(tempname)
+            os.chdir(tempname)
             name = pipe("%(python)s setup.py --name" % locals())
             version = pipe("%(python)s setup.py --version" % locals())
 
