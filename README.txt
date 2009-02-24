@@ -69,7 +69,7 @@ and followed by "name = value" entries.
 The [defaults] section has the following options:
 
 ``python``
-    The Python executable used; defaults to ``python2.4``.
+    The Python executable used; defaults to ``python2.6``.
 
 ``distbase``
     The value prepended if dist-location does not contain a

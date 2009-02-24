@@ -7,7 +7,7 @@ import ConfigParser
 
 from os.path import abspath, join, exists, isdir, isfile, expanduser
 
-python = "python2.4"
+python = "python2.6"
 distbase = "jarn.com:/home/psol/dist"
 distdefault = "public"
 
