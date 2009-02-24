@@ -216,8 +216,8 @@ class ReleaseMaker(object):
             self.trunkurl = pipe("svn info | grep ^URL")[5:]
             self.assert_trunkurl(self.trunkurl)
 
-            name = pipe("%(python)s setup.py --name" % locals())
-            version = pipe("%(python)s setup.py --version" % locals())
+            name = pipe('"%(python)s" setup.py --name' % locals())
+            version = pipe('"%(python)s" setup.py --version' % locals())
 
             print 'Releasing', name, version
             print 'URL:', self.trunkurl
@@ -246,8 +246,8 @@ class ReleaseMaker(object):
 
             self.assert_package(tempname)
             os.chdir(tempname)
-            name = pipe("%(python)s setup.py --name" % locals())
-            version = pipe("%(python)s setup.py --version" % locals())
+            name = pipe('"%(python)s" setup.py --name' % locals())
+            version = pipe('"%(python)s" setup.py --version' % locals())
 
             print 'Releasing', name, version
 
