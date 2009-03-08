@@ -13,8 +13,7 @@ distdefault = "public"
 
 version = "mkrelease 0.20"
 usage = """\
-Usage: mkrelease [-CTSDK] [-cz] [-d dist-location] [svn-url|svn-sandbox]
-       mkrelease [-CTSDK] [-cz] [-p [-s [-i identity]]] [svn-url|svn-sandbox]
+Usage: mkrelease [options] [svn-url|svn-sandbox]
 
 Release an sdist egg.
 
@@ -27,12 +26,11 @@ Options:
 
   -c                Assume a codespeak.net-style repository layout.
   -z                Create a zip archive instead of the default tar.gz.
-
-  -d dist-location  An scp destination specification.
-
-  -p                Upload the release to PyPI.
   -s                Sign the release tarball with GnuPG.
   -i identity       The GnuPG identity to sign with.
+
+  -d dist-location  An scp destination specification, or an index server
+                    configured in ~/.pypirc, or an alias name for either.
 
   svn-url           A URL with protocol svn, svn+ssh, http, https, or file.
   svn-sandbox       A local directory; defaults to the current working
@@ -74,7 +72,8 @@ class Defaults(object):
 
     def __init__(self):
         self.parser = ConfigParser.ConfigParser()
-        self.parser.read(('/etc/mkrelease', expanduser('~/.mkrelease')))
+        self.parser.read((expanduser('~/.pypirc'), '/etc/mkrelease',
+                          expanduser('~/.mkrelease')))
 
         def get(section, key, default=None):
             if self.parser.has_option(section, key):
@@ -90,6 +89,13 @@ class Defaults(object):
             for key, value in self.parser.items('aliases'):
                 self.aliases[key] = value.split()
 
+        self.servers = {}
+        for server in get('distutils', 'index-servers', '').split():
+            self.servers[server] = True
+            url = get(server, 'repository')
+            if url is not None:
+                self.servers[url] = True
+
 
 class ReleaseMaker(object):
 
@@ -99,7 +105,6 @@ class ReleaseMaker(object):
         self.skiptag = False
         self.skipscp = False
         self.keeptemp = False
-        self.pypi = False
         self.sdistflags = []
         self.uploadflags = []
         self.directory = os.curdir
@@ -108,6 +113,7 @@ class ReleaseMaker(object):
         self.distbase = self.defaults.distbase
         self.distdefault = self.defaults.distdefault
         self.aliases = self.defaults.aliases
+        self.servers = self.defaults.servers
         self.distlocation = self.get_location(self.distdefault)
 
     def err_exit(self, msg, rc=1):
@@ -151,6 +157,8 @@ class ReleaseMaker(object):
     def get_location(self, location):
         if location in self.aliases:
             return self.aliases[location]
+        if location in self.servers:
+            return [location]
         if location.find(':') < 0 and self.distbase:
             return ['%s/%s' % (self.distbase, location)]
         return [location]
@@ -168,7 +176,7 @@ class ReleaseMaker(object):
 
     def get_options(self):
         try:
-            options, args = getopt.getopt(sys.argv[1:], 'CDKSTcd:hi:psvz',
+            options, args = getopt.getopt(sys.argv[1:], 'CDKSTcd:hi:svz',
                                           ('help', 'version', 'codespeak'))
         except getopt.GetoptError, e:
             self.err_exit('%s\n\n%s' % (e.msg, usage))
@@ -188,14 +196,12 @@ class ReleaseMaker(object):
                 self.layout = ('trunk', 'branch', 'tag')
             elif name == '-z':
                 self.sdistflags.append('--formats=zip')
-            elif name == '-d':
-                self.distlocation = self.get_location(value)
-            elif name == '-p':
-                self.pypi = True
             elif name == '-s':
                 self.uploadflags.append('--sign')
             elif name == '-i':
                 self.uploadflags.append('--identity=%s' % value)
+            elif name == '-d':
+                self.distlocation = self.get_location(value)
             elif name in ('-v', '--version'):
                 self.err_exit(version, 0)
             elif name in ('-h', '--help'):
@@ -263,18 +269,22 @@ class ReleaseMaker(object):
                 if rc != 0:
                     self.err_exit('Tag failed')
 
-            if not self.skipscp and self.pypi:
-                rc = system('"%(python)s" setup.py sdist %(sdistflags)s register upload %(uploadflags)s' % locals())
-            else:
-                rc = system('"%(python)s" setup.py sdist %(sdistflags)s' % locals())
-                if not self.skipscp and rc == 0:
-                    for location in self.distlocation:
-                        rc = system('scp dist/* "%(location)s"' % locals())
-                        if rc != 0:
-                            self.err_exit('Scp failed')
-
+            rc = system('"%(python)s" setup.py sdist %(sdistflags)s' % locals())
             if rc != 0:
                 self.err_exit('Release failed')
+
+            if not self.skipscp:
+                for location in self.distlocation:
+                    if location in self.servers:
+                        serverflags = '--repository=%s' % location
+                        rc = system('"%(python)s" setup.py sdist %(sdistflags)s register %(serverflags)s '
+                                    'upload %(uploadflags)s %(serverflags)s' % locals())
+                        if rc != 0:
+                            self.err_exit('Upload failed')
+                    else:
+                       rc = system('scp dist/* "%(location)s"' % locals())
+                       if rc != 0:
+                           self.err_exit('Scp failed')
         finally:
             if not self.keeptemp:
                 shutil.rmtree(tempname)

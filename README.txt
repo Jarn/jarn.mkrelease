@@ -8,9 +8,7 @@ Release sdist eggs
 Usage
 =====
 
-``mkrelease [-CTSDK] [-cz] [-d dist-location] [svn-url|svn-sandbox]``
-
-``mkrelease [-CTSDK] [-cz] [-p [-s [-i identity]]] [svn-url|svn-sandbox]``
+``mkrelease [options] [svn-url|svn-sandbox]``
 
 Options
 =======
@@ -36,17 +34,15 @@ Options
 -z
     Create a zip archive instead of the default tar.gz.
 
--d dist-location
-    An scp destination specification.
-
--p
-    Upload the release to PyPI.
-
 -s
     Sign the release tarball with GnuPG.
 
 -i identity
     The GnuPG identity to sign with.
+
+-d dist-location
+    An scp destination specification, or an index server
+    configured in ``~/.pypirc``, or an alias name for either.
 
 ``svn-url``
     A URL with protocol svn, svn+ssh, http, https, or file.

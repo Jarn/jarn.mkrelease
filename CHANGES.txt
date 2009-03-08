@@ -4,6 +4,11 @@ Changelog
 0.20 - Unreleased
 -----------------
 
+- Read index servers from ~/.pypirc and allow them to be used with -d.
+  [stefan]
+
+- Dropped -p option. Use -d pypi instead.
+  [stefan]
 
 0.19 - 2009-02-23
 -----------------
