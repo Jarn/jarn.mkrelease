@@ -286,9 +286,9 @@ class ReleaseMaker(object):
                         if rc != 0:
                             self.err_exit('Upload failed')
                     else:
-                       rc = system('scp dist/* "%(location)s"' % locals())
-                       if rc != 0:
-                           self.err_exit('Scp failed')
+                        rc = system('scp dist/* "%(location)s"' % locals())
+                        if rc != 0:
+                            self.err_exit('Scp failed')
         finally:
             if not self.keeptemp:
                 shutil.rmtree(tempname)
