@@ -4,6 +4,10 @@ Changelog
 0.20 - Unreleased
 -----------------
 
+- The distbase and distdefault config file options no longer have
+  default values.
+  [stefan]
+
 - Read index servers from ~/.pypirc and allow them to be used with -d.
   [stefan]
 

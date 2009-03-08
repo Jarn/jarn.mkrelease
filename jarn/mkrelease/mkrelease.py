@@ -8,8 +8,8 @@ import ConfigParser
 from os.path import abspath, join, exists, isdir, isfile, expanduser
 
 python = "python2.6"
-distbase = "jarn.com:/home/psol/dist"
-distdefault = "public"
+distbase = ""
+distdefault = ""
 
 version = "mkrelease 0.20"
 usage = """\
@@ -47,9 +47,8 @@ Files:
 
   python            The Python executable used; defaults to %(python)s.
   distbase          The value prepended if dist-location does not contain a
-                    host part; defaults to %(distbase)s.
-  distdefault       The default value for dist-location; defaults to
-                    %(distbase)s/%(distdefault)s.
+                    host part. Applies to scp dist-locations only.
+  distdefault       The default value for dist-location.
 
   The [aliases] section may be used to define short names for (one or more)
   dist-locations.
@@ -155,6 +154,8 @@ class ReleaseMaker(object):
         return '/'.join(parts + [self.layout[2], tag])
 
     def get_location(self, location):
+        if not location:
+            return []
         if location in self.aliases:
             return self.aliases[location]
         if location in self.servers:
@@ -211,6 +212,9 @@ class ReleaseMaker(object):
 
         if args:
             self.directory = args[0]
+
+        if not self.distlocation:
+            self.err_exit('option -d is required\n\n%s' % usage)
 
     def get_package_url(self):
         directory = self.directory
