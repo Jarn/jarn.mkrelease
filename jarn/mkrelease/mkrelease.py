@@ -188,7 +188,7 @@ class ReleaseMaker(object):
             sep = ''
         return '%s%s%s' % (base, sep, location)
 
-    def find(self, dir, name, maxdepth=999):
+    def find(self, dir, name, maxdepth=9999):
         regex = r'.*[/\\:]%s$' % name.replace('.', '[.]')
         return pipe('find "%(dir)s" -maxdepth %(maxdepth)s -iregex "%(regex)s" -print' % locals())
 
