@@ -24,7 +24,6 @@ Options:
   -D                Dry-run; equivalent to -CTS.
   -K                Keep the temporary build directory.
 
-  -c                Assume a codespeak.net-style repository layout.
   -z                Create a zip archive instead of the default tar.gz.
   -s                Sign the release tarball with GnuPG.
   -i identity       The GnuPG identity to sign with.
@@ -107,7 +106,6 @@ class ReleaseMaker(object):
         self.sdistflags = []
         self.uploadflags = []
         self.directory = os.curdir
-        self.layout = ('trunk', 'branches', 'tags')
         self.python = self.defaults.python
         self.distbase = self.defaults.distbase
         self.distdefault = self.defaults.distdefault
@@ -145,21 +143,13 @@ class ReleaseMaker(object):
 
     def assert_trunkurl(self, url):
         parts = url.split('/')
-        if parts[-1] != self.layout[0] and parts[-2] not in self.layout[1:]:
+        if parts[-1] != 'trunk' and parts[-2] not in ('branches', 'tags'):
             self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
 
     def assert_tagurl(self, url):
         devnull = os.devnull
         if system('svn ls "%(url)s" >%(devnull)s 2>&1' % locals()) == 0:
             self.err_exit("Tag exists: %(url)s" % locals())
-
-    def get_tagurl(self, url, tag):
-        parts = url.split('/')
-        if parts[-1] == self.layout[0]:
-            parts = parts[:-1]
-        elif parts[-2] in self.layout[1:]:
-            parts = parts[:-2]
-        return '/'.join(parts + [self.layout[2], tag])
 
     def get_location(self, location):
         if not location:
@@ -171,6 +161,14 @@ class ReleaseMaker(object):
         if not self.has_host(location) and self.distbase:
             return ['%s/%s' % (self.distbase, location)]
         return [location]
+
+    def get_tagurl(self, url, tag):
+        parts = url.split('/')
+        if parts[-1] == 'trunk':
+            parts = parts[:-1]
+        elif parts[-2] in ('branches', 'tags'):
+            parts = parts[:-2]
+        return '/'.join(parts + ['tags', tag])
 
     def is_svnurl(self, url):
         return (url.startswith('svn://') or
@@ -190,8 +188,7 @@ class ReleaseMaker(object):
 
     def get_options(self):
         try:
-            options, args = getopt.getopt(sys.argv[1:], 'CDKSTcd:hi:svz',
-                                          ('help', 'version', 'codespeak'))
+            options, args = getopt.getopt(sys.argv[1:], 'CDKSTd:hi:svz', ('help', 'version'))
         except getopt.GetoptError, e:
             self.err_exit('%s\n\n%s' % (e.msg, usage))
 
@@ -206,8 +203,6 @@ class ReleaseMaker(object):
                 self.skipcheckin = self.skiptag = self.skipscp = True
             elif name == '-K':
                 self.keeptemp = True
-            elif name in ('-c', '--codespeak'):
-                self.layout = ('trunk', 'branch', 'tag')
             elif name == '-z':
                 self.sdistflags.append('--formats=zip')
             elif name == '-s':
