@@ -14,6 +14,10 @@ Changelog
 - Dropped -p option. Use -d pypi instead.
   [stefan]
 
+- Dropped -c option. If your have non-standard SVN repositories you must
+  tag by hand.
+  [stefan]
+
 0.19 - 2009-02-23
 -----------------
 
