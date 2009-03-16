@@ -119,6 +119,14 @@ class ReleaseMaker(object):
         print >>sys.stderr, msg
         sys.exit(rc)
 
+    def assert_location(self, locations):
+        if not locations:
+            self.err_exit('option -d is required\n\n%s' % usage)
+        for location in locations:
+            if location not in self.servers and not self.has_host(location):
+                self.err_exit('scp destination must contain a host part: '
+                              '%s\n\n%s' % (location, usage))
+
     def assert_checkout(self, dir):
         if not exists(dir):
             self.err_exit("No such file or directory: %(dir)s" % locals())
@@ -160,7 +168,7 @@ class ReleaseMaker(object):
             return self.aliases[location]
         if location in self.servers:
             return [location]
-        if location.find(':') < 0 and self.distbase:
+        if not self.has_host(location) and self.distbase:
             return ['%s/%s' % (self.distbase, location)]
         return [location]
 
@@ -170,6 +178,11 @@ class ReleaseMaker(object):
                 url.startswith('http://') or
                 url.startswith('https://') or
                 url.startswith('file://'))
+
+    def has_host(self, location):
+        colon = location.find(':')
+        slash = location.find('/')
+        return colon > 0 and (slash < 0 or slash > colon)
 
     def find(self, dir, name, maxdepth=999):
         regex = r'.*[/\\:]%s$' % name.replace('.', '[.]')
@@ -213,8 +226,7 @@ class ReleaseMaker(object):
         if args:
             self.directory = args[0]
 
-        if not self.distlocation:
-            self.err_exit('option -d is required\n\n%s' % usage)
+        self.assert_location(self.distlocation)
 
     def get_package_url(self):
         directory = self.directory
