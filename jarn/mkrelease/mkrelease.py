@@ -184,7 +184,7 @@ class ReleaseMaker(object):
 
     def find(self, dir, name, maxdepth=999):
         regex = r'.*[/\\:]%s$' % name.replace('.', '[.]')
-        return pipe("find %(dir)s -maxdepth %(maxdepth)s -iregex '%(regex)s' -print" % locals())
+        return pipe('find "%(dir)s" -maxdepth %(maxdepth)s -iregex "%(regex)s" -print' % locals())
 
     def get_options(self):
         try:
@@ -250,8 +250,8 @@ class ReleaseMaker(object):
                 changes_txt = self.find(directory, 'CHANGES.txt')
                 history_txt = self.find(directory, 'HISTORY.txt')
                 version_txt = self.find(directory, 'version.txt')
-                rc = system('svn ci -m"Prepare %(name)s %(version)s." setup.py %(setup_cfg)s '
-                            '%(changes_txt)s %(history_txt)s %(version_txt)s' % locals())
+                rc = system('svn ci -m"Prepare %(name)s %(version)s." setup.py "%(setup_cfg)s" '
+                            '"%(changes_txt)s" "%(history_txt)s" "%(version_txt)s"' % locals())
                 if rc != 0:
                     self.err_exit('Checkin failed')
 
