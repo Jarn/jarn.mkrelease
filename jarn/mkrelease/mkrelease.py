@@ -226,7 +226,8 @@ class ReleaseMaker(object):
         if args:
             self.directory = args[0]
 
-        self.assert_location(self.distlocation)
+        if not self.skipscp:
+            self.assert_location(self.distlocation)
 
     def get_package_url(self):
         directory = self.directory
