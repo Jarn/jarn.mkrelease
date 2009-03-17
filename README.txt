@@ -67,11 +67,10 @@ The [defaults] section has the following options:
 
 ``distbase``
     The value prepended if dist-location does not contain a
-    host part; defaults to ``jarn.com:/home/psol/dist``.
+    host part. Applies to scp dist-locations only.
 
 ``distdefault``
-    The default value for dist-location; defaults to
-    ``jarn.com:/home/psol/dist/public``.
+    The default value for dist-location.
 
 The [aliases] section may be used to define short names for (one or more)
 dist-locations.
