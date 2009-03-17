@@ -241,14 +241,12 @@ class ReleaseMaker(object):
 
         if self.is_svnurl(directory):
             self.trunkurl = directory
-            self.assert_trunkurl(self.trunkurl)
         else:
             directory = abspath(directory)
             self.assert_checkout(directory)
             self.assert_package(directory)
             os.chdir(directory)
             self.trunkurl = pipe("svn info | grep ^URL")[5:]
-            self.assert_trunkurl(self.trunkurl)
 
             name = pipe('"%(python)s" setup.py --name' % locals())
             version = pipe('"%(python)s" setup.py --version' % locals())
@@ -286,6 +284,7 @@ class ReleaseMaker(object):
             print 'Releasing', name, version
 
             if not self.skiptag:
+                self.assert_trunkurl(trunkurl)
                 tagurl = self.get_tagurl(trunkurl, version)
                 self.assert_tagurl(tagurl)
                 rc = system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
