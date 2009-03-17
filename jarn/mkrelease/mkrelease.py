@@ -195,28 +195,30 @@ class ReleaseMaker(object):
 
     def get_options(self):
         try:
-            options, args = getopt.getopt(sys.argv[1:], 'CDKSTd:hi:svz', ('help', 'version'))
+            options, args = getopt.getopt(sys.argv[1:], 'CDKSTd:hi:svz',
+                ('skip-checkin', 'skip-tag', 'skip-scp', 'dry-run', 'keep-temp',
+                 'zip', 'sign', 'identity=', 'dist-location=', 'version', 'help'))
         except getopt.GetoptError, e:
             self.err_exit('%s\n\n%s' % (e.msg, usage))
 
         for name, value in options:
-            if name == '-C':
+            if name in ('-C', '--skip-checkin'):
                 self.skipcheckin = True
-            elif name == '-T':
+            elif name in ('-T', '--skip-tag'):
                 self.skiptag = True
-            elif name == '-S':
+            elif name in ('-S', '--skip-scp'):
                 self.skipscp = True
-            elif name == '-D':
+            elif name in ('-D', '--dry-run'):
                 self.skipcheckin = self.skiptag = self.skipscp = True
-            elif name == '-K':
+            elif name in ('-K', '--keep-temp'):
                 self.keeptemp = True
-            elif name == '-z':
+            elif name in ('-z', '--zip'):
                 self.sdistflags.append('--formats=zip')
-            elif name == '-s':
+            elif name in ('-s', '--sign'):
                 self.uploadflags.append('--sign')
-            elif name == '-i':
+            elif name in ('-i', '--identity'):
                 self.uploadflags.append('--identity=%s' % value)
-            elif name == '-d':
+            elif name in ('-d', '--dist-location'):
                 self.distlocation.extend(self.get_location(value))
             elif name in ('-v', '--version'):
                 self.err_exit(version, 0)
