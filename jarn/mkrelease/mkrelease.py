@@ -123,8 +123,7 @@ class ReleaseMaker(object):
             self.err_exit('option -d is required\n\n%s' % usage)
         for location in locations:
             if location not in self.servers and not self.has_host(location):
-                self.err_exit('scp destination must contain a host part: '
-                              '%s\n\n%s' % (location, usage))
+                self.err_exit('Scp destination must contain host part: %s' % location)
 
     def assert_checkout(self, dir):
         if not exists(dir):
