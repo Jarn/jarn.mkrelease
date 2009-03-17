@@ -271,6 +271,11 @@ class ReleaseMaker(object):
         sdistflags = ' '.join(self.sdistflags)
         uploadflags = ' '.join(self.uploadflags)
 
+        if pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals()) < '2.6':
+            register, upload = 'mregister', 'mupload'
+        else:
+            register, upload = 'register', 'upload'
+
         try:
             rc = system('svn co "%(trunkurl)s" "%(tempname)s"' % locals())
             if rc != 0:
@@ -299,8 +304,8 @@ class ReleaseMaker(object):
                 for location in self.distlocation:
                     if location in self.servers:
                         serverflags = '--repository=%s' % location
-                        rc = system('"%(python)s" setup.py sdist %(sdistflags)s register %(serverflags)s '
-                                    'upload %(uploadflags)s %(serverflags)s' % locals())
+                        rc = system('"%(python)s" setup.py sdist %(sdistflags)s %(register)s %(serverflags)s '
+                                    '%(upload)s %(uploadflags)s %(serverflags)s' % locals())
                         if rc != 0:
                             self.err_exit('Upload failed')
                     else:

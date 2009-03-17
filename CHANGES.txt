@@ -21,6 +21,9 @@ Changelog
   tag by hand.
   [stefan]
 
+- Support both Python 2.6 and collective.dist.
+  [stefan]
+
 0.19 - 2009-02-23
 -----------------
 
