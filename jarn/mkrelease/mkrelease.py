@@ -256,11 +256,12 @@ class ReleaseMaker(object):
 
             if not self.skipcheckin:
                 setup_cfg = self.find(directory, 'setup.cfg', maxdepth=1)
+                readme_txt = self.find(directory, 'README.txt')
                 changes_txt = self.find(directory, 'CHANGES.txt')
                 history_txt = self.find(directory, 'HISTORY.txt')
                 version_txt = self.find(directory, 'version.txt')
                 rc = system('svn ci -m"Prepare %(name)s %(version)s." setup.py "%(setup_cfg)s" '
-                            '"%(changes_txt)s" "%(history_txt)s" "%(version_txt)s"' % locals())
+                            '"%(readme_txt)s" "%(changes_txt)s" "%(history_txt)s" "%(version_txt)s"' % locals())
                 if rc != 0:
                     self.err_exit('Checkin failed')
 
