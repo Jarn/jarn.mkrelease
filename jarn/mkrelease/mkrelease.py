@@ -30,6 +30,7 @@ Options:
 
   -d dist-location  An scp destination specification, or an index server
                     configured in ~/.pypirc, or an alias name for either.
+                    This option may be specified more than once.
 
   svn-url           A URL with protocol svn, svn+ssh, http, https, or file.
   svn-sandbox       A local directory; defaults to the current working
@@ -103,6 +104,7 @@ class ReleaseMaker(object):
         self.skiptag = False
         self.skipscp = False
         self.keeptemp = False
+        self.distlocation = []
         self.sdistflags = []
         self.uploadflags = []
         self.directory = os.curdir
@@ -111,7 +113,6 @@ class ReleaseMaker(object):
         self.distdefault = self.defaults.distdefault
         self.aliases = self.defaults.aliases
         self.servers = self.defaults.servers
-        self.distlocation = self.get_location(self.distdefault)
 
     def err_exit(self, msg, rc=1):
         print >>sys.stderr, msg
@@ -216,7 +217,7 @@ class ReleaseMaker(object):
             elif name == '-i':
                 self.uploadflags.append('--identity=%s' % value)
             elif name == '-d':
-                self.distlocation = self.get_location(value)
+                self.distlocation.extend(self.get_location(value))
             elif name in ('-v', '--version'):
                 self.err_exit(version, 0)
             elif name in ('-h', '--help'):
@@ -224,11 +225,14 @@ class ReleaseMaker(object):
             else:
                 self.err_exit(usage)
 
-        if args:
-            self.directory = args[0]
+        if not self.distlocation:
+            self.distlocation = self.get_location(self.distdefault)
 
         if not self.skipscp:
             self.assert_location(self.distlocation)
+
+        if args:
+            self.directory = args[0]
 
     def get_package_url(self):
         directory = self.directory

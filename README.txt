@@ -40,6 +40,7 @@ Options
 -d dist-location
     An scp destination specification, or an index server
     configured in ``~/.pypirc``, or an alias name for either.
+    This option may be specified more than once.
 
 ``svn-url``
     A URL with protocol svn, svn+ssh, http, https, or file.
