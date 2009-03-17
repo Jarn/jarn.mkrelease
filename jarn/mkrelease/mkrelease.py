@@ -184,7 +184,7 @@ class ReleaseMaker(object):
 
     def join(self, base, location):
         sep = '/'
-        if base[-1] in ('/', ':'):
+        if base[-1] in (':', '/'):
             sep = ''
         return '%s%s%s' % (base, sep, location)
 
