@@ -24,6 +24,9 @@ Changelog
 - Support both Python 2.6 and collective.dist.
   [stefan]
 
+- Checkin README.txt.
+  [stefan]
+
 0.19 - 2009-02-23
 -----------------
 
