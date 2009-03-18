@@ -120,7 +120,7 @@ class ReleaseMaker(object):
 
     def assert_location(self, locations):
         if not locations:
-            self.err_exit('option -d is required\n\n%s' % usage)
+            self.err_exit('mkrelease: option -d is required\n\n%s' % usage)
         for location in locations:
             if location not in self.servers and not self.has_host(location):
                 self.err_exit('Scp destination must contain host part: %s' % location)
@@ -198,7 +198,7 @@ class ReleaseMaker(object):
                 ('skip-checkin', 'skip-tag', 'skip-scp', 'dry-run', 'keep-temp',
                  'zip', 'sign', 'identity=', 'dist-location=', 'version', 'help'))
         except getopt.GetoptError, e:
-            self.err_exit('%s\n\n%s' % (e.msg, usage))
+            self.err_exit('mkrelease: %s\n\n%s' % (e.msg, usage))
 
         for name, value in options:
             if name in ('-C', '--skip-checkin'):
@@ -216,21 +216,22 @@ class ReleaseMaker(object):
             elif name in ('-s', '--sign'):
                 self.uploadflags.append('--sign')
             elif name in ('-i', '--identity'):
-                self.uploadflags.append('--identity=%s' % value)
+                self.uploadflags.append('--identity="%s"' % value)
             elif name in ('-d', '--dist-location'):
                 self.distlocation.extend(self.get_location(value))
             elif name in ('-v', '--version'):
                 self.err_exit(version, 0)
             elif name in ('-h', '--help'):
                 self.err_exit(usage, 0)
-            else:
-                self.err_exit(usage)
 
         if not self.distlocation:
             self.distlocation = self.get_location(self.distdefault)
 
         if not self.skipscp:
             self.assert_location(self.distlocation)
+
+        if len(args) > 1:
+            self.err_exit('mkrelease: too many arguments\n\n%s' % usage)
 
         if args:
             self.directory = args[0]
@@ -304,7 +305,7 @@ class ReleaseMaker(object):
             if not self.skipscp:
                 for location in self.distlocation:
                     if location in self.servers:
-                        serverflags = '--repository=%s' % location
+                        serverflags = '--repository="%s"' % location
                         rc = system('"%(python)s" setup.py sdist %(sdistflags)s %(register)s %(serverflags)s '
                                     '%(upload)s %(uploadflags)s %(serverflags)s' % locals())
                         if rc != 0:
