@@ -14,7 +14,7 @@ Options
 =======
 
 -C
-    Do not checkin release-relevant files from the sandbox.
+    Do not checkin modified files from the sandbox.
 
 -T
     Do not tag the release in subversion.

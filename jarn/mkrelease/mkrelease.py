@@ -18,7 +18,7 @@ Usage: mkrelease [options] [svn-url|svn-sandbox]
 Release an sdist egg.
 
 Options:
-  -C                Do not checkin release-relevant files from the sandbox.
+  -C                Do not checkin modified files from the sandbox.
   -T                Do not tag the release in subversion.
   -S                Do not scp the release tarball to dist-location.
   -D                Dry-run; equivalent to -CTS.
@@ -188,10 +188,6 @@ class ReleaseMaker(object):
             sep = ''
         return '%s%s%s' % (base, sep, location)
 
-    def find(self, dir, name, maxdepth=9999):
-        regex = r'.*[/\\:]%s$' % name.replace('.', '[.]')
-        return pipe('find "%(dir)s" -maxdepth %(maxdepth)s -iregex "%(regex)s" -print' % locals())
-
     def get_options(self):
         try:
             options, args = getopt.getopt(sys.argv[1:], 'CDKSTd:hi:svz',
@@ -256,13 +252,7 @@ class ReleaseMaker(object):
             print 'URL:', self.trunkurl
 
             if not self.skipcheckin:
-                setup_cfg = self.find(directory, 'setup.cfg', maxdepth=1)
-                readme_txt = self.find(directory, 'README.txt')
-                changes_txt = self.find(directory, 'CHANGES.txt')
-                history_txt = self.find(directory, 'HISTORY.txt')
-                version_txt = self.find(directory, 'version.txt')
-                rc = system('svn ci -m"Prepare %(name)s %(version)s." setup.py "%(setup_cfg)s" '
-                            '"%(readme_txt)s" "%(changes_txt)s" "%(history_txt)s" "%(version_txt)s"' % locals())
+                rc = system('svn ci -m"Prepare %(name)s %(version)s."' % locals())
                 if rc != 0:
                     self.err_exit('Checkin failed')
 
