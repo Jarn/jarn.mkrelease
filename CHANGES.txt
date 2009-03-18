@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0b1 - Unreleased
+1.0b1 - 2009-03-18
 ------------------
 
 - The distbase and distdefault config file options no longer have
