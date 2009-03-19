@@ -159,7 +159,7 @@ class ReleaseMaker(object):
         if location in self.servers:
             return [location]
         if not self.has_host(location) and self.distbase:
-            return [self.join(self.distbase, location)]
+            return [self.join_base(self.distbase, location)]
         return [location]
 
     def get_tagurl(self, url, tag):
@@ -182,7 +182,7 @@ class ReleaseMaker(object):
         slash = location.find('/')
         return colon > 0 and (slash < 0 or slash > colon)
 
-    def join(self, base, location):
+    def join_base(self, base, location):
         sep = '/'
         if base[-1] in (':', '/'):
             sep = ''
