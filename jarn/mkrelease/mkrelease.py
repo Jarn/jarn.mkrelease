@@ -155,11 +155,17 @@ class ReleaseMaker(object):
         if not location:
             return []
         if location in self.aliases:
-            return self.aliases[location]
+            res = []
+            for loc in self.aliases[location]:
+                res.extend(self.get_location(loc))
+            return res
         if location in self.servers:
             return [location]
         if not self.has_host(location) and self.distbase:
-            return [self.join_base(self.distbase, location)]
+            sep = '/'
+            if self.distbase[-1] in (':', '/'):
+                sep = ''
+            return [self.distbase + sep + location]
         return [location]
 
     def get_tagurl(self, url, tag):
@@ -181,12 +187,6 @@ class ReleaseMaker(object):
         colon = location.find(':')
         slash = location.find('/')
         return colon > 0 and (slash < 0 or slash > colon)
-
-    def join_base(self, base, location):
-        sep = '/'
-        if base[-1] in (':', '/'):
-            sep = ''
-        return '%s%s%s' % (base, sep, location)
 
     def get_options(self):
         try:

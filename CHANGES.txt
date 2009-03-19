@@ -7,6 +7,9 @@ Changelog
 - Checkin everything that's been modified, not just "relevant" files.
   [stefan]
 
+- Expand aliases recursively.
+  [stefan]
+
 1.0b1 - 2009-03-18
 ------------------
 
