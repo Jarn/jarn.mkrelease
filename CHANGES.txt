@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0b2 - Unreleased
+1.0b2 - 2009-03-19
 ------------------
 
 - Checkin everything that's been modified, not just "relevant" files.
