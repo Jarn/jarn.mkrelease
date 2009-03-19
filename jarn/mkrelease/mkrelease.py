@@ -11,7 +11,7 @@ python = "python2.6"
 distbase = ""
 distdefault = ""
 
-version = "mkrelease 1.0b2"
+version = "mkrelease 1.0"
 usage = """\
 Usage: mkrelease [options] [svn-url|svn-sandbox]
 
