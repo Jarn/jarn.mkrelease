@@ -7,6 +7,9 @@ Changelog
 - No longer depend on ``grep``.
   [stefan]
 
+- Use subprocess.Popen instead of os.system and os.popen.
+  [stefan]
+
 1.0b2 - 2009-03-19
 ------------------
 

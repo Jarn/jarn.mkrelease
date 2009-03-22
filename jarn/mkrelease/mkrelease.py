@@ -5,6 +5,7 @@ import tempfile
 import shutil
 import ConfigParser
 
+from subprocess import Popen, PIPE
 from os.path import abspath, join, exists, isdir, isfile, expanduser
 
 python = "python2.6"
@@ -56,23 +57,24 @@ Files:
 
 
 def system(cmd):
-    return os.system(cmd)
-
-
-def pipe(cmd):
-    p = os.popen(cmd)
-    try:
-        return p.readline()[:-1]
-    finally:
-        p.close()
+    p = Popen(cmd, shell=True)
+    p.communicate()
+    return p.returncode
 
 
 def raw_pipe(cmd):
-    p = os.popen(cmd)
-    try:
-        return p.readlines()
-    finally:
-        p.close()
+    p = Popen(cmd, shell=True, stdout=PIPE)
+    stdout = p.communicate()[0]
+    if p.returncode == 0:
+        return stdout.replace('\r','\n').split('\n')
+    return []
+
+
+def pipe(cmd):
+    lines = raw_pipe(cmd)
+    if lines:
+        return lines[0]
+    return ''
 
 
 class Defaults(object):
@@ -160,10 +162,10 @@ class ReleaseMaker(object):
             self.err_exit("Tag exists: %(url)s" % locals())
 
     def get_trunkurl(self, dir):
-        info = raw_pipe('svn info "%(dir)s"' % locals())
-        if not info or len(info) < 10:
+        lines = raw_pipe('svn info "%(dir)s"' % locals())
+        if not lines:
             self.err_exit('Svn info failed')
-        url = info[1][5:-1]
+        url = lines[1][5:]
         if not self.is_svnurl(url):
             self.err_exit('Bad URL: %(url)s' % locals())
         return url
