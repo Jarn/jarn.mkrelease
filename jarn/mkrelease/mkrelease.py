@@ -11,6 +11,7 @@ from os.path import abspath, join, exists, isdir, isfile, expanduser
 python = "python2.6"
 distbase = ""
 distdefault = ""
+maxaliasdepth = 23
 
 version = "mkrelease 1.0"
 usage = """\
@@ -187,13 +188,13 @@ class ReleaseMaker(object):
             if location not in self.servers and not self.has_host(location):
                 self.err_exit('Scp destination must contain host part: %s' % location)
 
-    def get_location(self, location):
-        if not location:
+    def get_location(self, location, depth=0):
+        if not location or depth > maxaliasdepth:
             return []
         if location in self.aliases:
             res = []
             for loc in self.aliases[location]:
-                res.extend(self.get_location(loc))
+                res.extend(self.get_location(loc, depth+1))
             return res
         if location in self.servers:
             return [location]

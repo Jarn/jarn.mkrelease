@@ -10,6 +10,9 @@ Changelog
 - Use subprocess.Popen instead of os.system and os.popen.
   [stefan]
 
+- Protect against infinite alias recursion.
+  [stefan]
+
 1.0b2 - 2009-03-19
 ------------------
 
