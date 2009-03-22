@@ -67,6 +67,14 @@ def pipe(cmd):
         p.close()
 
 
+def raw_pipe(cmd):
+    p = os.popen(cmd)
+    try:
+        return p.readlines()
+    finally:
+        p.close()
+
+
 class Defaults(object):
 
     def __init__(self):
@@ -141,11 +149,6 @@ class ReleaseMaker(object):
         if not isfile(join(dir, 'setup.py')):
             self.err_exit("Not eggified (no setup.py found): %(dir)s" % locals())
 
-    def assert_trunkurl(self, url):
-        parts = url.split('/')
-        if parts[-1] != 'trunk' and parts[-2] not in ('branches', 'tags'):
-            self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
-
     def assert_tagurl(self, url):
         devnull = os.devnull
         if system('svn ls "%(url)s" >%(devnull)s 2>&1' % locals()) == 0:
@@ -168,12 +171,23 @@ class ReleaseMaker(object):
             return [self.distbase + sep + location]
         return [location]
 
+    def get_trunkurl(self, dir):
+        info = raw_pipe('svn info "%(dir)s"' % locals())
+        if not info or len(info) < 10:
+            self.err_exit('Svn info failed')
+        url = info[1][5:-1]
+        if not self.is_svnurl(url):
+            self.err_exit('Bad URL: %(url)s' % locals())
+        return url
+
     def get_tagurl(self, url, tag):
         parts = url.split('/')
         if parts[-1] == 'trunk':
             parts = parts[:-1]
         elif parts[-2] in ('branches', 'tags'):
             parts = parts[:-2]
+        else:
+            self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
         return '/'.join(parts + ['tags', tag])
 
     def is_svnurl(self, url):
@@ -242,9 +256,8 @@ class ReleaseMaker(object):
             directory = abspath(directory)
             self.assert_checkout(directory)
             self.assert_package(directory)
+            self.trunkurl = self.get_trunkurl(directory)
             os.chdir(directory)
-            self.trunkurl = pipe("svn info | grep ^URL")[5:]
-
             name = pipe('"%(python)s" setup.py --name' % locals())
             version = pipe('"%(python)s" setup.py --version' % locals())
 
@@ -281,7 +294,6 @@ class ReleaseMaker(object):
             print 'Releasing', name, version
 
             if not self.skiptag:
-                self.assert_trunkurl(trunkurl)
                 tagurl = self.get_tagurl(trunkurl, version)
                 self.assert_tagurl(tagurl)
                 rc = system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())

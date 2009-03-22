@@ -4,6 +4,8 @@ Changelog
 1.0 - Unreleased
 ----------------
 
+- No longer depend on ``grep``.
+  [stefan]
 
 1.0b2 - 2009-03-19
 ------------------
