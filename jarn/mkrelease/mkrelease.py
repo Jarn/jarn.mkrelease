@@ -133,7 +133,7 @@ class ReleaseMaker(object):
                 url.startswith('https://') or
                 url.startswith('file://'))
 
-    def has_scphost(self, location):
+    def has_host(self, location):
         colon = location.find(':')
         slash = location.find('/')
         return colon > 0 and (slash < 0 or slash > colon)
@@ -154,7 +154,7 @@ class ReleaseMaker(object):
         if not isfile(join(dir, 'setup.py')):
             self.err_exit("Not eggified (no setup.py found): %(dir)s" % locals())
 
-    def assert_tag(self, url):
+    def assert_tagurl(self, url):
         devnull = os.devnull
         if system('svn ls "%(url)s" >%(devnull)s 2>&1' % locals()) == 0:
             self.err_exit("Tag exists: %(url)s" % locals())
@@ -178,11 +178,11 @@ class ReleaseMaker(object):
             self.err_exit("URL must point to trunk, branch, or tag: %(url)s" % locals())
         return '/'.join(parts + ['tags', tag])
 
-    def assert_locations(self, locations):
+    def assert_location(self, locations):
         if not locations:
             self.err_exit('mkrelease: option -d is required\n\n%s' % usage)
         for location in locations:
-            if location not in self.servers and not self.has_scphost(location):
+            if location not in self.servers and not self.has_host(location):
                 self.err_exit('Scp destination must contain host part: %s' % location)
 
     def get_location(self, location):
@@ -195,7 +195,7 @@ class ReleaseMaker(object):
             return res
         if location in self.servers:
             return [location]
-        if not self.has_scphost(location) and self.distbase:
+        if not self.has_host(location) and self.distbase:
             sep = '/'
             if self.distbase[-1] in (':', '/'):
                 sep = ''
@@ -238,7 +238,7 @@ class ReleaseMaker(object):
             self.distlocation = self.get_location(self.distdefault)
 
         if not self.skipscp:
-            self.assert_locations(self.distlocation)
+            self.assert_location(self.distlocation)
 
         if len(args) > 1:
             self.err_exit('mkrelease: too many arguments\n\n%s' % usage)
@@ -296,7 +296,7 @@ class ReleaseMaker(object):
 
             if not self.skiptag:
                 tagurl = self.get_tagurl(trunkurl, version)
-                self.assert_tag(tagurl)
+                self.assert_tagurl(tagurl)
                 rc = system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
                 if rc != 0:
                     self.err_exit('Tag failed')
