@@ -188,7 +188,9 @@ class ReleaseMaker(object):
                 self.err_exit('Scp destination must contain host part: %s' % location)
 
     def get_location(self, location, depth=0):
-        if not location or depth > maxaliasdepth:
+        if depth > maxaliasdepth:
+            self.err_exit('Maximum alias recursion depth exceeded')
+        if not location:
             return []
         if location in self.aliases:
             res = []
