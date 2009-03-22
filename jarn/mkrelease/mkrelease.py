@@ -26,7 +26,6 @@ Options:
   -D                Dry-run; equivalent to -CTS.
   -K                Keep the temporary build directory.
 
-  -z                Create a zip archive instead of the default tar.gz.
   -s                Sign the release tarball with GnuPG.
   -i identity       The GnuPG identity to sign with.
 
@@ -116,7 +115,7 @@ class ReleaseMaker(object):
         self.skipscp = False
         self.keeptemp = False
         self.distlocation = []
-        self.sdistflags = []
+        self.sdistflags = ['--formats=zip']
         self.uploadflags = []
         self.directory = os.curdir
         self.python = self.defaults.python
@@ -207,9 +206,9 @@ class ReleaseMaker(object):
 
     def get_options(self):
         try:
-            options, args = getopt.getopt(sys.argv[1:], 'CDKSTd:hi:svz',
+            options, args = getopt.getopt(sys.argv[1:], 'CDKSTd:hi:sv',
                 ('skip-checkin', 'skip-tag', 'skip-scp', 'dry-run', 'keep-temp',
-                 'zip', 'sign', 'identity=', 'dist-location=', 'version', 'help'))
+                 'sign', 'identity=', 'dist-location=', 'version', 'help'))
         except getopt.GetoptError, e:
             self.err_exit('mkrelease: %s\n\n%s' % (e.msg, usage))
 
@@ -224,8 +223,6 @@ class ReleaseMaker(object):
                 self.skipcheckin = self.skiptag = self.skipscp = True
             elif name in ('-K', '--keep-temp'):
                 self.keeptemp = True
-            elif name in ('-z', '--zip'):
-                self.sdistflags.append('--formats=zip')
             elif name in ('-s', '--sign'):
                 self.uploadflags.append('--sign')
             elif name in ('-i', '--identity'):

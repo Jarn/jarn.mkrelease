@@ -13,6 +13,9 @@ Changelog
 - Protect against infinite alias recursion.
   [stefan]
 
+- Drop -z option and always create zip files from now on.
+  [stefan]
+
 1.0b2 - 2009-03-19
 ------------------
 
