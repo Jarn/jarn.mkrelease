@@ -276,13 +276,13 @@ class ReleaseMaker(object):
         tempname = abspath(tempfile.mkdtemp(prefix='release-'))
         trunkurl = self.trunkurl
         python = self.python
+        register = 'register'
+        upload = 'upload'
         sdistflags = ' '.join(self.sdistflags)
         uploadflags = ' '.join(self.uploadflags)
 
         if pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals()) < '2.6':
             register, upload = 'mregister', 'mupload'
-        else:
-            register, upload = 'register', 'upload'
 
         try:
             rc = system('svn co "%(trunkurl)s" "%(tempname)s"' % locals())
