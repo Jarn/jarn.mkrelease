@@ -13,7 +13,7 @@ distbase = ""
 distdefault = ""
 maxaliasdepth = 23
 
-version = "mkrelease 1.0"
+version = "mkrelease 1.0b3"
 usage = """\
 Usage: mkrelease [options] [svn-url|svn-sandbox]
 
