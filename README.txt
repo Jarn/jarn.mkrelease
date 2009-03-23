@@ -28,9 +28,6 @@ Options
 -K
     Keep the temporary build directory.
 
--z
-    Create a zip archive instead of the default tar.gz.
-
 -s
     Sign the release tarball with GnuPG.
 
