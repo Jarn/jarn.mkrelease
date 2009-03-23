@@ -20,7 +20,7 @@ Options
     Do not tag the release in subversion.
 
 -S
-    Do not scp the release tarball to dist-location.
+    Do not scp the release to dist-location.
 
 -D
     Dry-run; equivalent to ``-CTS``.
@@ -29,7 +29,7 @@ Options
     Keep the temporary build directory.
 
 -s
-    Sign the release tarball with GnuPG.
+    Sign the release with GnuPG.
 
 -i identity
     The GnuPG identity to sign with.

@@ -22,11 +22,11 @@ Release an sdist egg.
 Options:
   -C                Do not checkin modified files from the sandbox.
   -T                Do not tag the release in subversion.
-  -S                Do not scp the release tarball to dist-location.
+  -S                Do not scp the release to dist-location.
   -D                Dry-run; equivalent to -CTS.
   -K                Keep the temporary build directory.
 
-  -s                Sign the release tarball with GnuPG.
+  -s                Sign the release with GnuPG.
   -i identity       The GnuPG identity to sign with.
 
   -d dist-location  An scp destination specification, or an index server
