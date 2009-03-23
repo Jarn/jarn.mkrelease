@@ -185,15 +185,15 @@ class ReleaseMaker(object):
             self.err_exit('mkrelease: option -d is required\n\n%s' % usage)
         for location in locations:
             if location not in self.servers and not self.has_host(location):
-                self.err_exit('Scp destination must contain host part: %s' % location)
+                self.err_exit('Scp destination must contain host part: %(location)s' % locals())
 
     def get_location(self, location, depth=0):
-        if depth > maxaliasdepth:
-            self.err_exit('Maximum alias recursion depth exceeded')
         if not location:
             return []
         if location in self.aliases:
             res = []
+            if depth > maxaliasdepth:
+                self.err_exit('Maximum alias recursion depth exceeded: %(location)s' % locals())
             for loc in self.aliases[location]:
                 res.extend(self.get_location(loc, depth+1))
             return res
