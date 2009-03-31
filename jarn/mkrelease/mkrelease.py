@@ -193,7 +193,7 @@ class ReleaseMaker(object):
         if location in self.aliases:
             res = []
             if depth > maxaliasdepth:
-                self.err_exit('Maximum alias recursion depth exceeded: %(location)s' % locals())
+                self.err_exit('Maximum alias depth exceeded: %(location)s' % locals())
             for loc in self.aliases[location]:
                 res.extend(self.get_location(loc, depth+1))
             return res
@@ -299,7 +299,8 @@ class ReleaseMaker(object):
             if not self.skiptag:
                 tagurl = self.get_tagurl(trunkurl, version)
                 self.assert_tagurl(tagurl)
-                rc = system('svn cp -m"Tagged %(name)s %(version)s." "%(trunkurl)s" "%(tagurl)s"' % locals())
+                rc = system('svn cp -m"Tagged %(name)s %(version)s." '
+                            '"%(trunkurl)s" "%(tagurl)s"' % locals())
                 if rc != 0:
                     self.err_exit('Tag failed')
 
@@ -311,7 +312,8 @@ class ReleaseMaker(object):
                 for location in self.distlocation:
                     if location in self.servers:
                         serverflags = '--repository="%s"' % location
-                        rc = system('"%(python)s" setup.py sdist %(sdistflags)s %(register)s %(serverflags)s '
+                        rc = system('"%(python)s" setup.py sdist %(sdistflags)s '
+                                    '%(register)s %(serverflags)s '
                                     '%(upload)s %(uploadflags)s %(serverflags)s' % locals())
                         if rc != 0:
                             self.err_exit('Upload failed')
