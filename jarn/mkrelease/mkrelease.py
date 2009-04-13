@@ -117,6 +117,8 @@ class ReleaseMaker(object):
         self.distlocation = []
         self.sdistflags = ['--formats=zip']
         self.uploadflags = []
+        self.register = 'register'
+        self.upload = 'upload'
         self.directory = os.curdir
         self.python = self.defaults.python
         self.distbase = self.defaults.distbase
@@ -276,8 +278,8 @@ class ReleaseMaker(object):
         tempname = abspath(tempfile.mkdtemp(prefix='release-'))
         trunkurl = self.trunkurl
         python = self.python
-        register = 'register'
-        upload = 'upload'
+        register = self.register
+        upload = self.upload
         sdistflags = ' '.join(self.sdistflags)
         uploadflags = ' '.join(self.uploadflags)
 
