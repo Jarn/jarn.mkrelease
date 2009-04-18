@@ -5,7 +5,7 @@ import tempfile
 import shutil
 import ConfigParser
 
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, STDOUT
 from os.path import abspath, join, exists, isdir, isfile, expanduser
 
 python = "python2.6"
@@ -62,19 +62,48 @@ def system(cmd):
     return p.returncode
 
 
+def readlines(str):
+    return str.strip().replace('\r', '\n').split('\n')
+
+
 def raw_pipe(cmd):
-    p = Popen(cmd, shell=True, stdout=PIPE)
-    stdout = p.communicate()[0]
-    if p.returncode == 0:
-        return stdout.replace('\r','\n').split('\n')
-    return []
+    p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+    output = p.communicate()[0]
+    return p.returncode, readlines(output)
 
 
 def pipe(cmd):
-    lines = raw_pipe(cmd)
-    if lines:
+    rc, lines = raw_pipe(cmd)
+    if rc == 0 and lines:
         return lines[0]
     return ''
+
+
+def CheckedSdist(cmd):
+    rc = system(cmd)
+    if rc == 0 and isdir('dist') and os.listdir('dist'):
+        return 0
+    return 1
+
+
+def CheckedUpload(cmd):
+    rc, lines = raw_pipe(cmd)
+    numlines = len(lines)
+    register_ok = upload_ok = False
+    echo = False
+    for i, line in enumerate(lines):
+        if line == 'running register':
+            echo = True
+            if i+2 < numlines and lines[i+2] == 'Server response (200): OK':
+                register_ok = True
+        if line == 'running upload':
+            if i+2 < numlines and lines[i+2] == 'Server response (200): OK':
+                upload_ok = True
+        if echo:
+            print line
+    if rc == 0 and register_ok and upload_ok:
+        return 0
+    return 1
 
 
 class Defaults(object):
@@ -159,13 +188,13 @@ class ReleaseMaker(object):
             self.err_exit("Not eggified (no setup.py found): %(dir)s" % locals())
 
     def assert_tagurl(self, url):
-        devnull = os.devnull
-        if system('svn ls "%(url)s" >%(devnull)s 2>&1' % locals()) == 0:
+        rc, lines = raw_pipe('svn ls "%(url)s"' % locals())
+        if rc == 0:
             self.err_exit("Tag exists: %(url)s" % locals())
 
     def get_trunkurl(self, dir):
-        lines = raw_pipe('svn info "%(dir)s"' % locals())
-        if not lines:
+        rc, lines = raw_pipe('svn info "%(dir)s"' % locals())
+        if rc != 0 or not lines:
             self.err_exit('Svn info failed')
         url = lines[1][5:]
         if not self.is_svnurl(url):
@@ -306,7 +335,7 @@ class ReleaseMaker(object):
                 if rc != 0:
                     self.err_exit('Tag failed')
 
-            rc = system('"%(python)s" setup.py sdist %(sdistflags)s' % locals())
+            rc = CheckedSdist('"%(python)s" setup.py sdist %(sdistflags)s' % locals())
             if rc != 0:
                 self.err_exit('Release failed')
 
@@ -314,9 +343,9 @@ class ReleaseMaker(object):
                 for location in self.distlocation:
                     if location in self.servers:
                         serverflags = '--repository="%s"' % location
-                        rc = system('"%(python)s" setup.py sdist %(sdistflags)s '
-                                    '%(register)s %(serverflags)s '
-                                    '%(upload)s %(uploadflags)s %(serverflags)s' % locals())
+                        rc = CheckedUpload('"%(python)s" setup.py sdist %(sdistflags)s '
+                                           '%(register)s %(serverflags)s '
+                                           '%(upload)s %(uploadflags)s %(serverflags)s' % locals())
                         if rc != 0:
                             self.err_exit('Upload failed')
                     else:

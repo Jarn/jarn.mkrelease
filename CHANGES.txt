@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+- Since distutils commands always return 0, successful or not, we must
+  check their output for signs of success or failure.
+  [stefan]
+
 1.0b3 - 2009-03-23
 ------------------
 
