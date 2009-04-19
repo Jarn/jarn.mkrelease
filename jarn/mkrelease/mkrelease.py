@@ -279,7 +279,7 @@ class ReleaseMaker(object):
         if args:
             self.directory = args[0]
 
-    def get_package_url(self):
+    def get_packageurl(self):
         directory = self.directory
         python = self.python
 
@@ -358,7 +358,7 @@ class ReleaseMaker(object):
 
     def run(self):
         self.get_options()
-        self.get_package_url()
+        self.get_packageurl()
         self.make_release()
         print 'done'
 
