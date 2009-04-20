@@ -79,33 +79,6 @@ def pipe(cmd):
     return ''
 
 
-def CheckedSdist(cmd):
-    rc = system(cmd)
-    if rc == 0 and isdir('dist') and os.listdir('dist'):
-        return 0
-    return 1
-
-
-def CheckedUpload(cmd):
-    rc, lines = raw_pipe(cmd)
-    numlines = len(lines)
-    register_ok = upload_ok = False
-    echo = False
-    for i, line in enumerate(lines):
-        if line == 'running register':
-            echo = True
-            if i+2 < numlines and lines[i+2] == 'Server response (200): OK':
-                register_ok = True
-        if line == 'running upload':
-            if i+2 < numlines and lines[i+2] == 'Server response (200): OK':
-                upload_ok = True
-        if echo:
-            print line
-    if rc == 0 and register_ok and upload_ok:
-        return 0
-    return 1
-
-
 class Defaults(object):
 
     def __init__(self):
@@ -335,7 +308,7 @@ class ReleaseMaker(object):
                 if rc != 0:
                     self.err_exit('Tag failed')
 
-            rc = CheckedSdist('"%(python)s" setup.py sdist %(sdistflags)s' % locals())
+            rc = system('"%(python)s" setup.py sdist %(sdistflags)s' % locals())
             if rc != 0:
                 self.err_exit('Release failed')
 
@@ -343,9 +316,9 @@ class ReleaseMaker(object):
                 for location in self.distlocation:
                     if location in self.servers:
                         serverflags = '--repository="%s"' % location
-                        rc = CheckedUpload('"%(python)s" setup.py sdist %(sdistflags)s '
-                                           '%(register)s %(serverflags)s '
-                                           '%(upload)s %(uploadflags)s %(serverflags)s' % locals())
+                        rc = system('"%(python)s" setup.py sdist %(sdistflags)s '
+                                    '%(register)s %(serverflags)s '
+                                    '%(upload)s %(uploadflags)s %(serverflags)s' % locals())
                         if rc != 0:
                             self.err_exit('Upload failed')
                     else:
