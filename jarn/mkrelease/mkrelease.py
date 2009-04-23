@@ -63,7 +63,7 @@ def system(cmd):
 
 
 def readlines(str):
-    return str.strip().replace('\r', '\n').split('\n')
+    return str.rstrip().replace('\r', '\n').split('\n')
 
 
 def raw_pipe(cmd, stderr=None):
