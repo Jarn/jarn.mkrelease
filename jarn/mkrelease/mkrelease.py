@@ -5,7 +5,7 @@ import tempfile
 import shutil
 import ConfigParser
 
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE
 from os.path import abspath, join, exists, isdir, isfile, expanduser
 
 python = "python2.6"
@@ -66,8 +66,8 @@ def readlines(str):
     return str.strip().replace('\r', '\n').split('\n')
 
 
-def raw_pipe(cmd):
-    p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+def raw_pipe(cmd, stderr=None):
+    p = Popen(cmd, shell=True, stdout=PIPE, stderr=stderr)
     output = p.communicate()[0]
     return p.returncode, readlines(output)
 
@@ -117,10 +117,8 @@ class ReleaseMaker(object):
         self.skipscp = False
         self.keeptemp = False
         self.distlocation = []
-        self.sdistflags = ['--formats=zip']
+        self.sdistflags = ['--formats="zip"']
         self.uploadflags = []
-        self.register = 'register'
-        self.upload = 'upload'
         self.directory = os.curdir
         self.python = self.defaults.python
         self.distbase = self.defaults.distbase
@@ -161,7 +159,7 @@ class ReleaseMaker(object):
             self.err_exit("Not eggified (no setup.py found): %(dir)s" % locals())
 
     def assert_tagurl(self, url):
-        rc, lines = raw_pipe('svn ls "%(url)s"' % locals())
+        rc, lines = raw_pipe('svn ls "%(url)s"' % locals(), stderr=PIPE)
         if rc == 0:
             self.err_exit("Tag exists: %(url)s" % locals())
 
@@ -268,6 +266,9 @@ class ReleaseMaker(object):
             name = pipe('"%(python)s" setup.py --name' % locals())
             version = pipe('"%(python)s" setup.py --version' % locals())
 
+            if not name or not version:
+                self.err_exit('Bad setup.py')
+
             print 'Releasing', name, version
             print 'URL:', self.trunkurl
 
@@ -285,9 +286,6 @@ class ReleaseMaker(object):
         sdistflags = ' '.join(self.sdistflags)
         uploadflags = ' '.join(self.uploadflags)
 
-        if pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals()) < '2.6':
-            register, upload = 'mregister', 'mupload'
-
         try:
             rc = system('svn co "%(trunkurl)s" "%(tempname)s"' % locals())
             if rc != 0:
@@ -297,6 +295,9 @@ class ReleaseMaker(object):
             os.chdir(tempname)
             name = pipe('"%(python)s" setup.py --name' % locals())
             version = pipe('"%(python)s" setup.py --version' % locals())
+
+            if not name or not version:
+                self.err_exit('Bad setup.py')
 
             print 'Releasing', name, version
 
@@ -329,9 +330,26 @@ class ReleaseMaker(object):
             if not self.keeptemp:
                 shutil.rmtree(tempname)
 
+    def get_pythonversion(self):
+        python = self.python
+
+        self.pythonversion = pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
+        if not self.pythonversion:
+            self.err_exit('Bad interpreter')
+
+    def get_uploadcmds(self):
+        if self.pythonversion < '2.6':
+            self.register = 'mregister'
+            self.upload = 'mupload'
+        else:
+            self.register = 'register'
+            self.upload = 'upload'
+
     def run(self):
         self.get_options()
+        self.get_pythonversion()
         self.get_packageurl()
+        self.get_uploadcmds()
         self.make_release()
         print 'done'
 
