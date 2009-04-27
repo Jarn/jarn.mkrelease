@@ -4,6 +4,9 @@ Changelog
 Unreleased
 ----------
 
+- Since distutils commands may return 0, successful or not, we must
+  check their output for signs of failure.
+  [stefan]
 
 1.0b3 - 2009-03-23
 ------------------

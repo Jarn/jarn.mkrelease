@@ -5,8 +5,8 @@ import tempfile
 import shutil
 import ConfigParser
 
-from subprocess import Popen, PIPE
-from os.path import abspath, join, exists, isdir, isfile, expanduser
+from os.path import abspath, join, expanduser, exists, isdir, isfile
+from tee import popen, pipe, NotEmpty, NotBefore
 
 python = "python2.6"
 distbase = ""
@@ -57,26 +57,35 @@ Files:
 
 
 def system(cmd):
-    p = Popen(cmd, shell=True)
-    p.communicate()
-    return p.returncode
+    rc, lines = popen(cmd, echo=NotEmpty())
+    return rc
 
 
-def readlines(str):
-    return str.rstrip().replace('\r', '\n').split('\n')
+def run_sdist(cmd):
+    rc, lines = popen(cmd)
+    if rc == 0 and isdir('dist') and os.listdir('dist'):
+        return 0
+    return 1
 
 
-def raw_pipe(cmd, stderr=None):
-    p = Popen(cmd, shell=True, stdout=PIPE, stderr=stderr)
-    output = p.communicate()[0]
-    return p.returncode, readlines(output)
+def run_upload(cmd):
+    rc, lines = popen(cmd, echo=NotBefore('running register'))
+    numlines = len(lines)
+    register_ok = upload_ok = False
+    for i, line in enumerate(lines):
+        if line == 'running register':
+            if i+2 < numlines and lines[i+2] == 'Server response (200): OK':
+                register_ok = True
+        if line == 'running upload':
+            if i+2 < numlines and lines[i+2] == 'Server response (200): OK':
+                upload_ok = True
+    if rc == 0 and register_ok and upload_ok:
+        return 0
+    return 1
 
 
-def pipe(cmd):
-    rc, lines = raw_pipe(cmd)
-    if rc == 0 and lines:
-        return lines[0]
-    return ''
+def run_scp(cmd):
+    return os.system(cmd)
 
 
 class Defaults(object):
@@ -158,19 +167,19 @@ class ReleaseMaker(object):
         if not isfile(join(dir, 'setup.py')):
             self.err_exit("Not eggified (no setup.py found): %(dir)s" % locals())
 
-    def assert_tagurl(self, url):
-        rc, lines = raw_pipe('svn ls "%(url)s"' % locals(), stderr=PIPE)
-        if rc == 0:
-            self.err_exit("Tag exists: %(url)s" % locals())
-
     def get_trunkurl(self, dir):
-        rc, lines = raw_pipe('svn info "%(dir)s"' % locals())
+        rc, lines = popen('svn info "%(dir)s"' % locals(), echo=False)
         if rc != 0 or not lines:
             self.err_exit('Svn info failed')
         url = lines[1][5:]
         if not self.is_svnurl(url):
             self.err_exit('Bad URL: %(url)s' % locals())
         return url
+
+    def assert_tagurl(self, url):
+        rc, lines = popen('svn ls "%(url)s"' % locals(), echo=False, echo2=False)
+        if rc == 0:
+            self.err_exit("Tag exists: %(url)s" % locals())
 
     def get_tagurl(self, url, tag):
         parts = url.split('/')
@@ -250,6 +259,13 @@ class ReleaseMaker(object):
         if args:
             self.directory = args[0]
 
+    def get_pythonversion(self):
+        python = self.python
+
+        self.pythonversion = pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
+        if not self.pythonversion:
+            self.err_exit('Bad interpreter')
+
     def get_packageurl(self):
         directory = self.directory
         python = self.python
@@ -276,6 +292,14 @@ class ReleaseMaker(object):
                 rc = system('svn ci -m"Prepare %(name)s %(version)s."' % locals())
                 if rc != 0:
                     self.err_exit('Checkin failed')
+
+    def get_uploadcmds(self):
+        if self.pythonversion < '2.6':
+            self.register = 'mregister'
+            self.upload = 'mupload'
+        else:
+            self.register = 'register'
+            self.upload = 'upload'
 
     def make_release(self):
         tempname = abspath(tempfile.mkdtemp(prefix='release-'))
@@ -309,7 +333,7 @@ class ReleaseMaker(object):
                 if rc != 0:
                     self.err_exit('Tag failed')
 
-            rc = system('"%(python)s" setup.py sdist %(sdistflags)s' % locals())
+            rc = run_sdist('"%(python)s" setup.py sdist %(sdistflags)s' % locals())
             if rc != 0:
                 self.err_exit('Release failed')
 
@@ -317,33 +341,18 @@ class ReleaseMaker(object):
                 for location in self.distlocation:
                     if location in self.servers:
                         serverflags = '--repository="%s"' % location
-                        rc = system('"%(python)s" setup.py sdist %(sdistflags)s '
-                                    '%(register)s %(serverflags)s '
-                                    '%(upload)s %(uploadflags)s %(serverflags)s' % locals())
+                        rc = run_upload('"%(python)s" setup.py sdist %(sdistflags)s '
+                                        '%(register)s %(serverflags)s '
+                                        '%(upload)s %(uploadflags)s %(serverflags)s' % locals())
                         if rc != 0:
                             self.err_exit('Upload failed')
                     else:
-                        rc = system('scp dist/* "%(location)s"' % locals())
+                        rc = run_scp('scp dist/* "%(location)s"' % locals())
                         if rc != 0:
                             self.err_exit('Scp failed')
         finally:
             if not self.keeptemp:
                 shutil.rmtree(tempname)
-
-    def get_pythonversion(self):
-        python = self.python
-
-        self.pythonversion = pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
-        if not self.pythonversion:
-            self.err_exit('Bad interpreter')
-
-    def get_uploadcmds(self):
-        if self.pythonversion < '2.6':
-            self.register = 'mregister'
-            self.upload = 'mupload'
-        else:
-            self.register = 'register'
-            self.upload = 'upload'
 
     def run(self):
         self.get_options()
