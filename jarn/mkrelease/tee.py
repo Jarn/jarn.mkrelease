@@ -44,7 +44,7 @@ def popen(cmd, echo=True, echo2=True):
 
 
 def system(cmd):
-    """Run cmd and return its exit code
+    """Run cmd and return its exit code.
     """
     rc, lines = popen(cmd)
     return rc
