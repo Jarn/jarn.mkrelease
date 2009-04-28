@@ -57,11 +57,17 @@ Files:
 
 
 def system(cmd):
+    """Run cmd and return its exit code.
+    """
     rc, lines = popen(cmd, echo=NotEmpty())
     return rc
 
 
 def run_sdist(cmd):
+    """Run 'setup.py sdist' and check its results.
+
+    Returns exit code 0 on success, 1 on failure.
+    """
     rc, lines = popen(cmd)
     if rc == 0 and isdir('dist') and os.listdir('dist'):
         return 0
@@ -69,6 +75,10 @@ def run_sdist(cmd):
 
 
 def run_upload(cmd):
+    """Run 'setup.py register upload' and check its results.
+
+    Returns exit code 0 on success, 1 on failure.
+    """
     rc, lines = popen(cmd, echo=NotBefore('running register'))
     numlines = len(lines)
     register_ok = upload_ok = False
@@ -85,12 +95,17 @@ def run_upload(cmd):
 
 
 def run_scp(cmd):
+    """Run scp and return its exit code.
+    """
+    # Scp output cannot be tee'd
     return os.system(cmd)
 
 
 class Defaults(object):
 
     def __init__(self):
+        """Read config files.
+        """
         self.parser = ConfigParser.ConfigParser()
         self.parser.read((expanduser('~/.pypirc'), '/etc/mkrelease',
                           expanduser('~/.mkrelease')))
@@ -120,6 +135,8 @@ class Defaults(object):
 class ReleaseMaker(object):
 
     def __init__(self):
+        """Set defaults.
+        """
         self.defaults = Defaults()
         self.skipcheckin = False
         self.skiptag = False
@@ -136,10 +153,14 @@ class ReleaseMaker(object):
         self.servers = self.defaults.servers
 
     def err_exit(self, msg, rc=1):
+        """Print msg to stderr and exit with rc.
+        """
         print >>sys.stderr, msg
         sys.exit(rc)
 
     def is_svnurl(self, url):
+        """Return True if 'url' appears to be an SVN URL.
+        """
         return (url.startswith('svn://') or
                 url.startswith('svn+ssh://') or
                 url.startswith('http://') or
@@ -147,11 +168,15 @@ class ReleaseMaker(object):
                 url.startswith('file://'))
 
     def has_host(self, location):
+        """Return True if 'location' contains a host part.
+        """
         colon = location.find(':')
         slash = location.find('/')
         return colon > 0 and (slash < 0 or slash > colon)
 
     def assert_checkout(self, dir):
+        """Fail if 'dir' is not an SVN checkout.
+        """
         if not exists(dir):
             self.err_exit("No such file or directory: %(dir)s" % locals())
         if not isdir(dir):
@@ -160,6 +185,8 @@ class ReleaseMaker(object):
             self.err_exit("Not a checkout: %(dir)s" % locals())
 
     def assert_package(self, dir):
+        """Fail if 'dir' is not eggified.
+        """
         if not exists(dir):
             self.err_exit("No such file or directory: %(dir)s" % locals())
         if not isdir(dir):
@@ -168,6 +195,8 @@ class ReleaseMaker(object):
             self.err_exit("Not eggified (no setup.py found): %(dir)s" % locals())
 
     def get_trunkurl(self, dir):
+        """Get the repository URL from the SVN sandbox in 'dir'.
+        """
         rc, lines = popen('svn info "%(dir)s"' % locals(), echo=False)
         if rc != 0 or not lines:
             self.err_exit('Svn info failed')
@@ -177,11 +206,15 @@ class ReleaseMaker(object):
         return url
 
     def assert_tagurl(self, url):
+        """Fail if tag 'url' exists.
+        """
         rc, lines = popen('svn ls "%(url)s"' % locals(), echo=False, echo2=False)
         if rc == 0:
             self.err_exit("Tag exists: %(url)s" % locals())
 
     def get_tagurl(self, url, tag):
+        """Construct the tag URL.
+        """
         parts = url.split('/')
         if parts[-1] == 'trunk':
             parts = parts[:-1]
@@ -192,6 +225,8 @@ class ReleaseMaker(object):
         return '/'.join(parts + ['tags', tag])
 
     def assert_location(self, locations):
+        """Fail if 'locations' is empty or contains bad scp destinations.
+        """
         if not locations:
             self.err_exit('mkrelease: option -d is required\n\n%s' % usage)
         for location in locations:
@@ -199,6 +234,8 @@ class ReleaseMaker(object):
                 self.err_exit('Scp destination must contain host part: %(location)s' % locals())
 
     def get_location(self, location, depth=0):
+        """Resolve aliases and apply distbase.
+        """
         if not location:
             return []
         if location in self.aliases:
@@ -218,6 +255,8 @@ class ReleaseMaker(object):
         return [location]
 
     def get_options(self):
+        """Parse command line.
+        """
         try:
             options, args = getopt.getopt(sys.argv[1:], 'CDKSTd:hi:sv',
                 ('skip-checkin', 'skip-tag', 'skip-scp', 'dry-run', 'keep-temp',
@@ -260,6 +299,8 @@ class ReleaseMaker(object):
             self.directory = args[0]
 
     def get_pythonversion(self):
+        """Get version of configured Python interpreter.
+        """
         python = self.python
 
         self.pythonversion = pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
@@ -267,6 +308,8 @@ class ReleaseMaker(object):
             self.err_exit('Bad interpreter')
 
     def get_packageurl(self):
+        """Get URL to release.
+        """
         directory = self.directory
         python = self.python
 
@@ -294,6 +337,8 @@ class ReleaseMaker(object):
                     self.err_exit('Checkin failed')
 
     def get_uploadcmds(self):
+        """Get register and upload commands.
+        """
         if self.pythonversion < '2.6':
             self.register = 'mregister'
             self.upload = 'mupload'
@@ -302,6 +347,8 @@ class ReleaseMaker(object):
             self.upload = 'upload'
 
     def make_release(self):
+        """Build and distribute the egg.
+        """
         tempname = abspath(tempfile.mkdtemp(prefix='release-'))
         trunkurl = self.trunkurl
         python = self.python
