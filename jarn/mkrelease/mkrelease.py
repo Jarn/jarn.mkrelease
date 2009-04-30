@@ -138,7 +138,7 @@ class Defaults(object):
 
 class ReleaseMaker(object):
 
-    def __init__(self):
+    def __init__(self, args):
         """Set defaults.
         """
         self.defaults = Defaults()
@@ -155,6 +155,7 @@ class ReleaseMaker(object):
         self.distdefault = self.defaults.distdefault
         self.aliases = self.defaults.aliases
         self.servers = self.defaults.servers
+        self.args = args
 
     def err_exit(self, msg, rc=1):
         """Print msg to stderr and exit with rc.
@@ -262,7 +263,7 @@ class ReleaseMaker(object):
         """Parse command line.
         """
         try:
-            options, args = getopt.getopt(sys.argv[1:], 'CDKSTd:hi:sv',
+            options, args = getopt.getopt(self.args, 'CDKSTd:hi:sv',
                 ('skip-checkin', 'skip-tag', 'skip-scp', 'dry-run', 'keep-temp',
                  'sign', 'identity=', 'dist-location=', 'version', 'help'))
         except getopt.GetoptError, e:
@@ -414,8 +415,10 @@ class ReleaseMaker(object):
         print 'done'
 
 
-def main():
-    ReleaseMaker().run()
+def main(args=None):
+    if args is None:
+        args = sys.argv[1:]
+    ReleaseMaker(args).run()
     return 0
 
 

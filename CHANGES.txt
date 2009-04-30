@@ -8,6 +8,9 @@ Unreleased
   check their output for signs of failure.
   [stefan]
 
+- Allow to pass argument list to ``main()``.
+  [stefan]
+
 1.0b3 - 2009-03-23
 ------------------
 
