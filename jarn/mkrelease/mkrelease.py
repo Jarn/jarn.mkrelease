@@ -141,7 +141,7 @@ class ReleaseMaker(object):
     def __init__(self, args):
         """Set defaults.
         """
-        self.defaults = Defaults()
+        defaults = Defaults()
         self.skipcheckin = False
         self.skiptag = False
         self.skipscp = False
@@ -150,11 +150,11 @@ class ReleaseMaker(object):
         self.sdistflags = ['--formats="zip"']
         self.uploadflags = []
         self.directory = os.curdir
-        self.python = self.defaults.python
-        self.distbase = self.defaults.distbase
-        self.distdefault = self.defaults.distdefault
-        self.aliases = self.defaults.aliases
-        self.servers = self.defaults.servers
+        self.python = defaults.python
+        self.distbase = defaults.distbase
+        self.distdefault = defaults.distdefault
+        self.aliases = defaults.aliases
+        self.servers = defaults.servers
         self.args = args
 
     def err_exit(self, msg, rc=1):
