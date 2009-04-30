@@ -84,7 +84,7 @@ class NotEmpty(object):
 
 
 class NotBefore(object):
-    """A tee filter supressing output until 'startline' is encountered."""
+    """A tee filter supressing output before 'startline'."""
 
     def __init__(self, startline):
         self.echo = False
