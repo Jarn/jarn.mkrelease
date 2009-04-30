@@ -66,7 +66,7 @@ def system(cmd):
 def run_sdist(cmd):
     """Run 'setup.py sdist' and check its results.
 
-    Returns exit code 0 on success, 1 on failure.
+    Returns 0 on success, 1 on failure.
     """
     rc, lines = popen(cmd)
     if rc == 0 and isdir('dist') and os.listdir('dist'):
@@ -77,18 +77,22 @@ def run_sdist(cmd):
 def run_upload(cmd):
     """Run 'setup.py register upload' and check its results.
 
-    Returns exit code 0 on success, 1 on failure.
+    Returns 0 on success, 1 on failure.
     """
     rc, lines = popen(cmd, echo=NotBefore('running register'))
-    numlines = len(lines)
     register_ok = upload_ok = False
-    for i, line in enumerate(lines):
-        if line == 'running register':
-            if i+2 < numlines and lines[i+2] == 'Server response (200): OK':
-                register_ok = True
-        if line == 'running upload':
-            if i+2 < numlines and lines[i+2] == 'Server response (200): OK':
-                upload_ok = True
+    current, expect = None, 'running register'
+    for line in lines:
+        if line == expect:
+            if line == 'Server response (200): OK':
+                if current == 'running register':
+                    register_ok = True
+                    current, expect = expect, 'running upload'
+                elif current == 'running upload':
+                    upload_ok = True
+                    current, expect = expect, None
+            else:
+                current, expect = expect, 'Server response (200): OK'
     if rc == 0 and register_ok and upload_ok:
         return 0
     return 1
