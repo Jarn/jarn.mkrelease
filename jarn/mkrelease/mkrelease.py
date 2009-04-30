@@ -418,10 +418,13 @@ class ReleaseMaker(object):
 def main(args=None):
     if args is None:
         args = sys.argv[1:]
-    ReleaseMaker(args).run()
+    try:
+        ReleaseMaker(args).run()
+    except SystemExit, e:
+        return e.code
     return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
 
