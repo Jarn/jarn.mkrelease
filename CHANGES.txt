@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Unreleased
-----------
+1.0b4 - 2009-04-30
+------------------
 
 - Since distutils commands may return 0, successful or not, we must
   check their output for signs of failure.
