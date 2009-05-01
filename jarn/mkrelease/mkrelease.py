@@ -14,7 +14,8 @@ distdefault = ""
 maxaliasdepth = 23
 
 version = "mkrelease 1.0"
-usage = """\
+usage = "Try 'mkrelease --help' for more information."
+help = """\
 Usage: mkrelease [options] [svn-url|svn-sandbox]
 
 Release an sdist egg.
@@ -157,6 +158,12 @@ class ReleaseMaker(object):
         self.servers = defaults.servers
         self.args = args
 
+    def msg_exit(self, msg, rc=0):
+        """Print msg to stdout and exit with rc.
+        """
+        print msg
+        sys.exit(rc)
+
     def err_exit(self, msg, rc=1):
         """Print msg to stderr and exit with rc.
         """
@@ -233,7 +240,7 @@ class ReleaseMaker(object):
         """Fail if 'locations' is empty or contains bad scp destinations.
         """
         if not locations:
-            self.err_exit('mkrelease: option -d is required\n\n%s' % usage)
+            self.err_exit('mkrelease: option -d is required\n%s' % usage)
         for location in locations:
             if location not in self.servers and not self.has_host(location):
                 self.err_exit('Scp destination must contain host part: %(location)s' % locals())
@@ -267,7 +274,7 @@ class ReleaseMaker(object):
                 ('skip-checkin', 'skip-tag', 'skip-scp', 'dry-run', 'keep-temp',
                  'sign', 'identity=', 'dist-location=', 'version', 'help'))
         except getopt.GetoptError, e:
-            self.err_exit('mkrelease: %s\n\n%s' % (e.msg, usage))
+            self.err_exit('mkrelease: %s\n%s' % (e.msg, usage))
 
         for name, value in options:
             if name in ('-C', '--skip-checkin'):
@@ -287,9 +294,9 @@ class ReleaseMaker(object):
             elif name in ('-d', '--dist-location'):
                 self.distlocation.extend(self.get_location(value))
             elif name in ('-v', '--version'):
-                self.err_exit(version, 0)
+                self.msg_exit(version)
             elif name in ('-h', '--help'):
-                self.err_exit(usage, 0)
+                self.msg_exit(help)
 
         if not self.distlocation:
             self.distlocation = self.get_location(self.distdefault)
@@ -298,7 +305,7 @@ class ReleaseMaker(object):
             self.assert_location(self.distlocation)
 
         if len(args) > 1:
-            self.err_exit('mkrelease: too many arguments\n\n%s' % usage)
+            self.err_exit('mkrelease: too many arguments\n%s' % usage)
 
         if args:
             self.directory = args[0]

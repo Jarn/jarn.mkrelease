@@ -4,6 +4,8 @@ Changelog
 1.0 - Unreleased
 ----------------
 
+- Print help and version to stdout, not stderr.
+  [stefan]
 
 1.0b4 - 2009-04-30
 ------------------
