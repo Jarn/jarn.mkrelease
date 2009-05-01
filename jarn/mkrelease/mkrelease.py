@@ -402,7 +402,7 @@ class ReleaseMaker(object):
                         serverflags = '--repository="%s"' % location
                         rc = run_upload('"%(python)s" setup.py sdist %(sdistflags)s '
                                         '%(register)s %(serverflags)s '
-                                        '%(upload)s %(uploadflags)s %(serverflags)s' % locals())
+                                        '%(upload)s %(serverflags)s %(uploadflags)s' % locals())
                         if rc != 0:
                             self.err_exit('Upload failed')
                     else:
