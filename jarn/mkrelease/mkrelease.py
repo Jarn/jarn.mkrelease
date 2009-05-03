@@ -6,7 +6,7 @@ import shutil
 import ConfigParser
 
 from os.path import abspath, join, expanduser, exists, isdir, isfile
-from tee import popen, pipe, NotEmpty, NotBefore
+from tee import popen, NotEmpty, NotBefore
 
 python = "python2.6"
 distbase = ""
@@ -62,6 +62,18 @@ def system(cmd):
     """
     rc, lines = popen(cmd, echo=NotEmpty())
     return rc
+
+
+def pipe(cmd):
+    """Run cmd and return the first line of its output.
+
+    Returns empty string if cmd fails or does not produce
+    any output.
+    """
+    rc, lines = popen(cmd, echo=False)
+    if rc == 0 and lines:
+        return lines[0]
+    return ''
 
 
 def run_sdist(cmd):

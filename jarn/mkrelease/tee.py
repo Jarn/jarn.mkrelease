@@ -43,25 +43,6 @@ def popen(cmd, echo=True, echo2=True):
     return process.returncode, lines
 
 
-def system(cmd):
-    """Run cmd and return its exit code.
-    """
-    rc, lines = popen(cmd)
-    return rc
-
-
-def pipe(cmd):
-    """Run cmd and return the first line of its output.
-
-    Returns empty string if cmd fails or does not produce
-    any output.
-    """
-    rc, lines = popen(cmd, echo=False)
-    if rc == 0 and lines:
-        return lines[0]
-    return ''
-
-
 class On(object):
     """A tee filter printing all lines."""
 
