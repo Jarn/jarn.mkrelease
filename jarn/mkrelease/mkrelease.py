@@ -278,6 +278,15 @@ class ReleaseMaker(object):
             return [self.distbase + sep + location]
         return [location]
 
+    def assert_python(self, python):
+        """Fail if 'python' doesn't work or is of wrong version.
+        """
+        pythonversion = pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
+        if not pythonversion:
+            self.err_exit('Bad interpreter')
+        if pythonversion < '2.6':
+            self.err_exit('Python >= 2.6 is required.')
+
     def get_options(self):
         """Parse command line.
         """
@@ -322,20 +331,13 @@ class ReleaseMaker(object):
         if args:
             self.directory = args[0]
 
-    def get_pythonversion(self):
-        """Check configured Python interpreter.
-        """
-        python = self.python
-
-        self.pythonversion = pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
-        if not self.pythonversion:
-            self.err_exit('Bad interpreter')
-
     def get_packageurl(self):
         """Get URL to release.
         """
         directory = self.directory
         python = self.python
+
+        self.assert_python(python)
 
         if self.is_svnurl(directory):
             self.trunkurl = directory
@@ -415,7 +417,6 @@ class ReleaseMaker(object):
 
     def run(self):
         self.get_options()
-        self.get_pythonversion()
         self.get_packageurl()
         self.make_release()
         print 'done'
