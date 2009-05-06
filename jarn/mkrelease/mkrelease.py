@@ -97,15 +97,15 @@ def run_upload(cmd):
     current, expect = None, 'running register'
     for line in lines:
         if line == expect:
-            if line == 'Server response (200): OK':
+            if line != 'Server response (200): OK':
+                current, expect = expect, 'Server response (200): OK'
+            else:
                 if current == 'running register':
                     register_ok = True
                     current, expect = expect, 'running upload'
                 elif current == 'running upload':
                     upload_ok = True
                     current, expect = expect, None
-            else:
-                current, expect = expect, 'Server response (200): OK'
     if rc == 0 and register_ok and upload_ok:
         return 0
     return 1
