@@ -323,7 +323,7 @@ class ReleaseMaker(object):
             self.directory = args[0]
 
     def get_pythonversion(self):
-        """Get version of configured Python interpreter.
+        """Check configured Python interpreter.
         """
         python = self.python
 
@@ -360,24 +360,12 @@ class ReleaseMaker(object):
                 if rc != 0:
                     self.err_exit('Checkin failed')
 
-    def get_uploadcmds(self):
-        """Get register and upload commands.
-        """
-        if self.pythonversion < '2.6':
-            self.register = 'mregister'
-            self.upload = 'mupload'
-        else:
-            self.register = 'register'
-            self.upload = 'upload'
-
     def make_release(self):
         """Build and distribute the egg.
         """
         tempname = abspath(tempfile.mkdtemp(prefix='release-'))
         trunkurl = self.trunkurl
         python = self.python
-        register = self.register
-        upload = self.upload
         sdistflags = ' '.join(self.sdistflags)
         uploadflags = ' '.join(self.uploadflags)
 
@@ -413,8 +401,8 @@ class ReleaseMaker(object):
                     if location in self.servers:
                         serverflags = '--repository="%s"' % location
                         rc = run_upload('"%(python)s" setup.py sdist %(sdistflags)s '
-                                        '%(register)s %(serverflags)s '
-                                        '%(upload)s %(serverflags)s %(uploadflags)s' % locals())
+                                        'register %(serverflags)s '
+                                        'upload %(serverflags)s %(uploadflags)s' % locals())
                         if rc != 0:
                             self.err_exit('Upload failed')
                     else:
@@ -429,7 +417,6 @@ class ReleaseMaker(object):
         self.get_options()
         self.get_pythonversion()
         self.get_packageurl()
-        self.get_uploadcmds()
         self.make_release()
         print 'done'
 
