@@ -19,9 +19,9 @@ def tee(process, filter):
         if not line and process.poll() is not None:
             break
         stripped_line = line.rstrip()
-        lines.append(stripped_line)
         if filter(stripped_line):
             stdout.write(line)
+        lines.append(stripped_line)
     return lines
 
 

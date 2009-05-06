@@ -285,7 +285,7 @@ class ReleaseMaker(object):
         if not pythonversion:
             self.err_exit('Bad interpreter')
         if pythonversion < '2.6':
-            self.err_exit('Python >= 2.6 is required.')
+            self.err_exit('Python < 2.6 not supported.')
 
     def get_options(self):
         """Parse command line.
