@@ -80,7 +80,7 @@ package's ``setup.py``, and distribute it to the default location::
 
   $ mkrelease https://svn.jarn.com/public/jarn.somepackage/trunk
 
-The same as 1, but the URL is taken from the sandbox in ``src/jarn.somepackage``::
+The same as 1, but the URL is taken from the SVN sandbox in ``src/jarn.somepackage``::
 
   $ mkrelease src/jarn.somepackage
 
