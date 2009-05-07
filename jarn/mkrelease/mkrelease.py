@@ -281,10 +281,10 @@ class ReleaseMaker(object):
     def assert_python(self, python):
         """Fail if 'python' doesn't work or is of wrong version.
         """
-        pythonversion = pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
-        if not pythonversion:
+        version = pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
+        if not version:
             self.err_exit('Bad interpreter')
-        if pythonversion < '2.6':
+        if version < '2.6':
             self.err_exit('Python >= 2.6 is required.')
 
     def get_options(self):
