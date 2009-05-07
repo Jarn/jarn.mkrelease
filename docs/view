@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+styles = """
+<link rel="stylesheet" href="http://www.python.org/css/pypi.css" type="text/css"/>
+<link media="screen" href="http://www.python.org/styles/screen-switcher-default.css" type="text/css" id="screen-switcher-stylesheet" rel="stylesheet"/>
+<link media="screen" href="http://www.python.org/styles/netscape4.css" type="text/css" rel="stylesheet"/>
+<link media="print" href="http://www.python.org/styles/print.css" type="text/css" rel="stylesheet"/>
+<link media="screen" href="http://www.python.org/styles/largestyles.css" type="text/css" rel="alternate stylesheet" title="large text"/>
+<link media="screen" href="http://www.python.org/styles/defaultfonts.css" type="text/css" rel="alternate stylesheet" title="default fonts"/>
+<style type="text/css">
+body {margin-left: 6em; margin-right: 6em; font-size: 95%;}
+a {text-decoration: none;}
+</style>
+"""
+
+def readlines(filename, mode='rt'):
+    file = open(filename, mode)
+    try:
+        return file.readlines()
+    finally:
+        file.close()
+
+def main(args):
+    if args:
+        infile = args[0]
+        outfile = infile + '.html'
+        os.system('rst2html %s %s' % (infile, outfile))
+        outlines = readlines(outfile)
+        f = open(outfile, 'wt')
+        for line in outlines:
+            if line.strip() == '</head>':
+                f.write(styles)
+            f.write(line)
+        f.close()
+        os.system('open %s' % outfile)
+        return 0
+    else:
+        print >>sys.stderr, 'Usage: view restfile'
+        return 1
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))
