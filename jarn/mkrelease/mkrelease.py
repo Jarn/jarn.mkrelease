@@ -319,6 +319,9 @@ class ReleaseMaker(object):
             elif name in ('-h', '--help'):
                 self.msg_exit(help)
 
+        if self.uploadflags and '--sign' not in self.uploadflags:
+            self.uploadflags.append('--sign')
+
         if not self.distlocation:
             self.distlocation = self.get_location(self.distdefault)
 
