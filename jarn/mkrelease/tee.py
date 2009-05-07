@@ -34,11 +34,13 @@ def popen(cmd, echo=True, echo2=True):
     The echo argument may be a callable, in which case it is used
     as a tee filter.
     """
-    stream2 = not echo2 and PIPE or None
-    process = Popen(cmd, shell=True, stdout=PIPE, stderr=stream2)
     filter = echo
     if not callable(echo):
         filter = echo and On() or Off()
+    stream2 = None
+    if not echo2:
+        stream2 = PIPE
+    process = Popen(cmd, shell=True, stdout=PIPE, stderr=stream2)
     lines = tee(process, filter)
     return process.returncode, lines
 
