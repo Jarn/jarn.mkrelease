@@ -410,10 +410,9 @@ class ReleaseMaker(object):
             if not self.skipscp:
                 for location in self.distlocation:
                     if location in self.servers:
-                        serverflags = '--repository="%s"' % location
                         rc = run_upload('"%(python)s" setup.py sdist %(sdistflags)s '
-                                        'register %(serverflags)s '
-                                        'upload %(serverflags)s %(uploadflags)s' % locals())
+                                        'register --repository="%(location)s" '
+                                        'upload --repository="%(location)s" %(uploadflags)s' % locals())
                         if rc != 0:
                             self.err_exit('Upload failed')
                     else:
