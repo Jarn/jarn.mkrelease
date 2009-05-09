@@ -349,7 +349,6 @@ class ReleaseMaker(object):
             self.assert_checkout(directory)
             self.assert_package(directory)
             self.trunkurl = self.get_trunkurl(directory)
-
             os.chdir(directory)
 
             name = pipe('"%(python)s" setup.py --name' % locals())
