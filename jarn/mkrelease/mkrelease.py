@@ -12,6 +12,7 @@ python = "python2.6"
 distbase = ""
 distdefault = ""
 maxaliasdepth = 23
+pypiurl = 'http://pypi.python.org/pypi'
 
 version = "mkrelease 1.0"
 usage = "Try 'mkrelease --help' for more information."
@@ -144,9 +145,8 @@ class Defaults(object):
         self.servers = {}
         for server in get('distutils', 'index-servers', '').split():
             self.servers[server] = True
-            url = get(server, 'repository')
-            if url is not None:
-                self.servers[url] = True
+            url = get(server, 'repository', pypiurl)
+            self.servers[url] = True
 
 
 class ReleaseMaker(object):
