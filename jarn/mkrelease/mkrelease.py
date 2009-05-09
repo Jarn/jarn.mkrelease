@@ -349,12 +349,14 @@ class ReleaseMaker(object):
             self.assert_checkout(directory)
             self.assert_package(directory)
             self.trunkurl = self.get_trunkurl(directory)
-
             os.chdir(directory)
-            name = pipe('"%(python)s" setup.py --name' % locals())
-            version = pipe('"%(python)s" setup.py --version' % locals())
 
-            if not name or not version:
+            name = pipe('"%(python)s" setup.py --name' % locals())
+            if not name:
+                self.err_exit('Bad setup.py')
+
+            version = pipe('"%(python)s" setup.py --version' % locals())
+            if not version:
                 self.err_exit('Bad setup.py')
 
             print 'Releasing', name, version
@@ -381,10 +383,13 @@ class ReleaseMaker(object):
 
             self.assert_package(tempname)
             os.chdir(tempname)
-            name = pipe('"%(python)s" setup.py --name' % locals())
-            version = pipe('"%(python)s" setup.py --version' % locals())
 
-            if not name or not version:
+            name = pipe('"%(python)s" setup.py --name' % locals())
+            if not name:
+                self.err_exit('Bad setup.py')
+
+            version = pipe('"%(python)s" setup.py --version' % locals())
+            if not version:
                 self.err_exit('Bad setup.py')
 
             print 'Releasing', name, version
