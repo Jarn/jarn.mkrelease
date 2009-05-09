@@ -198,6 +198,15 @@ class ReleaseMaker(object):
         slash = location.find('/')
         return colon > 0 and (slash < 0 or slash > colon)
 
+    def assert_python(self, python):
+        """Fail if 'python' doesn't work or is of wrong version.
+        """
+        version = pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
+        if not version:
+            self.err_exit('Bad interpreter')
+        if version < '2.6':
+            self.err_exit('Python >= 2.6 required')
+
     def assert_checkout(self, dir):
         """Fail if 'dir' is not an SVN checkout.
         """
@@ -277,15 +286,6 @@ class ReleaseMaker(object):
                 sep = ''
             return [self.distbase + sep + location]
         return [location]
-
-    def assert_python(self, python):
-        """Fail if 'python' doesn't work or is of wrong version.
-        """
-        version = pipe('"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
-        if not version:
-            self.err_exit('Bad interpreter')
-        if version < '2.6':
-            self.err_exit('Python >= 2.6 required')
 
     def get_options(self):
         """Parse command line.
