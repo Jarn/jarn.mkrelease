@@ -11,8 +11,8 @@ from tee import popen, NotEmpty, NotBefore
 python = "python2.6"
 distbase = ""
 distdefault = ""
+pypiurl = "http://pypi.python.org/pypi"
 maxaliasdepth = 23
-pypiurl = 'http://pypi.python.org/pypi'
 
 version = "mkrelease 1.0"
 usage = "Try 'mkrelease --help' for more information."
