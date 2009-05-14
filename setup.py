@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
-version = '1.0'
+version = '2.0dev'
 
 setup(name='jarn.mkrelease',
       version=version,
-      description='Release sdist eggs.',
+      description='Release sdist eggs',
       long_description=open('README.txt').read() + '\n' +
                        open('CHANGES.txt').read(),
       classifiers=[
