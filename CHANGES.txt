@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0 - Unreleased
+1.0 - 2009-05-14
 ----------------
 
 - Print help and version to stdout, not stderr.
