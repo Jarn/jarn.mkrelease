@@ -116,6 +116,9 @@ mkrelease furthermore reads its own configuration files,
     public
     pypi
 
+(Note that ``pypi`` refers to the index server `pypi` as configured in
+``~/.pypirc``.)
+
 Armed with this configuration we can shorten example 3 to::
 
   $ mkrelease -d public src/my.package
