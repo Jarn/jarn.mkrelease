@@ -15,8 +15,8 @@ Here at Jarn, we have switched to zc.buildout and pinned egg versions for
 customer deployments. This means that for every update, we have to make
 proper egg releases of all modified packages.
 
-Turns out it's quite a bit of work to make a new egg available on a
-distribution server. After preparing a package for release (update
+Turns out it's quite a bit of work to put a new egg on a
+distribution server! After preparing a package for release (update
 version strings, etc.), we typically have to:
 
 1. Check in modified files.
@@ -75,31 +75,31 @@ Options
 Examples
 ========
 
-Release jarn.somepackage trunk, using version information from the
+Release my.package trunk, using version information from the
 package's ``setup.py``, and distribute it to the default location::
 
-  $ mkrelease https://svn.jarn.com/public/jarn.somepackage/trunk
+  $ mkrelease https://svn.jarn.com/public/my.package/trunk
 
-The same as 1, but the URL is taken from the SVN sandbox in ``src/jarn.somepackage``::
+The same as above, but the URL is taken from the SVN sandbox in ``src/my.package``::
 
-  $ mkrelease src/jarn.somepackage
+  $ mkrelease src/my.package
 
-Release jarn.somepackage and distribute it via scp to
+Release my.package and distribute it via scp to
 ``jarn.com:/var/dist/public``::
 
-  $ mkrelease -d jarn.com:/var/dist/public src/jarn.somepackage
+  $ mkrelease -d jarn.com:/var/dist/public src/my.package
 
-Release jarn.somepackage and upload it to PyPI::
+Release my.package and upload it to PyPI::
 
-  $ mkrelease -d pypi src/jarn.somepackage
+  $ mkrelease -d pypi src/my.package
 
 Configuration
 =============
 
-jarn.mkrelease reads available index servers from the distutils configuration
+mkrelease reads available index servers from the distutils configuration
 file ``~/.pypirc``. How this file must look is documented elsewhere_.
 
-jarn.mkrelease furthermore reads its own configuration files,
+mkrelease furthermore reads its own configuration files,
 ``/etc/mkrelease`` and ``~/.mkrelease``. Here's an example::
 
   [defaults]
@@ -116,16 +116,13 @@ jarn.mkrelease furthermore reads its own configuration files,
     public
     pypi
 
-(Note that ``pypi`` refers to the index server `pypi` as configured in
-``~/.pypirc``.)
-
 Armed with this configuration we can shorten example 3 to::
 
-  $ mkrelease -d public src/jarn.somepackage
+  $ mkrelease -d public src/my.package
 
 And, because ``public`` is the default location, we can omit ``-d`` entirely::
 
-  $ mkrelease src/jarn.somepackage
+  $ mkrelease src/my.package
 
 .. _elsewhere: http://docs.python.org/distutils/packageindex.html#the-pypirc-file
 
@@ -135,12 +132,12 @@ Working with scp
 The simplest distribution location is a server directory shared through
 Apache. Releasing eggs means scp'ing them to the server::
 
-  $ mkrelease -d jarn.com:/var/dist/public src/jarn.somepackage
+  $ mkrelease -d jarn.com:/var/dist/public src/my.package
 
 We have a distribution point for every project, so customer A does not
 see customer B's releases::
 
-  $ mkrelease -d jarn.com:/var/dist/customerB src/jarn.somepackage
+  $ mkrelease -d jarn.com:/var/dist/customerB src/my.package
 
 Typing the full destination every time is tedious, even setting up an alias
 for each and every customer is, so we configure distbase instead::
@@ -158,8 +155,8 @@ for each and every customer is, so we configure distbase instead::
 The distbase is prepended if an scp destination does not contain a
 host part. We can now write::
 
-  $ mkrelease -d public src/jarn.somepackage
-  $ mkrelease -d customerB src/jarn.somepackage
+  $ mkrelease -d public src/my.package
+  $ mkrelease -d customerB src/my.package
 
 Working with index servers
 ==========================
@@ -183,7 +180,7 @@ In the Plone world, it is common practice to upload packages to plone.org
 
 We can now type::
 
-  $ mkrelease -d ploneorg -d pypi src/jarn.somepackage
+  $ mkrelease -d ploneorg -d pypi src/my.package
 
 Next, we define an alias in ``~/.mkrelease``::
 
@@ -197,22 +194,22 @@ Next, we define an alias in ``~/.mkrelease``::
 
 Which allows us to write::
 
-  $ mkrelease -d plone src/jarn.somepackage
+  $ mkrelease -d plone src/my.package
 
 Releasing a tag
 ===============
 
-Release jarn.somepackage from an existing tag::
+Release my.package from an existing tag::
 
-  $ mkrelease -T https://svn.jarn.com/public/jarn.somepackage/tags/1.0
+  $ mkrelease -T https://svn.jarn.com/public/my.package/tags/1.0
 
 Using GnuPG
 ===========
 
-Release jarn.somepackage to PyPI, signing the archive with PGP (the ``gpg``
-command must be available on the system PATH)::
+Release my.package to PyPI and sign the archive with PGP (the ``gpg``
+command must be on the system PATH)::
 
-  $ mkrelease -d pypi -s -i fred@bedrock.com src/jarn.somepackage
+  $ mkrelease -d pypi -s -i fred@bedrock.com src/my.package
 
 Requirements
 ============
@@ -223,7 +220,7 @@ The following commands must be available on the system PATH:
 
 * scp
 
-* python2.6
+* python2.6 (alternatively, configure the interpeter in ``~/.mkrelease``)
 
 Limitations
 ===========
