@@ -40,31 +40,37 @@ Usage
 Options
 =======
 
--C
+``-C, --skip-checkin``
     Do not checkin modified files from the sandbox.
 
--T
+``-T, --skip-tag``
     Do not tag the release in subversion.
 
--S
+``-S, --skip-scp``
     Do not scp the release to dist-location.
 
--D
+``-D, --dry-run``
     Dry-run; equivalent to ``-CTS``.
 
--K
+``-K, --keep-temp``
     Keep the temporary build directory.
 
--s
+``-s, --sign``
     Sign the release with GnuPG.
 
--i identity
+``-i identity, --identity=identity``
     The GnuPG identity to sign with.
 
--d dist-location
+``-d dist-location, --dist-location=dist-location``
     An scp destination specification, or an index server
     configured in ``~/.pypirc``, or an alias name for either.
     This option may be specified more than once.
+
+``-h, --help``
+    Print a help message and exit.
+
+``-v, --version``
+    Print the version string and exit.
 
 ``svn-url``
     A URL with protocol svn, svn+ssh, http, https, or file.
