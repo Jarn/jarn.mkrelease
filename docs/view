@@ -2,6 +2,9 @@
 
 import os
 import sys
+import webbrowser
+
+from os.path import abspath, isfile
 
 styles = """
 <link rel="stylesheet" href="http://www.python.org/css/pypi.css" type="text/css"/>
@@ -23,23 +26,34 @@ def readlines(filename, mode='rt'):
     finally:
         file.close()
 
+def apply_styles(outfile):
+    outlines = readlines(outfile)
+    f = open(outfile, 'wt')
+    for line in outlines:
+        if line.strip() == '</head>':
+            f.write(styles)
+        f.write(line)
+    f.close()
+
 def main(args):
-    if args:
-        infile = args[0]
-        outfile = infile + '.html'
-        os.system('rst2html %s %s' % (infile, outfile))
-        outlines = readlines(outfile)
-        f = open(outfile, 'wt')
-        for line in outlines:
-            if line.strip() == '</head>':
-                f.write(styles)
-            f.write(line)
-        f.close()
-        os.system('open %s' % outfile)
-        return 0
-    else:
-        print >>sys.stderr, 'Usage: view restfile'
+    if len(args) > 1:
+        print >>sys.stderr, 'Too many arguments'
         return 1
+    if args:
+        infile = abspath(args[0])
+        outfile = abspath('.'+args[0]+'.html')
+        rc = os.system('rst2html %s %s' % (infile, outfile))
+    else:
+        if not isfile('setup.py'):
+            print >>sys.stderr, 'No setup.py found'
+            return 1
+        outfile = abspath('.long-description.html')
+        rc = os.system('%s setup.py --long-description | rst2html > %s' % (sys.executable, outfile))
+    if rc == 0:
+        apply_styles(outfile)
+        webbrowser.open('file://'+outfile)
+    return rc
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
+
