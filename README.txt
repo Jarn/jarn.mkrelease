@@ -67,7 +67,7 @@ Options
     This option may be specified more than once.
 
 ``-h, --help``
-    Print a help message and exit.
+    Print the help message and exit.
 
 ``-v, --version``
     Print the version string and exit.
