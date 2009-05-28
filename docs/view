@@ -4,7 +4,7 @@ import os
 import sys
 import webbrowser
 
-from os.path import abspath, isfile
+from os.path import abspath, split, join, isdir, isfile
 
 styles = """
 <link rel="stylesheet" href="http://www.python.org/css/pypi.css" type="text/css"/>
@@ -35,23 +35,42 @@ def apply_styles(outfile):
         f.write(line)
     f.close()
 
+def view_long_description(dirname):
+    os.chdir(dirname)
+    if not isfile('setup.py'):
+        print >>sys.stderr, 'No setup.py found'
+        return 1, ''
+    outfile = abspath('.long-description.html')
+    rc = os.system('%s setup.py --long-description | rst2html > %s' % (sys.executable, outfile))
+    return rc, outfile
+
+def view_file(filename):
+    infile = abspath(filename)
+    dirname, basename = split(filename)
+    outfile = '.%s.html' % basename
+    if dirname:
+        outfile = join(dirname, outfile)
+    outfile = abspath(outfile)
+    rc = os.system('rst2html %s %s' % (infile, outfile))
+    return rc, outfile
+
 def main(args):
-    if len(args) > 1:
-        print >>sys.stderr, 'Too many arguments'
-        return 1
     if args:
-        infile = abspath(args[0])
-        outfile = abspath('.'+args[0]+'.html')
-        rc = os.system('rst2html %s %s' % (infile, outfile))
+        arg = args[0]
     else:
-        if not isfile('setup.py'):
-            print >>sys.stderr, 'No setup.py found'
-            return 1
-        outfile = abspath('.long-description.html')
-        rc = os.system('%s setup.py --long-description | rst2html > %s' % (sys.executable, outfile))
+        arg = os.curdir
+
+    if isdir(arg):
+        rc, outfile = view_long_description(arg)
+    elif isfile(arg):
+        rc, outfile = view_file(arg)
+    else:
+        print >>sys.stderr, 'No such file or directory: %s' % arg
+        return 1
+
     if rc == 0:
         apply_styles(outfile)
-        webbrowser.open('file://'+outfile)
+        webbrowser.open('file://%s' % outfile)
     return rc
 
 if __name__ == '__main__':
