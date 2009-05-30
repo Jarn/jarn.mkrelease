@@ -4,6 +4,8 @@ Changelog
 2.0dev - Unreleased
 -------------------
 
+- Document long options.
+  [stefan]
 
 1.0 - 2009-05-14
 ----------------

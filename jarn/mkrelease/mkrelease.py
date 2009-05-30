@@ -19,39 +19,44 @@ usage = "Try 'mkrelease --help' for more information."
 help = """\
 Usage: mkrelease [options] [svn-url|svn-sandbox]
 
-Release an sdist egg.
+Release sdist eggs
 
 Options:
-  -C                Do not checkin modified files from the sandbox.
-  -T                Do not tag the release in subversion.
-  -S                Do not scp the release to dist-location.
-  -D                Dry-run; equivalent to -CTS.
-  -K                Keep the temporary build directory.
+  -C, --skip-checkin  Do not checkin modified files from the sandbox.
+  -T, --skip-tag      Do not tag the release in subversion.
+  -S, --skip-scp      Do not scp the release to dist-location.
+  -D, --dry-run       Dry-run; equivalent to -CTS.
+  -K, --keep-temp     Keep the temporary build directory.
 
-  -s                Sign the release with GnuPG.
-  -i identity       The GnuPG identity to sign with.
+  -s, --sign          Sign the release with GnuPG.
+  -i identity, --identity=identity
+                      The GnuPG identity to sign with.
 
-  -d dist-location  An scp destination specification, or an index server
-                    configured in ~/.pypirc, or an alias name for either.
-                    This option may be specified more than once.
+  -d dist-location, --dist-location=dist-location
+                      An scp destination specification, or an index server
+                      configured in ~/.pypirc, or an alias name for either.
+                      This option may be specified more than once.
 
-  svn-url           A URL with protocol svn, svn+ssh, http, https, or file.
-  svn-sandbox       A local directory; defaults to the current working
-                    directory.
+  -h, --help          Print this help message and exit.
+  -v, --version       Print the version string and exit.
+
+  svn-url             A URL with protocol svn, svn+ssh, http, https, or file.
+  svn-sandbox         A local directory; defaults to the current working
+                      directory.
 
 Files:
-  /etc/mkrelease    Global configuration file.
-  ~/.mkrelease      Per user configuration file.
+  /etc/mkrelease      Global configuration file.
+  ~/.mkrelease        Per user configuration file.
 
   The configuration file consists of sections, led by a "[section]" header
   and followed by "name = value" entries.
 
   The [defaults] section has the following options:
 
-  python            The Python executable used; defaults to %(python)s.
-  distbase          The value prepended if dist-location does not contain a
-                    host part. Applies to scp dist-locations only.
-  distdefault       The default value for dist-location.
+  python              The Python executable used; defaults to %(python)s.
+  distbase            The value prepended if dist-location does not contain a
+                      host part. Applies to scp dist-locations only.
+  distdefault         The default value for dist-location.
 
   The [aliases] section may be used to define short names for (one or more)
   dist-locations.
