@@ -7,6 +7,12 @@ Unreleased
 - Document long options.
   [stefan]
 
+- The doc viewer now displays the long description by default.
+  [stefan]
+
+- Print a "Tagging ..." line before tagging.
+  [stefan]
+
 1.0 - 2009-05-14
 ----------------
 

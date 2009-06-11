@@ -402,6 +402,7 @@ class ReleaseMaker(object):
             if not self.skiptag:
                 tagurl = self.get_tagurl(trunkurl, version)
                 self.assert_tagurl(tagurl)
+                print 'Tagging', name, version
                 rc = system('svn cp -m"Tagged %(name)s %(version)s." '
                             '"%(trunkurl)s" "%(tagurl)s"' % locals())
                 if rc != 0:
