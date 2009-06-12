@@ -60,14 +60,14 @@ class Off(object):
 
 
 class NotEmpty(object):
-    """A tee filter supressing empty lines."""
+    """A tee filter suppressing empty lines."""
 
     def __call__(self, line):
         return bool(line)
 
 
 class NotBefore(object):
-    """A tee filter supressing output before 'startline'."""
+    """A tee filter suppressing output before 'startline'."""
 
     def __init__(self, startline):
         self.echo = False
@@ -81,7 +81,7 @@ class NotBefore(object):
 
 
 class NotAfter(object):
-    """A tee filter supressing output after 'stopline'."""
+    """A tee filter suppressing output after 'stopline'."""
 
     def __init__(self, stopline):
         self.echo = True
