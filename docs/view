@@ -60,6 +60,10 @@ def main(args):
     else:
         arg = os.curdir
 
+    if arg in ('-h', '--help'):
+        print 'Usage: view [eggdir|rstfile]'
+        return 0
+
     if isdir(arg):
         rc, outfile = view_long_description(arg)
     elif isfile(arg):
