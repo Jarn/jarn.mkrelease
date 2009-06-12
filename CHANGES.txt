@@ -1,13 +1,10 @@
 Changelog
 =========
 
-Unreleased
-----------
+1.0.2 - Unreleased
+------------------
 
-- Document long options.
-  [stefan]
-
-- The doc viewer now displays the long description by default.
+- Documented long options.
   [stefan]
 
 - Print a "Tagging ..." line before tagging.
