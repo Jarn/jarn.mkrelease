@@ -1,5 +1,6 @@
+import sys
+
 from subprocess import Popen, PIPE
-from sys import stdout
 
 
 def tee(process, filter):
@@ -20,7 +21,7 @@ def tee(process, filter):
             break
         stripped_line = line.rstrip()
         if filter(stripped_line):
-            stdout.write(line)
+            sys.stdout.write(line)
         lines.append(stripped_line)
     return lines
 
