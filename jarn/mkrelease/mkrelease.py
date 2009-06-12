@@ -14,7 +14,7 @@ distdefault = ""
 pypiurl = "http://pypi.python.org/pypi"
 maxaliasdepth = 23
 
-version = "mkrelease 1.0"
+version = "mkrelease 1.0.2"
 usage = "Try 'mkrelease --help' for more information."
 help = """\
 Usage: mkrelease [options] [svn-url|svn-sandbox]
