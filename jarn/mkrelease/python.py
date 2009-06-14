@@ -14,8 +14,8 @@ class WithPython(object):
 class Python(WithProcess, WithPython):
     """A Python interpreter path that can test itself."""
 
-    def __init__(self, defaults):
-        WithProcess.__init__(self, None)
+    def __init__(self, defaults, process=None):
+        WithProcess.__init__(self, process)
         WithPython.__init__(self, defaults.python)
 
     def __str__(self):

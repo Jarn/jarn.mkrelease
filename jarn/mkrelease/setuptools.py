@@ -11,8 +11,8 @@ from exit import err_exit
 class Setuptools(WithProcess, WithPython, WithDirStack):
     """Interface to setuptools functions."""
 
-    def __init__(self, defaults):
-        WithProcess.__init__(self, None)
+    def __init__(self, defaults, process=None):
+        WithProcess.__init__(self, process)
         WithPython.__init__(self, defaults.python)
         WithDirStack.__init__(self)
 
