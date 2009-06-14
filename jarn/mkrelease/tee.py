@@ -1,5 +1,6 @@
+import sys
+
 from subprocess import Popen, PIPE
-from sys import stdout
 
 
 def tee(process, filter):
@@ -20,7 +21,7 @@ def tee(process, filter):
             break
         stripped_line = line.rstrip()
         if filter(stripped_line):
-            stdout.write(line)
+            sys.stdout.write(line)
         lines.append(stripped_line)
     return lines
 
@@ -60,14 +61,14 @@ class Off(object):
 
 
 class NotEmpty(object):
-    """A tee filter supressing empty lines."""
+    """A tee filter suppressing empty lines."""
 
     def __call__(self, line):
         return bool(line)
 
 
 class NotBefore(object):
-    """A tee filter supressing output before 'startline'."""
+    """A tee filter suppressing output before 'startline'."""
 
     def __init__(self, startline):
         self.echo = False
@@ -81,16 +82,36 @@ class NotBefore(object):
 
 
 class NotAfter(object):
-    """A tee filter supressing output after 'stopline'."""
+    """A tee filter suppressing output after 'stopline'."""
 
     def __init__(self, stopline):
         self.echo = True
         self.stopline = stopline
 
     def __call__(self, line):
-        echo = self.echo
         if self.echo:
             if line == self.stopline:
                 self.echo = False
-        return echo
+                return True
+        return self.echo
+
+
+class FromTo(object):
+    """A tee filter suppressing output before 'startline' and
+     after 'stopline' respectively."""
+
+    def __init__(self, startline, stopline):
+        self.echo = False
+        self.startline = startline
+        self.stopline = stopline
+
+    def __call__(self, line):
+        if not self.echo:
+            if line == self.startline:
+                self.echo = True
+        else:
+            if line == self.stopline:
+                self.echo = False
+                return True
+        return self.echo
 
