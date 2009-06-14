@@ -19,7 +19,7 @@ distdefault = ""
 pypiurl = "http://pypi.python.org/pypi"
 maxaliasdepth = 23
 
-version = "mkrelease 2.0a1"
+version = "mkrelease 2.0a2"
 usage = "Try 'mkrelease --help' for more information."
 help = """\
 Usage: mkrelease [options] [scm-url|scm-sandbox]
