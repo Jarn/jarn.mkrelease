@@ -226,7 +226,8 @@ class Mercurial(DSCM):
         if rc != 0:
             err_exit('Commit failed')
         if push and self.is_remote_sandbox(dir):
-            rc = self.process.system('hg push')
+            rc = self.process.system(
+                'hg push')
             if rc != 0:
                 err_exit('Push failed')
         return rc
@@ -259,7 +260,8 @@ class Mercurial(DSCM):
         if rc != 0:
             err_exit('Tag failed')
         if push and self.is_remote_sandbox(dir):
-            rc = self.process.system('hg push')
+            rc = self.process.system(
+                'hg push')
             if rc != 0:
                 err_exit('Push failed')
         return rc
@@ -324,7 +326,8 @@ class Git(DSCM):
         if rc not in (0, 1):
             err_exit('Commit failed')
         if push and self.is_remote_sandbox(dir):
-            rc = self.process.system('git push --all origin')
+            rc = self.process.system(
+                'git push --all origin')
             if rc != 0:
                 err_exit('Push failed')
         return rc
@@ -357,7 +360,8 @@ class Git(DSCM):
         if rc != 0:
             err_exit('Tag failed')
         if push and self.is_remote_sandbox(dir):
-            rc = self.process.system('git push origin tag "%(tagid)s"' % locals())
+            rc = self.process.system(
+                'git push origin tag "%(tagid)s"' % locals())
             if rc != 0:
                 err_exit('Push failed')
         return rc
