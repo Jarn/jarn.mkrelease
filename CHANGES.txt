@@ -4,7 +4,13 @@ Changelog
 2.0dev - Unreleased
 -------------------
 
-- Document long options.
+- Added support for Mercurial and Git.
+  [stefan]
+
+- Documented long options.
+  [stefan]
+
+- Print a "Tagging ..." line before tagging.
   [stefan]
 
 1.0 - 2009-05-14
