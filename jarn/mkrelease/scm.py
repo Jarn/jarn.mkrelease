@@ -75,7 +75,7 @@ class DSCM(SCM):
         return True
 
     def is_remote_sandbox(self, dir):
-        return bool(self.get_url_from_sandbox(dir)) # XXX This may exit
+        return bool(self.get_url_from_sandbox(dir))
 
     def get_tag_id(self, dir, version):
         return version
