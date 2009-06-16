@@ -274,7 +274,7 @@ class Git(DSCM):
     @chdir
     def is_dirty_sandbox(self, dir):
         rc, lines = self.process.popen(
-            'git status -a' % locals(), echo=False)
+            'git status -a' % locals(), echo=False) # FIXME
         return rc == 0
 
     @chdir
@@ -306,7 +306,7 @@ class Git(DSCM):
     def update_sandbox(self, dir):
         if self.is_remote_sandbox(dir):
             rc = self.process.system(
-                'git pull')
+                'git pull origin')
             if rc != 0:
                 err_exit('Update failed')
         return 0
@@ -319,7 +319,7 @@ class Git(DSCM):
             err_exit('Commit failed')
         if push and self.is_remote_sandbox(dir):
             rc = self.process.system(
-                'git push --all origin')
+                'git push origin master')
             if rc != 0:
                 err_exit('Push failed')
         return rc
