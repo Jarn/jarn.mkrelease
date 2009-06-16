@@ -4,17 +4,16 @@ import tee
 from os.path import abspath, join, isdir, isfile
 from process import WithProcess
 from python import WithPython
-from dirstack import WithDirStack, chdir
+from dirstack import chdir
 from exit import err_exit
 
 
-class Setuptools(WithProcess, WithPython, WithDirStack):
+class Setuptools(WithProcess, WithPython):
     """Interface to setuptools functions."""
 
     def __init__(self, defaults, process=None):
         WithProcess.__init__(self, process)
         WithPython.__init__(self, defaults.python)
-        WithDirStack.__init__(self)
 
     def is_valid_package(self, dir):
         return isfile(join(dir, 'setup.py'))

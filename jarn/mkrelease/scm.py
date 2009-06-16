@@ -1,6 +1,6 @@
 from os.path import join, isdir
 from process import WithProcess
-from dirstack import WithDirStack, chdir
+from dirstack import chdir
 from exit import err_exit
 
 
@@ -24,7 +24,7 @@ class SCM(WithProcess):
             err_exit('Not a %(name)s sandbox: %(dir)s' % locals())
 
     def is_remote_sandbox(self, dir):
-        raise NotImplementedError
+        return True
 
     def is_dirty_sandbox(self, dir):
         raise NotImplementedError
@@ -66,21 +66,15 @@ class SCM(WithProcess):
         raise NotImplementedError
 
 
-class DSCM(SCM, WithDirStack):
+class DSCM(SCM):
     """Interface to distributed source code management systems."""
 
     name = ''
-
-    def __init__(self, process=None):
-        SCM.__init__(self, process)
-        WithDirStack.__init__(self)
 
     def is_distributed(self):
         return True
 
     def is_remote_sandbox(self, dir):
-        if not self.is_valid_sandbox(dir):
-            return False
         return bool(self.get_url_from_sandbox(dir)) # XXX This may exit
 
     def get_tag_id(self, dir, version):
@@ -97,9 +91,6 @@ class Subversion(SCM):
                 url.startswith('http://') or
                 url.startswith('https://') or
                 url.startswith('file://'))
-
-    def is_remote_sandbox(self, dir):
-        return self.is_valid_sandbox(dir)
 
     def is_dirty_sandbox(self, dir):
         rc, lines = self.process.popen(
@@ -206,6 +197,7 @@ class Mercurial(DSCM):
                 url = lines[0]
             else:
                 return ''
+        # hg show always returns 0 so we should never get here
         if not url:
             err_exit('Failed to get URL from %(dir)s' % locals())
         return url

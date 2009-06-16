@@ -23,30 +23,17 @@ class DirStack(object):
             os.chdir(self.stack.pop())
 
 
-class WithDirStack(object):
-    """Inherit from this to gain 'pushdir' and 'popdir' methods."""
-
-    def __init__(self):
-        self.dirstack = DirStack()
-
-    def pushdir(self, dir):
-        self.dirstack.push(dir)
-
-    def popdir(self):
-        self.dirstack.pop()
-
-
 def chdir(func):
     """Decorator executing 'func' in directory 'dir'.
     """
     def wrapped_func(self, dir, *args, **kw):
-        assert isinstance(self, WithDirStack)
-
-        self.pushdir(dir)
+        dirstack = DirStack()
+        if dir:
+            dirstack.push(dir)
         try:
             return func(self, dir, *args, **kw)
         finally:
-            self.popdir()
+            dirstack.pop()
 
     wrapped_func.__name__ = func.__name__
     wrapped_func.__dict__ = func.__dict__
