@@ -5,8 +5,8 @@ from os.path import join, isdir
 
 from jarn.mkrelease.scm import Mercurial
 
-from jarn.mkrelease.process import Process
 from jarn.mkrelease.dirstack import chdir
+from jarn.mkrelease.process import Process
 
 from jarn.mkrelease.testing import MercurialSetup
 from jarn.mkrelease.testing import TestProcess
@@ -132,7 +132,7 @@ class DirtySandboxTests(MercurialSetup):
 
     def testModifiedFile(self):
         scm = Mercurial()
-        self.modify()
+        self.modify(self.packagedir)
         self.assertEqual(scm.is_dirty_sandbox(self.packagedir), True)
 
     def testRemovedFile(self):
@@ -160,7 +160,7 @@ class DirtySandboxTests(MercurialSetup):
     @quiet
     def testCheckRaises(self):
         scm = Mercurial()
-        self.modify()
+        self.modify(self.packagedir)
         self.assertRaises(SystemExit, scm.check_dirty_sandbox, self.packagedir)
 
 
@@ -172,7 +172,7 @@ class UncleanSandboxTests(DirtySandboxTests):
 
     def testModifiedFile(self):
         scm = Mercurial()
-        self.modify()
+        self.modify(self.packagedir)
         self.assertEqual(scm.is_unclean_sandbox(self.packagedir), True)
 
     def testRemovedFile(self):
@@ -200,7 +200,7 @@ class UncleanSandboxTests(DirtySandboxTests):
     @quiet
     def testCheckRaises(self):
         scm = Mercurial()
-        self.modify()
+        self.modify(self.packagedir)
         self.assertRaises(SystemExit, scm.check_unclean_sandbox, self.packagedir)
 
 
@@ -218,7 +218,7 @@ class UpdateSandboxTests(MercurialSetup):
     def testUpdateLocallyModifiedSandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.clone()
-        self.modify()
+        self.modify(self.packagedir)
         self.assertEqual(scm.update_sandbox(self.clonedir), 0)
 
     # TODO: Test more funky changes, conflicts, etc.
@@ -245,11 +245,6 @@ class UpdateSandboxTests(MercurialSetup):
 class CheckinSandboxTests(MercurialSetup):
 
     @chdir
-    def verify(self, dir):
-        line = readlines('setup.py')[-1]
-        self.assertEqual(line, '#foo')
-
-    @chdir
     def update(self, dir):
         process = Process(quiet=True)
         process.system('hg update')
@@ -260,7 +255,7 @@ class CheckinSandboxTests(MercurialSetup):
 
     def testCheckinDirtySandbox(self):
         scm = Mercurial(Process(quiet=True))
-        self.modify()
+        self.modify(self.packagedir)
         self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '2.6', False), 0)
 
     def testCheckinAndPushCleanLocalSandbox(self):
@@ -269,7 +264,7 @@ class CheckinSandboxTests(MercurialSetup):
 
     def testCheckinAndPushDirtyLocalSandbox(self):
         scm = Mercurial(Process(quiet=True))
-        self.modify()
+        self.modify(self.packagedir)
         self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '2.6', True), 0)
 
     def testCheckinAndPushCleanRemoteSandbox(self):
