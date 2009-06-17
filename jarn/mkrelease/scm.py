@@ -16,12 +16,7 @@ class SCM(WithProcess):
         raise NotImplementedError
 
     def is_valid_sandbox(self, dir):
-        return isdir(join(dir, '.%s' % self.name))
-
-    def check_valid_sandbox(self, dir):
-        if not self.is_valid_sandbox(dir):
-            name = self.__class__.__name__
-            err_exit('Not a %(name)s sandbox: %(dir)s' % locals())
+        return isdir(join(dir, '.'+self.name))
 
     def is_remote_sandbox(self, dir):
         return True
@@ -29,16 +24,8 @@ class SCM(WithProcess):
     def is_dirty_sandbox(self, dir):
         raise NotImplementedError
 
-    def check_dirty_sandbox(self, dir):
-        if self.is_dirty_sandbox(dir):
-            err_exit('Uncommitted changes in %(dir)s' % locals())
-
     def is_unclean_sandbox(self, dir):
         raise NotImplementedError
-
-    def check_unclean_sandbox(self, dir):
-        if self.is_unclean_sandbox(dir):
-            err_exit('Unclean sandbox: %(dir)s' % locals())
 
     def get_url_from_sandbox(self, dir):
         raise NotImplementedError
@@ -58,12 +45,25 @@ class SCM(WithProcess):
     def tag_exists(self, dir, tagid):
         raise NotImplementedError
 
+    def create_tag(self, dir, tagid, name, version, push):
+        raise NotImplementedError
+
+    def check_valid_sandbox(self, dir):
+        if not self.is_valid_sandbox(dir):
+            name = self.__class__.__name__
+            err_exit('Not a %(name)s sandbox: %(dir)s' % locals())
+
+    def check_dirty_sandbox(self, dir):
+        if self.is_dirty_sandbox(dir):
+            err_exit('Uncommitted changes in %(dir)s' % locals())
+
+    def check_unclean_sandbox(self, dir):
+        if self.is_unclean_sandbox(dir):
+            err_exit('Unclean sandbox: %(dir)s' % locals())
+
     def check_tag_exists(self, dir, tagid):
         if self.tag_exists(dir, tagid):
             err_exit('Tag exists: %(tagid)s' % locals())
-
-    def create_tag(self, dir, tagid, name, version, push):
-        raise NotImplementedError
 
 
 class DSCM(SCM):
@@ -377,18 +377,18 @@ class SCMContainer(object):
         err_exit('Unknown SCM type: %(type)s' % locals())
 
     def get_scm_from_sandbox(self, dir):
-        match = []
+        matches = []
         for scm in self.scms:
             if scm().is_valid_sandbox(dir):
-                match.append(scm)
-        if not match:
+                matches.append(scm)
+        if not matches:
             err_exit('Unknown sandbox: %(dir)s' % locals())
-        if len(match) == 1:
-            return match[0]()
-        if len(match) == 2:
-            types = '%s or %s' % tuple([x.name for x in match])
-        elif len(match) == 3:
-            types = '%s, %s, or %s' % tuple([x.name for x in match])
+        if len(matches) == 1:
+            return matches[0]()
+        if len(matches) == 2:
+            types = '%s or %s' % tuple([x.name for x in matches])
+        elif len(matches) == 3:
+            types = '%s, %s, or %s' % tuple([x.name for x in matches])
         err_exit('Failed to guess SCM type (may be %(types)s): %(dir)s' % locals())
 
     def get_scm_from_url(self, url):
