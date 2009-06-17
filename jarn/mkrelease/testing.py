@@ -62,16 +62,20 @@ class PackageSetup(JailSetup):
     def clone(self):
         pass
 
-    def modify(self, dir=None):
+    def destroy(self, dir=None, name=None):
         if dir is None:
             dir = self.packagedir
+        if name is None:
+            name = self.name
+        if name:
+            shutil.rmtree(join(dir, '.'+name))
+
+    def modify(self, dir):
         appendlines(join(dir, 'setup.py'), ['#foo'])
 
-    def destroy(self, dir=None):
-        if dir is None:
-            dir = self.packagedir
-        if self.name:
-            shutil.rmtree(join(dir, '.'+self.name))
+    def verify(self, dir):
+        line = readlines(join(dir, 'setup.py'))[-1]
+        self.assertEqual(line, '#foo')
 
 
 class SubversionSetup(PackageSetup):
@@ -103,6 +107,11 @@ class GitSetup(PackageSetup):
         process = Process(quiet=True)
         process.system('git clone testpackage testclone')
         self.clonedir = join(self.tempdir, 'testclone')
+        # Park the server on a branch because "Updating the currently checked
+        # out branch may cause confusion..."
+        self.dirstack.push('testpackage')
+        process.system('git checkout -b parking')
+        self.dirstack.pop()
 
 
 class TestProcessError(Exception):
