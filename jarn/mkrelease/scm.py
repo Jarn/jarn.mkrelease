@@ -274,13 +274,13 @@ class Git(DSCM):
     @chdir
     def is_dirty_sandbox(self, dir):
         rc, lines = self.process.popen(
-            'git status -a' % locals(), echo=False) # FIXME
+            'git status -a' % locals(), echo=False)
         return rc == 0
 
     @chdir
     def is_unclean_sandbox(self, dir):
         rc, lines = self.process.popen(
-            'git status -a' % locals(), echo=False) # FIXME
+            'git status -a' % locals(), echo=False)
         return rc == 0
 
     @chdir
@@ -290,14 +290,14 @@ class Git(DSCM):
             'git config -l', echo=False)
         if rc == 0 and lines:
             for line in lines:
-                key_value = line.split('=', 1)
-                if len(key_value) == 2:
-                    key, value = key_value
+                if line:
+                    key, value = line.split('=', 1)
                     if key == 'remote.origin.url':
                         url = value
                         break
             if not url:
                 return ''
+        # git config -l always returns 0 so we should never get here
         if not url:
             err_exit('Failed to get URL from %(dir)s' % locals())
         return url
@@ -317,9 +317,10 @@ class Git(DSCM):
             'git commit -a -m"Prepare %(name)s %(version)s."' % locals())
         if rc not in (0, 1):
             err_exit('Commit failed')
+        rc = 0
         if push and self.is_remote_sandbox(dir):
             rc = self.process.system(
-                'git push origin master')
+                'git push origin')
             if rc != 0:
                 err_exit('Push failed')
         return rc
