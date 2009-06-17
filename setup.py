@@ -19,6 +19,7 @@ setup(name='jarn.mkrelease',
       namespace_packages=['jarn'],
       include_package_data=True,
       zip_safe=False,
+      test_suite='jarn.mkrelease.tests',
       install_requires=[
           'setuptools',
           'setuptools_hg',
