@@ -8,7 +8,7 @@ import StringIO
 from os.path import realpath, join, dirname, isdir
 
 from jarn.mkrelease.process import Process
-from jarn.mkrelease.dirstack import DirStack
+from jarn.mkrelease.dirstack import DirStack, chdir
 
 
 class JailSetup(unittest.TestCase):
@@ -44,10 +44,8 @@ class JailSetup(unittest.TestCase):
 class PackageSetup(JailSetup):
     """Make sure the jail contains a testpackage."""
 
-    name = ''
     source = None
     packagedir = None
-    clonedir = None
 
     def setUp(self):
         JailSetup.setUp(self)
@@ -58,6 +56,13 @@ class PackageSetup(JailSetup):
         except:
             self.cleanUp()
             raise
+
+
+class PackageAPI(PackageSetup):
+    """Provide API for manipulating the sandbox."""
+
+    name = ''
+    clonedir = None
 
     def clone(self):
         pass
@@ -77,15 +82,32 @@ class PackageSetup(JailSetup):
         line = readlines(join(dir, 'setup.py'))[-1]
         self.assertEqual(line, '#foo')
 
+    def delete(self, dir):
+        os.remove(join(dir, 'setup.py'))
 
-class SubversionSetup(PackageSetup):
+    def remove(self, dir):
+        pass
+
+    def update(self, dir):
+        pass
+
+    def tag(self, dir, tagid):
+        pass
+
+
+class SubversionSetup(PackageAPI):
     """Set up a Subversion sandbox."""
 
     name = 'svn'
     source = 'testpackage.svn'
 
+    @chdir
+    def remove(self, dir):
+        process = Process(quiet=True)
+        process.system('svn remove setup.py')
 
-class MercurialSetup(PackageSetup):
+
+class MercurialSetup(PackageAPI):
     """Set up a Mercurial sandbox."""
 
     name = 'hg'
@@ -96,8 +118,23 @@ class MercurialSetup(PackageSetup):
         process.system('hg clone testpackage testclone')
         self.clonedir = join(self.tempdir, 'testclone')
 
+    @chdir
+    def remove(self, dir):
+        process = Process(quiet=True)
+        process.system('hg remove setup.py')
 
-class GitSetup(PackageSetup):
+    @chdir
+    def update(self, dir):
+        process = Process(quiet=True)
+        process.system('hg update')
+
+    @chdir
+    def tag(self, dir, tagid):
+        process = Process(quiet=True)
+        process.system('hg tag %s' % tagid)
+
+
+class GitSetup(PackageAPI):
     """Set up a Git sandbox."""
 
     name = 'git'
@@ -112,6 +149,21 @@ class GitSetup(PackageSetup):
         self.dirstack.push('testpackage')
         process.system('git checkout -b parking')
         self.dirstack.pop()
+
+    @chdir
+    def remove(self, dir):
+        process = Process(quiet=True)
+        process.system('git rm setup.py')
+
+    @chdir
+    def update(self, dir):
+        process = Process(quiet=True)
+        process.system('git checkout master')
+
+    @chdir
+    def tag(self, dir, tagid):
+        process = Process(quiet=True)
+        process.system('git tag %s' % tagid)
 
 
 class TestProcessError(Exception):

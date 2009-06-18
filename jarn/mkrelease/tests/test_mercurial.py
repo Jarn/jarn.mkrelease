@@ -5,7 +5,6 @@ from os.path import join, isdir
 
 from jarn.mkrelease.scm import Mercurial
 
-from jarn.mkrelease.dirstack import chdir
 from jarn.mkrelease.process import Process
 
 from jarn.mkrelease.testing import MercurialSetup
@@ -116,15 +115,6 @@ class RemoteSandboxTests(MercurialSetup):
 
 
 class DirtySandboxTests(MercurialSetup):
-
-    @chdir
-    def remove(self, dir):
-        process = Process(quiet=True)
-        process.system('hg remove setup.py')
-
-    @chdir
-    def delete(self, dir):
-        os.remove('setup.py')
 
     def testCleanSandbox(self):
         scm = Mercurial()
@@ -244,11 +234,6 @@ class UpdateSandboxTests(MercurialSetup):
 
 class CheckinSandboxTests(MercurialSetup):
 
-    @chdir
-    def update(self, dir):
-        process = Process(quiet=True)
-        process.system('hg update')
-
     def testCheckinCleanSandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '2.6', False), 0)
@@ -320,11 +305,6 @@ class CheckoutUrlTests(MercurialSetup):
 
 
 class TagExistsTests(MercurialSetup):
-
-    @chdir
-    def tag(self, dir, tagid):
-        process = Process(quiet=True)
-        process.system('hg tag %s' % tagid)
 
     def testTagDoesNotExist(self):
         scm = Mercurial()

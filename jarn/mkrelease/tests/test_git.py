@@ -5,7 +5,6 @@ from os.path import join, isdir
 
 from jarn.mkrelease.scm import Git
 
-from jarn.mkrelease.dirstack import chdir
 from jarn.mkrelease.process import Process
 
 from jarn.mkrelease.testing import GitSetup
@@ -125,15 +124,6 @@ class RemoteSandboxTests(GitSetup):
 
 class DirtySandboxTests(GitSetup):
 
-    @chdir
-    def remove(self, dir):
-        process = Process(quiet=True)
-        process.system('git rm setup.py')
-
-    @chdir
-    def delete(self, dir):
-        os.remove('setup.py')
-
     def testCleanSandbox(self):
         scm = Git()
         self.assertEqual(scm.is_dirty_sandbox(self.packagedir), False)
@@ -252,11 +242,6 @@ class UpdateSandboxTests(GitSetup):
 
 class CheckinSandboxTests(GitSetup):
 
-    @chdir
-    def update(self, dir):
-        process = Process(quiet=True)
-        process.system('git checkout master')
-
     def testCheckinCleanSandbox(self):
         scm = Git(Process(quiet=True))
         self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '2.6', False), 0)
@@ -328,11 +313,6 @@ class CheckoutUrlTests(GitSetup):
 
 
 class TagExistsTests(GitSetup):
-
-    @chdir
-    def tag(self, dir, tagid):
-        process = Process(quiet=True)
-        process.system('git tag %s' % tagid)
 
     def testTagDoesNotExist(self):
         scm = Git()
