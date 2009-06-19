@@ -1,5 +1,4 @@
 import os
-import shutil
 import zipfile
 
 from os.path import join, dirname
@@ -25,60 +24,63 @@ def contains(archive, name):
 
 class SubversionTests(SubversionSetup):
 
-    def testSubversionSdist(self):
+    def testSubversionSdistPy(self):
         st = Setuptools(defaults, Process(quiet=True))
-        # This uses svn to create the manifest, obviously.
+        # This uses svn to create the manifest.
         archive = st.run_sdist(self.clonedir, '--formats=zip', True)
-        self.assertEqual(contains(archive, 'subversion_only.py'), True)
+        self.assertEqual(contains(archive, '__init__.py'), True)
 
-
-class SubversionMercurialTests(MercurialSetup):
-
-    def testMercurialSdist(self):
+    def testSubversionSdistTxt(self):
         st = Setuptools(defaults, Process(quiet=True))
-        self.destroy(name='svn')
+        # This uses svn to create the manifest.
+        archive = st.run_sdist(self.clonedir, '--formats=zip', True)
+        self.assertEqual(contains(archive, 'subversion_only.txt'), True)
+
+    def testDefaultSdistPy(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        self.destroy(self.clonedir)
+        # This uses ??? to create the manifest.
+        archive = st.run_sdist(self.clonedir, '--formats=zip', True)
+        self.assertEqual(contains(archive, '__init__.py'), True)
+
+    def testDefaultSdistTxt(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        self.destroy(self.clonedir)
+        # This uses ??? to create the manifest.
+        archive = st.run_sdist(self.clonedir, '--formats=zip', True)
+        self.assertEqual(contains(archive, 'subversion_only.txt'), False)
+
+
+class MercurialTests(MercurialSetup):
+
+    def testMercurialSdistPy(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        self.clone()
         # This uses hg to create the manifest.
-        archive = st.run_sdist(self.packagedir, '--formats=zip', True)
-        self.assertEqual(contains(archive, 'mercurial_only.py'), True)
+        archive = st.run_sdist(self.clonedir, '--formats=zip', True)
+        self.assertEqual(contains(archive, '__init__.py'), True)
 
-    def testMercurialPreemptsSubversion(self):
+    def testMercurialSdistTxt(self):
         st = Setuptools(defaults, Process(quiet=True))
+        self.clone()
         # This uses hg to create the manifest.
-        archive = st.run_sdist(self.packagedir, '--formats=zip', True)
-        self.assertEqual(contains(archive, 'mercurial_only.py'), True)
+        archive = st.run_sdist(self.clonedir, '--formats=zip', True)
+        self.assertEqual(contains(archive, 'mercurial_only.txt'), True)
 
 
-class SubversionGitTests(GitSetup):
+class GitTests(GitSetup):
 
-    def testGitSdist(self):
+    def testGitSdistPy(self):
         st = Setuptools(defaults, Process(quiet=True))
-        self.destroy(name='svn')
+        self.clone()
         # This uses git to create the manifest.
-        archive = st.run_sdist(self.packagedir, '--formats=zip', True)
-        self.assertEqual(contains(archive, 'git_only.py'), True)
+        archive = st.run_sdist(self.clonedir, '--formats=zip', True)
+        self.assertEqual(contains(archive, '__init__.py'), True)
 
-    def testGitPreemptsSubversion(self):
+    def testGitSdistTxt(self):
         st = Setuptools(defaults, Process(quiet=True))
+        self.clone()
         # This uses git to create the manifest.
-        archive = st.run_sdist(self.packagedir, '--formats=zip', True)
-        self.assertEqual(contains(archive, 'git_only.py'), True)
-
-
-class GitMercurialTests(GitSetup):
-
-    def setUp(self):
-        GitSetup.setUp(self)
-        try:
-            shutil.copytree(join(dirname(__file__), MercurialSetup.source, '.hg'),
-                            join(self.packagedir, '.hg'))
-            self.destroy(self.packagedir, name='svn')
-        except:
-            self.cleanUp()
-            raise
-
-    def testGitPreemptsMercurial(self):
-        st = Setuptools(defaults, Process(quiet=True))
-        # This uses git to create the manifest.
-        archive = st.run_sdist(self.packagedir, '--formats=zip', True)
-        self.assertEqual(contains(archive, 'git_only.py'), True)
+        archive = st.run_sdist(self.clonedir, '--formats=zip', True)
+        self.assertEqual(contains(archive, 'git_only.txt'), True)
 

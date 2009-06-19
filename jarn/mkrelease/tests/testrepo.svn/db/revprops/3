@@ -1,0 +1,13 @@
+K 10
+svn:author
+V 6
+stefan
+K 8
+svn:date
+V 27
+2009-06-19T20:33:48.332618Z
+K 7
+svn:log
+V 50
+Renamed subversion_only.py to subversion_only.txt.
+END
