@@ -99,12 +99,44 @@ class SubversionSetup(PackageAPI):
     """Set up a Subversion sandbox."""
 
     name = 'svn'
-    source = 'testpackage.svn'
+    source = 'testrepo.svn'
+
+    def setUp(self):
+        PackageAPI.setUp(self)
+        try:
+            self.clone()
+        except:
+            self.cleanUp()
+            raise
+
+    def clone(self):
+        process = Process(quiet=True)
+        process.system('svn checkout file://%s/trunk testclone' % self.packagedir)
+        self.clonedir = join(self.tempdir, 'testclone')
+
+    def destroy(self, dir=None, name=None):
+        if dir is None:
+            dir = self.packagedir
+        if isdir(join(dir, 'db')): # The svn repo
+            shutil.rmtree(dir)
+        else:
+            PackageAPI.destroy(self, dir, name)
 
     @chdir
     def remove(self, dir):
         process = Process(quiet=True)
         process.system('svn remove setup.py')
+
+    @chdir
+    def update(self, dir):
+        process = Process(quiet=True)
+        process.system('svn update')
+
+    @chdir
+    def tag(self, dir, tagid):
+        process = Process(quiet=True)
+        process.system('svn cp -m"Tagged testpackage." %s %s' %
+            ('file://%s/trunk' % self.packagedir, tagid))
 
 
 class MercurialSetup(PackageAPI):

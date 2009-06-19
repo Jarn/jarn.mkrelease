@@ -5,7 +5,7 @@ import os
 from os.path import join
 
 from jarn.mkrelease.testing import JailSetup
-from jarn.mkrelease.testing import SubversionSetup
+from jarn.mkrelease.testing import MercurialSetup
 from jarn.mkrelease.testing import TestProcess
 from jarn.mkrelease.testing import quiet
 
@@ -82,7 +82,7 @@ class JailSetupTests(unittest.TestCase):
         self.failIfEqual(self.cwd, os.getcwd())
 
 
-class PackageSetupTestCase(SubversionSetup):
+class PackageSetupTestCase(MercurialSetup):
 
     def dummyTest(self):
         self.fail()

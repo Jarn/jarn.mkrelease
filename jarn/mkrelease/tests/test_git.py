@@ -10,7 +10,6 @@ from jarn.mkrelease.process import Process
 from jarn.mkrelease.testing import GitSetup
 from jarn.mkrelease.testing import TestProcess
 from jarn.mkrelease.testing import quiet
-from jarn.mkrelease.testing import readlines
 
 
 class ValidUrlTests(unittest.TestCase):
@@ -213,7 +212,7 @@ class UpdateSandboxTests(GitSetup):
         self.clone()
         self.assertEqual(scm.update_sandbox(self.clonedir), 0)
 
-    def testUpdateLocallyModifiedSandbox(self):
+    def testUpdateModifiedSandbox(self):
         scm = Git(Process(quiet=True))
         self.clone()
         self.modify(self.packagedir)
@@ -301,7 +300,7 @@ class CheckoutUrlTests(GitSetup):
         self.assertEqual(isdir('testclone'), True)
 
     @quiet
-    def testBadSandbox(self):
+    def testBadServer(self):
         scm = Git(Process(quiet=True))
         self.destroy()
         self.assertRaises(SystemExit, scm.checkout_url, self.packagedir, 'testclone')
@@ -351,7 +350,7 @@ class CreateTagTests(GitSetup):
 
     @quiet
     def testCreateExistingTag(self):
-        scm = Git(Process(quiet=1))
+        scm = Git(Process(quiet=True))
         self.assertEqual(scm.create_tag(self.packagedir, '2.6', 'testpackage', '2.6', False), 0)
         self.assertEqual(scm.tag_exists(self.packagedir, '2.6'), True)
         self.assertRaises(SystemExit, scm.create_tag, self.packagedir, '2.6', 'testpackage', '2.6', False)
