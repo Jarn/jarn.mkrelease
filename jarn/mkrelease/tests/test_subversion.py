@@ -8,7 +8,7 @@ from jarn.mkrelease.scm import Subversion
 from jarn.mkrelease.process import Process
 
 from jarn.mkrelease.testing import SubversionSetup
-from jarn.mkrelease.testing import TestProcess
+from jarn.mkrelease.testing import MockProcess
 from jarn.mkrelease.testing import quiet
 
 
@@ -91,7 +91,7 @@ class UrlFromSandboxTests(SubversionSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Subversion(TestProcess(rc=1))
+        scm = Subversion(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.clonedir)
 
 
@@ -108,7 +108,7 @@ class RemoteSandboxTests(SubversionSetup):
         self.assertEqual(scm.is_remote_sandbox(self.clonedir), True)
 
     def testBadProcess(self):
-        scm = Subversion(TestProcess(rc=1))
+        scm = Subversion(MockProcess(rc=1))
         # Note: Always true
         self.assertEqual(scm.is_remote_sandbox(self.clonedir), True)
 
@@ -142,7 +142,7 @@ class DirtySandboxTests(SubversionSetup):
         self.assertEqual(scm.is_dirty_sandbox(self.clonedir), False)
 
     def testBadProcess(self):
-        scm = Subversion(TestProcess(rc=1))
+        scm = Subversion(MockProcess(rc=1))
         # Note: The sandbox is reported as clean
         self.assertEqual(scm.is_dirty_sandbox(self.clonedir), False)
 
@@ -182,7 +182,7 @@ class UncleanSandboxTests(DirtySandboxTests):
         self.assertEqual(scm.is_unclean_sandbox(self.clonedir), False)
 
     def testBadProcess(self):
-        scm = Subversion(TestProcess(rc=1))
+        scm = Subversion(MockProcess(rc=1))
         # Note: The sandbox is reported as clean
         self.assertEqual(scm.is_unclean_sandbox(self.clonedir), False)
 
@@ -220,7 +220,7 @@ class UpdateSandboxTests(SubversionSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Subversion(TestProcess(rc=1))
+        scm = Subversion(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.update_sandbox, self.clonedir)
 
 
@@ -260,7 +260,7 @@ class CheckinSandboxTests(SubversionSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Subversion(TestProcess(rc=1))
+        scm = Subversion(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.checkin_sandbox, self.clonedir, 'testpackage', '2.6', False)
 
 
@@ -279,7 +279,7 @@ class CheckoutUrlTests(SubversionSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Subversion(TestProcess(rc=1))
+        scm = Subversion(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.checkout_url, 'file://'+self.packagedir, 'testclone2')
 
 
@@ -304,7 +304,7 @@ class TagExistsTests(SubversionSetup):
         self.assertEqual(scm.tag_exists(self.clonedir, tagid), False)
 
     def testBadProcess(self):
-        scm = Subversion(TestProcess(rc=1))
+        scm = Subversion(MockProcess(rc=1))
         tagid = 'file://%s/tags/2.6' % self.packagedir
         # Note: The tag is reported as not existing
         self.assertEqual(scm.tag_exists(self.clonedir, tagid), False)
@@ -324,16 +324,16 @@ class TagIdTests(SubversionSetup):
         self.assertEqual(scm.get_tag_id(self.clonedir, '2.6'), 'file://%s/tags/2.6' % self.packagedir)
 
     def testTagIdFromBranch(self):
-        scm = Subversion(TestProcess(rc=0, lines=['', 'URL: file://testpackage/branches/2.x']))
+        scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://testpackage/branches/2.x']))
         self.assertEqual(scm.get_tag_id(self.clonedir, '2.6'), 'file://testpackage/tags/2.6')
 
     def testTagIdFromTag(self):
-        scm = Subversion(TestProcess(rc=0, lines=['', 'URL: file://testpackage/tags/2.6b2']))
+        scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://testpackage/tags/2.6b2']))
         self.assertEqual(scm.get_tag_id(self.clonedir, '2.6'), 'file://testpackage/tags/2.6')
 
     @quiet
     def testTagIdFromBadUrl(self):
-        scm = Subversion(TestProcess(rc=0, lines=['', 'URL: file://testpackage']))
+        scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://testpackage']))
         self.assertRaises(SystemExit, scm.get_tag_id, self.clonedir, '2.6')
 
 
@@ -380,7 +380,7 @@ class CreateTagTests(SubversionSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Subversion(TestProcess(rc=1))
+        scm = Subversion(MockProcess(rc=1))
         tagid = 'file://%s/tags/2.6' % self.packagedir
         self.assertRaises(SystemExit, scm.create_tag, self.clonedir, tagid, 'testpackage', '2.6', False)
 

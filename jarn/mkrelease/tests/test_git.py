@@ -8,7 +8,7 @@ from jarn.mkrelease.scm import Git
 from jarn.mkrelease.process import Process
 
 from jarn.mkrelease.testing import GitSetup
-from jarn.mkrelease.testing import TestProcess
+from jarn.mkrelease.testing import MockProcess
 from jarn.mkrelease.testing import quiet
 
 
@@ -94,7 +94,7 @@ class UrlFromSandboxTests(GitSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Git(TestProcess(rc=1))
+        scm = Git(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.packagedir)
 
 
@@ -117,7 +117,7 @@ class RemoteSandboxTests(GitSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Git(TestProcess(rc=1))
+        scm = Git(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.is_remote_sandbox, self.packagedir)
 
 
@@ -150,7 +150,7 @@ class DirtySandboxTests(GitSetup):
         self.assertEqual(scm.is_dirty_sandbox(self.packagedir), False)
 
     def testBadProcess(self):
-        scm = Git(TestProcess(rc=1))
+        scm = Git(MockProcess(rc=1))
         # Note: The sandbox is reported as clean
         self.assertEqual(scm.is_dirty_sandbox(self.packagedir), False)
 
@@ -190,7 +190,7 @@ class UncleanSandboxTests(DirtySandboxTests):
         self.assertEqual(scm.is_unclean_sandbox(self.packagedir), False)
 
     def testBadProcess(self):
-        scm = Git(TestProcess(rc=1))
+        scm = Git(MockProcess(rc=1))
         # Note: The sandbox is reported as clean
         self.assertEqual(scm.is_unclean_sandbox(self.packagedir), False)
 
@@ -235,7 +235,7 @@ class UpdateSandboxTests(GitSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Git(TestProcess(rc=1))
+        scm = Git(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.update_sandbox, self.packagedir)
 
 
@@ -288,7 +288,7 @@ class CheckinSandboxTests(GitSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Git(TestProcess(rc=255))
+        scm = Git(MockProcess(rc=255))
         self.assertRaises(SystemExit, scm.checkin_sandbox, self.packagedir, 'testpackage', '2.6', False)
 
 
@@ -307,7 +307,7 @@ class CheckoutUrlTests(GitSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Git(TestProcess(rc=1))
+        scm = Git(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.checkout_url, self.packagedir, 'testclone')
 
 
@@ -329,7 +329,7 @@ class TagExistsTests(GitSetup):
         self.assertEqual(scm.tag_exists(self.packagedir, '2.6'), False)
 
     def testBadProcess(self):
-        scm = Git(TestProcess(rc=1))
+        scm = Git(MockProcess(rc=1))
         # Note: The tag is reported as not existing
         self.assertEqual(scm.tag_exists(self.packagedir, '2.6'), False)
 
@@ -382,6 +382,6 @@ class CreateTagTests(GitSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Git(TestProcess(rc=1))
+        scm = Git(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.create_tag, self.packagedir, '2.6', 'testpackage', '2.6', False)
 

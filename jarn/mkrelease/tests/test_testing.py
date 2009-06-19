@@ -6,7 +6,7 @@ from os.path import join
 
 from jarn.mkrelease.testing import JailSetup
 from jarn.mkrelease.testing import MercurialSetup
-from jarn.mkrelease.testing import TestProcess
+from jarn.mkrelease.testing import MockProcess
 from jarn.mkrelease.testing import quiet
 
 
@@ -102,46 +102,46 @@ class PackageSetupTests(unittest.TestCase):
         self.failIf(os.path.exists(test.tempdir))
 
 
-class TestProcessTests(unittest.TestCase):
+class MockProcessTests(unittest.TestCase):
 
     def testPopenSuccess(self):
-        process = TestProcess(rc=0, lines=[])
+        process = MockProcess(rc=0, lines=[])
         self.assertEqual(process.popen(''), (0, []))
 
     def testPopenFailure(self):
-        process = TestProcess(rc=1, lines=[])
+        process = MockProcess(rc=1, lines=[])
         self.assertEqual(process.popen(''), (1, []))
 
     def testPopenLines(self):
-        process = TestProcess(rc=0, lines=['these', 'are', '4', 'lines'])
+        process = MockProcess(rc=0, lines=['these', 'are', '4', 'lines'])
         self.assertEqual(process.popen(''), (0, ['these', 'are', '4', 'lines']))
 
     def testSystemSuccess(self):
-        process = TestProcess(rc=0, lines=[])
+        process = MockProcess(rc=0, lines=[])
         self.assertEqual(process.system(''), 0)
 
     def testSystemFailure(self):
-        process = TestProcess(rc=1, lines=[])
+        process = MockProcess(rc=1, lines=[])
         self.assertEqual(process.system(''), 1)
 
     def testPipeSuccess(self):
-        process = TestProcess(rc=0, lines=['these', 'are', '4', 'lines'])
+        process = MockProcess(rc=0, lines=['these', 'are', '4', 'lines'])
         self.assertEqual(process.pipe(''), 'these')
 
     def testPipeFailure(self):
-        process = TestProcess(rc=1, lines=['these', 'are', '4', 'lines'])
+        process = MockProcess(rc=1, lines=['these', 'are', '4', 'lines'])
         self.assertEqual(process.pipe(''), '')
 
     def testPipeNoLines(self):
-        process = TestProcess(rc=0, lines=[])
+        process = MockProcess(rc=0, lines=[])
         self.assertEqual(process.pipe(''), '')
 
     def testOsSystemSuccess(self):
-        process = TestProcess(rc=0, lines=[])
+        process = MockProcess(rc=0, lines=[])
         self.assertEqual(process.os_system(''), 0)
 
     def testOsSystemFailure(self):
-        process = TestProcess(rc=1, lines=[])
+        process = MockProcess(rc=1, lines=[])
         self.assertEqual(process.os_system(''), 1)
 
 

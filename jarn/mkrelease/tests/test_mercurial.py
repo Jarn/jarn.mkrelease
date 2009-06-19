@@ -8,7 +8,7 @@ from jarn.mkrelease.scm import Mercurial
 from jarn.mkrelease.process import Process
 
 from jarn.mkrelease.testing import MercurialSetup
-from jarn.mkrelease.testing import TestProcess
+from jarn.mkrelease.testing import MockProcess
 from jarn.mkrelease.testing import quiet
 
 
@@ -86,7 +86,7 @@ class UrlFromSandboxTests(MercurialSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Mercurial(TestProcess(rc=1))
+        scm = Mercurial(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.packagedir)
 
 
@@ -109,7 +109,7 @@ class RemoteSandboxTests(MercurialSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Mercurial(TestProcess(rc=1))
+        scm = Mercurial(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.is_remote_sandbox, self.packagedir)
 
 
@@ -142,7 +142,7 @@ class DirtySandboxTests(MercurialSetup):
         self.assertEqual(scm.is_dirty_sandbox(self.packagedir), False)
 
     def testBadProcess(self):
-        scm = Mercurial(TestProcess(rc=1))
+        scm = Mercurial(MockProcess(rc=1))
         # Note: The sandbox is reported as clean
         self.assertEqual(scm.is_dirty_sandbox(self.packagedir), False)
 
@@ -182,7 +182,7 @@ class UncleanSandboxTests(DirtySandboxTests):
         self.assertEqual(scm.is_unclean_sandbox(self.packagedir), False)
 
     def testBadProcess(self):
-        scm = Mercurial(TestProcess(rc=1))
+        scm = Mercurial(MockProcess(rc=1))
         # Note: The sandbox is reported as clean
         self.assertEqual(scm.is_unclean_sandbox(self.packagedir), False)
 
@@ -227,7 +227,7 @@ class UpdateSandboxTests(MercurialSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Mercurial(TestProcess(rc=1))
+        scm = Mercurial(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.update_sandbox, self.packagedir)
 
 
@@ -280,7 +280,7 @@ class CheckinSandboxTests(MercurialSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Mercurial(TestProcess(rc=1))
+        scm = Mercurial(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.checkin_sandbox, self.packagedir, 'testpackage', '2.6', False)
 
 
@@ -299,7 +299,7 @@ class CheckoutUrlTests(MercurialSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Mercurial(TestProcess(rc=1))
+        scm = Mercurial(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.checkout_url, self.packagedir, 'testclone')
 
 
@@ -321,7 +321,7 @@ class TagExistsTests(MercurialSetup):
         self.assertEqual(scm.tag_exists(self.packagedir, '2.6'), False)
 
     def testBadProcess(self):
-        scm = Mercurial(TestProcess(rc=1))
+        scm = Mercurial(MockProcess(rc=1))
         # Note: The tag is reported as not existing
         self.assertEqual(scm.tag_exists(self.packagedir, '2.6'), False)
 
@@ -374,6 +374,6 @@ class CreateTagTests(MercurialSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Mercurial(TestProcess(rc=1))
+        scm = Mercurial(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.create_tag, self.packagedir, '2.6', 'testpackage', '2.6', False)
 

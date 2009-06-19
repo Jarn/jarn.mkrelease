@@ -59,7 +59,7 @@ class PackageSetup(JailSetup):
 
 
 class PackageAPI(PackageSetup):
-    """Provide API for manipulating the sandbox."""
+    """API for manipulating the sandbox."""
 
     name = ''
     clonedir = None
@@ -198,11 +198,11 @@ class GitSetup(PackageAPI):
         process.system('git tag %s' % tagid)
 
 
-class TestProcessError(Exception):
-    """Raised by TestProcess."""
+class MockProcessError(Exception):
+    """Raised by MockProcess."""
 
 
-class TestProcess(Process):
+class MockProcess(Process):
     """A Process we can tell what to return by
 
     - passing rc and lines, or
@@ -221,7 +221,7 @@ class TestProcess(Process):
             if rc_lines is not None:
                 return rc_lines
             else:
-                raise TestProcessError('Unhandled command: %s' % cmd)
+                raise MockProcessError('Unhandled command: %s' % cmd)
         return self.rc, self.lines
 
     def os_system(self, cmd):
@@ -230,7 +230,7 @@ class TestProcess(Process):
             if rc_lines is not None:
                 return rc_lines[0]
             else:
-                raise TestProcessError('Unhandled command: %s' % cmd)
+                raise MockProcessError('Unhandled command: %s' % cmd)
         return self.rc
 
 
