@@ -65,7 +65,7 @@ class PackageAPI(PackageSetup):
     clonedir = None
 
     def clone(self):
-        pass
+        raise NotImplementedError
 
     def destroy(self, dir=None, name=None):
         if dir is None:
@@ -73,7 +73,13 @@ class PackageAPI(PackageSetup):
         if name is None:
             name = self.name
         if name:
-            shutil.rmtree(join(dir, '.'+name))
+            if name == 'svn':
+                for path, dirs, files in os.walk(dir):
+                    if '.svn' in dirs:
+                        shutil.rmtree(join(path, '.svn'))
+                        dirs.remove('.svn')
+            else:
+                shutil.rmtree(join(dir, '.'+name))
 
     def modify(self, dir):
         appendlines(join(dir, 'setup.py'), ['#foo'])
@@ -86,13 +92,13 @@ class PackageAPI(PackageSetup):
         os.remove(join(dir, 'setup.py'))
 
     def remove(self, dir):
-        pass
+        raise NotImplementedError
 
     def update(self, dir):
-        pass
+        raise NotImplementedError
 
     def tag(self, dir, tagid):
-        pass
+        raise NotImplementedError
 
 
 class SubversionSetup(PackageAPI):
@@ -135,8 +141,7 @@ class SubversionSetup(PackageAPI):
     @chdir
     def tag(self, dir, tagid):
         process = Process(quiet=True)
-        process.system('svn cp -m"Tagged testpackage." %s %s' %
-            ('file://%s/trunk' % self.packagedir, tagid))
+        process.system('svn cp -m"Tag" file://%s/trunk %s' % (self.packagedir, tagid))
 
 
 class MercurialSetup(PackageAPI):
@@ -258,7 +263,7 @@ def readlines(filename):
     """
     f = open(filename, 'rb')
     try:
-        return f.read().rstrip().replace('\r', '\n').split('\n')
+        return f.read().strip().replace('\r', '\n').split('\n')
     finally:
         f.close()
 
