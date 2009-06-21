@@ -26,7 +26,7 @@ def tee(process, filter):
     return lines
 
 
-def popen(cmd, echo=True, echo2=True):
+def popen(cmd, echo=True, echo2=True, cwd=None, env=None):
     """Run cmd and return a two-tuple of exit code and lines read.
 
     If echo is True, the stdout stream is echoed to sys.stdout.
@@ -41,7 +41,7 @@ def popen(cmd, echo=True, echo2=True):
     stream2 = None
     if not echo2:
         stream2 = PIPE
-    process = Popen(cmd, shell=True, stdout=PIPE, stderr=stream2)
+    process = Popen(cmd, shell=True, stdout=PIPE, stderr=stream2, cwd=cwd, env=env)
     lines = tee(process, filter)
     return process.returncode, lines
 
