@@ -23,8 +23,8 @@ class Env(dict):
         eggbase = join(dirname(__file__), 'testeggs')
         self.update(os.environ)
         self['PYTHONPATH'] = '%s:%s' % (
-            join(eggbase, 'setuptools_hg-0.2x-py2.6.egg'),
-            join(eggbase, 'setuptools_git-0.3.4x-py2.6.egg'))
+                join(eggbase, 'setuptools_hg-0.2x-py2.6.egg'),
+                join(eggbase, 'setuptools_git-0.3.4x-py2.6.egg'))
 
 env = Env()
 
@@ -51,7 +51,6 @@ def get_finder(type):
 class SubversionTests(SubversionSetup):
 
     def testSubversionFinder(self):
-        st = Setuptools(defaults, Process(quiet=True))
         files = list(get_finder('svn')(self.clonedir))
         self.failUnless(join(self.clonedir, 'testpackage', 'subversion_only.py') in files)
         self.failUnless(join(self.clonedir, 'testpackage', 'subversion_only.txt') in files)
@@ -87,7 +86,6 @@ class SubversionTests(SubversionSetup):
 class MercurialTests(MercurialSetup):
 
     def testMercurialFinder(self):
-        st = Setuptools(defaults, Process(quiet=True))
         self.clone()
         files = list(get_finder('hg')(self.clonedir))
         self.failUnless(join('testpackage', 'mercurial_only.py') in files)
@@ -111,7 +109,6 @@ class MercurialTests(MercurialSetup):
 class GitTests(GitSetup):
 
     def testGitFinder(self):
-        st = Setuptools(defaults, Process(quiet=True))
         self.clone()
         files = list(get_finder('git')(self.clonedir))
         self.failUnless(join('testpackage', 'git_only.py') in files)
