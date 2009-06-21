@@ -14,13 +14,14 @@ class WithProcess(object):
 class Process(object):
     """Process related functions using the tee module (mostly)."""
 
-    def __init__(self, quiet=False):
+    def __init__(self, quiet=False, env=None):
         self.quiet = quiet
+        self.env = env
 
     def popen(self, cmd, echo=True, echo2=True):
         if self.quiet:
             echo = echo2 = False
-        return tee.popen(cmd, echo, echo2)
+        return tee.popen(cmd, echo, echo2, env=self.env)
 
     def pipe(self, cmd):
         rc, lines = self.popen(cmd, echo=False)
