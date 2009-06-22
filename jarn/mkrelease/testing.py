@@ -108,6 +108,7 @@ class SubversionSetup(PackageAPI):
     source = 'testrepo.svn'
 
     def setUp(self):
+        # Always clone the svn repo
         PackageAPI.setUp(self)
         try:
             self.clone()
