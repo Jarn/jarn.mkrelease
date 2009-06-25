@@ -1,4 +1,5 @@
 from os.path import join, isdir
+from urlparse import urlsplit
 from process import WithProcess
 from dirstack import chdir
 from exit import err_exit
@@ -393,22 +394,24 @@ class SCMContainer(object):
         err_exit('Failed to guess SCM type (may be %(types)s): %(dir)s' % locals())
 
     def get_scm_from_url(self, url):
-        protocol = url.split('://', 1)[0]
-        if protocol in ('svn', 'svn+ssh'):
+        proto, host, path, qs, frag = urlsplit(url)
+        if proto in ('svn', 'svn+ssh'):
             return Subversion()
-        if protocol in ('git', 'rsync'):
+        if proto in ('git', 'rsync'):
             return Git()
-        if protocol in ('ssh',):
-            if url.endswith('.hg'):
+        if proto in ('ssh',):
+            if path.endswith('.hg'):
                 return Mercurial()
-            if url.endswith('.git'):
+            if path.endswith('.git'):
                 return Git()
             err_exit('Failed to guess SCM type (may be hg or git): %(url)s' % locals())
-        if protocol in ('http', 'https', 'file'):
-            if url.endswith('.hg'):
+        if proto in ('http', 'https', 'file'):
+            if path.endswith('.hg'):
                 return Mercurial()
-            if url.endswith('.git'):
+            if path.endswith('.git'):
                 return Git()
+            if host.startswith('svn.') or path.startswith('/svn/'):
+                return Subversion()
             err_exit('Failed to guess SCM type (may be svn, hg, or git): %(url)s' % locals())
         err_exit('Unknown URL: %(url)s' % locals())
 
