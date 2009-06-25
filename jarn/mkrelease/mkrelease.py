@@ -9,11 +9,10 @@ from os.path import abspath, join, expanduser
 
 from python import Python
 from setuptools import Setuptools
-from scm import SCMContainer
 from scp import SCP
+from scm import SCMContainer
 from exit import msg_exit, err_exit
 
-python = "python2.6"
 distbase = ""
 distdefault = ""
 pypiurl = "http://pypi.python.org/pypi"
@@ -36,8 +35,7 @@ Options:
   --svn, --hg, --git  Select the SCM type. Only required if the SCM type
                       cannot be guessed from the argument.
 
-  -u, --update        Update the sandbox before doing anything else.
-  -p, --push          Push all local changes upstream.
+  -p, --push          Push local changes upstream.
 
   -s, --sign          Sign the release with GnuPG.
   -i identity, --identity=identity
@@ -71,7 +69,7 @@ class Defaults(object):
                 return self.parser.get(section, key)
             return default
 
-        self.python = get('defaults', 'python', python)
+        self.python = sys.executable
         self.distbase = get('defaults', 'distbase', distbase)
         self.distdefault = get('defaults', 'distdefault', distdefault)
 
@@ -170,7 +168,6 @@ class ReleaseMaker(object):
         self.skiptag = False
         self.skipscp = False
         self.keeptemp = False
-        self.update = False
         self.push = False
         self.quiet = False
         self.sdistflags = ['--formats="zip"']
@@ -190,10 +187,10 @@ class ReleaseMaker(object):
         """Parse command line.
         """
         try:
-            options, args = getopt.getopt(self.args, 'CDKSTd:hi:pqsuv',
+            options, args = getopt.getopt(self.args, 'CDKSTd:hi:pqsv',
                 ('skip-checkin', 'skip-tag', 'skip-scp', 'dry-run', 'keep-temp',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
-                 'update', 'push', 'quiet', 'svn', 'hg', 'git'))
+                 'push', 'quiet', 'svn', 'hg', 'git'))
         except getopt.GetoptError, e:
             err_exit('mkrelease: %s\n%s' % (e.msg, usage))
 
@@ -208,8 +205,6 @@ class ReleaseMaker(object):
                 self.skipcheckin = self.skiptag = self.skipscp = True
             elif name in ('-K', '--keep-temp'):
                 self.keeptemp = True
-            elif name in ('-u', '--update'):
-                self.update = True
             elif name in ('-p', '--push'):
                 self.push = True
             elif name in ('-q', '--quiet'):
@@ -252,28 +247,18 @@ class ReleaseMaker(object):
 
         if self.scm.is_valid_url(directory):
             self.remoteurl = directory
-            self.push = self.isremote = True
+            self.isremote = True
+            self.push = True
         else:
             directory = abspath(directory)
             self.scm.check_valid_sandbox(directory)
-
-            if self.update:
-                self.scm.update_sandbox(directory)
-
             self.setuptools.check_valid_package(directory)
+
             self.remoteurl = self.scm.get_url_from_sandbox(directory)
+            self.isremote = False
 
-            if self.scm.is_distributed():
-                self.isremote = False
-            else:
-                self.push = self.isremote = True
-
-            name = self.setuptools.get_package_name(directory)
-            version = self.setuptools.get_package_version(directory)
-
+            name, version = self.setuptools.get_package_info(directory)
             print 'Releasing', name, version
-            if self.isremote:
-                print 'URL:', self.remoteurl
 
             if not self.skipcheckin:
                 if self.scm.is_dirty_sandbox(directory):
@@ -284,8 +269,9 @@ class ReleaseMaker(object):
         """
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
         directory = join(tempdir, 'checkout')
-        sdistflags = ' '.join(self.sdistflags)
-        uploadflags = ' '.join(self.uploadflags)
+        scmtype = self.scm.name
+        sdistflags = self.sdistflags
+        uploadflags = self.uploadflags
 
         try:
             if self.isremote:
@@ -298,9 +284,7 @@ class ReleaseMaker(object):
             self.scm.check_unclean_sandbox(directory)
             self.setuptools.check_valid_package(directory)
 
-            name = self.setuptools.get_package_name(directory)
-            version = self.setuptools.get_package_version(directory)
-
+            name, version = self.setuptools.get_package_info(directory)
             if self.isremote:
                 print 'Releasing', name, version
 
@@ -310,12 +294,12 @@ class ReleaseMaker(object):
                 print 'Tagging', name, version
                 self.scm.create_tag(directory, tagid, name, version, self.push)
 
-            distfile = self.setuptools.run_sdist(directory, sdistflags, self.quiet)
+            distfile = self.setuptools.run_sdist(directory, sdistflags, scmtype, self.quiet)
 
             if not self.skipscp:
                 for location in self.locations:
                     if self.locations.is_server(location):
-                        self.setuptools.run_upload(directory, location, sdistflags, uploadflags)
+                        self.setuptools.run_upload(directory, location, sdistflags, uploadflags, scmtype)
                     else:
                         self.scp.run_scp(distfile, location)
         finally:
