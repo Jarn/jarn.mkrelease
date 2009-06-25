@@ -26,14 +26,16 @@ def tee(process, filter):
     return lines
 
 
-def popen(cmd, echo=True, echo2=True, cwd=None, env=None):
-    """Run cmd and return a two-tuple of exit code and lines read.
+def popen(cmd, echo=True, echo2=True, env=None):
+    """Run 'cmd' and return a two-tuple of exit code and lines read.
 
-    If echo is True, the stdout stream is echoed to sys.stdout.
-    If echo2 is True, the stderr stream is echoed to sys.stderr.
+    If 'echo' is True, the stdout stream is echoed to sys.stdout.
+    If 'echo2' is True, the stderr stream is echoed to sys.stderr.
 
-    The echo argument may be a callable, in which case it is used
+    The 'echo' argument may be a callable, in which case it is used
     as a tee filter.
+
+    The optional 'env' argument allows to pass an os.environ-like dict.
     """
     filter = echo
     if not callable(echo):
@@ -41,7 +43,7 @@ def popen(cmd, echo=True, echo2=True, cwd=None, env=None):
     stream2 = None
     if not echo2:
         stream2 = PIPE
-    process = Popen(cmd, shell=True, stdout=PIPE, stderr=stream2, cwd=cwd, env=env)
+    process = Popen(cmd, shell=True, stdout=PIPE, stderr=stream2, env=env)
     lines = tee(process, filter)
     return process.returncode, lines
 
