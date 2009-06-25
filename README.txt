@@ -21,7 +21,7 @@ version strings, etc.), we typically have to:
 
 1. Check in modified files.
 
-2. Tag the release in Subversion.
+2. Tag the release in SCM.
 
 3. Package up an egg.
 
@@ -35,7 +35,7 @@ Enter jarn.mkrelease.
 Usage
 =====
 
-``mkrelease [options] [svn-url|svn-sandbox]``
+``mkrelease [options] [scm-url|scm-sandbox]``
 
 Options
 =======
@@ -44,16 +44,23 @@ Options
     Do not checkin modified files from the sandbox.
 
 ``-T, --skip-tag``
-    Do not tag the release in subversion.
+    Do not tag the release in SCM.
 
 ``-S, --skip-scp``
-    Do not scp the release to dist-location.
+    Do not upload the release to dist-location.
 
 ``-D, --dry-run``
     Dry-run; equivalent to ``-CTS``.
 
 ``-K, --keep-temp``
     Keep the temporary build directory.
+
+``--svn, --hg, --git``
+    Select the SCM type. Only required if the SCM type
+    cannot be guessed from the argument.
+
+``-p, --push``
+    Push local changes upstream.
 
 ``-s, --sign``
     Sign the release with GnuPG.
@@ -72,11 +79,12 @@ Options
 ``-v, --version``
     Print the version string and exit.
 
-``svn-url``
-    A URL with protocol svn, svn+ssh, http, https, or file.
+``scm-url``
+    The URL of a remote SCM repository.
 
-``svn-sandbox``
-    A local directory; defaults to the current working directory.
+``scm-sandbox``
+    A local SCM sandbox; defaults to the current working
+    directory.
 
 Examples
 ========
@@ -86,7 +94,7 @@ package's ``setup.py``, and distribute it to the default location::
 
   $ mkrelease https://svn.jarn.com/public/my.package/trunk
 
-The same as above, but the URL is taken from the SVN sandbox in ``src/my.package``::
+The same as above, except the URL is taken from the SVN sandbox in ``src/my.package``::
 
   $ mkrelease src/my.package
 
@@ -109,7 +117,6 @@ mkrelease furthermore reads its own configuration files,
 ``/etc/mkrelease`` and ``~/.mkrelease``. Here's an example::
 
   [defaults]
-  python = python2.6
   distbase =
   distdefault = public
 
@@ -152,7 +159,6 @@ Typing the full destination every time is tedious, even setting up an alias
 for each and every customer is, so we configure distbase instead::
 
   [defaults]
-  python = python2.6
   distbase = jarn.com:/var/dist
   distdefault = public
 
@@ -193,9 +199,6 @@ We can now type::
 
 Next, we define an alias in ``~/.mkrelease``::
 
-  [defaults]
-  python = python2.6
-
   [aliases]
   plone =
     ploneorg
@@ -215,8 +218,8 @@ Release my.package from an existing tag::
 Using GnuPG
 ===========
 
-Release my.package to PyPI and sign the archive with PGP (the ``gpg``
-command must be on the system PATH)::
+Release my.package to PyPI and sign the archive with GnuPG (the ``gpg``
+command must be available on the system PATH)::
 
   $ mkrelease -d pypi -s -i fred@bedrock.com src/my.package
 
@@ -227,16 +230,32 @@ The following commands must be available on the system PATH:
 
 * svn
 
-* scp
+* hg
 
-* python2.6 (alternatively, configure the interpeter in ``~/.mkrelease``)
+* git
+
+* scp
 
 Limitations
 ===========
+
+Subversion
+----------
 
 The release tag can only be made if the package follows the
 standard Subversion repository layout: ``package.name/trunk``,
 ``package.name/branches/xxx``, and ``package.name/tags/xxx``.
 If you have a non-standard repository, you must tag by hand
 and run mkrelease with the ``-T`` option.
+
+Mercurial and Git
+-----------------
+
+Remote Mercurial and Git repositories are not fully supported. There is,
+for example, no way to release a branch or tag when using URLs.
+
+All
+---
+
+``file://`` URLs must be absolute.
 
