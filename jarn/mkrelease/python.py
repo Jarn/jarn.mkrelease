@@ -4,11 +4,8 @@ from exit import err_exit
 
 class WithPython(object):
 
-    def __init__(self, python=None):
-        if python is None:
-            self.python = 'python2.6' # FIXME
-        else:
-            self.python = python
+    def __init__(self, python):
+        self.python = python
 
 
 class Python(WithProcess, WithPython):
