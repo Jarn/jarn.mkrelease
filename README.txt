@@ -19,7 +19,7 @@ Turns out it's quite a bit of work to put a new egg on a
 distribution server! After preparing a package for release (update
 version strings, etc.), we typically have to:
 
-1. Check in modified files.
+1. Commit modified files.
 
 2. Tag the release in SCM.
 
@@ -46,21 +46,19 @@ Options
 ``-T, --skip-tag``
     Do not tag the release in SCM.
 
-``-S, --skip-scp``
+``-U, --skip-upload``
     Do not upload the release to dist-location.
 
 ``-D, --dry-run``
-    Dry-run; equivalent to ``-CTS``.
-
-``-K, --keep-temp``
-    Keep the temporary build directory.
+    Dry-run; equivalent to ``-CTU``.
 
 ``--svn, --hg, --git``
     Select the SCM type. Only required if the SCM type
     cannot be guessed from the argument.
 
 ``-p, --push``
-    Push local changes upstream.
+    Push local changes upstream. Applies to Mercurial
+    and Git repositories only.
 
 ``-s, --sign``
     Sign the release with GnuPG.
@@ -72,6 +70,12 @@ Options
     An scp destination specification, or an index server
     configured in ``~/.pypirc``, or an alias name for either.
     This option may be specified more than once.
+
+``-q, --quiet``
+    Suppress the output of ``setup.py sdist``.
+
+``-k, --keep-temp``
+    Keep the temporary build directory.
 
 ``-h, --help``
     Print the help message and exit.
@@ -89,12 +93,13 @@ Options
 Examples
 ========
 
-Release my.package trunk, using version information from the
-package's ``setup.py``, and distribute it to the default location::
+Release my.package, using version information from the package's
+``setup.py``, and distribute it to the default location::
 
   $ mkrelease https://svn.jarn.com/public/my.package/trunk
 
-The same as above, except the URL is taken from the SVN sandbox in ``src/my.package``::
+The same as above, but release the contents of the SCM sandbox in
+``src/my.package``::
 
   $ mkrelease src/my.package
 
@@ -146,7 +151,7 @@ Working with scp
 ================
 
 The simplest distribution location is a server directory shared through
-Apache. Releasing eggs means scp'ing them to the server::
+Apache. Releasing eggs means scp-ing them to the server::
 
   $ mkrelease -d jarn.com:/var/dist/public src/my.package
 
@@ -215,6 +220,12 @@ Release my.package from an existing tag::
 
   $ mkrelease -T https://svn.jarn.com/public/my.package/tags/1.0
 
+Only Subversion allows us to specify a branch or tag to check out. With
+Mercurial or Git this is a two-step process and looks something like::
+
+  $ git checkout -f 1.0
+  $ mkrelease -T
+
 Using GnuPG
 ===========
 
@@ -242,9 +253,9 @@ Limitations
 Subversion
 ----------
 
-The release tag can only be made if the package follows the
+The release tag can only be created if the package follows the
 standard Subversion repository layout: ``package.name/trunk``,
-``package.name/branches/xxx``, and ``package.name/tags/xxx``.
+``package.name/branches``, and ``package.name/tags``.
 If you have a non-standard repository, you must tag by hand
 and run mkrelease with the ``-T`` option.
 
@@ -254,8 +265,8 @@ Mercurial and Git
 Remote Mercurial and Git repositories are not fully supported. There is,
 for example, no way to release a branch or tag when using URLs.
 
-All
----
+All SCMs
+--------
 
 ``file://`` URLs must be absolute.
 
