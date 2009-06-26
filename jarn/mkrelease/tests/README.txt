@@ -1,8 +1,12 @@
 Tests require the following commands on the system PATH:
-- svn
-- hg
-- git
-- python2.6
 
-Run tests by typing 'python2.6 setup.py -q test' in the
-top-level directory.
+  - svn
+  - hg
+  - git
+
+To run tests create a Python 2.6 virtualenv in the top-level directory::
+
+  $ virtualenv .
+  $ ./bin/python setup.py develop
+  $ ./bin/python setup.py -q test
+
