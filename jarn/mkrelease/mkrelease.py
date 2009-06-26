@@ -28,14 +28,14 @@ Release sdist eggs
 Options:
   -C, --skip-checkin  Do not checkin modified files from the sandbox.
   -T, --skip-tag      Do not tag the release in SCM.
-  -S, --skip-scp      Do not upload the release to dist-location.
-  -D, --dry-run       Dry-run; equivalent to -CTS.
-  -K, --keep-temp     Keep the temporary build directory.
+  -U, --skip-upload   Do not upload the release to dist-location.
+  -D, --dry-run       Dry-run; equivalent to -CTU.
 
   --svn, --hg, --git  Select the SCM type. Only required if the SCM type
                       cannot be guessed from the argument.
 
-  -p, --push          Push local changes upstream.
+  -p, --push          Push local changes upstream. Applies to Mercurial
+                      and Git repositories only.
 
   -s, --sign          Sign the release with GnuPG.
   -i identity, --identity=identity
@@ -46,6 +46,8 @@ Options:
                       configured in ~/.pypirc, or an alias name for either.
                       This option may be specified more than once.
 
+  -q, --quiet         Suppress the output of setup.py sdist.
+  -k, --keep-temp     Keep the temporary build directory.
   -h, --help          Print this help message and exit.
   -v, --version       Print the version string and exit.
 
@@ -166,7 +168,7 @@ class ReleaseMaker(object):
         """
         self.skipcheckin = False
         self.skiptag = False
-        self.skipscp = False
+        self.skipupload = False
         self.keeptemp = False
         self.push = False
         self.quiet = False
@@ -187,8 +189,8 @@ class ReleaseMaker(object):
         """Parse command line.
         """
         try:
-            options, args = getopt.getopt(self.args, 'CDKSTd:hi:pqsv',
-                ('skip-checkin', 'skip-tag', 'skip-scp', 'dry-run', 'keep-temp',
+            options, args = getopt.getopt(self.args, 'CDTUd:hi:kpqsv',
+                ('skip-checkin', 'skip-tag', 'skip-upload', 'dry-run', 'keep-temp',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git'))
         except getopt.GetoptError, e:
@@ -199,11 +201,11 @@ class ReleaseMaker(object):
                 self.skipcheckin = True
             elif name in ('-T', '--skip-tag'):
                 self.skiptag = True
-            elif name in ('-S', '--skip-scp'):
-                self.skipscp = True
+            elif name in ('-U', '--skip-upload'):
+                self.skipupload = True
             elif name in ('-D', '--dry-run'):
-                self.skipcheckin = self.skiptag = self.skipscp = True
-            elif name in ('-K', '--keep-temp'):
+                self.skipcheckin = self.skiptag = self.skipupload = True
+            elif name in ('-k', '--keep-temp'):
                 self.keeptemp = True
             elif name in ('-p', '--push'):
                 self.push = True
@@ -228,7 +230,7 @@ class ReleaseMaker(object):
         if not self.locations:
             self.locations.extend(self.locations.default_location())
 
-        if not self.skipscp:
+        if not self.skipupload:
             self.locations.check_valid_locations()
 
         if len(args) > 1:
@@ -296,7 +298,7 @@ class ReleaseMaker(object):
 
             distfile = self.setuptools.run_sdist(directory, sdistflags, scmtype, self.quiet)
 
-            if not self.skipscp:
+            if not self.skipupload:
                 for location in self.locations:
                     if self.locations.is_server(location):
                         self.setuptools.run_upload(directory, location, sdistflags, uploadflags, scmtype)
