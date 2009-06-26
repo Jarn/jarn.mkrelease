@@ -9,19 +9,23 @@ Changelog
   [stefan]
 
 - Force setuptools to only use file-finders for the selected SCM type.
+  This is required to support multi-SCM sandboxes (think git-svn).
   [stefan]
 
 - Treat Subversion sandboxes just like the others and avoid the
   temporary checkout step.
   [stefan]
 
-- Remove the -u flag for reasons of YAGNI.
+- Remove the -u flag for being pointless.
   [stefan]
 
 2.0a1 - 2009-06-14
 ------------------
 
 - Added support for Mercurial and Git.
+  [stefan]
+
+- Added 250+ unit tests.
   [stefan]
 
 1.0.2 - 2009-06-13
