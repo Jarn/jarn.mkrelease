@@ -40,14 +40,12 @@ class SubversionTests(SubversionSetup):
     def testSubversionFinderNoDirname(self):
         self.dirstack.push(self.clonedir)
         files = list(get_finder('svn')())
-        self.dirstack.pop()
         self.failUnless(join('testpackage', 'subversion_only.py') in files)
         self.failUnless(join('testpackage', 'subversion_only.txt') in files)
 
     def testSubversionFinderEmptyDirname(self):
         self.dirstack.push(self.clonedir)
         files = list(get_finder('svn')(''))
-        self.dirstack.pop()
         self.failUnless(join('testpackage', 'subversion_only.py') in files)
         self.failUnless(join('testpackage', 'subversion_only.txt') in files)
 
@@ -91,7 +89,6 @@ class MercurialTests(MercurialSetup):
         self.clone()
         self.dirstack.push(self.clonedir)
         files = list(get_finder('hg')())
-        self.dirstack.pop()
         self.failUnless(join('testpackage', 'mercurial_only.py') in files)
         self.failUnless(join('testpackage', 'mercurial_only.txt') in files)
 
@@ -99,7 +96,6 @@ class MercurialTests(MercurialSetup):
         self.clone()
         self.dirstack.push(self.clonedir)
         files = list(get_finder('hg')(''))
-        self.dirstack.pop()
         self.failUnless(join('testpackage', 'mercurial_only.py') in files)
         self.failUnless(join('testpackage', 'mercurial_only.txt') in files)
 
@@ -122,6 +118,7 @@ class GitTests(GitSetup):
 
     def testGitFinder(self):
         self.clone()
+        self.dirstack.push(self.clonedir) # XXX
         files = list(get_finder('git')(self.clonedir))
         self.failUnless(join('testpackage', 'git_only.py') in files)
         self.failUnless(join('testpackage', 'git_only.txt') in files)
@@ -130,7 +127,6 @@ class GitTests(GitSetup):
         self.clone()
         self.dirstack.push(self.clonedir)
         files = list(get_finder('git')())
-        self.dirstack.pop()
         self.failUnless(join('testpackage', 'git_only.py') in files)
         self.failUnless(join('testpackage', 'git_only.txt') in files)
 
@@ -138,7 +134,6 @@ class GitTests(GitSetup):
         self.clone()
         self.dirstack.push(self.clonedir)
         files = list(get_finder('git')(''))
-        self.dirstack.pop()
         self.failUnless(join('testpackage', 'git_only.py') in files)
         self.failUnless(join('testpackage', 'git_only.txt') in files)
 
