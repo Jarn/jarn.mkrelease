@@ -37,6 +37,20 @@ class SubversionTests(SubversionSetup):
         self.failUnless(join(self.clonedir, 'testpackage', 'subversion_only.py') in files)
         self.failUnless(join(self.clonedir, 'testpackage', 'subversion_only.txt') in files)
 
+    def testSubversionFinderNoDirname(self):
+        self.dirstack.push(self.clonedir)
+        files = list(get_finder('svn')())
+        self.dirstack.pop()
+        self.failUnless(join('testpackage', 'subversion_only.py') in files)
+        self.failUnless(join('testpackage', 'subversion_only.txt') in files)
+
+    def testSubversionFinderEmptyDirname(self):
+        self.dirstack.push(self.clonedir)
+        files = list(get_finder('svn')(''))
+        self.dirstack.pop()
+        self.failUnless(join('testpackage', 'subversion_only.py') in files)
+        self.failUnless(join('testpackage', 'subversion_only.txt') in files)
+
     def testSubversionSdistPy(self):
         st = Setuptools(defaults, Process(quiet=True))
         # This uses svn to create the manifest.
@@ -73,6 +87,22 @@ class MercurialTests(MercurialSetup):
         self.failUnless(join('testpackage', 'mercurial_only.py') in files)
         self.failUnless(join('testpackage', 'mercurial_only.txt') in files)
 
+    def testMercurialFinderNoDirname(self):
+        self.clone()
+        self.dirstack.push(self.clonedir)
+        files = list(get_finder('hg')())
+        self.dirstack.pop()
+        self.failUnless(join('testpackage', 'mercurial_only.py') in files)
+        self.failUnless(join('testpackage', 'mercurial_only.txt') in files)
+
+    def testMercurialFinderEmptyDirname(self):
+        self.clone()
+        self.dirstack.push(self.clonedir)
+        files = list(get_finder('hg')(''))
+        self.dirstack.pop()
+        self.failUnless(join('testpackage', 'mercurial_only.py') in files)
+        self.failUnless(join('testpackage', 'mercurial_only.txt') in files)
+
     def testMercurialSdistPy(self):
         st = Setuptools(defaults, Process(quiet=True))
         self.clone()
@@ -93,6 +123,22 @@ class GitTests(GitSetup):
     def testGitFinder(self):
         self.clone()
         files = list(get_finder('git')(self.clonedir))
+        self.failUnless(join('testpackage', 'git_only.py') in files)
+        self.failUnless(join('testpackage', 'git_only.txt') in files)
+
+    def testGitFinderNoDirname(self):
+        self.clone()
+        self.dirstack.push(self.clonedir)
+        files = list(get_finder('git')())
+        self.dirstack.pop()
+        self.failUnless(join('testpackage', 'git_only.py') in files)
+        self.failUnless(join('testpackage', 'git_only.txt') in files)
+
+    def testGitFinderEmptyDirname(self):
+        self.clone()
+        self.dirstack.push(self.clonedir)
+        files = list(get_finder('git')(''))
+        self.dirstack.pop()
         self.failUnless(join('testpackage', 'git_only.py') in files)
         self.failUnless(join('testpackage', 'git_only.txt') in files)
 
