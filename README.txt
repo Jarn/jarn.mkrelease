@@ -221,7 +221,7 @@ Release my.package from an existing tag::
   $ mkrelease -T https://svn.jarn.com/public/my.package/tags/1.0
 
 Only Subversion allows us to specify a branch or tag to check out. With
-Mercurial or Git this is a two-step process and looks something like::
+Mercurial and Git this is a two-step process and looks something like::
 
   $ git checkout -f 1.0
   $ mkrelease -T
@@ -264,6 +264,13 @@ Mercurial and Git
 
 Remote Mercurial and Git repositories are not fully supported. There is,
 for example, no way to release a branch or tag when using URLs.
+
+Git
+---
+
+Giving the ``-p`` option results in ``git push origin`` and
+``git push origin tag <tagid>`` respectively. If this does not fit your
+use-case, avoid ``-p`` and push manually.
 
 All SCMs
 --------
