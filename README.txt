@@ -270,7 +270,7 @@ Git
 
 Giving the ``-p`` option results in ``git push origin`` and
 ``git push origin tag <tagid>`` respectively. If this does not fit your
-use-case, avoid ``-p`` and push manually.
+situation, avoid ``-p`` and push manually.
 
 All SCMs
 --------
