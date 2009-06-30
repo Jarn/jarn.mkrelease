@@ -400,18 +400,22 @@ class SCMContainer(object):
         if proto in ('git', 'rsync'):
             return Git()
         if proto in ('ssh',):
-            if path.endswith('.hg'):
-                return Mercurial()
             if path.endswith('.git'):
+                return Git()
+            if host.startswith('hg.') or path.startswith('/hg/') or path.startswith('//hg/'):
+                return Mercurial()
+            if host.startswith('git.') or path.startswith('/git/'):
                 return Git()
             err_exit('Failed to guess SCM type (may be hg or git): %(url)s' % locals())
         if proto in ('http', 'https', 'file'):
-            if path.endswith('.hg'):
-                return Mercurial()
             if path.endswith('.git'):
                 return Git()
             if host.startswith('svn.') or path.startswith('/svn/'):
                 return Subversion()
+            if host.startswith('hg.') or path.startswith('/hg/'):
+                return Mercurial()
+            if host.startswith('git.') or path.startswith('/git/'):
+                return Git()
             err_exit('Failed to guess SCM type (may be svn, hg, or git): %(url)s' % locals())
         err_exit('Unknown URL: %(url)s' % locals())
 
