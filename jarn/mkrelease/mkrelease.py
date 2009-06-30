@@ -5,7 +5,7 @@ import tempfile
 import shutil
 import ConfigParser
 
-from os.path import abspath, join, expanduser
+from os.path import abspath, join, expanduser, isfile
 
 from python import Python
 from setuptools import Setuptools
@@ -301,6 +301,9 @@ class ReleaseMaker(object):
             if not self.skipupload:
                 for location in self.locations:
                     if self.locations.is_server(location):
+                        if '--sign' in uploadflags:
+                            if isfile(distfile+'.asc'):
+                                os.remove(distfile+'.asc')
                         self.setuptools.run_upload(directory, location, sdistflags, uploadflags, scmtype)
                     else:
                         self.scp.run_scp(distfile, location)
