@@ -13,9 +13,6 @@ from scp import SCP
 from scm import SCMContainer
 from exit import msg_exit, err_exit
 
-python = "python2.6"
-distbase = ""
-distdefault = ""
 pypiurl = "http://pypi.python.org/pypi"
 maxaliasdepth = 23
 
@@ -72,9 +69,9 @@ class Defaults(object):
                 return self.parser.get(section, key)
             return default
 
-        self.python = get('defaults', 'python', python)
-        self.distbase = get('defaults', 'distbase', distbase)
-        self.distdefault = get('defaults', 'distdefault', distdefault)
+        self.python = sys.executable
+        self.distbase = get('defaults', 'distbase', '')
+        self.distdefault = get('defaults', 'distdefault', '')
 
         self.aliases = {}
         if self.parser.has_section('aliases'):

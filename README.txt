@@ -122,7 +122,6 @@ mkrelease furthermore reads its own configuration files,
 ``/etc/mkrelease`` and ``~/.mkrelease``. Here's an example::
 
   [defaults]
-  python = python2.6
   distbase =
   distdefault = public
 
@@ -165,7 +164,6 @@ Typing the full destination every time is tedious, even setting up an alias
 for each and every customer is, so we configure distbase instead::
 
   [defaults]
-  python = python2.6
   distbase = jarn.com:/var/dist
   distdefault = public
 

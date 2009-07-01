@@ -11,6 +11,10 @@ Changelog
 2.0a2 - 2009-06-27
 ------------------
 
+- Drop configurable Python and use sys.executable. This also means we
+  now require Python 2.6.
+  [stefan]
+
 - Force setuptools to only use file-finders for the selected SCM type.
   This is required to support multi-SCM sandboxes (think git-svn).
   [stefan]
