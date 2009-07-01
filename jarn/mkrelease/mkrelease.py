@@ -241,8 +241,6 @@ class ReleaseMaker(object):
         """Get URL to release.
         """
         directory = self.directory
-
-        self.python.check_valid_python()
         self.scm = self.scmcontainer.guess_scm(self.scmtype, directory)
 
         if self.scm.is_valid_url(directory):
@@ -310,6 +308,7 @@ class ReleaseMaker(object):
                 shutil.rmtree(tempdir)
 
     def run(self):
+        self.python.check_valid_python()
         self.get_options()
         self.get_packageurl()
         self.make_release()
