@@ -3,7 +3,7 @@ import os
 import zipfile
 import pkg_resources
 
-from os.path import join, dirname
+from os.path import join
 
 from jarn.mkrelease.setuptools import Setuptools
 from jarn.mkrelease.process import Process
