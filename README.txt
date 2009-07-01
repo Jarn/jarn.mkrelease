@@ -32,6 +32,13 @@ of `I gotta script this` approaches at warp 9.
 
 Enter jarn.mkrelease.
 
+Installation
+============
+
+mkrelease requires Python 2.6 for the improved distutils support. Use
+``easy_install-2.6 jarn.mkrelease`` to install the ``mkrelease`` script.
+Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
+
 Usage
 =====
 
@@ -221,7 +228,8 @@ Release my.package from an existing tag::
   $ mkrelease -T https://svn.jarn.com/public/my.package/tags/1.0
 
 Only Subversion allows us to specify a branch or tag to check out. With
-Mercurial and Git this is a two-step process and looks something like::
+Mercurial and Git we need a local working copy, switched to the tag
+we want to release::
 
   $ git checkout -f 1.0
   $ mkrelease -T
@@ -259,18 +267,12 @@ standard Subversion repository layout: ``package.name/trunk``,
 If you have a non-standard repository, you must tag by hand
 and run mkrelease with the ``-T`` option.
 
-Mercurial and Git
------------------
-
-Remote Mercurial and Git repositories are not fully supported. There is,
-for example, no way to release a branch or tag when using URLs.
-
 Git
 ---
 
 Giving the ``-p`` option results in ``git push origin`` and
 ``git push origin tag <tagid>`` respectively. If this does not fit your
-situation, avoid ``-p`` and push manually.
+setup, avoid ``-p`` and push manually.
 
 All SCMs
 --------
