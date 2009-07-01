@@ -384,7 +384,7 @@ class SCMContainer(object):
             if scm().is_valid_sandbox(dir):
                 matches.append(scm)
         if not matches:
-            err_exit('Unknown sandbox: %(dir)s' % locals())
+            err_exit('Not a sandbox: %(dir)s' % locals())
         if len(matches) == 1:
             return matches[0]()
         if len(matches) == 2:
