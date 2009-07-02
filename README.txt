@@ -35,7 +35,7 @@ Enter jarn.mkrelease.
 Installation
 ============
 
-mkrelease requires Python 2.6 for the improved distutils support. Use
+mkrelease requires Python 2.6 for its improved distutils support. Use
 ``easy_install-2.6 jarn.mkrelease`` to install the ``mkrelease`` script.
 Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
 
