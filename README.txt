@@ -75,7 +75,7 @@ Options
     This option may be specified more than once.
 
 ``-p, --push``
-    Push changes upstream (hg and git only).
+    Push local changes upstream (Mercurial and Git only).
 
 ``-q, --quiet``
     Suppress output of setuptools commands.
