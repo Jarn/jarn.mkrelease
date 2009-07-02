@@ -1,0 +1,9 @@
+New in 2.0
+==========
+
+* Support for Mercurial and Git.
+
+* Support for multi-SCM sandboxes (e.g. git-svn).
+
+* Require Python 2.6 (for its distutils version).
+
