@@ -170,6 +170,7 @@ class ReleaseMaker(object):
         self.keeptemp = False
         self.push = False
         self.quiet = False
+        self.infoflags = ['--no-svn-revision', '--no-date', '--tag-build=""']
         self.sdistflags = ['--formats="zip"']
         self.uploadflags = []
         self.directory = os.curdir
@@ -190,7 +191,7 @@ class ReleaseMaker(object):
             options, args = getopt.getopt(self.args, 'CDTUd:hi:kpqsv',
                 ('skip-checkin', 'skip-tag', 'skip-upload', 'dry-run', 'keep-temp',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
-                 'push', 'quiet', 'svn', 'hg', 'git'))
+                 'push', 'quiet', 'svn', 'hg', 'git', 'develop'))
         except getopt.GetoptError, e:
             err_exit('mkrelease: %s\n%s' % (e.msg, usage))
 
@@ -221,6 +222,8 @@ class ReleaseMaker(object):
                 msg_exit(help)
             elif name in ('--svn', '--hg', '--git'):
                 self.scmtype = name[2:]
+            elif name in ('--develop',):
+                self.infoflags = []
 
         if self.uploadflags and '--sign' not in self.uploadflags:
             self.uploadflags.append('--sign')
@@ -268,6 +271,7 @@ class ReleaseMaker(object):
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
         directory = join(tempdir, 'checkout')
         scmtype = self.scm.name
+        infoflags = self.infoflags
         sdistflags = self.sdistflags
         uploadflags = self.uploadflags
 
@@ -292,7 +296,7 @@ class ReleaseMaker(object):
                 print 'Tagging', name, version
                 self.scm.create_tag(directory, tagid, name, version, self.push)
 
-            distfile = self.setuptools.run_sdist(directory, sdistflags, scmtype, self.quiet)
+            distfile = self.setuptools.run_sdist(directory, infoflags, sdistflags, scmtype, self.quiet)
 
             if not self.skipupload:
                 for location in self.locations:
@@ -300,7 +304,7 @@ class ReleaseMaker(object):
                         if '--sign' in uploadflags:
                             if isfile(distfile+'.asc'):
                                 os.remove(distfile+'.asc')
-                        self.setuptools.run_upload(directory, location, sdistflags, uploadflags, scmtype)
+                        self.setuptools.run_upload(directory, location, infoflags, sdistflags, uploadflags, scmtype)
                     else:
                         self.scp.run_scp(distfile, location)
         finally:

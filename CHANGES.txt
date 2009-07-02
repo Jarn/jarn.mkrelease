@@ -4,6 +4,9 @@ Changelog
 2.0b1 - Unreleased
 ------------------
 
+- Disable all version-number decorations configured in setup.cfg.
+  [witsch, stefan]
+
 - Delete any existing signature file before signing anew. This keeps
   GnuPG from complaining about existing (but left-over) files.
   [stefan]

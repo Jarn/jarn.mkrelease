@@ -31,13 +31,15 @@ class Setuptools(WithProcess, WithPython):
         err_exit('Bad setup.py')
 
     @chdir
-    def run_sdist(self, dir, sdistflags, scmtype='', quiet=False):
+    def run_sdist(self, dir, infoflags, sdistflags, scmtype='', quiet=False):
         echo = True
         if quiet:
             echo = tee.NotAfter('running sdist')
 
-        rc, lines = self._patched_setup(
-            ['sdist'] + sdistflags, echo=echo, scmtype=scmtype)
+        rc, lines = self._run_setup_py(
+            ['egg_info'] + infoflags + ['sdist'] + sdistflags,
+            echo=echo,
+            scmtype=scmtype)
 
         if rc == 0:
             filename = self._parse_sdist_results(lines)
@@ -46,11 +48,12 @@ class Setuptools(WithProcess, WithPython):
         err_exit('Release failed')
 
     @chdir
-    def run_upload(self, dir, location, sdistflags, uploadflags, scmtype=''):
+    def run_upload(self, dir, location, infoflags, sdistflags, uploadflags, scmtype=''):
         serverflags = ['--repository="%s"' % location]
 
-        rc, lines = self._patched_setup(
-            ['sdist'] + sdistflags + ['register'] + serverflags + ['upload'] + serverflags + uploadflags,
+        rc, lines = self._run_setup_py(
+            ['egg_info'] + infoflags + ['sdist'] + sdistflags +
+            ['register'] + serverflags + ['upload'] + serverflags + uploadflags,
             echo=tee.NotBefore('running register'),
             scmtype=scmtype)
 
@@ -60,7 +63,7 @@ class Setuptools(WithProcess, WithPython):
                 return rc
         err_exit('Upload failed')
 
-    def _patched_setup(self, args, echo=True, echo2=True, scmtype=''):
+    def _run_setup_py(self, args, echo=True, echo2=True, scmtype=''):
         """Run setup.py with monkey-patched setuptools.
 
         The patch forces setuptools to only use file-finders for the
