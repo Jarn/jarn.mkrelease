@@ -32,9 +32,6 @@ Options:
   --svn, --hg, --git  Select the SCM type. Only required if the SCM type
                       cannot be guessed from the argument.
 
-  -p, --push          Push local changes upstream. Applies to Mercurial
-                      and Git repositories only.
-
   -s, --sign          Sign the release with GnuPG.
   -i identity, --identity=identity
                       The GnuPG identity to sign with.
@@ -44,6 +41,7 @@ Options:
                       configured in ~/.pypirc, or an alias name for either.
                       This option may be specified more than once.
 
+  -p, --push          Push changes upstream (hg and git only).
   -q, --quiet         Suppress the output of setup.py sdist.
   -k, --keep-temp     Keep the temporary build directory.
   -h, --help          Print this help message and exit.
