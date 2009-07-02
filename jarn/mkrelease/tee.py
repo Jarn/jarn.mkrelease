@@ -117,3 +117,17 @@ class FromTo(object):
                 return True
         return self.echo
 
+
+class StartsWith(object):
+    """A tee filter printing lines that start with one
+    of the patterns provided as constructor arguments."""
+
+    def __init__(self, *args):
+        self.patterns = args
+
+    def __call__(self, line):
+        for pattern in self.patterns:
+            if line.startswith(pattern):
+                return True
+        return False
+

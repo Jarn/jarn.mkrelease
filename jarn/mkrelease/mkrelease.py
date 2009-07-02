@@ -42,7 +42,7 @@ Options:
                       This option may be specified more than once.
 
   -p, --push          Push changes upstream (hg and git only).
-  -q, --quiet         Suppress the output of setup.py sdist.
+  -q, --quiet         Suppress output of setuptools commands.
   -k, --keep-temp     Keep the temporary build directory.
   -h, --help          Print this help message and exit.
   -v, --version       Print the version string and exit.

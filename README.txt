@@ -78,7 +78,7 @@ Options
     Push changes upstream (hg and git only).
 
 ``-q, --quiet``
-    Suppress the output of ``setup.py sdist``.
+    Suppress output of setuptools commands.
 
 ``-k, --keep-temp``
     Keep the temporary build directory.

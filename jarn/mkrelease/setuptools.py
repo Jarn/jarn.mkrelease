@@ -34,7 +34,7 @@ class Setuptools(WithProcess, WithPython):
     def run_sdist(self, dir, infoflags, sdistflags, scmtype='', quiet=False):
         echo = True
         if quiet:
-            echo = tee.NotAfter('running sdist')
+            echo = tee.StartsWith('running')
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + ['sdist'] + sdistflags,
