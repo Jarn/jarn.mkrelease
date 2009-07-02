@@ -1,4 +1,4 @@
-from os.path import join, isdir
+from os.path import abspath, join, isdir
 from urlparse import urlsplit
 from process import WithProcess
 from dirstack import chdir
@@ -424,5 +424,5 @@ class SCMContainer(object):
             return self.get_scm_from_type(type)
         if self.is_valid_url(url_or_dir):
             return self.get_scm_from_url(url_or_dir)
-        return self.get_scm_from_sandbox(url_or_dir)
+        return self.get_scm_from_sandbox(abspath(url_or_dir))
 
