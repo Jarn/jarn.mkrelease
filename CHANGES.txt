@@ -4,7 +4,7 @@ Changelog
 2.0b1 - Unreleased
 ------------------
 
-- Disable all version-number decorations configured in setup.cfg.
+- Disable all version number decorations configured in setup.cfg.
   [witsch, stefan]
 
 - Delete any existing signature file before signing anew. This keeps
