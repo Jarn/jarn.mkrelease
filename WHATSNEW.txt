@@ -1,5 +1,5 @@
-New in 2.0
-==========
+What's new in 2.0?
+==================
 
 * Support for Mercurial and Git.
 
