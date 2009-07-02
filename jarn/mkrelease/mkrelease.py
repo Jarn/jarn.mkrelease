@@ -26,8 +26,8 @@ Release sdist eggs
 Options:
   -C, --skip-checkin  Do not checkin modified files from the sandbox.
   -T, --skip-tag      Do not tag the release in SCM.
-  -U, --skip-upload   Do not upload the release to dist-location.
-  -D, --dry-run       Dry-run; equivalent to -CTU.
+  -S, --skip-upload   Do not upload the release to dist-location.
+  -D, --dry-run       Dry-run; equivalent to -CTS.
 
   --svn, --hg, --git  Select the SCM type. Only required if the SCM type
                       cannot be guessed from the argument.
@@ -186,7 +186,7 @@ class ReleaseMaker(object):
         """Parse command line.
         """
         try:
-            options, args = getopt.getopt(self.args, 'CDTUd:hi:kpqsv',
+            options, args = getopt.getopt(self.args, 'CDSTd:hi:kpqsv',
                 ('skip-checkin', 'skip-tag', 'skip-upload', 'dry-run', 'keep-temp',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop'))
@@ -198,7 +198,7 @@ class ReleaseMaker(object):
                 self.skipcheckin = True
             elif name in ('-T', '--skip-tag'):
                 self.skiptag = True
-            elif name in ('-U', '--skip-upload'):
+            elif name in ('-S', '--skip-upload'):
                 self.skipupload = True
             elif name in ('-D', '--dry-run'):
                 self.skipcheckin = self.skiptag = self.skipupload = True

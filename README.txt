@@ -53,11 +53,11 @@ Options
 ``-T, --skip-tag``
     Do not tag the release in SCM.
 
-``-U, --skip-upload``
+``-S, --skip-upload``
     Do not upload the release to dist-location.
 
 ``-D, --dry-run``
-    Dry-run; equivalent to ``-CTU``.
+    Dry-run; equivalent to ``-CTS``.
 
 ``--svn, --hg, --git``
     Select the SCM type. Only required if the SCM type
