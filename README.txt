@@ -275,8 +275,3 @@ setup, avoid ``-p`` and push manually.
 
 Git's short-hand notation for ``ssh://`` URLs is not supported.
 
-All SCMs
---------
-
-``file://`` URLs must be absolute.
-
