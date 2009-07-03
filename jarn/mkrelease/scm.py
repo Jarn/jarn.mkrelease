@@ -198,7 +198,8 @@ class Mercurial(DSCM):
                 url = lines[0]
             else:
                 return ''
-        # hg show always returns 0 so we should never get here
+        # hg show always returns 0 so we should only get here
+        # on catastrophic failure
         if not url:
             err_exit('Failed to get URL from %(dir)s' % locals())
         return url
@@ -298,7 +299,8 @@ class Git(DSCM):
                         break
             if not url:
                 return ''
-        # git config -l always returns 0 so we should never get here
+        # git config -l always returns 0 so we should only get here
+        # on catastrophic failure
         if not url:
             err_exit('Failed to get URL from %(dir)s' % locals())
         return url
