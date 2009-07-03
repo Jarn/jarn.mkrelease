@@ -261,7 +261,8 @@ class ReleaseMaker(object):
 
             if not self.skipcheckin:
                 if self.scm.is_dirty_sandbox(directory):
-                    self.scm.checkin_sandbox(directory, name, version, self.push)
+                    self.scm.checkin_sandbox(
+                        directory, name, version, self.push)
 
     def make_release(self):
         """Build and distribute the egg.
@@ -292,9 +293,11 @@ class ReleaseMaker(object):
                 tagid = self.scm.get_tag_id(directory, version)
                 self.scm.check_tag_exists(directory, tagid)
                 print 'Tagging', name, version
-                self.scm.create_tag(directory, tagid, name, version, self.push)
+                self.scm.create_tag(
+                    directory, tagid, name, version, self.push)
 
-            distfile = self.setuptools.run_sdist(directory, infoflags, sdistflags, scmtype, self.quiet)
+            distfile = self.setuptools.run_sdist(
+                directory, infoflags, sdistflags, scmtype, self.quiet)
 
             if not self.skipupload:
                 for location in self.locations:
@@ -302,9 +305,11 @@ class ReleaseMaker(object):
                         if '--sign' in uploadflags:
                             if isfile(distfile+'.asc'):
                                 os.remove(distfile+'.asc')
-                        self.setuptools.run_upload(directory, location, infoflags, sdistflags, uploadflags, scmtype)
+                        self.setuptools.run_upload(
+                            directory, location, infoflags, sdistflags, uploadflags, scmtype)
                     else:
-                        self.scp.run_scp(distfile, location)
+                        self.scp.run_scp(
+                            distfile, location)
         finally:
             if not self.keeptemp:
                 shutil.rmtree(tempdir)
