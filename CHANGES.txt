@@ -5,8 +5,8 @@ Changelog
 ------------------
 
 - By default, ignore all version number decorations (1.0dev-r12345)
-  that may be configured in setup.cfg. The ``--develop`` flag disables
-  this safeguard.
+  that may be configured in setup.cfg. Passing the ``--develop`` flag
+  disables this safeguard.
   [witsch, stefan]
 
 - Delete any existing signature file before signing anew. This keeps
