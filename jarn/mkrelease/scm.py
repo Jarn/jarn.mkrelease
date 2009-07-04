@@ -390,10 +390,13 @@ class SCMContainer(object):
         if len(matches) == 1:
             return matches[0]()
         if len(matches) == 2:
-            types = '%s or %s' % tuple([x.name for x in matches])
+            names = '%s and %s' % tuple([x.name for x in matches])
+            flags = '--%s or --%s' % tuple([x.name for x in matches])
         elif len(matches) == 3:
-            types = '%s, %s, or %s' % tuple([x.name for x in matches])
-        err_exit('Failed to guess SCM type (may be %(types)s): %(dir)s' % locals())
+            names = '%s, %s, and %s' % tuple([x.name for x in matches])
+            flags = '--%s, --%s, or --%s' % tuple([x.name for x in matches])
+        err_exit('Ambiguous SCM type: %(names)s meta-information found in %(dir)s\n'
+                 'Please specify %(flags)s to resolve' % locals())
 
     def get_scm_from_url(self, url):
         proto, host, path, qs, frag = urlsplit(url)
@@ -408,7 +411,8 @@ class SCMContainer(object):
                 return Mercurial()
             if host.startswith('git.') or path.startswith('/git/'):
                 return Git()
-            err_exit('Failed to guess SCM type (may be hg or git): %(url)s' % locals())
+            err_exit('Failed to guess SCM type: %(url)s\n'
+                     'Please specify --hg or --git' % locals())
         if proto in ('http', 'https', 'file'):
             if path.endswith('.git'):
                 return Git()
@@ -418,7 +422,8 @@ class SCMContainer(object):
                 return Mercurial()
             if host.startswith('git.') or path.startswith('/git/'):
                 return Git()
-            err_exit('Failed to guess SCM type (may be svn, hg, or git): %(url)s' % locals())
+            err_exit('Failed to guess SCM type: %(url)s\n'
+                     'Please specify --svn, --hg, or --git' % locals())
         err_exit('Unknown URL: %(url)s' % locals())
 
     def guess_scm(self, type, url_or_dir):
