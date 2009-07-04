@@ -4,6 +4,8 @@ Changelog
 2.0b2 - Unreleased
 ------------------
 
+- Improve error messages in the SCM-detection part.
+  [stefan]
 
 2.0b1 - 2009-07-03
 ------------------
