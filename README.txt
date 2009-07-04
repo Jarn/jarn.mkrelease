@@ -192,8 +192,8 @@ In the Plone world, it is common practice to upload packages to plone.org
 
   [distutils]
   index-servers =
-      pypi
-      ploneorg
+    pypi
+    ploneorg
 
   [pypi]
   username = fred
