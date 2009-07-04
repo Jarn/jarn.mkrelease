@@ -186,7 +186,7 @@ class ReleaseMaker(object):
         """Parse command line.
         """
         try:
-            options, args = getopt.getopt(self.args, 'CDSTd:ehi:kpqsv',
+            options, args = getopt.getopt(self.args, 'CDSTd:ehi:knpqsv',
                 ('skip-checkin', 'skip-tag', 'skip-upload', 'dry-run', 'keep-temp',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop'))
@@ -200,7 +200,7 @@ class ReleaseMaker(object):
                 self.skiptag = True
             elif name in ('-S', '--skip-upload'):
                 self.skipupload = True
-            elif name in ('-D', '--dry-run'):
+            elif name in ('-D', '-n', '--dry-run'):
                 self.skipcheckin = self.skiptag = self.skipupload = True
             elif name in ('-k', '--keep-temp'):
                 self.keeptemp = True
