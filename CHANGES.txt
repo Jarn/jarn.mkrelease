@@ -10,7 +10,7 @@ Changelog
 2.0b1 - 2009-07-03
 ------------------
 
-- By default, ignore all version number decorations (1.0dev-r12345)
+- By default, ignore all version number extensions (1.0dev-r12345)
   that may be configured in setup.cfg. Passing the ``--develop`` flag
   disables this safeguard.
   [witsch, stefan]
