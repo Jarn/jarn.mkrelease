@@ -63,19 +63,22 @@ Options
     Select the SCM type. Only required if the SCM type
     cannot be guessed from the argument.
 
+``-d dist-location, --dist-location=dist-location``
+    An scp destination specification, or an index server
+    configured in ``~/.pypirc``, or an alias name for either.
+    This option may be specified more than once.
+
 ``-s, --sign``
     Sign the release with GnuPG.
 
 ``-i identity, --identity=identity``
     The GnuPG identity to sign with.
 
-``-d dist-location, --dist-location=dist-location``
-    An scp destination specification, or an index server
-    configured in ``~/.pypirc``, or an alias name for either.
-    This option may be specified more than once.
-
 ``-p, --push``
-    Push local changes upstream (Mercurial and Git only).
+    Push changes upstream (Mercurial and Git).
+
+``-e, --develop``
+    Allow version number extensions.
 
 ``-q, --quiet``
     Suppress output of setuptools commands.
