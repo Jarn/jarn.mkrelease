@@ -247,7 +247,8 @@ class ReleaseMaker(object):
 
         if self.scm.is_valid_url(directory):
             self.remoteurl = directory
-            self.isremote = self.push = True
+            self.isremote = True
+            self.push = True
 
             if directory.startswith('file://') and not directory.startswith('file:///'):
                 err_exit('File URLs must be absolute: %(directory)s' % locals())
@@ -257,11 +258,7 @@ class ReleaseMaker(object):
             self.setuptools.check_valid_package(directory)
 
             self.remoteurl = self.scm.get_url_from_sandbox(directory)
-
-            if self.scm.is_distributed():
-                self.isremote = False
-            else:
-                self.isremote = self.push = True
+            self.isremote = False
 
             name, version = self.setuptools.get_package_info(directory)
             print 'Releasing', name, version
