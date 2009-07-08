@@ -433,10 +433,8 @@ class SCMContainer(object):
             return self.get_scm_from_type(type)
         if self.is_valid_url(url_or_dir):
             return self.get_scm_from_url(url_or_dir)
-
         dir = abspath(url_or_dir)
         if not exists(url_or_dir):
             err_exit('No such file or directory: %(dir)s' % locals())
-
         return self.get_scm_from_sandbox(dir)
 
