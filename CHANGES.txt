@@ -4,17 +4,17 @@ Changelog
 2.0b2 - Unreleased
 ------------------
 
-- Improve error messages in the SCM-detection part.
+- Improve user feedback in the SCM-detection part.
   [stefan]
 
-- Documentation for the ``-e`` flag was missing.
+- Document the -e flag.
   [stefan]
 
 2.0b1 - 2009-07-03
 ------------------
 
 - By default, ignore all version number extensions (dev-r12345)
-  that may be configured in setup.cfg. Passing the ``-e`` flag
+  that may be configured in setup.cfg. Passing the -e flag
   disables this safeguard.
   [witsch, stefan]
 
