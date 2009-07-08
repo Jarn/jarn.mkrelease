@@ -1,4 +1,4 @@
-from os.path import abspath, join, isdir
+from os.path import abspath, join, exists, isdir
 from urlparse import urlsplit
 from process import WithProcess
 from dirstack import chdir
@@ -50,6 +50,8 @@ class SCM(WithProcess):
         raise NotImplementedError
 
     def check_valid_sandbox(self, dir):
+        if not exists(dir):
+            err_exit('No such file or directory: %(dir)s' % locals())
         if not self.is_valid_sandbox(dir):
             name = self.__class__.__name__
             err_exit('Not a %(name)s sandbox: %(dir)s' % locals())
@@ -431,5 +433,10 @@ class SCMContainer(object):
             return self.get_scm_from_type(type)
         if self.is_valid_url(url_or_dir):
             return self.get_scm_from_url(url_or_dir)
-        return self.get_scm_from_sandbox(abspath(url_or_dir))
+
+        dir = abspath(url_or_dir)
+        if not exists(url_or_dir):
+            err_exit('No such file or directory: %(dir)s' % locals())
+
+        return self.get_scm_from_sandbox(dir)
 
