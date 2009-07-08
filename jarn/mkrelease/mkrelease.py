@@ -60,7 +60,7 @@ class Defaults(object):
         """Read config files.
         """
         self.parser = ConfigParser.ConfigParser()
-        self.parser.read((expanduser('~/.pypirc'), '/etc/mkrelease',
+        self.parser.read((expanduser('~/.pypirc'),
                           expanduser('~/.mkrelease')))
 
         def get(section, key, default=None):

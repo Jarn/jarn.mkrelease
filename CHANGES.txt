@@ -10,6 +10,9 @@ Changelog
 - Document the -e flag.
   [stefan]
 
+- Drop global configuration file for YAGNI.
+  [stefan]
+
 2.0b1 - 2009-07-03
 ------------------
 

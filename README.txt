@@ -128,8 +128,8 @@ Configuration
 mkrelease reads available index servers from the distutils configuration
 file ``~/.pypirc``. How this file must look is documented elsewhere_.
 
-mkrelease furthermore reads its own configuration files,
-``/etc/mkrelease`` and ``~/.mkrelease``. Here's an example::
+mkrelease furthermore reads its own configuration file
+``~/.mkrelease``. Here's an example::
 
   [defaults]
   distbase =
