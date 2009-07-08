@@ -33,10 +33,6 @@ Changelog
   This is required to support multi-SCM sandboxes (think git-svn).
   [stefan]
 
-- Treat Subversion sandboxes just like the others and avoid the
-  temporary checkout step.
-  [stefan]
-
 - Remove the -u flag for being pointless.
   [stefan]
 
