@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0b2 - Unreleased
+2.0b2 - 2009-07-09
 ------------------
 
 - Improve user feedback in the SCM-detection part.
