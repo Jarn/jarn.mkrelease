@@ -210,14 +210,14 @@ In the Plone world, it is common practice to upload packages to plone.org
 
 We can now type::
 
-  $ mkrelease -d ploneorg -d pypi src/my.package
+  $ mkrelease -d pypi -d ploneorg src/my.package
 
 Next, we define an alias in ``~/.mkrelease``::
 
   [aliases]
   plone =
-    ploneorg
     pypi
+    ploneorg
 
 Which allows us to write::
 
