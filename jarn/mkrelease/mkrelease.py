@@ -68,9 +68,17 @@ class Defaults(object):
                 return self.parser.get(section, key)
             return default
 
+        def getboolean(section, key, default=None):
+            if self.parser.has_option(section, key):
+                return self.parser.getboolean(section, key)
+            return default
+
         self.python = sys.executable
         self.distbase = get('defaults', 'distbase', '')
         self.distdefault = get('defaults', 'distdefault', '')
+
+        self.sign = getboolean('defaults', 'sign', False)
+        self.identity = get('defaults', 'identity', '')
 
         self.aliases = {}
         if self.parser.has_section('aliases'):
@@ -224,8 +232,14 @@ class ReleaseMaker(object):
             elif name in ('-e', '--develop'):
                 self.infoflags = []
 
+        if not self.uploadflags and self.defaults.sign:
+            self.uploadflags.append('--sign')
+
         if self.uploadflags and '--sign' not in self.uploadflags:
             self.uploadflags.append('--sign')
+
+        if len(set(self.uploadflags)) == 1 and self.defaults.identity:
+            self.uploadflags.append('--identity="%s"' % self.defaults.identity)
 
         if not self.locations:
             self.locations.extend(self.locations.default_location())

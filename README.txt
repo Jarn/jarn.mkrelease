@@ -245,6 +245,15 @@ command must be available on the system PATH)::
 
   $ mkrelease -d pypi -s -i fred@bedrock.com src/my.package
 
+For convenience, and to support mandatory-signing scenarios, defaults
+for ``-s`` and ``-i`` may be configured in ``~/.mkrelease``::
+
+  [defaults]
+  distbase = jarn.com:/var/dist
+  distdefault = public
+  sign = true
+  identity = fred@bedrock.com
+
 Requirements
 ============
 
