@@ -249,8 +249,6 @@ For convenience, and to support mandatory-signing scenarios, defaults
 for ``-s`` and ``-i`` may be configured in ``~/.mkrelease``::
 
   [defaults]
-  distbase = jarn.com:/var/dist
-  distdefault = public
   sign = true
   identity = fred@bedrock.com
 
