@@ -194,8 +194,23 @@ class ReleaseMaker(object):
     def get_options(self):
         """Parse command line.
         """
+        args = self.parse_options(self.args)
+
+        if args:
+            self.directory = args[0]
+
+        if len(args) > 1:
+            args = self.parse_options(args[1:])
+        else:
+            args = []
+
+        self.finalize_options(args)
+
+    def parse_options(self, args):
+        """Parse command line options.
+        """
         try:
-            options, args = getopt.getopt(self.args, 'CDSTd:ehi:knpqsv',
+            options, args = getopt.getopt(args, 'CDSTd:ehi:knpqsv',
                 ('skip-checkin', 'skip-tag', 'skip-upload', 'dry-run', 'keep-temp',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop'))
@@ -232,6 +247,11 @@ class ReleaseMaker(object):
             elif name in ('-e', '--develop'):
                 self.infoflags = []
 
+        return args
+
+    def finalize_options(self, args):
+        """Post-process command line options.
+        """
         if not self.uploadflags and self.defaults.sign:
             self.uploadflags.append('--sign')
 
@@ -247,11 +267,8 @@ class ReleaseMaker(object):
         if not self.skipupload:
             self.locations.check_valid_locations()
 
-        if len(args) > 1:
-            err_exit('mkrelease: too many arguments\n%s' % usage)
-
         if args:
-            self.directory = args[0]
+            err_exit('mkrelease: too many arguments\n%s' % usage)
 
     def get_packageurl(self):
         """Get URL to release.
