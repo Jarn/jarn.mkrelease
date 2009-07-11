@@ -78,7 +78,7 @@ Options
     Push changes upstream (Mercurial and Git).
 
 ``-e, --develop``
-    Allow version number extensions (i.e. don't ignore the
+    Allow version number extensions (i.e. don't ignore
     respective setup.cfg options).
 
 ``-q, --quiet``
@@ -240,16 +240,16 @@ we want to release::
 Using GnuPG
 ===========
 
-Release my.package to PyPI and sign the archive with GnuPG (the ``gpg``
+Release my.package and sign the archive with GnuPG (the ``gpg``
 command must be available on the system PATH)::
 
-  $ mkrelease -d pypi -s -i fred@bedrock.com src/my.package
+  $ mkrelease -s -i fred@bedrock.com -d pypi src/my.package
 
 For convenience, and to support mandatory-signing scenarios, defaults
 for ``-s`` and ``-i`` may be configured in ``~/.mkrelease``::
 
   [defaults]
-  sign = true
+  sign = yes
   identity = fred@bedrock.com
 
 Requirements
