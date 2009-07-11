@@ -191,27 +191,6 @@ class ReleaseMaker(object):
         self.scmtype = ''
         self.args = args
 
-    def get_python(self):
-        """Verify Python version.
-        """
-        self.python.check_valid_python()
-
-    def get_options(self):
-        """Parse command line.
-        """
-        args = self._parse_options(self.args)
-
-        if args:
-            self.directory = args[0]
-
-        # If there are more arguments, parse again
-        if len(args) > 1:
-            args = self._parse_options(args[1:])
-        else:
-            args = []
-
-        self._finalize_options(args)
-
     def _parse_options(self, args):
         """Parse command line options.
         """
@@ -275,6 +254,27 @@ class ReleaseMaker(object):
 
         if args:
             err_exit('mkrelease: too many arguments\n%s' % usage)
+
+    def get_python(self):
+        """Verify Python interpreter.
+        """
+        self.python.check_valid_python()
+
+    def get_options(self):
+        """Parse command line.
+        """
+        args = self._parse_options(self.args)
+
+        if args:
+            self.directory = args[0]
+
+        # If there are more arguments, parse again
+        if len(args) > 1:
+            args = self._parse_options(args[1:])
+        else:
+            args = []
+
+        self._finalize_options(args)
 
     def get_scm(self):
         """Select and instantiate the SCM.
