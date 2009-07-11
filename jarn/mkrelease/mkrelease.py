@@ -191,6 +191,11 @@ class ReleaseMaker(object):
         self.scmtype = ''
         self.args = args
 
+    def get_python(self):
+        """Make sure we have a usable Python.
+        """
+        self.python.check_valid_python()
+
     def get_options(self):
         """Parse command line.
         """
@@ -270,8 +275,8 @@ class ReleaseMaker(object):
         if args:
             err_exit('mkrelease: too many arguments\n%s' % usage)
 
-    def get_packageurl(self):
-        """Get URL to release.
+    def get_package(self):
+        """Get URL or sandbox to release.
         """
         directory = self.directory
         self.scm = self.scmcontainer.guess_scm(self.scmtype, directory)
@@ -347,9 +352,9 @@ class ReleaseMaker(object):
                 shutil.rmtree(tempdir)
 
     def run(self):
-        self.python.check_valid_python()
+        self.get_python()
         self.get_options()
-        self.get_packageurl()
+        self.get_package()
         self.make_release()
         print 'done'
 
