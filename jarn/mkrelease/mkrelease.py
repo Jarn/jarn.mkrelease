@@ -149,7 +149,7 @@ class Locations(object):
             return [self.distbase + sep + location]
         return [location]
 
-    def default_location(self):
+    def get_default_location(self):
         """Return the default location.
         """
         return self.get_location(self.distdefault)
@@ -268,7 +268,7 @@ class ReleaseMaker(object):
             self.uploadflags.append('--identity="%s"' % self.defaults.identity)
 
         if not self.locations:
-            self.locations.extend(self.locations.default_location())
+            self.locations.extend(self.locations.get_default_location())
 
         if not self.skipupload:
             self.locations.check_valid_locations()
