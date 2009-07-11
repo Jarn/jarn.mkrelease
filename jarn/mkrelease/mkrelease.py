@@ -276,11 +276,18 @@ class ReleaseMaker(object):
         if args:
             err_exit('mkrelease: too many arguments\n%s' % usage)
 
-    def get_package(self):
-        """Get URL or sandbox to release.
+    def get_scm(self):
+        """Select and instantiate the SCM.
         """
         directory = self.directory
-        self.scm = self.scmcontainer.guess_scm(self.scmtype, directory)
+        scmtype = self.scmtype
+
+        self.scm = self.scmcontainer.guess_scm(scmtype, directory)
+
+    def get_package(self):
+        """Get the URL or sandbox to release.
+        """
+        directory = self.directory
 
         if self.scm.is_valid_url(directory):
             self.remoteurl = directory
@@ -355,6 +362,7 @@ class ReleaseMaker(object):
     def run(self):
         self.get_python()
         self.get_options()
+        self.get_scm()
         self.get_package()
         self.make_release()
         print 'done'
