@@ -192,26 +192,27 @@ class ReleaseMaker(object):
         self.args = args
 
     def get_python(self):
-        """Make sure we have a usable Python.
+        """Verify Python version.
         """
         self.python.check_valid_python()
 
     def get_options(self):
         """Parse command line.
         """
-        args = self.parse_options(self.args)
+        args = self._parse_options(self.args)
 
         if args:
             self.directory = args[0]
 
+        # If there are more arguments, parse again
         if len(args) > 1:
-            args = self.parse_options(args[1:])
+            args = self._parse_options(args[1:])
         else:
             args = []
 
-        self.finalize_options(args)
+        self._finalize_options(args)
 
-    def parse_options(self, args):
+    def _parse_options(self, args):
         """Parse command line options.
         """
         try:
@@ -254,7 +255,7 @@ class ReleaseMaker(object):
 
         return args
 
-    def finalize_options(self, args):
+    def _finalize_options(self, args):
         """Post-process command line options.
         """
         if not self.uploadflags and self.defaults.sign:
