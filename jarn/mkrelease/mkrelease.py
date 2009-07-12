@@ -268,7 +268,6 @@ class ReleaseMaker(object):
         if args:
             self.directory = args[0]
 
-        # If there are more arguments, parse again
         if len(args) > 1:
             args = self._parse_options(args[1:])
         else:
