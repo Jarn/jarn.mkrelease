@@ -199,19 +199,19 @@ class ReleaseMaker(object):
     def get_options(self):
         """Parse command line.
         """
-        args = self._parse_options(self.args)
+        args = self.parse_options(self.args)
 
         if args:
             self.directory = args[0]
 
         if len(args) > 1:
-            args = self._parse_options(args[1:])
+            args = self.parse_options(args[1:])
         else:
             args = []
 
-        self._finalize_options(args)
+        self.finalize_options(args)
 
-    def _parse_options(self, args):
+    def parse_options(self, args):
         """Parse command line options.
         """
         try:
@@ -254,7 +254,7 @@ class ReleaseMaker(object):
 
         return args
 
-    def _finalize_options(self, args):
+    def finalize_options(self, args):
         """Post-process command line options.
         """
         if not self.uploadflags and self.defaults.sign:
