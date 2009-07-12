@@ -310,10 +310,10 @@ class ReleaseMaker(object):
         """
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
         directory = join(tempdir, 'checkout')
-        scmtype = self.scm.name
         infoflags = self.infoflags
         sdistflags = self.sdistflags
         uploadflags = self.uploadflags
+        scmtype = self.scm.name
 
         try:
             if self.isremote:
