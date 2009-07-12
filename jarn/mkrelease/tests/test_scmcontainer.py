@@ -75,13 +75,18 @@ class SubversionFromSandboxTests(SubversionSetup):
 
     def testGetSubversion(self):
         scms = SCMContainer()
-        self.assertEqual(scms.get_scm_from_sandbox(self.packagedir).name, 'svn')
+        self.assertEqual(scms.get_scm_from_sandbox(self.clonedir).name, 'svn')
 
     @quiet
     def testBadSandbox(self):
         scms = SCMContainer()
-        self.destroy()
-        self.assertRaises(SystemExit, scms.get_scm_from_sandbox, self.packagedir)
+        self.destroy(self.clonedir)
+        self.assertRaises(SystemExit, scms.get_scm_from_sandbox, self.clonedir)
+
+    @quiet
+    def testNoSuchFile(self):
+        scms = SCMContainer()
+        self.assertRaises(SystemExit, scms.get_scm_from_sandbox, 'foobarbaz.peng')
 
 
 class MercurialFromSandboxTests(MercurialSetup):

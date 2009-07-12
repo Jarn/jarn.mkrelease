@@ -63,9 +63,19 @@ class PackageAPI(PackageSetup):
 
     name = ''
     clonedir = None
+    auto_clone = False
 
     def clone(self):
         raise NotImplementedError
+
+    def setUp(self):
+        PackageSetup.setUp(self)
+        if self.auto_clone:
+            try:
+                self.clone()
+            except:
+                self.cleanUp()
+                raise
 
     def destroy(self, dir=None, name=None):
         if dir is None:
@@ -74,12 +84,18 @@ class PackageAPI(PackageSetup):
             name = self.name
         if name:
             if name == 'svn':
-                for path, dirs, files in os.walk(dir):
-                    if '.svn' in dirs:
-                        shutil.rmtree(join(path, '.svn'))
-                        dirs.remove('.svn')
+                self._destroy_svn(dir, name)
             else:
                 shutil.rmtree(join(dir, '.'+name))
+
+    def _destroy_svn(self, dir, name):
+        if isdir(join(dir, 'db', 'revs')): # The svn repo
+            shutil.rmtree(join(dir, 'db'))
+        else:
+            for path, dirs, files in os.walk(dir):
+                if '.svn' in dirs:
+                    shutil.rmtree(join(path, '.svn'))
+                    dirs.remove('.svn')
 
     def modify(self, dir):
         appendlines(join(dir, 'setup.py'), ['#foo'])
@@ -106,28 +122,12 @@ class SubversionSetup(PackageAPI):
 
     name = 'svn'
     source = 'testrepo.svn'
-
-    def setUp(self):
-        # Always clone the svn repo
-        PackageAPI.setUp(self)
-        try:
-            self.clone()
-        except:
-            self.cleanUp()
-            raise
+    auto_clone = True
 
     def clone(self):
         process = Process(quiet=True)
         process.system('svn checkout file://%s/trunk testclone' % self.packagedir)
         self.clonedir = join(self.tempdir, 'testclone')
-
-    def destroy(self, dir=None, name=None):
-        if dir is None:
-            dir = self.packagedir
-        if isdir(join(dir, 'db')): # The svn repo
-            shutil.rmtree(dir)
-        else:
-            PackageAPI.destroy(self, dir, name)
 
     @chdir
     def remove(self, dir):
@@ -150,6 +150,7 @@ class MercurialSetup(PackageAPI):
 
     name = 'hg'
     source = 'testpackage.hg'
+    auto_clone = False
 
     def clone(self):
         process = Process(quiet=True)
@@ -177,6 +178,7 @@ class GitSetup(PackageAPI):
 
     name = 'git'
     source = 'testpackage.git'
+    auto_clone = False
 
     def clone(self):
         process = Process(quiet=True)
