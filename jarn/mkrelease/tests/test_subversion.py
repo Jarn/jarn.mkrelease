@@ -85,7 +85,7 @@ class UrlFromSandboxTests(SubversionSetup):
 
     @quiet
     def testBadSandbox(self):
-        scm = Subversion(Process(quiet=1))
+        scm = Subversion(Process(quiet=True))
         self.destroy(self.clonedir)
         self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.clonedir)
 
