@@ -191,6 +191,26 @@ class ReleaseMaker(object):
         self.scmtype = ''
         self.args = args
 
+    def get_python(self):
+        """Verify Python interpreter.
+        """
+        self.python.check_valid_python()
+
+    def get_options(self):
+        """Parse command line.
+        """
+        args = self._parse_options(self.args)
+
+        if args:
+            self.directory = args[0]
+
+        if len(args) > 1:
+            args = self._parse_options(args[1:])
+        else:
+            args = []
+
+        self._finalize_options(args)
+
     def _parse_options(self, args):
         """Parse command line options.
         """
@@ -254,26 +274,6 @@ class ReleaseMaker(object):
 
         if args:
             err_exit('mkrelease: too many arguments\n%s' % usage)
-
-    def get_python(self):
-        """Verify Python interpreter.
-        """
-        self.python.check_valid_python()
-
-    def get_options(self):
-        """Parse command line.
-        """
-        args = self._parse_options(self.args)
-
-        if args:
-            self.directory = args[0]
-
-        if len(args) > 1:
-            args = self._parse_options(args[1:])
-        else:
-            args = []
-
-        self._finalize_options(args)
 
     def get_package(self):
         """Get the URL or sandbox to release.
