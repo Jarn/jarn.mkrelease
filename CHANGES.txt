@@ -8,7 +8,7 @@ Changelog
   files (Symptom: data files not installed).
   [stefan]
 
-- The -e flag now implies -T. We never want to tag development releases.
+- The -e flag now implies -T. We never want to tag a development release.
   [stefan]
 
 2.0 - 2009-07-16
