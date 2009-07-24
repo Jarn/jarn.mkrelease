@@ -4,6 +4,9 @@ Changelog
 2.0.1 - Unreleased
 ------------------
 
+- Fixed bug which could cause mkrelease to issue eggs with faulty manifest
+  files (Symptom: data files not installed).
+  [stefan]
 
 2.0 - 2009-07-16
 ----------------

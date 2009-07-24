@@ -123,7 +123,7 @@ def walk_revctrl(dirname=''):
         if %(scmtype)r in ep.name:
             found = True
             distutils.log.info('using ' + ep.name + ' file-finder')
-            for item in ep.load()(dirname or os.curdir):
+            for item in ep.load()(dirname):
                 yield item
     if not found:
         print >>sys.stderr, 'No %(scmtype)s file-finder ' \

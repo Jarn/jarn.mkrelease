@@ -24,6 +24,12 @@ def contains(archive, name):
     return False
 
 
+def manifest(archive):
+    manifest = zipfile.ZipFile(archive).open(
+        'testpackage-2.6/testpackage.egg-info/SOURCES.txt')
+    return manifest.read()
+
+
 def get_finder(type):
     for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
         if type.lower() in ep.name:
@@ -76,6 +82,23 @@ class SubversionTests(SubversionSetup):
         archive = st.run_sdist(self.clonedir, [], ['--formats=zip'])
         self.assertEqual(contains(archive, 'subversion_only.txt'), False)
 
+    def testSubversionManifest(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        # This uses svn to create the manifest.
+        archive = st.run_sdist(self.clonedir, [], ['--formats=zip'], scmtype='svn')
+        self.assertEqual(manifest(archive), """\
+README.txt
+setup.py
+testpackage/__init__.py
+testpackage/subversion_only.py
+testpackage/subversion_only.txt
+testpackage.egg-info/PKG-INFO
+testpackage.egg-info/SOURCES.txt
+testpackage.egg-info/dependency_links.txt
+testpackage.egg-info/not-zip-safe
+testpackage.egg-info/requires.txt
+testpackage.egg-info/top_level.txt""")
+
 
 class MercurialTests(MercurialSetup):
 
@@ -112,6 +135,24 @@ class MercurialTests(MercurialSetup):
         # This uses hg to create the manifest.
         archive = st.run_sdist(self.clonedir, [], ['--formats=zip'])
         self.assertEqual(contains(archive, 'mercurial_only.txt'), True)
+
+    def testMercurialManifest(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        self.clone()
+        # This uses hg to create the manifest.
+        archive = st.run_sdist(self.clonedir, [], ['--formats=zip'], scmtype='hg')
+        self.assertEqual(manifest(archive), """\
+README.txt
+setup.py
+testpackage/__init__.py
+testpackage/mercurial_only.py
+testpackage/mercurial_only.txt
+testpackage.egg-info/PKG-INFO
+testpackage.egg-info/SOURCES.txt
+testpackage.egg-info/dependency_links.txt
+testpackage.egg-info/not-zip-safe
+testpackage.egg-info/requires.txt
+testpackage.egg-info/top_level.txt""")
 
 
 class GitTests(GitSetup):
@@ -150,4 +191,22 @@ class GitTests(GitSetup):
         # This uses git to create the manifest.
         archive = st.run_sdist(self.clonedir, [], ['--formats=zip'])
         self.assertEqual(contains(archive, 'git_only.txt'), True)
+
+    def testGitManifest(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        self.clone()
+        # This uses git to create the manifest.
+        archive = st.run_sdist(self.clonedir, [], ['--formats=zip'], scmtype='git')
+        self.assertEqual(manifest(archive), """\
+README.txt
+setup.py
+testpackage/__init__.py
+testpackage/git_only.py
+testpackage/git_only.txt
+testpackage.egg-info/PKG-INFO
+testpackage.egg-info/SOURCES.txt
+testpackage.egg-info/dependency_links.txt
+testpackage.egg-info/not-zip-safe
+testpackage.egg-info/requires.txt
+testpackage.egg-info/top_level.txt""")
 
