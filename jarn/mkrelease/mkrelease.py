@@ -250,6 +250,7 @@ class ReleaseMaker(object):
             elif name in ('--svn', '--hg', '--git'):
                 self.scmtype = name[2:]
             elif name in ('-e', '--develop'):
+                self.skiptag = True
                 self.infoflags = []
 
         return args
