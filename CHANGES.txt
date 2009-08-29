@@ -4,6 +4,10 @@ Changelog
 2.0.2 - Unreleased
 ------------------
 
+- Filter meta files (``.svn*``, ``.hg*``, ``.git*``) and never include
+  them in releases.
+  [stefan]
+
 - Make sure to clean up all temporary files.
   [stefan]
 

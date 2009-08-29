@@ -130,7 +130,8 @@ def walk_revctrl(dirname=''):
             found = True
             distutils.log.info('using ' + ep.name + ' file-finder')
             for item in ep.load()(dirname):
-                yield item
+                if not os.path.basename(item).startswith('.' + %(scmtype)r):
+                    yield item
     if not found:
         print >>sys.stderr, 'No %(scmtype)s file-finder ' \
             '(setuptools_%(scmtype)s extension missing?)'

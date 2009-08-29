@@ -3,7 +3,7 @@ import os
 import zipfile
 import pkg_resources
 
-from os.path import join
+from os.path import join, isfile
 
 from jarn.mkrelease.setuptools import Setuptools
 from jarn.mkrelease.process import Process
@@ -82,6 +82,12 @@ class SubversionTests(SubversionSetup):
         archive = st.run_sdist(self.clonedir, [], ['--formats=zip'])
         self.assertEqual(contains(archive, 'subversion_only.txt'), False)
 
+    def testSubversionMetaFile(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        # This uses svn to create the manifest.
+        archive = st.run_sdist(self.clonedir, [], ['--formats=zip'], scmtype='svn')
+        self.assertEqual(contains(archive, '.svnignore'), False)
+
     def testSubversionManifest(self):
         st = Setuptools(defaults, Process(quiet=True))
         # This uses svn to create the manifest.
@@ -98,6 +104,12 @@ testpackage.egg-info/dependency_links.txt
 testpackage.egg-info/not-zip-safe
 testpackage.egg-info/requires.txt
 testpackage.egg-info/top_level.txt""")
+
+    def testSetupPycTurd(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        # This uses svn to create the manifest.
+        st.run_sdist(self.clonedir, [], ['--formats=zip'], scmtype='svn')
+        self.failIf(isfile(join(self.clonedir, 'setup.pyc')))
 
 
 class MercurialTests(MercurialSetup):
@@ -136,6 +148,13 @@ class MercurialTests(MercurialSetup):
         archive = st.run_sdist(self.clonedir, [], ['--formats=zip'])
         self.assertEqual(contains(archive, 'mercurial_only.txt'), True)
 
+    def testMercurialMetaFile(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        self.clone()
+        # This uses hg to create the manifest.
+        archive = st.run_sdist(self.clonedir, [], ['--formats=zip'], scmtype='hg')
+        self.assertEqual(contains(archive, '.hgignore'), False)
+
     def testMercurialManifest(self):
         st = Setuptools(defaults, Process(quiet=True))
         self.clone()
@@ -153,6 +172,13 @@ testpackage.egg-info/dependency_links.txt
 testpackage.egg-info/not-zip-safe
 testpackage.egg-info/requires.txt
 testpackage.egg-info/top_level.txt""")
+
+    def testSetupPycTurd(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        self.clone()
+        # This uses hg to create the manifest.
+        st.run_sdist(self.clonedir, [], ['--formats=zip'], scmtype='hg')
+        self.failIf(isfile(join(self.clonedir, 'setup.pyc')))
 
 
 class GitTests(GitSetup):
@@ -192,6 +218,13 @@ class GitTests(GitSetup):
         archive = st.run_sdist(self.clonedir, [], ['--formats=zip'])
         self.assertEqual(contains(archive, 'git_only.txt'), True)
 
+    def testGitMetaFile(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        self.clone()
+        # This uses git to create the manifest.
+        archive = st.run_sdist(self.clonedir, [], ['--formats=zip'], scmtype='git')
+        self.assertEqual(contains(archive, '.gitignore'), False)
+
     def testGitManifest(self):
         st = Setuptools(defaults, Process(quiet=True))
         self.clone()
@@ -209,4 +242,11 @@ testpackage.egg-info/dependency_links.txt
 testpackage.egg-info/not-zip-safe
 testpackage.egg-info/requires.txt
 testpackage.egg-info/top_level.txt""")
+
+    def testSetupPycTurd(self):
+        st = Setuptools(defaults, Process(quiet=True))
+        self.clone()
+        # This uses git to create the manifest.
+        st.run_sdist(self.clonedir, [], ['--formats=zip'], scmtype='git')
+        self.failIf(isfile(join(self.clonedir, 'setup.pyc')))
 
