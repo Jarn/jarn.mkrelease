@@ -105,7 +105,7 @@ testpackage.egg-info/not-zip-safe
 testpackage.egg-info/requires.txt
 testpackage.egg-info/top_level.txt""")
 
-    def testSetupPycTurd(self):
+    def testRemoveSetupPyc(self):
         st = Setuptools(defaults, Process(quiet=True))
         # This uses svn to create the manifest.
         st.run_sdist(self.clonedir, [], ['--formats=zip'], scmtype='svn')
@@ -173,7 +173,7 @@ testpackage.egg-info/not-zip-safe
 testpackage.egg-info/requires.txt
 testpackage.egg-info/top_level.txt""")
 
-    def testSetupPycTurd(self):
+    def testRemoveSetupPyc(self):
         st = Setuptools(defaults, Process(quiet=True))
         self.clone()
         # This uses hg to create the manifest.
@@ -243,7 +243,7 @@ testpackage.egg-info/not-zip-safe
 testpackage.egg-info/requires.txt
 testpackage.egg-info/top_level.txt""")
 
-    def testSetupPycTurd(self):
+    def testRemoveSetupPyc(self):
         st = Setuptools(defaults, Process(quiet=True))
         self.clone()
         # This uses git to create the manifest.
