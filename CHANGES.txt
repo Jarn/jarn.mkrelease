@@ -4,6 +4,8 @@ Changelog
 2.0.2 - Unreleased
 ------------------
 
+- Make sure to clean up all temporary files.
+  [stefan]
 
 2.0.1 - 2009-07-24
 ------------------

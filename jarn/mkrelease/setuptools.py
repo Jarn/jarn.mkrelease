@@ -1,3 +1,4 @@
+import os
 import tee
 
 from os.path import abspath, join, isfile
@@ -86,6 +87,11 @@ class Setuptools(WithProcess, WithPython):
 
         rc, lines = self.process.popen(
             '"%(python)s" %(setup_py)s' % locals(), echo=echo, echo2=echo2)
+
+        # Remove setup.pyc turd
+        if isfile('setup.pyc'):
+            os.remove('setup.pyc')
+
         return rc, lines
 
     def _parse_sdist_results(self, lines):
