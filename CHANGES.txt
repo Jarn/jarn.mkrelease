@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.2 - Unreleased
+2.0.2 - 2009-08-29
 ------------------
 
 - Filter meta files (``.svn*``, ``.hg*``, ``.git*``) and never include
