@@ -255,7 +255,8 @@ for ``-s`` and ``-i`` may be configured in ``~/.mkrelease``::
 Requirements
 ============
 
-The following commands must be available on the system PATH:
+The following commands must be available on the system PATH (you only need
+what you plan to use):
 
 * svn
 
