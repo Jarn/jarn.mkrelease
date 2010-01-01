@@ -87,8 +87,8 @@ class Defaults(object):
 
         self.servers = {}
         for server in get('distutils', 'index-servers', '').split():
-            self.servers[server] = True
             url = get(server, 'repository', pypiurl)
+            self.servers[server] = True
             self.servers[url] = True
 
 
