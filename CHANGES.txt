@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.3 - Unreleased
+2.0.3 - 2010-01-03
 ------------------
 
 - Add -b option for releasing binary eggs.
