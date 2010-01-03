@@ -21,7 +21,7 @@ usage = "Try 'mkrelease --help' for more information."
 help = """\
 Usage: mkrelease [options] [scm-url|scm-sandbox]
 
-Release sdist eggs
+Python egg releaser
 
 Options:
   -C, --skip-checkin  Do not checkin modified files from the sandbox.
@@ -43,6 +43,7 @@ Options:
 
   -p, --push          Push changes upstream (Mercurial and Git).
   -e, --develop       Allow version number extensions.
+  -b, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
   -k, --keep-temp     Keep the temporary build directory.
   -h, --help          Print this help message and exit.
@@ -177,8 +178,9 @@ class ReleaseMaker(object):
         self.keeptemp = False
         self.push = False
         self.quiet = False
+        self.distcmd = 'sdist'
         self.infoflags = ['--no-svn-revision', '--no-date', '--tag-build=""']
-        self.sdistflags = ['--formats="zip"']
+        self.distflags = ['--formats="zip"']
         self.uploadflags = []
         self.directory = os.curdir
         self.defaults = Defaults()
@@ -215,10 +217,10 @@ class ReleaseMaker(object):
         """Parse command line options.
         """
         try:
-            options, args = getopt.getopt(args, 'CDSTd:ehi:knpqsv',
+            options, args = getopt.getopt(args, 'CDSTbd:ehi:knpqsv',
                 ('skip-checkin', 'skip-tag', 'skip-upload', 'dry-run', 'keep-temp',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
-                 'push', 'quiet', 'svn', 'hg', 'git', 'develop'))
+                 'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary'))
         except getopt.GetoptError, e:
             err_exit('mkrelease: %s\n%s' % (e.msg, usage))
 
@@ -252,6 +254,9 @@ class ReleaseMaker(object):
             elif name in ('-e', '--develop'):
                 self.skiptag = True
                 self.infoflags = []
+            elif name in ('-b', '--binary'):
+                self.distcmd = 'bdist'
+                self.distflags = ['--formats="egg"']
 
         return args
 
@@ -311,8 +316,9 @@ class ReleaseMaker(object):
         """
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
         directory = join(tempdir, 'checkout')
+        distcmd = self.distcmd
         infoflags = self.infoflags
-        sdistflags = self.sdistflags
+        distflags = self.distflags
         uploadflags = self.uploadflags
         scmtype = self.scm.name
 
@@ -337,8 +343,8 @@ class ReleaseMaker(object):
                 print 'Tagging', name, version
                 self.scm.create_tag(directory, tagid, name, version, self.push)
 
-            distfile = self.setuptools.run_sdist(
-                directory, infoflags, sdistflags, scmtype, self.quiet)
+            distfile = self.setuptools.run_dist(
+                directory, distcmd, infoflags, distflags, scmtype, self.quiet)
 
             if not self.skipupload:
                 for location in self.locations:
@@ -347,7 +353,7 @@ class ReleaseMaker(object):
                             if isfile(distfile+'.asc'):
                                 os.remove(distfile+'.asc')
                         self.setuptools.run_upload(
-                            directory, location, infoflags, sdistflags, uploadflags, scmtype)
+                            directory, location, distcmd, infoflags, distflags, uploadflags, scmtype)
                     else:
                         self.scp.run_scp(distfile, location)
         finally:

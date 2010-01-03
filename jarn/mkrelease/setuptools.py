@@ -32,28 +32,28 @@ class Setuptools(WithProcess, WithPython):
         err_exit('Bad setup.py')
 
     @chdir
-    def run_sdist(self, dir, infoflags, sdistflags, scmtype='', quiet=False):
+    def run_dist(self, dir, distcmd, infoflags, distflags, scmtype='', quiet=False):
         echo = True
         if quiet:
             echo = tee.StartsWith('running')
 
         rc, lines = self._run_setup_py(
-            ['egg_info'] + infoflags + ['sdist'] + sdistflags,
+            ['egg_info'] + infoflags + [distcmd] + distflags,
             echo=echo,
             scmtype=scmtype)
 
         if rc == 0:
-            filename = self._parse_sdist_results(lines)
+            filename = self._parse_dist_results(lines)
             if filename and isfile(filename):
                 return abspath(filename)
         err_exit('Release failed')
 
     @chdir
-    def run_upload(self, dir, location, infoflags, sdistflags, uploadflags, scmtype=''):
+    def run_upload(self, dir, location, distcmd, infoflags, distflags, uploadflags, scmtype=''):
         serverflags = ['--repository="%s"' % location]
 
         rc, lines = self._run_setup_py(
-            ['egg_info'] + infoflags + ['sdist'] + sdistflags +
+            ['egg_info'] + infoflags + [distcmd] + distflags +
             ['register'] + serverflags + ['upload'] + serverflags + uploadflags,
             echo=tee.NotBefore('running register'),
             scmtype=scmtype)
@@ -94,8 +94,8 @@ class Setuptools(WithProcess, WithPython):
 
         return rc, lines
 
-    def _parse_sdist_results(self, lines):
-        # This relies on --formats=zip
+    def _parse_dist_results(self, lines):
+        # This relies on --formats=zip (or egg)
         for line in lines:
             if line.startswith("creating '") and "' and adding" in line:
                 return line.split("'")[1]

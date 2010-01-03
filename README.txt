@@ -1,43 +1,44 @@
 ==============
 jarn.mkrelease
 ==============
-------------------
-Release sdist eggs
-------------------
+-------------------
+Python egg releaser
+-------------------
 
-**jarn.mkrelease** is a no-frills Python egg releaser. It was created to take
+**mkrelease** is a no-frills Python egg releaser. It was created to take
 the cumber out of building and distributing Python eggs.
 
 Motivation
 ==========
 
-Here at Jarn, we have switched to zc.buildout and pinned egg versions for
-customer deployments. This means that for every update, we have to make
+Here at Jarn, we use zc.buildout and pinned egg versions for
+customer deployments. This means that for every update we have to make
 proper egg releases of all modified packages.
 
 Turns out it's quite a bit of work to put a new egg on a
 distribution server! After preparing a package for release (update
-version strings, etc.), we typically have to:
+version strings, etc) we typically have to:
 
 1. Commit modified files.
 
-2. Tag the release in SCM.
+2. Tag the release.
 
 3. Package up an egg.
 
 4. Distribute the egg via scp or upload it to an index server.
 
-Now multiply by the number of packages needing a release, and the moment
-of `I gotta script this` approaches at warp 9.
-
-Enter jarn.mkrelease.
+Now multiply by the number of packages waiting for release, and the moment of
+*I gotta script this* approaches at warp 9.
 
 Installation
 ============
 
-jarn.mkrelease requires Python 2.6 for its improved distutils support. Use
+mkrelease requires Python 2.6 for its improved distutils support. Use
 ``easy_install jarn.mkrelease`` to install the ``mkrelease`` script.
 Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
+
+mkrelease is known to work with the 0.6 series of setuptools (0.6c11)
+and distribute (0.6.10).
 
 Usage
 =====
@@ -80,6 +81,9 @@ Options
 ``-e, --develop``
     Allow version number extensions (i.e. don't ignore
     respective setup.cfg options).
+
+``-b, --binary``
+    Release a binary (bdist) egg.
 
 ``-q, --quiet``
     Suppress output of setuptools commands.
@@ -145,7 +149,7 @@ mkrelease furthermore reads its own configuration file
     pypi
 
 (Note that ``pypi`` refers to the index server `pypi` as configured in
-``~/.pypirc``.)
+``~/.pypirc``. More on index servers later.)
 
 Armed with this configuration we can shorten example 3 to::
 
@@ -161,7 +165,8 @@ Working with scp
 ================
 
 The simplest distribution location is a server directory shared through
-Apache. Releasing eggs means scp-ing them to the server::
+Apache. Releasing an egg means scp-ing it to the appropriate place on the
+server::
 
   $ mkrelease -d jarn.com:/var/dist/public src/my.package
 
@@ -191,8 +196,24 @@ host part. We can now write::
 Working with index servers
 ==========================
 
-In the Plone world, it is common practice to upload packages to plone.org
-`and` PyPI. For this to work, we first need a ``~/.pypirc`` file::
+Another way of distributing Python eggs is by uploading to dedicated
+index servers, notably PyPI. We first need a ``~/.pypirc`` file::
+
+  [distutils]
+  index-servers =
+    pypi
+
+  [pypi]
+  username = fred
+  password = secret
+
+To release a package on PyPI we can now type::
+
+  $ mkrelease -d pypi src/my.package
+
+Index servers are not limited to PyPI though.
+For example, in the Plone world it is common practice to upload packages to
+plone.org as well as PyPI. Let's extend our ``~/.pypirc``::
 
   [distutils]
   index-servers =
@@ -208,18 +229,18 @@ In the Plone world, it is common practice to upload packages to plone.org
   username = fred
   password = secret
 
-We can now type::
+This allows us to write::
 
   $ mkrelease -d pypi -d ploneorg src/my.package
 
-Next, we define an alias in ``~/.mkrelease``::
+Finally, we can group the servers by defining an alias in ``~/.mkrelease``::
 
   [aliases]
   plone =
     pypi
     ploneorg
 
-Which allows us to write::
+And type::
 
   $ mkrelease -d plone src/my.package
 

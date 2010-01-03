@@ -4,13 +4,13 @@ version = '2.0.3'
 
 setup(name='jarn.mkrelease',
       version=version,
-      description='Release sdist eggs',
+      description='Python egg releaser',
       long_description=open('README.txt').read() + '\n' +
                        open('CHANGES.txt').read(),
       classifiers=[
           'Programming Language :: Python',
       ],
-      keywords='release sdist eggs',
+      keywords='release sdist bdist eggs',
       author='Jarn AS',
       author_email='info@jarn.com',
       url='http://www.jarn.com/',
