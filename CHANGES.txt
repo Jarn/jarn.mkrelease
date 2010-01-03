@@ -7,6 +7,9 @@ Changelog
 - Add -b option for releasing binary eggs.
   [stefan]
 
+- Don't barf on dirty sandboxes when dry-running.
+  [stefan]
+
 2.0.2 - 2009-08-29
 ------------------
 

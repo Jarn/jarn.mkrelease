@@ -330,8 +330,10 @@ class ReleaseMaker(object):
 
             self.scm.check_valid_sandbox(directory)
             self.setuptools.check_valid_package(directory)
-            self.scm.check_dirty_sandbox(directory)
-            self.scm.check_unclean_sandbox(directory)
+
+            if not (self.skipcheckin and self.skiptag):
+                self.scm.check_dirty_sandbox(directory)
+                self.scm.check_unclean_sandbox(directory)
 
             name, version = self.setuptools.get_package_info(directory)
             if self.isremote:
