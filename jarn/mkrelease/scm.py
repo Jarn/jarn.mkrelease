@@ -31,9 +31,6 @@ class SCM(WithProcess):
     def get_url_from_sandbox(self, dir):
         raise NotImplementedError
 
-    def update_sandbox(self, dir):
-        raise NotImplementedError
-
     def checkin_sandbox(self, dir, name, version, push):
         raise NotImplementedError
 
@@ -118,13 +115,6 @@ class Subversion(SCM):
             return lines[1][5:]
         err_exit('Failed to get URL from %(dir)s' % locals())
 
-    def update_sandbox(self, dir):
-        rc = self.process.system(
-            'svn update "%(dir)s"' % locals())
-        if rc != 0:
-            err_exit('Update failed')
-        return rc
-
     def checkin_sandbox(self, dir, name, version, push):
         rc = self.process.system(
             'svn commit -m"Prepare %(name)s %(version)s." "%(dir)s"' % locals())
@@ -205,15 +195,6 @@ class Mercurial(DSCM):
         if not url:
             err_exit('Failed to get URL from %(dir)s' % locals())
         return url
-
-    @chdir
-    def update_sandbox(self, dir):
-        if self.is_remote_sandbox(dir):
-            rc = self.process.system(
-                'hg pull -u')
-            if rc != 0:
-                err_exit('Update failed')
-        return 0
 
     @chdir
     def checkin_sandbox(self, dir, name, version, push):
@@ -306,15 +287,6 @@ class Git(DSCM):
         if not url:
             err_exit('Failed to get URL from %(dir)s' % locals())
         return url
-
-    @chdir
-    def update_sandbox(self, dir):
-        if self.is_remote_sandbox(dir):
-            rc = self.process.system(
-                'git pull origin')
-            if rc != 0:
-                err_exit('Update failed')
-        return 0
 
     @chdir
     def checkin_sandbox(self, dir, name, version, push):

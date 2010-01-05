@@ -193,37 +193,6 @@ class UncleanSandboxTests(DirtySandboxTests):
         self.assertRaises(SystemExit, scm.check_unclean_sandbox, self.clonedir)
 
 
-class UpdateSandboxTests(SubversionSetup):
-
-    def testUpdateSandbox(self):
-        scm = Subversion(Process(quiet=True))
-        self.assertEqual(scm.update_sandbox(self.clonedir), 0)
-
-    def testUpdateModifiedSandbox(self):
-        scm = Subversion(Process(quiet=True))
-        self.modify(self.clonedir) # FIXME
-        self.assertEqual(scm.update_sandbox(self.clonedir), 0)
-
-    # TODO: Test more funky changes, conflicts, etc.
-
-    @quiet
-    def testBadUpdate(self):
-        scm = Subversion(Process(quiet=True))
-        self.destroy(self.packagedir)
-        self.assertRaises(SystemExit, scm.update_sandbox, self.clonedir)
-
-    def testBadSandbox(self):
-        scm = Subversion(Process(quiet=True))
-        self.destroy(self.clonedir)
-        # Note: The sandbox is reported as up-to-date
-        self.assertEqual(scm.update_sandbox(self.clonedir), 0)
-
-    @quiet
-    def testBadProcess(self):
-        scm = Subversion(MockProcess(rc=1))
-        self.assertRaises(SystemExit, scm.update_sandbox, self.clonedir)
-
-
 class CheckinSandboxTests(SubversionSetup):
 
     def testCheckinCleanSandbox(self):

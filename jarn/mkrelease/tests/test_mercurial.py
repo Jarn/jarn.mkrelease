@@ -193,44 +193,6 @@ class UncleanSandboxTests(DirtySandboxTests):
         self.assertRaises(SystemExit, scm.check_unclean_sandbox, self.packagedir)
 
 
-class UpdateSandboxTests(MercurialSetup):
-
-    def testUpdateLocalSandbox(self):
-        scm = Mercurial()
-        self.assertEqual(scm.update_sandbox(self.packagedir), 0)
-
-    def testUpdateRemoteSandbox(self):
-        scm = Mercurial(Process(quiet=True))
-        self.clone()
-        self.assertEqual(scm.update_sandbox(self.clonedir), 0)
-
-    def testUpdateModifiedSandbox(self):
-        scm = Mercurial(Process(quiet=True))
-        self.clone()
-        self.modify(self.packagedir)
-        self.assertEqual(scm.update_sandbox(self.clonedir), 0)
-
-    # TODO: Test more funky changes, conflicts, etc.
-
-    @quiet
-    def testBadUpdate(self):
-        scm = Mercurial(Process(quiet=True))
-        self.clone()
-        self.destroy()
-        self.assertRaises(SystemExit, scm.update_sandbox, self.clonedir)
-
-    def testBadSandbox(self):
-        scm = Mercurial(Process(quiet=True))
-        self.destroy()
-        # Note: The sandbox is reported as up-to-date
-        self.assertEqual(scm.update_sandbox(self.packagedir), 0)
-
-    @quiet
-    def testBadProcess(self):
-        scm = Mercurial(MockProcess(rc=1))
-        self.assertRaises(SystemExit, scm.update_sandbox, self.packagedir)
-
-
 class CheckinSandboxTests(MercurialSetup):
 
     def testCheckinCleanSandbox(self):
