@@ -213,7 +213,7 @@ class Mercurial(DSCM):
         rc = self.process.system(
             'hg clone -v "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
-            err_exit('Checkout failed')
+            err_exit('Clone failed')
         return rc
 
     @chdir
@@ -306,7 +306,7 @@ class Git(DSCM):
         rc = self.process.system(
             'git clone "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
-            err_exit('Checkout failed')
+            err_exit('Clone failed')
         return rc
 
     @chdir
