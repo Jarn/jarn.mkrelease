@@ -4,6 +4,9 @@ Changelog
 2.0.4 - Unreleased
 ------------------
 
+- Always verify checkouts.
+  [stefan]
+
 
 2.0.3 - 2010-01-03
 ------------------

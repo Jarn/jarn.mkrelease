@@ -331,7 +331,7 @@ class ReleaseMaker(object):
             self.scm.check_valid_sandbox(directory)
             self.setuptools.check_valid_package(directory)
 
-            if not (self.skipcheckin and self.skiptag):
+            if self.isremote or not (self.skipcheckin and self.skiptag):
                 self.scm.check_dirty_sandbox(directory)
                 self.scm.check_unclean_sandbox(directory)
 
