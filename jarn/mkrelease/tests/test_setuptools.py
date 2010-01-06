@@ -107,7 +107,6 @@ testpackage.egg-info/top_level.txt""")
 
     def testRemoveSetupPyc(self):
         st = Setuptools(defaults, Process(quiet=True))
-        # This uses svn to create the manifest.
         st.run_dist(self.clonedir, 'sdist', [], ['--formats=zip'], scmtype='svn')
         self.failIf(isfile(join(self.clonedir, 'setup.pyc')))
 
@@ -176,7 +175,6 @@ testpackage.egg-info/top_level.txt""")
     def testRemoveSetupPyc(self):
         st = Setuptools(defaults, Process(quiet=True))
         self.clone()
-        # This uses hg to create the manifest.
         st.run_dist(self.clonedir, 'sdist', [], ['--formats=zip'], scmtype='hg')
         self.failIf(isfile(join(self.clonedir, 'setup.pyc')))
 
@@ -246,7 +244,6 @@ testpackage.egg-info/top_level.txt""")
     def testRemoveSetupPyc(self):
         st = Setuptools(defaults, Process(quiet=True))
         self.clone()
-        # This uses git to create the manifest.
         st.run_dist(self.clonedir, 'sdist', [], ['--formats=zip'], scmtype='git')
         self.failIf(isfile(join(self.clonedir, 'setup.pyc')))
 

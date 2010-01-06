@@ -71,6 +71,30 @@ class ValidSandboxTests(SubversionSetup):
         self.assertRaises(SystemExit, scm.check_valid_sandbox, self.clonedir)
 
 
+class BranchFromSandboxTests(SubversionSetup):
+
+    def testGetBranch(self):
+        scm = Subversion()
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir),
+            'file://%s/trunk' % self.packagedir)
+
+    def testGetBranchFromSubdir(self):
+        scm = Subversion()
+        self.assertEqual(scm.get_branch_from_sandbox(join(self.clonedir, 'testpackage')),
+            'file://%s/trunk/testpackage' % self.packagedir) # XXX
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Subversion(Process(quiet=True))
+        self.destroy(self.clonedir)
+        self.assertRaises(SystemExit, scm.get_branch_from_sandbox, self.clonedir)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Subversion(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.get_branch_from_sandbox, self.clonedir)
+
+
 class UrlFromSandboxTests(SubversionSetup):
 
     def testGetUrl(self):
@@ -290,20 +314,20 @@ class TagIdTests(SubversionSetup):
 
     def testTagIdFromTrunk(self):
         scm = Subversion()
-        self.assertEqual(scm.get_tag_id(self.clonedir, '2.6'), 'file://%s/tags/2.6' % self.packagedir)
+        self.assertEqual(scm.make_tagid(self.clonedir, '2.6'), 'file://%s/tags/2.6' % self.packagedir)
 
     def testTagIdFromBranch(self):
         scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://testpackage/branches/2.x']))
-        self.assertEqual(scm.get_tag_id(self.clonedir, '2.6'), 'file://testpackage/tags/2.6')
+        self.assertEqual(scm.make_tagid(self.clonedir, '2.6'), 'file://testpackage/tags/2.6')
 
     def testTagIdFromTag(self):
         scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://testpackage/tags/2.6b2']))
-        self.assertEqual(scm.get_tag_id(self.clonedir, '2.6'), 'file://testpackage/tags/2.6')
+        self.assertEqual(scm.make_tagid(self.clonedir, '2.6'), 'file://testpackage/tags/2.6')
 
     @quiet
     def testTagIdFromBadUrl(self):
         scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://testpackage']))
-        self.assertRaises(SystemExit, scm.get_tag_id, self.clonedir, '2.6')
+        self.assertRaises(SystemExit, scm.make_tagid, self.clonedir, '2.6')
 
 
 class CreateTagTests(SubversionSetup):

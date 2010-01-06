@@ -1,7 +1,7 @@
 from os.path import abspath, join, exists, isdir
 from urlparse import urlsplit
 from process import WithProcess
-from dirstack import chdir
+from dirstack import DirStack, chdir
 from exit import err_exit
 
 
@@ -13,19 +13,22 @@ class SCM(WithProcess):
     def is_distributed(self):
         return False
 
+    def is_remote_sandbox(self, dir):
+        return True
+
     def is_valid_url(self, url):
         raise NotImplementedError
 
     def is_valid_sandbox(self, dir):
-        return isdir(join(dir, '.'+self.name))
-
-    def is_remote_sandbox(self, dir):
-        return True
+        raise NotImplementedError
 
     def is_dirty_sandbox(self, dir):
         raise NotImplementedError
 
     def is_unclean_sandbox(self, dir):
+        raise NotImplementedError
+
+    def get_branch_from_sandbox(self, dir):
         raise NotImplementedError
 
     def get_url_from_sandbox(self, dir):
@@ -37,7 +40,7 @@ class SCM(WithProcess):
     def checkout_url(self, url, dir):
         raise NotImplementedError
 
-    def get_tag_id(self, dir, version):
+    def make_tagid(self, dir, version):
         raise NotImplementedError
 
     def tag_exists(self, dir, tagid):
@@ -77,7 +80,7 @@ class DSCM(SCM):
     def is_remote_sandbox(self, dir):
         return bool(self.get_url_from_sandbox(dir))
 
-    def get_tag_id(self, dir, version):
+    def make_tagid(self, dir, version):
         return version
 
 
@@ -91,6 +94,14 @@ class Subversion(SCM):
                 url.startswith('http://') or
                 url.startswith('https://') or
                 url.startswith('file://'))
+
+    def is_valid_sandbox(self, dir):
+        if isdir(join(dir, '.svn')):
+            rc, lines = self.process.popen(
+                'svn info "%(dir)s"' % locals(), echo=False, echo2=False)
+            if rc == 0:
+                return True
+        return False
 
     def is_dirty_sandbox(self, dir):
         rc, lines = self.process.popen(
@@ -107,6 +118,12 @@ class Subversion(SCM):
             lines = [x for x in lines if x[0:1] in ('M', 'A', 'R', 'D', 'C', '!', '~')]
             return bool(lines)
         return False
+
+    def get_branch_from_sandbox(self, dir):
+        try:
+            return self.get_url_from_sandbox(dir) # XXX
+        except SystemExit:
+            err_exit('Failed to get branch from %(dir)s' % locals())
 
     def get_url_from_sandbox(self, dir):
         rc, lines = self.process.popen(
@@ -129,7 +146,7 @@ class Subversion(SCM):
             err_exit('Checkout failed')
         return rc
 
-    def get_tag_id(self, dir, version):
+    def make_tagid(self, dir, version):
         url = self.get_url_from_sandbox(dir)
         parts = url.split('/')
         if parts[-1] == 'trunk':
@@ -164,6 +181,21 @@ class Mercurial(DSCM):
                 url.startswith('https://') or
                 url.startswith('file://'))
 
+    def is_valid_sandbox(self, dir):
+        if isdir(dir):
+            dirstack = DirStack()
+            if dir:
+                dirstack.push(dir)
+            try:
+                if isdir('.hg'):
+                    rc, lines = self.process.popen(
+                        'hg status', echo=False, echo2=False)
+                    if rc == 0:
+                        return True
+            finally:
+                dirstack.pop()
+        return False
+
     @chdir
     def is_dirty_sandbox(self, dir):
         rc, lines = self.process.popen(
@@ -181,7 +213,16 @@ class Mercurial(DSCM):
         return False
 
     @chdir
+    def get_branch_from_sandbox(self, dir):
+        rc, lines = self.process.popen(
+            'hg branch', echo=False)
+        if rc == 0 and lines:
+            return lines[0]
+        err_exit('Failed to get branch from %(dir)s' % locals())
+
+    @chdir
     def get_url_from_sandbox(self, dir):
+        self.get_branch_from_sandbox(dir) # For error checking only
         url = ''
         rc, lines = self.process.popen(
             'hg show paths.default', echo=False)
@@ -190,7 +231,7 @@ class Mercurial(DSCM):
                 url = lines[0]
             else:
                 return ''
-        # hg show always returns 0 so we should only get here
+        # 'hg show' always returns 0 so we should only get here
         # on catastrophic failure
         if not url:
             err_exit('Failed to get URL from %(dir)s' % locals())
@@ -256,6 +297,21 @@ class Git(DSCM):
                 url.startswith('https://') or
                 url.startswith('file://'))
 
+    def is_valid_sandbox(self, dir):
+        if isdir(dir):
+            dirstack = DirStack()
+            if dir:
+                dirstack.push(dir)
+            try:
+                if isdir('.git'):
+                    rc, lines = self.process.popen(
+                        'git branch', echo=False, echo2=False)
+                    if rc == 0:
+                        return True
+            finally:
+                dirstack.pop()
+        return False
+
     @chdir
     def is_dirty_sandbox(self, dir):
         rc, lines = self.process.popen(
@@ -269,24 +325,36 @@ class Git(DSCM):
         return rc == 0
 
     @chdir
+    def get_branch_from_sandbox(self, dir):
+        rc, lines = self.process.popen(
+            'git branch', echo=False)
+        if rc == 0:
+            for line in lines:
+                if line.startswith('*'):
+                    return line[2:]
+        err_exit('Failed to get branch from %(dir)s' % locals())
+
+    @chdir
     def get_url_from_sandbox(self, dir):
-        url = ''
+        # In case of Git this function returns the remote name
+        branch = self.get_branch_from_sandbox(dir)
+        remote = ''
         rc, lines = self.process.popen(
             'git config -l', echo=False)
         if rc == 0 and lines:
             for line in lines:
                 if line:
                     key, value = line.split('=', 1)
-                    if key == 'remote.origin.url':
-                        url = value
+                    if key == 'branch.%(branch)s.remote' % locals():
+                        remote = value
                         break
-            if not url:
+            if not remote:
                 return ''
-        # git config -l always returns 0 so we should only get here
+        # 'git config -l' always returns 0 so we should only get here
         # on catastrophic failure
-        if not url:
+        if not remote:
             err_exit('Failed to get URL from %(dir)s' % locals())
-        return url
+        return remote
 
     @chdir
     def checkin_sandbox(self, dir, name, version, push):
@@ -296,8 +364,10 @@ class Git(DSCM):
             err_exit('Commit failed')
         rc = 0
         if push and self.is_remote_sandbox(dir):
+            remote = self.get_url_from_sandbox(dir)
+            branch = self.get_branch_from_sandbox(dir)
             rc = self.process.system(
-                'git push origin')
+                'git push "%(remote)s" "%(branch)s"' % locals())
             if rc != 0:
                 err_exit('Push failed')
         return rc
@@ -330,8 +400,9 @@ class Git(DSCM):
         if rc != 0:
             err_exit('Tag failed')
         if push and self.is_remote_sandbox(dir):
+            remote = self.get_url_from_sandbox(dir)
             rc = self.process.system(
-                'git push origin tag "%(tagid)s"' % locals())
+                'git push "%(remote)s" tag "%(tagid)s"' % locals())
             if rc != 0:
                 err_exit('Push failed')
         return rc

@@ -291,18 +291,16 @@ class ReleaseMaker(object):
 
         if self.scm.is_valid_url(directory):
             self.remoteurl = directory
-            self.isremote = True
-            self.push = True
+            self.isremote = self.push = True
 
             if directory.startswith('file://') and not directory.startswith('file:///'):
                 err_exit('File URLs must be absolute: %(directory)s' % locals())
         else:
             directory = abspath(directory)
+            self.isremote = False
+
             self.scm.check_valid_sandbox(directory)
             self.setuptools.check_valid_package(directory)
-
-            self.remoteurl = self.scm.get_url_from_sandbox(directory)
-            self.isremote = False
 
             name, version = self.setuptools.get_package_info(directory)
             print 'Releasing', name, version
@@ -340,7 +338,7 @@ class ReleaseMaker(object):
                 print 'Releasing', name, version
 
             if not self.skiptag:
-                tagid = self.scm.get_tag_id(directory, version)
+                tagid = self.scm.make_tagid(directory, version)
                 self.scm.check_tag_exists(directory, tagid)
                 print 'Tagging', name, version
                 self.scm.create_tag(directory, tagid, name, version, self.push)
@@ -357,6 +355,7 @@ class ReleaseMaker(object):
                         self.setuptools.run_upload(
                             directory, location, distcmd, infoflags, distflags, uploadflags, scmtype)
                     else:
+                        print 'Copying to', location
                         self.scp.run_scp(distfile, location)
         finally:
             if not self.keeptemp:

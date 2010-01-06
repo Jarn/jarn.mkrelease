@@ -75,6 +75,29 @@ class ValidSandboxTests(GitSetup):
         self.assertRaises(SystemExit, scm.check_valid_sandbox, self.packagedir)
 
 
+class BranchFromSandboxTests(GitSetup):
+
+    def testGetLocalBranch(self):
+        scm = Git()
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'parking') # XXX
+
+    def testGetRemoteBranch(self):
+        scm = Git()
+        self.clone()
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), 'master')
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Git(Process(quiet=True))
+        self.destroy()
+        self.assertRaises(SystemExit, scm.get_branch_from_sandbox, self.packagedir)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Git(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.get_branch_from_sandbox, self.packagedir)
+
+
 class UrlFromSandboxTests(GitSetup):
 
     def testGetLocalUrl(self):
@@ -84,13 +107,13 @@ class UrlFromSandboxTests(GitSetup):
     def testGetRemoteUrl(self):
         scm = Git()
         self.clone()
-        self.assertEqual(scm.get_url_from_sandbox(self.clonedir), self.packagedir)
+        self.assertEqual(scm.get_url_from_sandbox(self.clonedir), 'origin')
 
+    @quiet
     def testBadSandbox(self):
-        scm = Git()
+        scm = Git(Process(quiet=True))
         self.destroy()
-        # Note: No SystemExit, just returns empty string
-        self.assertEqual(scm.get_url_from_sandbox(self.packagedir), '')
+        self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.packagedir)
 
     @quiet
     def testBadProcess(self):
@@ -109,11 +132,11 @@ class RemoteSandboxTests(GitSetup):
         self.clone()
         self.assertEqual(scm.is_remote_sandbox(self.clonedir), True)
 
+    @quiet
     def testBadSandbox(self):
-        scm = Git()
+        scm = Git(Process(quiet=True))
         self.destroy()
-        # Note: No SystemExit, just returns False
-        self.assertEqual(scm.is_remote_sandbox(self.packagedir), False)
+        self.assertRaises(SystemExit, scm.is_remote_sandbox, self.packagedir)
 
     @quiet
     def testBadProcess(self):

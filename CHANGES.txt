@@ -4,10 +4,10 @@ Changelog
 2.0.4 - Unreleased
 ------------------
 
-- Always verify checkouts.
+- Improve Git support to handle remotes other than origin.
   [stefan]
 
-- Remove unused code.
+- Print a "Copying to ..." line before scp-ing.
   [stefan]
 
 2.0.3 - 2010-01-03
@@ -16,7 +16,7 @@ Changelog
 - Add -b option for releasing binary eggs.
   [stefan]
 
-- Don't barf on dirty sandboxes when dry-running.
+- Don't choke on dirty sandboxes when dry-running.
   [stefan]
 
 2.0.2 - 2009-08-29

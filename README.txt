@@ -266,8 +266,8 @@ command must be available on the system PATH)::
 
   $ mkrelease -s -i fred@bedrock.com -d pypi src/my.package
 
-For convenience, and to support mandatory-signing scenarios, defaults
-for ``-s`` and ``-i`` may be configured in ``~/.mkrelease``::
+For convenience, defaults for ``-s`` and ``-i`` may be configured
+in ``~/.mkrelease``::
 
   [defaults]
   sign = yes
@@ -301,10 +301,6 @@ and run mkrelease with the ``-T`` option.
 
 Git
 ---
-
-Giving the ``-p`` option results in ``git push origin`` and
-``git push origin tag <tagid>`` respectively. If this does not fit your
-setup, avoid ``-p`` and push manually.
 
 Git's short-hand notation for ``ssh://`` URLs is not supported.
 

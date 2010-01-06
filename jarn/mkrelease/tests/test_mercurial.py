@@ -67,6 +67,29 @@ class ValidSandboxTests(MercurialSetup):
         self.assertRaises(SystemExit, scm.check_valid_sandbox, self.packagedir)
 
 
+class BranchFromSandboxTests(MercurialSetup):
+
+    def testGetLocalBranch(self):
+        scm = Mercurial()
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'default')
+
+    def testGetRemoteBranch(self):
+        scm = Mercurial()
+        self.clone()
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), 'default')
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Mercurial(Process(quiet=True))
+        self.destroy()
+        self.assertRaises(SystemExit, scm.get_branch_from_sandbox, self.packagedir)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Mercurial(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.get_branch_from_sandbox, self.packagedir)
+
+
 class UrlFromSandboxTests(MercurialSetup):
 
     def testGetLocalUrl(self):
@@ -78,11 +101,11 @@ class UrlFromSandboxTests(MercurialSetup):
         self.clone()
         self.assertEqual(scm.get_url_from_sandbox(self.clonedir), self.packagedir)
 
+    @quiet
     def testBadSandbox(self):
-        scm = Mercurial()
+        scm = Mercurial(Process(quiet=True))
         self.destroy()
-        # Note: No SystemExit, just returns empty string
-        self.assertEqual(scm.get_url_from_sandbox(self.packagedir), '')
+        self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.packagedir)
 
     @quiet
     def testBadProcess(self):
@@ -101,11 +124,11 @@ class RemoteSandboxTests(MercurialSetup):
         self.clone()
         self.assertEqual(scm.is_remote_sandbox(self.clonedir), True)
 
+    @quiet
     def testBadSandbox(self):
-        scm = Mercurial()
+        scm = Mercurial(Process(quiet=True))
         self.destroy()
-        # Note: No SystemExit, just returns False
-        self.assertEqual(scm.is_remote_sandbox(self.packagedir), False)
+        self.assertRaises(SystemExit, scm.is_remote_sandbox, self.packagedir)
 
     @quiet
     def testBadProcess(self):
