@@ -119,24 +119,6 @@ class UrlFromSandboxTests(SubversionSetup):
         self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.clonedir)
 
 
-class RemoteSandboxTests(SubversionSetup):
-
-    def testIsRemoteSandbox(self):
-        scm = Subversion()
-        self.assertEqual(scm.is_remote_sandbox(self.clonedir), True)
-
-    def testBadSandbox(self):
-        scm = Subversion()
-        self.destroy(self.clonedir)
-        # Note: Always true
-        self.assertEqual(scm.is_remote_sandbox(self.clonedir), True)
-
-    def testBadProcess(self):
-        scm = Subversion(MockProcess(rc=1))
-        # Note: Always true
-        self.assertEqual(scm.is_remote_sandbox(self.clonedir), True)
-
-
 class DirtySandboxTests(SubversionSetup):
 
     def testCleanSandbox(self):

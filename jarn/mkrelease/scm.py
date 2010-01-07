@@ -10,12 +10,6 @@ class SCM(WithProcess):
 
     name = ''
 
-    def is_distributed(self):
-        return False
-
-    def is_remote_sandbox(self, dir):
-        return True
-
     def is_valid_url(self, url):
         raise NotImplementedError
 
@@ -67,21 +61,6 @@ class SCM(WithProcess):
     def check_tag_exists(self, dir, tagid):
         if self.tag_exists(dir, tagid):
             err_exit('Tag exists: %(tagid)s' % locals())
-
-
-class DSCM(SCM):
-    """Interface to distributed source code management systems."""
-
-    name = ''
-
-    def is_distributed(self):
-        return True
-
-    def is_remote_sandbox(self, dir):
-        return bool(self.get_url_from_sandbox(dir))
-
-    def make_tagid(self, dir, version):
-        return version
 
 
 class Subversion(SCM):
@@ -171,7 +150,7 @@ class Subversion(SCM):
         return rc
 
 
-class Mercurial(DSCM):
+class Mercurial(SCM):
 
     name = 'hg'
 
@@ -242,7 +221,7 @@ class Mercurial(DSCM):
             'hg commit -v -m"Prepare %(name)s %(version)s."' % locals())
         if rc != 0:
             err_exit('Commit failed')
-        if push and self.is_remote_sandbox(dir):
+        if push and self.get_url_from_sandbox(dir):
             rc = self.process.system(
                 'hg push')
             if rc != 0:
@@ -255,6 +234,9 @@ class Mercurial(DSCM):
         if rc != 0:
             err_exit('Clone failed')
         return rc
+
+    def make_tagid(self, dir, version):
+        return version
 
     @chdir
     def tag_exists(self, dir, tagid):
@@ -276,7 +258,7 @@ class Mercurial(DSCM):
             'hg tag -m"Tagged %(name)s %(version)s." "%(tagid)s"' % locals())
         if rc != 0:
             err_exit('Tag failed')
-        if push and self.is_remote_sandbox(dir):
+        if push and self.get_url_from_sandbox(dir):
             rc = self.process.system(
                 'hg push')
             if rc != 0:
@@ -284,7 +266,7 @@ class Mercurial(DSCM):
         return rc
 
 
-class Git(DSCM):
+class Git(SCM):
 
     name = 'git'
 
@@ -361,13 +343,14 @@ class Git(DSCM):
         if rc not in (0, 1):
             err_exit('Commit failed')
         rc = 0
-        if push and self.is_remote_sandbox(dir):
+        if push:
             remote = self.get_url_from_sandbox(dir)
-            branch = self.get_branch_from_sandbox(dir)
-            rc = self.process.system(
-                'git push "%(remote)s" "%(branch)s"' % locals())
-            if rc != 0:
-                err_exit('Push failed')
+            if remote:
+                branch = self.get_branch_from_sandbox(dir)
+                rc = self.process.system(
+                    'git push "%(remote)s" "%(branch)s"' % locals())
+                if rc != 0:
+                    err_exit('Push failed')
         return rc
 
     def checkout_url(self, url, dir):
@@ -376,6 +359,9 @@ class Git(DSCM):
         if rc != 0:
             err_exit('Clone failed')
         return rc
+
+    def make_tagid(self, dir, version):
+        return version
 
     @chdir
     def tag_exists(self, dir, tagid):
@@ -397,12 +383,13 @@ class Git(DSCM):
             'git tag -m"Tagged %(name)s %(version)s." "%(tagid)s"' % locals())
         if rc != 0:
             err_exit('Tag failed')
-        if push and self.is_remote_sandbox(dir):
+        if push:
             remote = self.get_url_from_sandbox(dir)
-            rc = self.process.system(
-                'git push "%(remote)s" tag "%(tagid)s"' % locals())
-            if rc != 0:
-                err_exit('Push failed')
+            if remote:
+                rc = self.process.system(
+                    'git push "%(remote)s" tag "%(tagid)s"' % locals())
+                if rc != 0:
+                    err_exit('Push failed')
         return rc
 
 

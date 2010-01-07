@@ -121,29 +121,6 @@ class UrlFromSandboxTests(GitSetup):
         self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.packagedir)
 
 
-class RemoteSandboxTests(GitSetup):
-
-    def testIsLocalSandbox(self):
-        scm = Git()
-        self.assertEqual(scm.is_remote_sandbox(self.packagedir), False)
-
-    def testIsRemoteSandbox(self):
-        scm = Git()
-        self.clone()
-        self.assertEqual(scm.is_remote_sandbox(self.clonedir), True)
-
-    @quiet
-    def testBadSandbox(self):
-        scm = Git(Process(quiet=True))
-        self.destroy()
-        self.assertRaises(SystemExit, scm.is_remote_sandbox, self.packagedir)
-
-    @quiet
-    def testBadProcess(self):
-        scm = Git(MockProcess(rc=1))
-        self.assertRaises(SystemExit, scm.is_remote_sandbox, self.packagedir)
-
-
 class DirtySandboxTests(GitSetup):
 
     def testCleanSandbox(self):
