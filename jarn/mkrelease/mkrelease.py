@@ -355,7 +355,6 @@ class ReleaseMaker(object):
                         self.setuptools.run_upload(
                             directory, location, distcmd, infoflags, distflags, uploadflags, scmtype)
                     else:
-                        print 'Copying to', location
                         self.scp.run_scp(distfile, location)
         finally:
             if not self.keeptemp:
