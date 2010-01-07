@@ -76,11 +76,11 @@ Options
     The GnuPG identity to sign with.
 
 ``-p, --push``
-    Push changes upstream (Mercurial and Git).
+    Push changes upstream (Mercurial and Git.)
 
 ``-e, --develop``
     Allow version number extensions (i.e. don't ignore
-    respective setup.cfg options).
+    respective setup.cfg options.)
 
 ``-b, --binary``
     Release a binary (bdist) egg.
