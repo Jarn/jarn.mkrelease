@@ -221,7 +221,7 @@ class Mercurial(DSCM):
 
     @chdir
     def get_url_from_sandbox(self, dir):
-        self.get_branch_from_sandbox(dir) # For error checking only
+        self.get_branch_from_sandbox(dir) # Called for its error checking only
         url = ''
         rc, lines = self.process.popen(
             'hg show paths.default', echo=False)
@@ -334,7 +334,7 @@ class Git(DSCM):
 
     @chdir
     def get_url_from_sandbox(self, dir):
-        # In case of Git this function returns the remote name
+        # In case of Git get_url_from_sandbox returns the remote name
         branch = self.get_branch_from_sandbox(dir)
         remote = ''
         rc, lines = self.process.popen(
