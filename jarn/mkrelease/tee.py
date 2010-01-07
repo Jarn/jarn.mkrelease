@@ -44,7 +44,13 @@ def popen(cmd, echo=True, echo2=True, env=None):
     stream2 = None
     if not echo2:
         stream2 = PIPE
-    process = Popen(cmd, shell=True, stdout=PIPE, stderr=stream2, env=env)
+    process = Popen(
+        cmd,
+        shell=True,
+        stdout=PIPE,
+        stderr=stream2,
+        env=env
+    )
     time.sleep(0.001) # Allow process to start up
     lines = tee(process, filter)
     return process.returncode, lines
