@@ -184,8 +184,7 @@ class Mercurial(DSCM):
     def is_valid_sandbox(self, dir):
         if isdir(dir):
             dirstack = DirStack()
-            if dir:
-                dirstack.push(dir)
+            dirstack.push(dir)
             try:
                 if isdir('.hg'):
                     rc, lines = self.process.popen(
@@ -300,8 +299,7 @@ class Git(DSCM):
     def is_valid_sandbox(self, dir):
         if isdir(dir):
             dirstack = DirStack()
-            if dir:
-                dirstack.push(dir)
+            dirstack.push(dir)
             try:
                 if isdir('.git'):
                     rc, lines = self.process.popen(
