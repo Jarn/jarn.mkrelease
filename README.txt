@@ -12,7 +12,7 @@ Motivation
 ==========
 
 Here at Jarn, we use zc.buildout and pinned egg versions for
-customer deployments. This means that for every update we have to make
+customer deployments. This means that for every update, we have to make
 proper egg releases of all modified packages.
 
 Turns out it's quite a bit of work to put a new egg on a
