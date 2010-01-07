@@ -10,7 +10,7 @@ from os.path import abspath, join, expanduser, isfile
 from python import Python
 from setuptools import Setuptools
 from scp import SCP
-from scm import SCMContainer
+from scm import SCMFactory
 from exit import msg_exit, err_exit
 
 pypiurl = "http://pypi.python.org/pypi"
@@ -188,7 +188,7 @@ class ReleaseMaker(object):
         self.python = Python(self.defaults)
         self.setuptools = Setuptools(self.defaults)
         self.scp = SCP()
-        self.scmcontainer = SCMContainer()
+        self.scms = SCMFactory()
         self.scm = None
         self.scmtype = ''
         self.args = args
@@ -287,7 +287,7 @@ class ReleaseMaker(object):
         directory = self.directory
         scmtype = self.scmtype
 
-        self.scm = self.scmcontainer.guess_scm(scmtype, directory)
+        self.scm = self.scms.guess_scm(scmtype, directory)
 
         if self.scm.is_valid_url(directory):
             self.remoteurl = directory

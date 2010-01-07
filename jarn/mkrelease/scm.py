@@ -393,7 +393,7 @@ class Git(SCM):
         return rc
 
 
-class SCMContainer(object):
+class SCMFactory(object):
     """Hands out SCM objects."""
 
     scms = (Subversion, Mercurial, Git)
