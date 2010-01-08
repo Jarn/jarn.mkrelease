@@ -45,7 +45,6 @@ Options:
   -e, --develop       Allow version number extensions.
   -b, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
-  -k, --keep-temp     Keep the temporary build directory.
   -h, --help          Print this help message and exit.
   -v, --version       Print the version string and exit.
 
@@ -175,7 +174,6 @@ class ReleaseMaker(object):
         self.skipcheckin = False
         self.skiptag = False
         self.skipupload = False
-        self.keeptemp = False
         self.push = False
         self.quiet = False
         self.distcmd = 'sdist'
@@ -197,8 +195,8 @@ class ReleaseMaker(object):
         """Parse command line options.
         """
         try:
-            options, args = getopt.getopt(args, 'CDSTbd:ehi:knpqsv',
-                ('skip-checkin', 'skip-tag', 'skip-upload', 'dry-run', 'keep-temp',
+            options, args = getopt.getopt(args, 'CDSTbd:ehi:npqsv',
+                ('skip-checkin', 'skip-tag', 'skip-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary'))
         except getopt.GetoptError, e:
@@ -213,8 +211,6 @@ class ReleaseMaker(object):
                 self.skipupload = True
             elif name in ('-D', '-n', '--dry-run'):
                 self.skipcheckin = self.skiptag = self.skipupload = True
-            elif name in ('-k', '--keep-temp'):
-                self.keeptemp = True
             elif name in ('-p', '--push'):
                 self.push = True
             elif name in ('-q', '--quiet'):
@@ -357,8 +353,7 @@ class ReleaseMaker(object):
                     else:
                         self.scp.run_scp(distfile, location)
         finally:
-            if not self.keeptemp:
-                shutil.rmtree(tempdir)
+            shutil.rmtree(tempdir)
 
     def run(self):
         self.get_python()

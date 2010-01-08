@@ -88,9 +88,6 @@ Options
 ``-q, --quiet``
     Suppress output of setuptools commands.
 
-``-k, --keep-temp``
-    Keep the temporary build directory.
-
 ``-h, --help``
     Print the help message and exit.
 
