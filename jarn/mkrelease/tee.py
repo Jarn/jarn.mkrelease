@@ -1,5 +1,4 @@
 import sys
-import time
 
 from subprocess import Popen, PIPE
 
@@ -51,7 +50,7 @@ def popen(cmd, echo=True, echo2=True, env=None):
         stderr=stream2,
         env=env
     )
-    time.sleep(0.001) # Allow process to start up
+    process.poll() # Allow process to start up
     lines = tee(process, filter)
     return process.returncode, lines
 
