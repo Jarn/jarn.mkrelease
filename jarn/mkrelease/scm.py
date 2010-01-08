@@ -395,7 +395,7 @@ class Git(SCM):
 
 
 class SCMFactory(object):
-    """Hands out SCM objects."""
+    """Creates SCM objects."""
 
     scms = (Subversion, Mercurial, Git)
 
@@ -415,11 +415,11 @@ class SCMFactory(object):
         matches = []
         for scm in self.scms:
             if scm().is_valid_sandbox(dir):
-                matches.append(scm)
+                matches.append(scm())
         if not matches:
             err_exit('Not a sandbox: %(dir)s' % locals())
         if len(matches) == 1:
-            return matches[0]()
+            return matches[0]
         if len(matches) == 2:
             names = '%s and %s' % tuple([x.name for x in matches])
             flags = '--%s or --%s' % tuple([x.name for x in matches])
