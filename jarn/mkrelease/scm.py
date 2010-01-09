@@ -1,3 +1,5 @@
+import re
+
 from os.path import abspath, join, exists, isdir
 from urlparse import urlsplit
 
@@ -395,21 +397,35 @@ class Git(SCM):
 
 
 class SCMFactory(object):
-    """Creates SCM objects."""
+    """Hands out SCM objects."""
 
     scms = (Subversion, Mercurial, Git)
+    scheme_re = re.compile('^(\S+?)://')
 
-    def is_valid_url(self, url):
-        for scm in self.scms:
-            if scm().is_valid_url(url):
-                return True
-        return False
+    def urlsplit(self, url):
+        if url.startswith(('ssh://', 'git://')):
+            orig_proto = url[:3]
+            url = 'http://%s' % url[6:]
+            proto, host, path, qs, frag = urlsplit(url)
+            proto = orig_proto
+        else:
+            proto, host, path, qs, frag = urlsplit(url)
+        user, host = self.hostsplit(host)
+        return proto, user, host, path, qs, frag
+
+    def hostsplit(self, host):
+        if '@' in host:
+            return host.split('@', 1)
+        return '', host
+
+    def is_url(self, url):
+        return bool(self.scheme_re.match(url))
 
     def get_scm_from_type(self, type):
         for scm in self.scms:
             if scm.name == type:
                 return scm()
-        err_exit('Unknown SCM type: %(type)s' % locals())
+        err_exit('Unsupported SCM type: %(type)s' % locals())
 
     def get_scm_from_sandbox(self, dir):
         matches = []
@@ -421,16 +437,16 @@ class SCMFactory(object):
         if len(matches) == 1:
             return matches[0]
         if len(matches) == 2:
-            names = '%s and %s' % tuple([x.name for x in matches])
+            names = '%s and %s' % tuple([x.__class__.__name__ for x in matches])
             flags = '--%s or --%s' % tuple([x.name for x in matches])
         elif len(matches) == 3:
-            names = '%s, %s, and %s' % tuple([x.name for x in matches])
+            names = '%s, %s, and %s' % tuple([x.__class__.__name__ for x in matches])
             flags = '--%s, --%s, or --%s' % tuple([x.name for x in matches])
-        err_exit('Ambiguous SCM type: %(names)s meta-information found in %(dir)s\n'
+        err_exit('%(names)s found in %(dir)s\n'
                  'Please specify %(flags)s to resolve' % locals())
 
     def get_scm_from_url(self, url):
-        proto, host, path, qs, frag = urlsplit(url)
+        proto, user, host, path, qs, frag = self.urlsplit(url)
         if proto in ('svn', 'svn+ssh'):
             return Subversion()
         if proto in ('git', 'rsync'):
@@ -438,13 +454,13 @@ class SCMFactory(object):
         if proto in ('ssh',):
             if path.endswith('.git'):
                 return Git()
-            if host.startswith('hg.') or path.startswith('/hg/') or path.startswith('//hg/'):
+            if host.startswith('hg.') or path.startswith(('/hg/', '//hg/')):
                 return Mercurial()
             if host.startswith('git.') or path.startswith('/git/'):
                 return Git()
             err_exit('Failed to guess SCM type: %(url)s\n'
-                     'Please specify --hg or --git' % locals())
-        if proto in ('http', 'https', 'file'):
+                     'Please specify --svn, --hg, or --git' % locals())
+        if proto in ('http', 'https'):
             if path.endswith('.git'):
                 return Git()
             if host.startswith('svn.') or path.startswith('/svn/'):
@@ -455,15 +471,21 @@ class SCMFactory(object):
                 return Git()
             err_exit('Failed to guess SCM type: %(url)s\n'
                      'Please specify --svn, --hg, or --git' % locals())
-        err_exit('Unknown URL: %(url)s' % locals())
+        if proto in ('file',):
+            if path.endswith('.git'):
+                return Git()
+            err_exit('Failed to guess SCM type: %(url)s\n'
+                     'Please specify --svn, --hg, or --git' % locals())
+        err_exit('Unsupported URL scheme: %(proto)s' % locals())
 
     def guess_scm(self, type, url_or_dir):
         if type:
             return self.get_scm_from_type(type)
-        if self.is_valid_url(url_or_dir):
+        if self.is_url(url_or_dir):
             return self.get_scm_from_url(url_or_dir)
-        dir = abspath(url_or_dir)
-        if not exists(url_or_dir):
-            err_exit('No such file or directory: %(dir)s' % locals())
-        return self.get_scm_from_sandbox(dir)
+        else:
+            dir = abspath(url_or_dir)
+            if not exists(url_or_dir):
+                err_exit('No such file or directory: %(dir)s' % locals())
+            return self.get_scm_from_sandbox(dir)
 

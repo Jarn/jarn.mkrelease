@@ -7,7 +7,7 @@ Changelog
 - Improve Git support to handle remotes other than origin.
   [stefan]
 
-- Always verify checkouts.
+- Fix SCM detection in ``ssh://`` URLs.
   [stefan]
 
 2.0.3 - 2010-01-03
