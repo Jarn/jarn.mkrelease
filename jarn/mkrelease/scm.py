@@ -406,6 +406,7 @@ class SCMFactory(object):
         match = self.scheme_re.match(url)
         if match is not None:
             return match.group(1)
+        return ''
 
     def is_url(self, url):
         return bool(self.get_scheme(url))
