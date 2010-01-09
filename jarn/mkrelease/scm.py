@@ -71,11 +71,7 @@ class Subversion(SCM):
     name = 'svn'
 
     def is_valid_url(self, url):
-        return (url.startswith('svn://') or
-                url.startswith('svn+ssh://') or
-                url.startswith('http://') or
-                url.startswith('https://') or
-                url.startswith('file://'))
+        return url.startswith(('svn://', 'svn+ssh://', 'http://', 'https://', 'file://'))
 
     def is_valid_sandbox(self, dir):
         if isdir(join(dir, '.svn')):
@@ -158,10 +154,7 @@ class Mercurial(SCM):
     name = 'hg'
 
     def is_valid_url(self, url):
-        return (url.startswith('ssh://') or
-                url.startswith('http://') or
-                url.startswith('https://') or
-                url.startswith('file://'))
+        return url.startswith(('ssh://', 'http://', 'https://', 'file://'))
 
     def is_valid_sandbox(self, dir):
         if isdir(dir):
@@ -274,12 +267,7 @@ class Git(SCM):
     name = 'git'
 
     def is_valid_url(self, url):
-        return (url.startswith('git://') or
-                url.startswith('ssh://') or
-                url.startswith('rsync://') or
-                url.startswith('http://') or
-                url.startswith('https://') or
-                url.startswith('file://'))
+        return url.startswith(('git://', 'ssh://', 'rsync://', 'http://', 'https://', 'file://'))
 
     def is_valid_sandbox(self, dir):
         if isdir(dir):
@@ -411,11 +399,6 @@ class SCMFactory(object):
     def is_url(self, url):
         return bool(self.get_scheme(url))
 
-    def hostsplit(self, host):
-        if '@' in host:
-            return host.split('@', 1)
-        return '', host
-
     def urlsplit(self, url):
         orig_proto = self.get_scheme(url)
         url = 'http%s' % url[len(orig_proto):]
@@ -423,6 +406,11 @@ class SCMFactory(object):
         proto = orig_proto
         user, host = self.hostsplit(host)
         return proto, user, host, path, qs, frag
+
+    def hostsplit(self, host):
+        if '@' in host:
+            return host.split('@', 1)
+        return '', host
 
     def get_scm_from_type(self, type):
         for scm in self.scms:
