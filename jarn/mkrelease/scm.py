@@ -402,24 +402,26 @@ class SCMFactory(object):
     scms = (Subversion, Mercurial, Git)
     scheme_re = re.compile('^(\S+?)://')
 
-    def urlsplit(self, url):
-        if url.startswith(('ssh://', 'git://')):
-            orig_proto = url[:3]
-            url = 'http://%s' % url[6:]
-            proto, host, path, qs, frag = urlsplit(url)
-            proto = orig_proto
-        else:
-            proto, host, path, qs, frag = urlsplit(url)
-        user, host = self.hostsplit(host)
-        return proto, user, host, path, qs, frag
+    def get_scheme(self, url):
+        match = self.scheme_re.match(url)
+        if match is not None:
+            return match.group(1)
+
+    def is_url(self, url):
+        return bool(self.get_scheme(url))
 
     def hostsplit(self, host):
         if '@' in host:
             return host.split('@', 1)
         return '', host
 
-    def is_url(self, url):
-        return bool(self.scheme_re.match(url))
+    def urlsplit(self, url):
+        orig_proto = self.get_scheme(url)
+        url = 'http%s' % url[len(orig_proto):]
+        proto, host, path, qs, frag = urlsplit(url)
+        proto = orig_proto
+        user, host = self.hostsplit(host)
+        return proto, user, host, path, qs, frag
 
     def get_scm_from_type(self, type):
         for scm in self.scms:
