@@ -199,7 +199,7 @@ class Mercurial(SCM):
 
     @chdir
     def get_url_from_sandbox(self, dir):
-        self.get_branch_from_sandbox(dir) # Called for its error checking only
+        self.get_branch_from_sandbox(dir) # Called here for its error checking
         url = ''
         rc, lines = self.process.popen(
             'hg show paths.default', echo=False)
@@ -311,18 +311,17 @@ class Git(SCM):
 
     @chdir
     def get_url_from_sandbox(self, dir):
-        # In case of Git get_url_from_sandbox returns the remote name
+        # In case of Git this method returns the remote name
         branch = self.get_branch_from_sandbox(dir)
         remote = ''
         rc, lines = self.process.popen(
             'git config -l', echo=False)
         if rc == 0 and lines:
+            key = 'branch.%(branch)s.remote=' % locals()
             for line in lines:
-                if line:
-                    key, value = line.split('=', 1)
-                    if key == 'branch.%(branch)s.remote' % locals():
-                        remote = value
-                        break
+                if line.startswith(key):
+                    remote = line[len(key):]
+                    break
             if not remote:
                 return ''
         # 'git config -l' always returns 0 so we should only get here
