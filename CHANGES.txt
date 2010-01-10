@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.4 - Unreleased
+2.0.4 - 2010-01-10
 ------------------
 
 - Improve Git support to handle remotes other than origin.
