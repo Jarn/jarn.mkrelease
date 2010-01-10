@@ -17,7 +17,7 @@ class URLParser(object):
         return bool(self.get_scheme(url))
 
     def split(self, url):
-        # Split all URLs like http URLs
+        # Splits all URLs like http URLs
         scheme = self.get_scheme(url)
         if scheme:
             url = 'http%s' % url[len(scheme):]
