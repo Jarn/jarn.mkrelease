@@ -209,7 +209,7 @@ class ReleaseMaker(object):
                 self.skiptag = True
             elif name in ('-S', '--skip-upload'):
                 self.skipupload = True
-            elif name in ('-D', '-n', '--dry-run'):
+            elif name in ('-D', '--dry-run', '-n'):
                 self.skipcheckin = self.skiptag = self.skipupload = True
             elif name in ('-p', '--push'):
                 self.push = True
