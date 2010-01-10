@@ -1,5 +1,6 @@
 import re
-import urlparse
+
+from urlparse import urlsplit
 
 
 class URLParser(object):
@@ -17,11 +18,11 @@ class URLParser(object):
         return bool(self.get_scheme(url))
 
     def split(self, url):
-        # Splits all URLs like http URLs
         scheme = self.get_scheme(url)
         if scheme:
+            # Split all URLs like http URLs
             url = 'http%s' % url[len(scheme):]
-            ignored, host, path, qs, frag = urlparse.urlsplit(url)
+            ignored, host, path, qs, frag = urlsplit(url)
             user, host = self._split_host(host)
             return scheme, user, host, path, qs, frag
         return '', '', '', url, '', ''
