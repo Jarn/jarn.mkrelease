@@ -19,10 +19,12 @@ class URLParser(object):
     def split(self, url):
         # Split all URLs like http URLs
         scheme = self.get_scheme(url)
-        url = 'http%s' % url[len(scheme):]
-        ignored, host, path, qs, frag = urlparse.urlsplit(url)
-        user, host = self._split_host(host)
-        return scheme, user, host, path, qs, frag
+        if scheme:
+            url = 'http%s' % url[len(scheme):]
+            ignored, host, path, qs, frag = urlparse.urlsplit(url)
+            user, host = self._split_host(host)
+            return scheme, user, host, path, qs, frag
+        return '', '', '', url, '', ''
 
     def _split_host(self, host):
         if '@' in host:

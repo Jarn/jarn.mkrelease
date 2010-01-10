@@ -210,50 +210,55 @@ class UrlSplitTests(unittest.TestCase):
         self.assertEqual(urlparser.split('ftp://jarn.com/public'),
                          ('ftp', '', 'jarn.com', '/public', '', ''))
 
+    def testSplitBadUrl(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.split('ssh:stefan@jarn.com/public'),
+                         ('', '', '', 'ssh:stefan@jarn.com/public', '', ''))
+
 
 class IsUrlTests(unittest.TestCase):
 
-    def testSplitSvn(self):
+    def testSvn(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('svn://jarn.com/public'), True)
 
-    def testSplitSvnSsh(self):
+    def testSvnSsh(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('svn+ssh://stefan@jarn.com/public'), True)
 
-    def testSplitGit(self):
+    def testGit(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('git://jarn.com/public'), True)
 
-    def testSplitRsync(self):
+    def testRsync(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('rsync://jarn.com/public'), True)
 
-    def testSplitSsh(self):
+    def testSsh(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('ssh://stefan@jarn.com//hg/public'), True)
 
-    def testSplitHttp(self):
+    def testHttp(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('http://jarn.com/public'), True)
 
-    def testSplitHttps(self):
+    def testHttps(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('https://jarn.com/public'), True)
 
-    def testSplitFile(self):
+    def testFile(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('file:///var/dist/public'), True)
 
-    def testSplitUnsupported(self):
+    def testUnsupported(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('ftp://jarn.com/public'), True)
 
-    def testSplitBadUrl(self):
+    def testBadUrl(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('ssh:'), False)
 
-    def testSplitWhitespace(self):
+    def testWhitespace(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url(' http://'), False)
 
