@@ -1,9 +1,7 @@
-import re
-
 from os.path import abspath, join, exists, isdir
-from urlparse import urlsplit
 
 from process import WithProcess
+from urlparser import WithURLParser
 from dirstack import DirStack, chdir
 from exit import err_exit
 
@@ -387,33 +385,10 @@ class Git(SCM):
         return rc
 
 
-class SCMFactory(object):
+class SCMFactory(WithURLParser):
     """Hands out SCM objects."""
 
     scms = (Subversion, Mercurial, Git)
-    scheme_re = re.compile('^(\S+?)://')
-
-    def get_scheme(self, url):
-        match = self.scheme_re.match(url)
-        if match is not None:
-            return match.group(1)
-        return ''
-
-    def is_url(self, url):
-        return bool(self.get_scheme(url))
-
-    def urlsplit(self, url):
-        orig_proto = self.get_scheme(url)
-        url = 'http%s' % url[len(orig_proto):]
-        proto, host, path, qs, frag = urlsplit(url)
-        proto = orig_proto
-        user, host = self.hostsplit(host)
-        return proto, user, host, path, qs, frag
-
-    def hostsplit(self, host):
-        if '@' in host:
-            return host.split('@', 1)
-        return '', host
 
     def get_scm_from_type(self, type):
         for scm in self.scms:
@@ -440,12 +415,12 @@ class SCMFactory(object):
                  'Please specify %(flags)s to resolve' % locals())
 
     def get_scm_from_url(self, url):
-        proto, user, host, path, qs, frag = self.urlsplit(url)
-        if proto in ('svn', 'svn+ssh'):
+        scheme, user, host, path, qs, frag = self.urlparser.split(url)
+        if scheme in ('svn', 'svn+ssh'):
             return Subversion()
-        if proto in ('git', 'rsync'):
+        if scheme in ('git', 'rsync'):
             return Git()
-        if proto in ('ssh',):
+        if scheme in ('ssh',):
             if path.endswith('.git'):
                 return Git()
             if host.startswith('hg.') or path.startswith(('/hg/', '//hg/')):
@@ -454,7 +429,7 @@ class SCMFactory(object):
                 return Git()
             err_exit('Failed to guess SCM type: %(url)s\n'
                      'Please specify --svn, --hg, or --git' % locals())
-        if proto in ('http', 'https'):
+        if scheme in ('http', 'https'):
             if path.endswith('.git'):
                 return Git()
             if host.startswith('svn.') or path.startswith('/svn/'):
@@ -465,17 +440,17 @@ class SCMFactory(object):
                 return Git()
             err_exit('Failed to guess SCM type: %(url)s\n'
                      'Please specify --svn, --hg, or --git' % locals())
-        if proto in ('file',):
+        if scheme in ('file',):
             if path.endswith('.git'):
                 return Git()
             err_exit('Failed to guess SCM type: %(url)s\n'
                      'Please specify --svn, --hg, or --git' % locals())
-        err_exit('Unsupported URL scheme: %(proto)s' % locals())
+        err_exit('Unsupported URL scheme: %(scheme)s' % locals())
 
     def guess_scm(self, type, url_or_dir):
         if type:
             return self.get_scm_from_type(type)
-        if self.is_url(url_or_dir):
+        if self.urlparser.is_url(url_or_dir):
             return self.get_scm_from_url(url_or_dir)
         else:
             dir = abspath(url_or_dir)
