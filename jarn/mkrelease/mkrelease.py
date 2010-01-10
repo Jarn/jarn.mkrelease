@@ -73,7 +73,6 @@ class Defaults(object):
                 return self.parser.getboolean(section, key)
             return default
 
-        self.python = sys.executable
         self.distbase = get('defaults', 'distbase', '')
         self.distdefault = get('defaults', 'distdefault', '')
 
@@ -90,6 +89,8 @@ class Defaults(object):
             url = get(server, 'repository', pypiurl)
             self.servers[server] = True
             self.servers[url] = True
+
+        self.python = sys.executable
 
 
 class Locations(object):
