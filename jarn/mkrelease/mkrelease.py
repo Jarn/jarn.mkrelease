@@ -45,6 +45,7 @@ Options:
   -e, --develop       Allow version number extensions.
   -b, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
+
   -h, --help          Print this help message and exit.
   -v, --version       Print the version string and exit.
 
