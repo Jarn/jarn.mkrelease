@@ -1,15 +1,18 @@
 from os.path import abspath, join, exists, isdir
 
-from process import WithProcess
-from urlparser import WithURLParser
+from process import Process
+from urlparser import URLParser
 from dirstack import DirStack, chdir
 from exit import err_exit
 
 
-class SCM(WithProcess):
+class SCM(object):
     """Interface to source code management systems."""
 
     name = ''
+
+    def __init__(self, process=None):
+        self.process = process or Process()
 
     def is_valid_url(self, url):
         raise NotImplementedError
@@ -385,10 +388,13 @@ class Git(SCM):
         return rc
 
 
-class SCMFactory(WithURLParser):
+class SCMFactory(object):
     """Hands out SCM objects."""
 
     scms = (Subversion, Mercurial, Git)
+
+    def __init__(self, urlparser=None):
+        self.urlparser = urlparser or URLParser()
 
     def get_scm_from_type(self, type):
         for scm in self.scms:

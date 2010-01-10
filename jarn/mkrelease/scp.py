@@ -1,9 +1,12 @@
-from process import WithProcess
+from process import Process
 from exit import err_exit
 
 
-class SCP(WithProcess):
+class SCP(object):
     """Secure copy abstraction."""
+
+    def __init__(self, process=None):
+        self.process = process or Process()
 
     def has_host(self, location):
         colon = location.find(':')

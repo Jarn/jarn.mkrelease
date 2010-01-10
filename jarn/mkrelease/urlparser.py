@@ -2,15 +2,6 @@ import re
 import urlparse
 
 
-class WithURLParser(object):
-
-    def __init__(self, urlparser=None):
-        if urlparser is None:
-            self.urlparser = URLParser()
-        else:
-            self.urlparser = urlparser
-
-
 class URLParser(object):
     """A minimal URL parser and splitter."""
 

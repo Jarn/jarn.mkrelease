@@ -2,15 +2,6 @@ import os
 import tee
 
 
-class WithProcess(object):
-
-    def __init__(self, process=None):
-        if process is None:
-            self.process = Process()
-        else:
-            self.process = process
-
-
 class Process(object):
     """Process related functions using the tee module (mostly)."""
 

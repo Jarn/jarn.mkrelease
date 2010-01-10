@@ -1,19 +1,13 @@
-from process import WithProcess
+from process import Process
 from exit import err_exit
 
 
-class WithPython(object):
-
-    def __init__(self, python):
-        self.python = python
-
-
-class Python(WithProcess, WithPython):
+class Python(object):
     """A Python interpreter path that can test itself."""
 
     def __init__(self, defaults, process=None):
-        WithProcess.__init__(self, process)
-        WithPython.__init__(self, defaults.python)
+        self.process = process or Process()
+        self.python = defaults.python
 
     def __str__(self):
         return self.python

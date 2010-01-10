@@ -3,18 +3,17 @@ import tee
 
 from os.path import abspath, join, isfile
 
-from process import WithProcess
-from python import WithPython
+from process import Process
 from dirstack import chdir
 from exit import err_exit
 
 
-class Setuptools(WithProcess, WithPython):
+class Setuptools(object):
     """Interface to setuptools functions."""
 
     def __init__(self, defaults, process=None):
-        WithProcess.__init__(self, process)
-        WithPython.__init__(self, defaults.python)
+        self.process = process or Process()
+        self.python = defaults.python
 
     def is_valid_package(self, dir):
         return isfile(join(dir, 'setup.py'))
