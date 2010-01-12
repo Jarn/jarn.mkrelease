@@ -98,6 +98,72 @@ class BranchFromSandboxTests(GitSetup):
         self.assertRaises(SystemExit, scm.get_branch_from_sandbox, self.packagedir)
 
 
+class RemoteFromSandboxTests(GitSetup):
+
+    def testGetLocal(self):
+        scm = Git()
+        self.assertEqual(scm.get_remote_from_sandbox(self.packagedir), '')
+
+    def testGetRemote(self):
+        scm = Git()
+        self.clone()
+        self.assertEqual(scm.get_remote_from_sandbox(self.clonedir), 'origin')
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Git(Process(quiet=True))
+        self.destroy()
+        self.assertRaises(SystemExit, scm.get_remote_from_sandbox, self.packagedir)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Git(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.get_remote_from_sandbox, self.packagedir)
+
+    @quiet
+    def testWhitebox(self):
+        def func(cmd):
+            if cmd == 'git branch':
+                return 0, ['* master']
+            return 1, []
+
+        scm = Git(MockProcess(func=func))
+        self.assertRaises(SystemExit, scm.get_remote_from_sandbox, self.packagedir)
+
+
+class TrackedBranchFromSandboxTests(GitSetup):
+
+    def testGetLocal(self):
+        scm = Git()
+        self.assertEqual(scm.get_tracked_branch_from_sandbox(self.packagedir), '')
+
+    def testGetRemote(self):
+        scm = Git()
+        self.clone()
+        self.assertEqual(scm.get_tracked_branch_from_sandbox(self.clonedir), 'master')
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Git(Process(quiet=True))
+        self.destroy()
+        self.assertRaises(SystemExit, scm.get_tracked_branch_from_sandbox, self.packagedir)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Git(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.get_tracked_branch_from_sandbox, self.packagedir)
+
+    @quiet
+    def testWhitebox(self):
+        def func(cmd):
+            if cmd == 'git branch':
+                return 0, ['* master']
+            return 1, []
+
+        scm = Git(MockProcess(func=func))
+        self.assertRaises(SystemExit, scm.get_tracked_branch_from_sandbox, self.packagedir)
+
+
 class UrlFromSandboxTests(GitSetup):
 
     def testGetLocalUrl(self):
@@ -107,7 +173,7 @@ class UrlFromSandboxTests(GitSetup):
     def testGetRemoteUrl(self):
         scm = Git()
         self.clone()
-        self.assertEqual(scm.get_url_from_sandbox(self.clonedir), 'origin')
+        self.assertEqual(scm.get_url_from_sandbox(self.clonedir), self.packagedir)
 
     @quiet
     def testBadSandbox(self):
@@ -119,6 +185,45 @@ class UrlFromSandboxTests(GitSetup):
     def testBadProcess(self):
         scm = Git(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.packagedir)
+
+    @quiet
+    def testWhitebox(self):
+        self.called = 0
+
+        def func(cmd):
+            if cmd == 'git branch':
+                return 0, ['* master']
+            if cmd == 'git config -l':
+                self.called += 1
+                if self.called == 1:
+                    return 0, ['branch.master.remote=origin']
+            return 1, []
+
+        scm = Git(MockProcess(func=func))
+        self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.packagedir)
+
+
+class RemoteSandboxTests(GitSetup):
+
+    def testIsLocal(self):
+        scm = Git()
+        self.assertEqual(scm.is_remote_sandbox(self.packagedir), False)
+
+    def testIsRemote(self):
+        scm = Git()
+        self.clone()
+        self.assertEqual(scm.is_remote_sandbox(self.clonedir), True)
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Git(Process(quiet=True))
+        self.destroy()
+        self.assertRaises(SystemExit, scm.is_remote_sandbox, self.packagedir)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Git(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.is_remote_sandbox, self.packagedir)
 
 
 class DirtySandboxTests(GitSetup):

@@ -113,6 +113,29 @@ class UrlFromSandboxTests(MercurialSetup):
         self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.packagedir)
 
 
+class RemoteSandboxTests(MercurialSetup):
+
+    def testIsLocal(self):
+        scm = Mercurial()
+        self.assertEqual(scm.is_remote_sandbox(self.packagedir), False)
+
+    def testIsRemote(self):
+        scm = Mercurial()
+        self.clone()
+        self.assertEqual(scm.is_remote_sandbox(self.clonedir), True)
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Mercurial(Process(quiet=True))
+        self.destroy()
+        self.assertRaises(SystemExit, scm.is_remote_sandbox, self.packagedir)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Mercurial(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.is_remote_sandbox, self.packagedir)
+
+
 class DirtySandboxTests(MercurialSetup):
 
     def testCleanSandbox(self):

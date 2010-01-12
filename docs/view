@@ -4,18 +4,14 @@ import os
 import sys
 import webbrowser
 
-from os.path import abspath, split, join, isdir, isfile
+from os.path import abspath, basename, split, join, isdir, isfile
 
 styles = """
-<link rel="stylesheet" href="http://www.python.org/css/pypi.css" type="text/css"/>
-<link media="screen" href="http://www.python.org/styles/screen-switcher-default.css" type="text/css" id="screen-switcher-stylesheet" rel="stylesheet"/>
-<link media="screen" href="http://www.python.org/styles/netscape4.css" type="text/css" rel="stylesheet"/>
-<link media="print" href="http://www.python.org/styles/print.css" type="text/css" rel="stylesheet"/>
-<link media="screen" href="http://www.python.org/styles/largestyles.css" type="text/css" rel="alternate stylesheet" title="large text"/>
-<link media="screen" href="http://www.python.org/styles/defaultfonts.css" type="text/css" rel="alternate stylesheet" title="default fonts"/>
+<link rel="stylesheet" href="http://www.python.org/styles/styles.css" type="text/css"/>
 <style type="text/css">
-body {margin-left: 6em; margin-right: 6em; font-size: 95%;}
-a {text-decoration: none;}
+body { margin-left: 6em; margin-right: 6em; font-size: 95%; }
+a { text-decoration: none; }
+pre.literal-block, pre.doctest-block { margin-left: 0em; margin-right: 0em; }
 </style>
 """
 
@@ -61,7 +57,7 @@ def main(args):
         arg = os.curdir
 
     if arg in ('-h', '--help'):
-        print 'Usage: view [eggdir|rstfile]'
+        print 'Usage: %s [eggdir|rstfile]' % basename(sys.argv[0])
         return 0
 
     if isdir(arg):

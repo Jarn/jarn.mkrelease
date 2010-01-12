@@ -1,6 +1,0 @@
-data/testpackage/__init__.py.i
-data/README.txt.i
-data/setup.py.i
-data/testpackage/mercurial_only.py.i
-data/testpackage/mercurial_only.txt.i
-data/testpackage/.hgignore.i

@@ -3,7 +3,7 @@ from os.path import abspath, join, exists, isdir
 from process import Process
 from urlparser import URLParser
 from dirstack import DirStack, chdir
-from exit import err_exit
+from exit import err_exit, warn
 
 
 class SCM(object):
@@ -24,6 +24,9 @@ class SCM(object):
         raise NotImplementedError
 
     def is_unclean_sandbox(self, dir):
+        raise NotImplementedError
+
+    def is_remote_sandbox(self, dir):
         raise NotImplementedError
 
     def get_branch_from_sandbox(self, dir):
@@ -98,6 +101,9 @@ class Subversion(SCM):
             lines = [x for x in lines if x[0:1] in ('M', 'A', 'R', 'D', 'C', '!', '~')]
             return bool(lines)
         return False
+
+    def is_remote_sandbox(self, dir):
+        return bool(self.get_url_from_sandbox(dir))
 
     def get_branch_from_sandbox(self, dir):
         try:
@@ -190,6 +196,10 @@ class Mercurial(SCM):
         return False
 
     @chdir
+    def is_remote_sandbox(self, dir):
+        return bool(self.get_url_from_sandbox(dir))
+
+    @chdir
     def get_branch_from_sandbox(self, dir):
         rc, lines = self.process.popen(
             'hg branch', echo=False)
@@ -220,7 +230,7 @@ class Mercurial(SCM):
             'hg commit -v -m"Prepare %(name)s %(version)s."' % locals())
         if rc != 0:
             err_exit('Commit failed')
-        if push and self.get_url_from_sandbox(dir):
+        if push and self.is_remote_sandbox(dir):
             rc = self.process.system(
                 'hg push')
             if rc != 0:
@@ -257,7 +267,7 @@ class Mercurial(SCM):
             'hg tag -m"Tagged %(name)s %(version)s." "%(tagid)s"' % locals())
         if rc != 0:
             err_exit('Tag failed')
-        if push and self.get_url_from_sandbox(dir):
+        if push and self.is_remote_sandbox(dir):
             rc = self.process.system(
                 'hg push')
             if rc != 0:
@@ -300,6 +310,10 @@ class Git(SCM):
         return rc == 0
 
     @chdir
+    def is_remote_sandbox(self, dir):
+        return bool(self.get_remote_from_sandbox(dir))
+
+    @chdir
     def get_branch_from_sandbox(self, dir):
         rc, lines = self.process.popen(
             'git branch', echo=False)
@@ -310,25 +324,47 @@ class Git(SCM):
         err_exit('Failed to get branch from %(dir)s' % locals())
 
     @chdir
-    def get_url_from_sandbox(self, dir):
-        # In case of Git this method returns the remote name
+    def get_remote_from_sandbox(self, dir):
         branch = self.get_branch_from_sandbox(dir)
-        remote = ''
         rc, lines = self.process.popen(
             'git config -l', echo=False)
         if rc == 0 and lines:
             key = 'branch.%(branch)s.remote=' % locals()
             for line in lines:
                 if line.startswith(key):
-                    remote = line[len(key):]
-                    break
-            if not remote:
-                return ''
-        # 'git config -l' always returns 0 so we should only get here
-        # on catastrophic failure
-        if not remote:
-            err_exit('Failed to get URL from %(dir)s' % locals())
-        return remote
+                    return line[len(key):]
+        else:
+            err_exit('Failed to get remote from %(dir)s' % locals())
+        return ''
+
+    @chdir
+    def get_tracked_branch_from_sandbox(self, dir):
+        branch = self.get_branch_from_sandbox(dir)
+        rc, lines = self.process.popen(
+            'git config -l', echo=False)
+        if rc == 0 and lines:
+            key = 'branch.%(branch)s.merge=' % locals()
+            for line in lines:
+                if line.startswith(key):
+                    return line[len(key):][len('refs/heads/'):]
+        else:
+            err_exit('Failed to get tracked branch from %(dir)s' % locals())
+        return ''
+
+    @chdir
+    def get_url_from_sandbox(self, dir):
+        remote = self.get_remote_from_sandbox(dir)
+        if remote:
+            rc, lines = self.process.popen(
+                'git config -l', echo=False)
+            if rc == 0 and lines:
+                key = 'remote.%(remote)s.url=' % locals()
+                for line in lines:
+                    if line.startswith(key):
+                        return line[len(key):]
+            else:
+                err_exit('Failed to get URL from %(dir)s' % locals())
+        return ''
 
     @chdir
     def checkin_sandbox(self, dir, name, version, push):
@@ -337,14 +373,18 @@ class Git(SCM):
         if rc not in (0, 1):
             err_exit('Commit failed')
         rc = 0
-        if push:
-            remote = self.get_url_from_sandbox(dir)
-            if remote:
-                branch = self.get_branch_from_sandbox(dir)
+        remote = self.get_remote_from_sandbox(dir)
+        if push and remote:
+            branch = self.get_branch_from_sandbox(dir)
+            tracked = self.get_tracked_branch_from_sandbox(dir)
+            if tracked:
                 rc = self.process.system(
-                    'git push "%(remote)s" "%(branch)s"' % locals())
+                    'git push "%(remote)s" "%(branch)s:%(tracked)s"' % locals())
                 if rc != 0:
                     err_exit('Push failed')
+            else:
+                warn('%(branch)s does not track any branch - '
+                    'not pushing the commit' % locals())
         return rc
 
     def checkout_url(self, url, dir):
@@ -377,13 +417,18 @@ class Git(SCM):
             'git tag -m"Tagged %(name)s %(version)s." "%(tagid)s"' % locals())
         if rc != 0:
             err_exit('Tag failed')
-        if push:
-            remote = self.get_url_from_sandbox(dir)
-            if remote:
+        remote = self.get_remote_from_sandbox(dir)
+        if push and remote:
+            branch = self.get_branch_from_sandbox(dir)
+            tracked = self.get_tracked_branch_from_sandbox(dir)
+            if tracked:
                 rc = self.process.system(
                     'git push "%(remote)s" tag "%(tagid)s"' % locals())
                 if rc != 0:
                     err_exit('Push failed')
+            else:
+                warn('%(branch)s does not track any branch - '
+                    'not pushing the tag' % locals())
         return rc
 
 

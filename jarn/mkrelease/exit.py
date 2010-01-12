@@ -14,3 +14,9 @@ def err_exit(msg, rc=1):
     print >>sys.stderr, msg
     sys.exit(rc)
 
+
+def warn(msg):
+    """Print a warning message to stderr.
+    """
+    print >>sys.stderr, 'WARNING:', msg
+

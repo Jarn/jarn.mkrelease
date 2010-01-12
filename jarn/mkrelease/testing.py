@@ -3,6 +3,7 @@ import os
 import unittest
 import tempfile
 import shutil
+import zipfile
 import StringIO
 
 from os.path import realpath, join, dirname, isdir
@@ -41,8 +42,8 @@ class JailSetup(unittest.TestCase):
         return tempfile.mkdtemp()
 
 
-class PackageSetup(JailSetup):
-    """Make sure the jail contains a testpackage."""
+class SandboxSetup(JailSetup):
+    """Make sure the jail contains an SCM sandbox."""
 
     source = None
     packagedir = None
@@ -52,30 +53,35 @@ class PackageSetup(JailSetup):
         try:
             package = join(dirname(__file__), 'tests', self.source)
             self.packagedir = join(self.tempdir, 'testpackage')
-            shutil.copytree(package, self.packagedir)
+            if self.source.endswith('.zip'):
+                archive = zipfile.ZipFile(package, 'r')
+                archive.extractall()
+                os.rename(self.source[:-4], 'testpackage')
+            else:
+                shutil.copytree(package, self.packagedir)
         except:
             self.cleanUp()
             raise
 
 
-class PackageAPI(PackageSetup):
+class SandboxAPI(SandboxSetup):
     """API for manipulating the sandbox."""
 
-    name = ''
+    name = None
     clonedir = None
-    auto_clone = False
-
-    def clone(self):
-        raise NotImplementedError
+    auto_clone = None
 
     def setUp(self):
-        PackageSetup.setUp(self)
+        SandboxSetup.setUp(self)
         if self.auto_clone:
             try:
                 self.clone()
             except:
                 self.cleanUp()
                 raise
+
+    def clone(self):
+        raise NotImplementedError
 
     def destroy(self, dir=None, name=None):
         if dir is None:
@@ -117,11 +123,11 @@ class PackageAPI(PackageSetup):
         raise NotImplementedError
 
 
-class SubversionSetup(PackageAPI):
+class SubversionSetup(SandboxAPI):
     """Set up a Subversion sandbox."""
 
     name = 'svn'
-    source = 'testrepo.svn'
+    source = 'testrepo.svn.zip'
     auto_clone = True
 
     def clone(self):
@@ -145,11 +151,11 @@ class SubversionSetup(PackageAPI):
         process.system('svn cp -m"Tag" file://%s/trunk %s' % (self.packagedir, tagid))
 
 
-class MercurialSetup(PackageAPI):
+class MercurialSetup(SandboxAPI):
     """Set up a Mercurial sandbox."""
 
     name = 'hg'
-    source = 'testpackage.hg'
+    source = 'testpackage.hg.zip'
     auto_clone = False
 
     def clone(self):
@@ -173,11 +179,11 @@ class MercurialSetup(PackageAPI):
         process.system('hg tag %s' % tagid)
 
 
-class GitSetup(PackageAPI):
+class GitSetup(SandboxAPI):
     """Set up a Git sandbox."""
 
     name = 'git'
-    source = 'testpackage.git'
+    source = 'testpackage.git.zip'
     auto_clone = False
 
     def clone(self):
@@ -214,7 +220,8 @@ class MockProcess(Process):
     """A Process we can tell what to return by
 
     - passing rc and lines, or
-    - passing a function that returns rc and lines depending on cmd.
+    - passing a function called as ``func(cmd)`` which returns
+      rc and lines.
     """
 
     def __init__(self, rc=None, lines=None, func=None):
