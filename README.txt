@@ -48,8 +48,8 @@ Usage
 Options
 =======
 
-``-C, --skip-checkin``
-    Do not checkin modified files from the sandbox.
+``-C, --skip-commit``
+    Do not commit modified files from the sandbox.
 
 ``-T, --skip-tag``
     Do not tag the release in SCM.
@@ -57,7 +57,7 @@ Options
 ``-S, --skip-upload``
     Do not upload the release to dist-location.
 
-``-D, --dry-run``
+``-n, --dry-run``
     Dry-run; equivalent to ``-CTS``.
 
 ``--svn, --hg, --git``

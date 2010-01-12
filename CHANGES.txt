@@ -4,6 +4,11 @@ Changelog
 3.0a1 - Unreleased
 ------------------
 
+- Switch to -n for dry-run to be consistent with other tools.
+  [stefan]
+
+- Rename --skip-checkin long option to --skip-commit.
+  [stefan]
 
 2.0.4 - 2010-01-10
 ------------------
