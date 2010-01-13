@@ -10,6 +10,9 @@ Changelog
 - Rename --skip-checkin long option to --skip-commit.
   [stefan]
 
+- Fix a bug in Mercurial and Git sandbox detection.
+  [stefan]
+
 2.0.4 - 2010-01-10
 ------------------
 
