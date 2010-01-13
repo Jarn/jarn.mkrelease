@@ -221,7 +221,7 @@ class Mercurial(SCM):
     @chdir
     def checkin_sandbox(self, dir, name, version, push):
         rc = self.process.system(
-            'hg commit -v -m"Prepare %(name)s %(version)s."' % locals())
+            'hg commit -v -m"Prepare %(name)s %(version)s." .' % locals())
         if rc != 0:
             err_exit('Commit failed')
         if push and self.is_remote_sandbox(dir):
@@ -358,7 +358,7 @@ class Git(SCM):
     @chdir
     def checkin_sandbox(self, dir, name, version, push):
         rc = self.process.system(
-            'git commit -a -m"Prepare %(name)s %(version)s."' % locals())
+            'git commit -m"Prepare %(name)s %(version)s." .' % locals())
         if rc not in (0, 1):
             err_exit('Commit failed')
         rc = 0
