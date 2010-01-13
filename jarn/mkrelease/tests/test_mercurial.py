@@ -45,6 +45,10 @@ class ValidSandboxTests(MercurialSetup):
         scm = Mercurial()
         self.assertEqual(scm.is_valid_sandbox(self.packagedir), True)
 
+    def testSubdirOfSandbox(self):
+        scm = Mercurial()
+        self.assertEqual(scm.is_valid_sandbox(join(self.packagedir, 'testpackage')), True)
+
     def testNotExists(self):
         scm = Mercurial()
         self.assertEqual(scm.is_valid_sandbox('foo'), False)

@@ -170,11 +170,10 @@ class Mercurial(SCM):
             dirstack = DirStack()
             dirstack.push(dir)
             try:
-                if isdir('.hg'):
-                    rc, lines = self.process.popen(
-                        'hg status', echo=False, echo2=False)
-                    if rc == 0:
-                        return True
+                rc, lines = self.process.popen(
+                    'hg status', echo=False, echo2=False)
+                if rc == 0:
+                    return True
             finally:
                 dirstack.pop()
         return False
@@ -279,11 +278,10 @@ class Git(SCM):
             dirstack = DirStack()
             dirstack.push(dir)
             try:
-                if isdir('.git'):
-                    rc, lines = self.process.popen(
-                        'git branch', echo=False, echo2=False)
-                    if rc == 0:
-                        return True
+                rc, lines = self.process.popen(
+                    'git branch', echo=False, echo2=False)
+                if rc == 0:
+                    return True
             finally:
                 dirstack.pop()
         return False

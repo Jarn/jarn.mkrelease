@@ -53,6 +53,10 @@ class ValidSandboxTests(GitSetup):
         scm = Git()
         self.assertEqual(scm.is_valid_sandbox(self.packagedir), True)
 
+    def testSubdirOfSandbox(self):
+        scm = Git()
+        self.assertEqual(scm.is_valid_sandbox(join(self.packagedir, 'testpackage')), True)
+
     def testNotExists(self):
         scm = Git()
         self.assertEqual(scm.is_valid_sandbox('foo'), False)
