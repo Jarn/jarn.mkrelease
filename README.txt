@@ -104,8 +104,8 @@ Options
 Examples
 ========
 
-Release my.package, using version information from the package's
-``setup.py``, and distribute it to the default location::
+Release my.package, using version information from its ``setup.py``,
+and distribute it to the default location::
 
   $ mkrelease https://svn.jarn.com/public/my.package/trunk
 
@@ -146,7 +146,7 @@ mkrelease furthermore reads its own configuration file
     pypi
 
 (Note that ``pypi`` refers to the index server `pypi` as configured in
-``~/.pypirc``. More on index servers later.)
+``~/.pypirc``. More on this later.)
 
 Armed with this configuration we can shorten example 3 to::
 
@@ -248,7 +248,7 @@ Release my.package from an existing tag::
 
   $ mkrelease -T https://svn.jarn.com/public/my.package/tags/1.0
 
-Only Subversion allows us to specify a branch or tag to check out. With
+Only Subversion allows us to specify the tag as part of the URL. With
 Mercurial and Git we need a local working copy, switched to the tag
 we want to release::
 
