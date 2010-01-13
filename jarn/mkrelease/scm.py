@@ -210,19 +210,14 @@ class Mercurial(SCM):
     @chdir
     def get_url_from_sandbox(self, dir):
         self.get_branch_from_sandbox(dir) # Called here for its error checking
-        url = ''
         rc, lines = self.process.popen(
             'hg show paths.default', echo=False)
         if rc == 0:
             if lines:
-                url = lines[0]
-            else:
-                return ''
-        # 'hg show' always returns 0 so we should only get here
-        # on catastrophic failure
-        if not url:
+                return lines[0]
+        else:
             err_exit('Failed to get URL from %(dir)s' % locals())
-        return url
+        return ''
 
     @chdir
     def checkin_sandbox(self, dir, name, version, push):
@@ -254,12 +249,8 @@ class Mercurial(SCM):
         if rc == 0 and lines:
             for line in lines:
                 if line.split()[0] == tagid:
-                    break
-            else:
-                rc = 1
-        else:
-            rc = 1
-        return rc == 0
+                    return True
+        return False
 
     @chdir
     def create_tag(self, dir, tagid, name, version, push):
@@ -404,12 +395,8 @@ class Git(SCM):
         if rc == 0 and lines:
             for line in lines:
                 if line == tagid:
-                    break
-            else:
-                rc = 1
-        else:
-            rc = 1
-        return rc == 0
+                    return True
+        return False
 
     @chdir
     def create_tag(self, dir, tagid, name, version, push):
