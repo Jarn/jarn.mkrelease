@@ -293,7 +293,7 @@ class ReleaseMaker(object):
             if directory.startswith('file://') and not directory.startswith('file:///'):
                 err_exit('File URLs must be absolute: %(directory)s' % locals())
         else:
-            directory = abspath(directory)
+            directory = abspath(expanduser(directory))
             self.isremote = False
 
             self.scm.check_valid_sandbox(directory)
@@ -321,7 +321,7 @@ class ReleaseMaker(object):
             if self.isremote:
                 self.scm.checkout_url(self.remoteurl, directory)
             else:
-                directory = abspath(self.directory)
+                directory = abspath(expanduser(self.directory))
 
             self.scm.check_valid_sandbox(directory)
             self.setuptools.check_valid_package(directory)

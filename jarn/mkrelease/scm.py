@@ -1,4 +1,4 @@
-from os.path import abspath, join, exists, isdir
+from os.path import abspath, join, expanduser, exists, isdir
 
 from process import Process
 from urlparser import URLParser
@@ -488,8 +488,8 @@ class SCMFactory(object):
         if self.urlparser.is_url(url_or_dir):
             return self.get_scm_from_url(url_or_dir)
         else:
-            dir = abspath(url_or_dir)
-            if not exists(url_or_dir):
+            dir = abspath(expanduser(url_or_dir))
+            if not exists(dir):
                 err_exit('No such file or directory: %(dir)s' % locals())
             return self.get_scm_from_sandbox(dir)
 
