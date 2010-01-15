@@ -1,3 +1,5 @@
+import sys
+
 from process import Process
 from exit import err_exit
 
@@ -28,6 +30,8 @@ class Python(object):
     def get_python_version(self, python=None):
         if python is None:
             python = self.python
+        if python == sys.executable:
+            return sys.version[:3]
         version = self.process.pipe(
             '"%(python)s" -c"import sys; print sys.version[:3]"' % locals())
         return version
