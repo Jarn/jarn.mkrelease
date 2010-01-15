@@ -261,7 +261,8 @@ class ReleaseMaker(object):
     def get_python(self):
         """Get the Python interpreter.
         """
-        self.python.check_valid_python()
+        if not self.python.is_valid_distutils():
+            self.python.check_valid_python()
 
     def get_options(self):
         """Parse the command line.
