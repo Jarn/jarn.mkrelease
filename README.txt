@@ -48,13 +48,13 @@ Usage
 Options
 =======
 
-``-C, --skip-commit``
+``-C, --no-commit``
     Do not commit modified files from the sandbox.
 
-``-T, --skip-tag``
+``-T, --no-tag``
     Do not tag the release in SCM.
 
-``-S, --skip-upload``
+``-S, --no-upload``
     Do not upload the release to dist-location.
 
 ``-n, --dry-run``

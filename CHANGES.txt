@@ -7,7 +7,7 @@ Changelog
 - Switch to -n for dry-run to be consistent with other tools.
   [stefan]
 
-- Rename --skip-checkin long option to --skip-commit.
+- Rename --skip-* long options to --no-* for the same reason.
   [stefan]
 
 - Fix a bug in Mercurial and Git sandbox detection.

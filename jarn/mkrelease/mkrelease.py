@@ -24,9 +24,9 @@ Usage: mkrelease [options] [scm-url|scm-sandbox]
 Python egg releaser
 
 Options:
-  -C, --skip-commit   Do not commit modified files from the sandbox.
-  -T, --skip-tag      Do not tag the release in SCM.
-  -S, --skip-upload   Do not upload the release to dist-location.
+  -C, --no-commit     Do not commit modified files from the sandbox.
+  -T, --no-tag        Do not tag the release in SCM.
+  -S, --no-upload     Do not upload the release to dist-location.
   -n, --dry-run       Dry-run; equivalent to -CTS.
 
   --svn, --hg, --git  Select the SCM type. Only required if the SCM type
@@ -197,18 +197,18 @@ class ReleaseMaker(object):
         """
         try:
             options, args = getopt.getopt(args, 'CSTbd:ehi:npqsv',
-                ('skip-commit', 'skip-tag', 'skip-upload', 'dry-run',
+                ('no-commit', 'no-tag', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary'))
         except getopt.GetoptError, e:
             err_exit('mkrelease: %s\n%s' % (e.msg, usage))
 
         for name, value in options:
-            if name in ('-C', '--skip-commit'):
+            if name in ('-C', '--no-commit'):
                 self.skipcheckin = True
-            elif name in ('-T', '--skip-tag'):
+            elif name in ('-T', '--no-tag'):
                 self.skiptag = True
-            elif name in ('-S', '--skip-upload'):
+            elif name in ('-S', '--no-upload'):
                 self.skipupload = True
             elif name in ('-n', '--dry-run'):
                 self.skipcheckin = self.skiptag = self.skipupload = True
