@@ -13,6 +13,9 @@ Changelog
 - Fix a bug in Mercurial and Git sandbox detection.
   [stefan]
 
+- Prepare for standalone distutils.
+  [stefan]
+
 2.0.4 - 2010-01-10
 ------------------
 
