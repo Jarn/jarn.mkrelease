@@ -311,7 +311,6 @@ class ReleaseMaker(object):
         """Build and distribute the egg.
         """
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
-        directory = join(tempdir, 'checkout')
         distcmd = self.distcmd
         infoflags = self.infoflags
         distflags = self.distflags
@@ -320,6 +319,7 @@ class ReleaseMaker(object):
 
         try:
             if self.isremote:
+                directory = join(tempdir, 'checkout')
                 self.scm.checkout_url(self.remoteurl, directory)
             else:
                 directory = abspath(expanduser(self.directory))
