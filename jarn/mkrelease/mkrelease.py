@@ -347,9 +347,8 @@ class ReleaseMaker(object):
             if not self.skipupload:
                 for location in self.locations:
                     if self.locations.is_server(location):
-                        if '--sign' in uploadflags:
-                            if isfile(distfile+'.asc'):
-                                os.remove(distfile+'.asc')
+                        if '--sign' in uploadflags and isfile(distfile+'.asc'):
+                            os.remove(distfile+'.asc')
                         self.setuptools.run_upload(
                             directory, location, distcmd, infoflags, distflags, uploadflags, scmtype)
                     else:
