@@ -46,3 +46,7 @@ class Python(object):
             '"%(python)s" -c"import distutils.command as x; print \'upload\' in x.__all__"' % locals())
         return upload == 'True'
 
+    def check_valid_distutils(self, python=None):
+        if not self.is_valid_distutils(python):
+            err_exit('distutils >= 2.6 required')
+
