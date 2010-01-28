@@ -196,7 +196,7 @@ class ReleaseMaker(object):
         """Parse command line options.
         """
         try:
-            options, args = getopt.getopt(args, 'CSTbd:ehi:npqsv',
+            options, args = getopt.gnu_getopt(args, 'CSTbd:ehi:npqsv',
                 ('no-commit', 'no-tag', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary'))
@@ -270,12 +270,7 @@ class ReleaseMaker(object):
         args = self.parse_options(self.args)
 
         if args:
-            self.directory = args[0]
-
-        if len(args) > 1:
-            args = self.parse_options(args[1:])
-        else:
-            args = []
+            self.directory = args.pop(0)
 
         self.finish_options(args)
 
