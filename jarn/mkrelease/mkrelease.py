@@ -143,6 +143,8 @@ class Locations(object):
             return res
         if self.is_server(location):
             return [location]
+        if location == 'pypi':
+            err_exit('No configuration found for server: pypi')
         if not self.has_host(location) and self.distbase:
             sep = '/'
             if self.distbase[-1] in (':', '/'):

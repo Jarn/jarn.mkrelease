@@ -4,6 +4,8 @@ Changelog
 3.0.1 - Unreleased
 ------------------
 
+- Stop when -d pypi is given but no configuration can be found.
+  [stefan]
 
 3.0 - 2010-01-15
 ----------------
