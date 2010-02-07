@@ -241,6 +241,11 @@ And type::
 
   $ mkrelease -d plone src/my.package
 
+Note: Due to the way setuptools works, the egg is rebuilt for every index
+server it is uploaded to. This means that MD5 sums and GnuPG signatures will
+differ between servers. If this is not what you want, upload to only one
+server and distribute from there by other means (e.g. replication).
+
 Releasing a tag
 ===============
 
