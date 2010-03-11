@@ -252,16 +252,18 @@ class DirtySandboxTests(GitSetup):
         # Note: The sandbox is reported as *dirty*
         self.assertEqual(scm.is_dirty_sandbox(self.packagedir), True)
 
+    @quiet
     def testBadSandbox(self):
         scm = Git(Process(quiet=True))
         self.destroy()
-        # Note: The sandbox is reported as clean
-        self.assertEqual(scm.is_dirty_sandbox(self.packagedir), False)
+        # Note: This exits
+        self.assertRaises(SystemExit, scm.is_dirty_sandbox, self.packagedir)
 
+    @quiet
     def testBadProcess(self):
-        scm = Git(MockProcess(rc=1))
-        # Note: The sandbox is reported as clean
-        self.assertEqual(scm.is_dirty_sandbox(self.packagedir), False)
+        scm = Git(MockProcess(rc=128))
+        # Note: This exits
+        self.assertRaises(SystemExit, scm.is_dirty_sandbox, self.packagedir)
 
     @quiet
     def testCheckRaises(self):
@@ -292,16 +294,18 @@ class UncleanSandboxTests(DirtySandboxTests):
         # Note: The sandbox is reported as *unclean*
         self.assertEqual(scm.is_unclean_sandbox(self.packagedir), True)
 
+    @quiet
     def testBadSandbox(self):
         scm = Git(Process(quiet=True))
         self.destroy()
-        # Note: The sandbox is reported as clean
-        self.assertEqual(scm.is_unclean_sandbox(self.packagedir), False)
+        # Note: This exits
+        self.assertRaises(SystemExit, scm.is_unclean_sandbox, self.packagedir)
 
+    @quiet
     def testBadProcess(self):
-        scm = Git(MockProcess(rc=1))
-        # Note: The sandbox is reported as clean
-        self.assertEqual(scm.is_unclean_sandbox(self.packagedir), False)
+        scm = Git(MockProcess(rc=128))
+        # Note: This exits
+        self.assertRaises(SystemExit, scm.is_unclean_sandbox, self.packagedir)
 
     @quiet
     def testCheckRaises(self):

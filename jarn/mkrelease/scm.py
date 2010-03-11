@@ -290,13 +290,21 @@ class Git(SCM):
     def is_dirty_sandbox(self, dir):
         rc, lines = self.process.popen(
             'git status -a' % locals(), echo=False)
-        return rc == 0
+        if rc == 0:
+            return True
+        if rc == 1:
+            return False
+        err_exit('Failed to get status from %(dir)s' % locals())
 
     @chdir
     def is_unclean_sandbox(self, dir):
         rc, lines = self.process.popen(
             'git status -a' % locals(), echo=False)
-        return rc == 0
+        if rc == 0:
+            return True
+        if rc == 1:
+            return False
+        err_exit('Failed to get status from %(dir)s' % locals())
 
     @chdir
     def is_remote_sandbox(self, dir):
