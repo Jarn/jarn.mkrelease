@@ -10,8 +10,8 @@ styles = """
 <link rel="stylesheet" href="http://www.python.org/styles/styles.css" type="text/css"/>
 <style type="text/css">
 body { margin-left: 6em; margin-right: 6em; font-size: 95%; }
-a { text-decoration: none; }
-pre.literal-block, pre.doctest-block { margin-left: 0em; margin-right: 0em; }
+a { text-decoration: none; color: #0000aa; border-bottom: 1px dashed #cccccc; }
+a:visited { text-decoration: none; color: #551a8b;  border-bottom: 1px dashed #cccccc; }
 </style>
 """
 
