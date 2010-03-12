@@ -334,23 +334,23 @@ class Git(SCM):
 
     @chdir
     def is_dirty_sandbox(self, dir):
-        rc, lines = self.process.popen(
-            'git status -a' % locals(), echo=False)
-        if rc == 0:
-            return True
-        if rc == 1:
-            return False
+        if self.version_tuple[:2] >= (1, 7):
+            rc, lines = self.process.popen(
+                'git status --porcelain --untracked-files=no' % locals(), echo=False)
+            if rc == 0:
+                return bool(lines)
+        else:
+            rc, lines = self.process.popen(
+                'git status -a' % locals(), echo=False)
+            if rc == 0:
+                return True
+            if rc == 1:
+                return False
         err_exit('Failed to get status from %(dir)s' % locals())
 
     @chdir
     def is_unclean_sandbox(self, dir):
-        rc, lines = self.process.popen(
-            'git status -a' % locals(), echo=False)
-        if rc == 0:
-            return True
-        if rc == 1:
-            return False
-        err_exit('Failed to get status from %(dir)s' % locals())
+        return self.is_dirty_sandbox(dir)
 
     @chdir
     def is_remote_sandbox(self, dir):
