@@ -268,8 +268,9 @@ command must be available on the system PATH)::
 
   $ mkrelease -s -i fred@bedrock.com -d pypi src/my.package
 
-For convenience, defaults for ``-s`` and ``-i`` may be configured
-in ``~/.mkrelease``::
+The ``-i`` flag is entirely optional, and GnuPG will pick your default
+key if not given. Additionally, defaults for ``-s`` and ``-i`` may be
+configured in ``~/.mkrelease``::
 
   [defaults]
   sign = yes
