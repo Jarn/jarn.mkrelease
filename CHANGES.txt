@@ -4,6 +4,9 @@ Changelog
 3.0.2 - Unreleased
 ------------------
 
+- Add support for Git 1.7.
+  [stefan]
+
 
 3.0.1 - 2010-02-07
 ------------------
