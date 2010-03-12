@@ -381,3 +381,14 @@ class CreateTagTests(SubversionSetup):
         tagid = 'file://%s/tags/2.6' % self.packagedir
         self.assertRaises(SystemExit, scm.create_tag, self.clonedir, tagid, 'testpackage', '2.6', False)
 
+
+class GetVersionTests(unittest.TestCase):
+
+    def testGetVersion(self):
+        scm = Subversion()
+        self.failIfEqual(scm.get_version(), None)
+
+    def testVersionTuple(self):
+        scm = Subversion()
+        self.failIfEqual(scm.version_tuple, ())
+

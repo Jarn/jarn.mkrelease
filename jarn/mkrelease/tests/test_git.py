@@ -460,3 +460,14 @@ class CreateTagTests(GitSetup):
         scm = Git(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.create_tag, self.packagedir, '2.6', 'testpackage', '2.6', False)
 
+
+class GetVersionTests(unittest.TestCase):
+
+    def testGetVersion(self):
+        scm = Git()
+        self.failIfEqual(scm.get_version(), None)
+
+    def testVersionTuple(self):
+        scm = Git()
+        self.failIfEqual(scm.version_tuple, ())
+

@@ -4,6 +4,10 @@ from process import Process
 from urlparser import URLParser
 from dirstack import DirStack, chdir
 from exit import err_exit, warn
+from lazy import lazy
+
+import re
+version_re = re.compile(r'version ([0-9.]+)', re.IGNORECASE)
 
 
 class SCM(object):
@@ -13,6 +17,9 @@ class SCM(object):
 
     def __init__(self, process=None):
         self.process = process or Process()
+
+    def get_version(self):
+        raise NotImplementedError
 
     def is_valid_url(self, url):
         raise NotImplementedError
@@ -69,10 +76,31 @@ class SCM(object):
         if self.tag_exists(dir, tagid):
             err_exit('Tag exists: %(tagid)s' % locals())
 
+    @lazy
+    def version_tuple(self):
+        version = self.get_version()
+        r = []
+        if version:
+            for number in version.split('.'):
+                try:
+                    r.append(int(number))
+                except (TypeError, ValueError):
+                    break
+        return tuple(r)
+
 
 class Subversion(SCM):
 
     name = 'svn'
+
+    def get_version(self):
+        rc, lines = self.process.popen(
+            'svn --version', echo=False)
+        if rc == 0 and lines:
+            match = version_re.search(lines[0])
+            if match is not None:
+                return match.group(1)
+        return None
 
     def is_valid_url(self, url):
         return url.startswith(
@@ -160,6 +188,15 @@ class Subversion(SCM):
 class Mercurial(SCM):
 
     name = 'hg'
+
+    def get_version(self):
+        rc, lines = self.process.popen(
+            'hg --version', echo=False)
+        if rc == 0 and lines:
+            match = version_re.search(lines[0])
+            if match is not None:
+                return match.group(1)
+        return None
 
     def is_valid_url(self, url):
         return url.startswith(
@@ -268,6 +305,15 @@ class Mercurial(SCM):
 class Git(SCM):
 
     name = 'git'
+
+    def get_version(self):
+        rc, lines = self.process.popen(
+            'git --version', echo=False)
+        if rc == 0 and lines:
+            match = version_re.search(lines[0])
+            if match is not None:
+                return match.group(1)
+        return None
 
     def is_valid_url(self, url):
         return url.startswith(

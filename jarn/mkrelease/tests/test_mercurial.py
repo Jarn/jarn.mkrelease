@@ -366,3 +366,14 @@ class CreateTagTests(MercurialSetup):
         scm = Mercurial(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.create_tag, self.packagedir, '2.6', 'testpackage', '2.6', False)
 
+
+class GetVersionTests(unittest.TestCase):
+
+    def testGetVersion(self):
+        scm = Mercurial()
+        self.failIfEqual(scm.get_version(), None)
+
+    def testVersionTuple(self):
+        scm = Mercurial()
+        self.failIfEqual(scm.version_tuple, ())
+
