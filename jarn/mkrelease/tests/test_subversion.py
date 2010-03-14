@@ -166,13 +166,13 @@ class DirtySandboxTests(SubversionSetup):
     def testBadSandbox(self):
         scm = Subversion(Process(quiet=True))
         self.destroy(self.clonedir)
-        # Note: The sandbox is reported as clean
+        # Note: The sandbox is reported as *clean*
         self.assertEqual(scm.is_dirty_sandbox(self.clonedir), False)
 
+    @quiet
     def testBadProcess(self):
         scm = Subversion(MockProcess(rc=1))
-        # Note: The sandbox is reported as clean
-        self.assertEqual(scm.is_dirty_sandbox(self.clonedir), False)
+        self.assertRaises(SystemExit, scm.is_dirty_sandbox, self.clonedir)
 
     @quiet
     def testCheckRaises(self):
@@ -200,19 +200,19 @@ class UncleanSandboxTests(DirtySandboxTests):
     def testDeletedButTrackedFile(self):
         scm = Subversion()
         self.delete(self.clonedir)
-        # Note: The sandbox is reported as *unclean*
+        # Note: The sandbox is reported as unclean
         self.assertEqual(scm.is_unclean_sandbox(self.clonedir), True)
 
     def testBadSandbox(self):
         scm = Subversion(Process(quiet=True))
         self.destroy(self.clonedir)
-        # Note: The sandbox is reported as clean
+        # Note: The sandbox is reported as *clean*
         self.assertEqual(scm.is_unclean_sandbox(self.clonedir), False)
 
+    @quiet
     def testBadProcess(self):
         scm = Subversion(MockProcess(rc=1))
-        # Note: The sandbox is reported as clean
-        self.assertEqual(scm.is_unclean_sandbox(self.clonedir), False)
+        self.assertRaises(SystemExit, scm.is_unclean_sandbox, self.clonedir)
 
     @quiet
     def testCheckRaises(self):

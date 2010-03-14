@@ -162,16 +162,16 @@ class DirtySandboxTests(MercurialSetup):
         # Note: The sandbox is reported as clean
         self.assertEqual(scm.is_dirty_sandbox(self.packagedir), False)
 
+    @quiet
     def testBadSandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.destroy()
-        # Note: The sandbox is reported as clean
-        self.assertEqual(scm.is_dirty_sandbox(self.packagedir), False)
+        self.assertRaises(SystemExit, scm.is_dirty_sandbox, self.packagedir)
 
+    @quiet
     def testBadProcess(self):
         scm = Mercurial(MockProcess(rc=1))
-        # Note: The sandbox is reported as clean
-        self.assertEqual(scm.is_dirty_sandbox(self.packagedir), False)
+        self.assertRaises(SystemExit, scm.is_dirty_sandbox, self.packagedir)
 
     @quiet
     def testCheckRaises(self):
@@ -199,19 +199,19 @@ class UncleanSandboxTests(DirtySandboxTests):
     def testDeletedButTrackedFile(self):
         scm = Mercurial()
         self.delete(self.packagedir)
-        # Note: The sandbox is reported as *unclean*
+        # Note: The sandbox is reported as unclean
         self.assertEqual(scm.is_unclean_sandbox(self.packagedir), True)
 
+    @quiet
     def testBadSandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.destroy()
-        # Note: The sandbox is reported as clean
-        self.assertEqual(scm.is_unclean_sandbox(self.packagedir), False)
+        self.assertRaises(SystemExit, scm.is_unclean_sandbox, self.packagedir)
 
+    @quiet
     def testBadProcess(self):
         scm = Mercurial(MockProcess(rc=1))
-        # Note: The sandbox is reported as clean
-        self.assertEqual(scm.is_unclean_sandbox(self.packagedir), False)
+        self.assertRaises(SystemExit, scm.is_unclean_sandbox, self.packagedir)
 
     @quiet
     def testCheckRaises(self):
@@ -303,16 +303,16 @@ class TagExistsTests(MercurialSetup):
         self.tag(self.packagedir, '2.6')
         self.assertEqual(scm.tag_exists(self.packagedir, '2.6'), True)
 
+    @quiet
     def testBadSandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.destroy()
-        # Note: The tag is reported as not existing
-        self.assertEqual(scm.tag_exists(self.packagedir, '2.6'), False)
+        self.assertRaises(SystemExit, scm.check_tag_exists, self.packagedir, '2.6')
 
+    @quiet
     def testBadProcess(self):
         scm = Mercurial(MockProcess(rc=1))
-        # Note: The tag is reported as not existing
-        self.assertEqual(scm.tag_exists(self.packagedir, '2.6'), False)
+        self.assertRaises(SystemExit, scm.check_tag_exists, self.packagedir, '2.6')
 
     @quiet
     def testCheckRaises(self):

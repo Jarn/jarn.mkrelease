@@ -120,7 +120,7 @@ class Subversion(SCM):
         if rc == 0:
             lines = [x for x in lines if x[0:1] in ('M', 'A', 'R', 'D')]
             return bool(lines)
-        return False
+        err_exit('Failed to get status from %(dir)s' % locals())
 
     def is_unclean_sandbox(self, dir):
         rc, lines = self.process.popen(
@@ -128,7 +128,7 @@ class Subversion(SCM):
         if rc == 0:
             lines = [x for x in lines if x[0:1] in ('M', 'A', 'R', 'D', 'C', '!', '~')]
             return bool(lines)
-        return False
+        err_exit('Failed to get status from %(dir)s' % locals())
 
     def is_remote_sandbox(self, dir):
         return bool(self.get_url_from_sandbox(dir))
@@ -221,7 +221,7 @@ class Mercurial(SCM):
             'hg status -mar' % locals(), echo=False)
         if rc == 0:
             return bool(lines)
-        return False
+        err_exit('Failed to get status from %(dir)s' % locals())
 
     @chdir
     def is_unclean_sandbox(self, dir):
@@ -229,7 +229,7 @@ class Mercurial(SCM):
             'hg status -mard' % locals(), echo=False)
         if rc == 0:
             return bool(lines)
-        return False
+        err_exit('Failed to get status from %(dir)s' % locals())
 
     @chdir
     def is_remote_sandbox(self, dir):
@@ -282,11 +282,12 @@ class Mercurial(SCM):
     def tag_exists(self, dir, tagid):
         rc, lines = self.process.popen(
             'hg tags', echo=False)
-        if rc == 0 and lines:
+        if rc == 0:
             for line in lines:
                 if line.split()[0] == tagid:
                     return True
-        return False
+            return False
+        err_exit('Failed to get tags from %(dir)s' % locals())
 
     @chdir
     def create_tag(self, dir, tagid, name, version, push):
@@ -444,11 +445,12 @@ class Git(SCM):
     def tag_exists(self, dir, tagid):
         rc, lines = self.process.popen(
             'git tag', echo=False)
-        if rc == 0 and lines:
+        if rc == 0:
             for line in lines:
                 if line == tagid:
                     return True
-        return False
+            return False
+        err_exit('Failed to get tags from %(dir)s' % locals())
 
     @chdir
     def create_tag(self, dir, tagid, name, version, push):
