@@ -224,7 +224,7 @@ class Mercurial(SCM):
     @chdir
     def is_dirty_sandbox(self, dir):
         rc, lines = self.process.popen(
-            'hg status -mar' % locals(), echo=False)
+            'hg status -mar .', echo=False)
         if rc == 0:
             return bool(lines)
         err_exit('Failed to get status from %(dir)s' % locals())
@@ -232,7 +232,7 @@ class Mercurial(SCM):
     @chdir
     def is_unclean_sandbox(self, dir):
         rc, lines = self.process.popen(
-            'hg status -mard' % locals(), echo=False)
+            'hg status -mard .', echo=False)
         if rc == 0:
             return bool(lines)
         err_exit('Failed to get status from %(dir)s' % locals())
@@ -343,12 +343,12 @@ class Git(SCM):
     def is_dirty_sandbox(self, dir):
         if self.version_tuple[:2] >= (1, 7):
             rc, lines = self.process.popen(
-                'git status --porcelain --untracked-files=no' % locals(), echo=False)
+                'git status --porcelain --untracked-files=no .', echo=False)
             if rc == 0:
                 return bool(lines)
         else:
             rc, lines = self.process.popen(
-                'git status -a' % locals(), echo=False)
+                'git status .', echo=False)
             if rc == 0:
                 return True
             if rc == 1:
