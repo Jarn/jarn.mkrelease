@@ -4,6 +4,9 @@ Changelog
 3.0.3 - Unreleased
 ------------------
 
+- Change how we check for existing tags in Subversion repositories.
+  [stefan]
+
 - Make sandbox-status checks more robust in all three SCMs.
   [stefan]
 
