@@ -4,6 +4,8 @@ Changelog
 3.0.3 - Unreleased
 ------------------
 
+- Make sandbox-status checks more robust in all three SCMs.
+  [stefan]
 
 3.0.2 - 2010-03-12
 ------------------
