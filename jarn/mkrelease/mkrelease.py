@@ -16,7 +16,7 @@ from exit import msg_exit, err_exit
 pypiurl = "http://pypi.python.org/pypi"
 maxaliasdepth = 23
 
-version = "jarn.mkrelease 3.0.3"
+version = "jarn.mkrelease 3.0.4"
 usage = "Try 'mkrelease --help' for more information."
 help = """\
 Usage: mkrelease [options] [scm-url|scm-sandbox]
