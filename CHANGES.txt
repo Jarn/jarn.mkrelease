@@ -4,6 +4,9 @@ Changelog
 3.0.4 - Unreleased
 ------------------
 
+- Status checks didn't use the same path restrictions as commits
+  (Mercurial and Git.)
+  [stefan]
 
 3.0.3 - 2010-03-16
 ------------------
