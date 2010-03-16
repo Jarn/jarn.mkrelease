@@ -293,18 +293,18 @@ class TagExistsTests(SubversionSetup):
         self.tag(self.clonedir, tagid)
         self.assertEqual(scm.tag_exists(self.clonedir, tagid), True)
 
-    def testBadSandbox(self):
+    @quiet
+    def testBadRepository(self):
         scm = Subversion(Process(quiet=True))
         tagid = 'file://%s/tags/2.6' % self.packagedir
-        self.destroy(self.clonedir)
-        # Note: The tag is reported as not existing
-        self.assertEqual(scm.tag_exists(self.clonedir, tagid), False)
+        self.destroy(self.packagedir)
+        self.assertRaises(SystemExit, scm.check_tag_exists, self.clonedir, tagid)
 
+    @quiet
     def testBadProcess(self):
         scm = Subversion(MockProcess(rc=1))
         tagid = 'file://%s/tags/2.6' % self.packagedir
-        # Note: The tag is reported as not existing
-        self.assertEqual(scm.tag_exists(self.clonedir, tagid), False)
+        self.assertRaises(SystemExit, scm.check_tag_exists, self.clonedir, tagid)
 
     @quiet
     def testCheckRaises(self):

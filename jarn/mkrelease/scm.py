@@ -172,9 +172,15 @@ class Subversion(SCM):
         return '/'.join(parts + ['tags', version])
 
     def tag_exists(self, dir, tagid):
+        url, version = tagid.rsplit('/', 1)
         rc, lines = self.process.popen(
-            'svn list "%(tagid)s"' % locals(), echo=False, echo2=False)
-        return rc == 0
+            'svn list "%(url)s"' % locals(), echo=False)
+        if rc == 0:
+            for line in lines:
+                if line[:-1] == version:
+                    return True
+            return False
+        err_exit('Failed to get tags from %(url)s' % locals())
 
     def create_tag(self, dir, tagid, name, version, push):
         url = self.get_url_from_sandbox(dir)
