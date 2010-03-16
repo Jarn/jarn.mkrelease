@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.4 - Unreleased
+3.0.4 - 2010-03-16
 ------------------
 
 - Status checks didn't use the same path restrictions as commits
