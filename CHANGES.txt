@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.3 - Unreleased
+3.0.3 - 2010-03-16
 ------------------
 
 - Change how we check for existing tags in Subversion repositories.
