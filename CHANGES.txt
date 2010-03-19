@@ -4,6 +4,8 @@ Changelog
 3.0.5 - Unreleased
 ------------------
 
+- Allow per-server configuration of ``-s`` and ``-i`` defaults.
+  [stefan]
 
 3.0.4 - 2010-03-16
 ------------------

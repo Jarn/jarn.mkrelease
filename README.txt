@@ -244,7 +244,7 @@ And type::
 Note: Due to the way setuptools works, the egg is rebuilt for every index
 server it is uploaded to. This means that MD5 sums and GnuPG signatures will
 differ between servers. If this is not what you want, upload to only one
-server and distribute from there by other means (e.g. replication).
+server and distribute from there by other means.
 
 Releasing a tag
 ===============
@@ -268,11 +268,17 @@ command must be available on the system PATH)::
 
   $ mkrelease -s -i fred@bedrock.com -d pypi src/my.package
 
-The ``-i`` flag is entirely optional, and GnuPG will pick your default
+The ``-i`` flag is optional, and GnuPG will pick your default
 key if not given. In addition, defaults for ``-s`` and ``-i`` may be
-configured in ``~/.mkrelease``::
+configured in ``~/.pypirc``::
 
-  [defaults]
+  [distutils]
+  index-servers =
+    pypi
+
+  [pypi]
+  username = fred
+  password = secret
   sign = yes
   identity = fred@bedrock.com
 
