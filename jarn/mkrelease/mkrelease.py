@@ -246,18 +246,6 @@ class ReleaseMaker(object):
 
         return args
 
-    def finish_options(self, args):
-        """Post-process command line options.
-        """
-        if not self.locations:
-            self.locations.extend(self.locations.get_default_location())
-
-        if not self.skipupload:
-            self.locations.check_valid_locations()
-
-        if args:
-            err_exit('mkrelease: too many arguments\n%s' % usage)
-
     def get_uploadflags(self, location):
         """Return uploadflags for the given server.
         """
@@ -299,7 +287,14 @@ class ReleaseMaker(object):
         if args:
             self.directory = args.pop(0)
 
-        self.finish_options(args)
+        if not self.locations:
+            self.locations.extend(self.locations.get_default_location())
+
+        if not self.skipupload:
+            self.locations.check_valid_locations()
+
+        if args:
+            err_exit('mkrelease: too many arguments\n%s' % usage)
 
     def get_package(self):
         """Get the URL or sandbox to release.
