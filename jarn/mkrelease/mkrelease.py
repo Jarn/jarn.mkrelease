@@ -73,6 +73,12 @@ class Defaults(object):
                 return self.parser.getboolean(section, key)
             return default
 
+        class ServerInfo(object):
+            def __init__(self, server):
+                self.url = get(server, 'repository', pypiurl)
+                self.sign = getboolean(server, 'sign', None)
+                self.identity = get(server, 'identity', None)
+
         self.distbase = get('defaults', 'distbase', '')
         self.distdefault = get('defaults', 'distdefault', '')
 
@@ -86,9 +92,9 @@ class Defaults(object):
 
         self.servers = {}
         for server in get('distutils', 'index-servers', '').split():
-            url = get(server, 'repository', pypiurl)
-            self.servers[server] = True
-            self.servers[url] = True
+            info = ServerInfo(server)
+            self.servers.setdefault(server, info)
+            self.servers.setdefault(info.url, info)
 
         self.python = sys.executable
 
@@ -179,10 +185,11 @@ class ReleaseMaker(object):
         self.skipupload = False
         self.push = False
         self.quiet = False
+        self.sign = False
+        self.identity = ''
         self.distcmd = 'sdist'
         self.infoflags = ['--no-svn-revision', '--no-date', '--tag-build=""']
         self.distflags = ['--formats="zip"']
-        self.uploadflags = []
         self.directory = os.curdir
         self.defaults = Defaults()
         self.locations = Locations(self.defaults)
@@ -219,9 +226,9 @@ class ReleaseMaker(object):
             elif name in ('-q', '--quiet'):
                 self.quiet = True
             elif name in ('-s', '--sign'):
-                self.uploadflags.append('--sign')
+                self.sign = True
             elif name in ('-i', '--identity'):
-                self.uploadflags.append('--identity="%s"' % value)
+                self.identity = value
             elif name in ('-d', '--dist-location'):
                 self.locations.extend(self.locations.get_location(value))
             elif name in ('-v', '--version'):
@@ -242,15 +249,6 @@ class ReleaseMaker(object):
     def finish_options(self, args):
         """Post-process command line options.
         """
-        if not self.uploadflags and self.defaults.sign:
-            self.uploadflags.append('--sign')
-
-        if self.uploadflags and '--sign' not in self.uploadflags:
-            self.uploadflags.append('--sign')
-
-        if len(set(self.uploadflags)) == 1 and self.defaults.identity:
-            self.uploadflags.append('--identity="%s"' % self.defaults.identity)
-
         if not self.locations:
             self.locations.extend(self.locations.get_default_location())
 
@@ -259,6 +257,33 @@ class ReleaseMaker(object):
 
         if args:
             err_exit('mkrelease: too many arguments\n%s' % usage)
+
+    def get_uploadflags(self, location):
+        """Return uploadflags for the given server.
+        """
+        uploadflags = []
+        server = self.defaults.servers[location]
+
+        if self.sign:
+            uploadflags.append('--sign')
+        elif server.sign is not None:
+            if server.sign:
+                uploadflags.append('--sign')
+        elif self.defaults.sign:
+            uploadflags.append('--sign')
+
+        if self.identity:
+            if '--sign' not in uploadflags:
+                uploadflags.append('--sign')
+            uploadflags.append('--identity="%s"' % self.identity)
+        elif '--sign' in uploadflags:
+            if server.identity is not None:
+                if server.identity:
+                    uploadflags.append('--identity="%s"' % server.identity)
+            elif self.defaults.identity:
+                uploadflags.append('--identity="%s"' % self.defaults.identity)
+
+        return uploadflags
 
     def get_python(self):
         """Get the Python interpreter.
@@ -311,7 +336,6 @@ class ReleaseMaker(object):
         distcmd = self.distcmd
         infoflags = self.infoflags
         distflags = self.distflags
-        uploadflags = self.uploadflags
         scmtype = self.scm.name
 
         try:
@@ -344,6 +368,7 @@ class ReleaseMaker(object):
             if not self.skipupload:
                 for location in self.locations:
                     if self.locations.is_server(location):
+                        uploadflags = self.get_uploadflags(location)
                         if '--sign' in uploadflags and isfile(distfile+'.asc'):
                             os.remove(distfile+'.asc')
                         self.setuptools.run_upload(
