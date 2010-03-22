@@ -73,12 +73,6 @@ class Defaults(object):
                 return self.parser.getboolean(section, key)
             return default
 
-        class ServerInfo(object):
-            def __init__(self, server):
-                self.url = get(server, 'repository', pypiurl)
-                self.sign = getboolean(server, 'sign', None)
-                self.identity = get(server, 'identity', None)
-
         self.distbase = get('defaults', 'distbase', '')
         self.distdefault = get('defaults', 'distdefault', '')
 
@@ -89,6 +83,12 @@ class Defaults(object):
         if self.parser.has_section('aliases'):
             for key, value in self.parser.items('aliases'):
                 self.aliases[key] = value.split()
+
+        class ServerInfo(object):
+            def __init__(self, server):
+                self.url = get(server, 'repository', pypiurl)
+                self.sign = getboolean(server, 'sign', None)
+                self.identity = get(server, 'identity', None)
 
         self.servers = {}
         for server in get('distutils', 'index-servers', '').split():
@@ -187,6 +187,7 @@ class ReleaseMaker(object):
         self.quiet = False
         self.sign = False
         self.identity = ''
+        self.scmtype = ''
         self.distcmd = 'sdist'
         self.infoflags = ['--no-svn-revision', '--no-date', '--tag-build=""']
         self.distflags = ['--formats="zip"']
@@ -198,7 +199,6 @@ class ReleaseMaker(object):
         self.scp = SCP()
         self.scms = SCMFactory()
         self.scm = None
-        self.scmtype = ''
         self.args = args
 
     def parse_options(self, args):
@@ -302,7 +302,7 @@ class ReleaseMaker(object):
         directory = self.directory
         scmtype = self.scmtype
 
-        self.scm = self.scms.guess_scm(scmtype, directory)
+        self.scm = self.scms.guess_scm(directory, scmtype)
 
         if self.scm.is_valid_url(directory):
             self.remoteurl = directory
