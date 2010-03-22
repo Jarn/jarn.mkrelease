@@ -253,7 +253,8 @@ class ReleaseMaker(object):
         server = self.defaults.servers[location]
 
         if self.sign:
-            uploadflags.append('--sign')
+            if server.sign is None or server.sign:
+                uploadflags.append('--sign')
         elif server.sign is not None:
             if server.sign:
                 uploadflags.append('--sign')
