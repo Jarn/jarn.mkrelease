@@ -158,7 +158,7 @@ And, because ``public`` is the default location, we can omit ``-d`` entirely::
 
 .. _elsewhere: http://docs.python.org/distutils/packageindex.html#the-pypirc-file
 
-Working with scp
+Working with SCP
 ================
 
 The simplest distribution location is a server directory shared through
@@ -190,7 +190,7 @@ host part. We can now write::
   $ mkrelease -d public src/my.package
   $ mkrelease -d customerB src/my.package
 
-Working with index servers
+Working with Index Servers
 ==========================
 
 Another way of distributing Python eggs is by uploading to dedicated
@@ -246,7 +246,7 @@ This means that MD5 sums and GnuPG signatures will differ between servers.
 If this is not what you want, upload to only one server and distribute from
 there by other means.
 
-Releasing a tag
+Releasing a Tag
 ===============
 
 Release my.package from an existing tag::
