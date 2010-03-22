@@ -81,7 +81,21 @@ class BranchFromSandboxTests(SubversionSetup):
     def testGetBranchFromSubdir(self):
         scm = Subversion()
         self.assertEqual(scm.get_branch_from_sandbox(join(self.clonedir, 'testpackage')),
-            'file://%s/trunk/testpackage' % self.packagedir) # XXX
+            'file://%s/trunk' % self.packagedir)
+
+    def testGetBranchFromBranch(self):
+        scm = Subversion()
+        branchid = 'file://%s/branches/2.x' % self.packagedir
+        self.branch(self.clonedir, branchid)
+        self.assertEqual(scm.get_branch_from_sandbox(self.branchdir),
+            'file://%s/branches/2.x' % self.packagedir)
+
+    def testGetBranchFromBranchSubdir(self):
+        scm = Subversion()
+        branchid = 'file://%s/branches/2.x' % self.packagedir
+        self.branch(self.clonedir, branchid)
+        self.assertEqual(scm.get_branch_from_sandbox(join(self.branchdir, 'testpackage')),
+            'file://%s/branches/2.x' % self.packagedir)
 
     @quiet
     def testBadSandbox(self):

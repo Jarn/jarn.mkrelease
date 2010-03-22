@@ -122,6 +122,9 @@ class SandboxAPI(SandboxSetup):
     def tag(self, dir, tagid):
         raise NotImplementedError
 
+    def branch(self, dir, branchid):
+        raise NotImplementedError
+
 
 class SubversionSetup(SandboxAPI):
     """Set up a Subversion sandbox."""
@@ -145,10 +148,15 @@ class SubversionSetup(SandboxAPI):
         process = Process(quiet=True)
         process.system('svn update')
 
-    @chdir
     def tag(self, dir, tagid):
         process = Process(quiet=True)
         process.system('svn cp -m"Tag" file://%s/trunk %s' % (self.packagedir, tagid))
+
+    def branch(self, dir, branchid):
+        process = Process(quiet=True)
+        process.system('svn cp -m"Branch" file://%s/trunk %s' % (self.packagedir, branchid))
+        process.system('svn co %s testbranch' % branchid)
+        self.branchdir = join(self.tempdir, 'testbranch')
 
 
 class MercurialSetup(SandboxAPI):
@@ -177,6 +185,12 @@ class MercurialSetup(SandboxAPI):
     def tag(self, dir, tagid):
         process = Process(quiet=True)
         process.system('hg tag %s' % tagid)
+
+    @chdir
+    def branch(self, dir, branchid):
+        process = Process(quiet=True)
+        process.system('hg branch %s' % branchid)
+        process.system('hg checkout %s' % branchid)
 
 
 class GitSetup(SandboxAPI):
@@ -210,6 +224,11 @@ class GitSetup(SandboxAPI):
     def tag(self, dir, tagid):
         process = Process(quiet=True)
         process.system('git tag %s' % tagid)
+
+    @chdir
+    def branch(self, dir, branchid):
+        process = Process(quiet=True)
+        process.system('git checkout -b %s' % branchid)
 
 
 class MockProcessError(Exception):

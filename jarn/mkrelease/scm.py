@@ -134,10 +134,18 @@ class Subversion(SCM):
         return bool(self.get_url_from_sandbox(dir))
 
     def get_branch_from_sandbox(self, dir):
-        try:
-            return self.get_url_from_sandbox(dir) # XXX
-        except SystemExit:
+        url = self.get_url_from_sandbox(dir)
+        parts = url.split('/')
+        for i in reversed(range(len(parts))):
+            if parts[i] == 'trunk':
+                parts = parts[:i+1]
+                break
+            elif parts[i] in ('branches', 'tags'):
+                parts = parts[:i+2]
+                break
+        else:
             err_exit('Failed to get branch from %(dir)s' % locals())
+        return '/'.join(parts)
 
     def get_url_from_sandbox(self, dir):
         rc, lines = self.process.popen(

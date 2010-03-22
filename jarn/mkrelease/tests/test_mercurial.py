@@ -77,6 +77,11 @@ class BranchFromSandboxTests(MercurialSetup):
         scm = Mercurial()
         self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'default')
 
+    def testGetLocalBranchFromBranch(self):
+        scm = Mercurial()
+        self.branch(self.packagedir, '2.x')
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), '2.x')
+
     def testGetRemoteBranch(self):
         scm = Mercurial()
         self.clone()
