@@ -280,7 +280,7 @@ class ReleaseMaker(object):
             self.python.check_valid_python()
 
     def get_options(self):
-        """Parse the command line.
+        """Process the command line.
         """
         args = self.parse_options(self.args)
 
