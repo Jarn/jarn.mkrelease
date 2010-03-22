@@ -552,14 +552,15 @@ class SCMFactory(object):
                      'Please specify --svn, --hg, or --git' % locals())
         err_exit('Unsupported URL scheme: %(scheme)s' % locals())
 
-    def guess_scm(self, url_or_dir, type):
+    def get_scm(self, url_or_dir, type):
         if type:
-            return self.get_scm_from_type(type)
-        if self.urlparser.is_url(url_or_dir):
-            return self.get_scm_from_url(url_or_dir)
+            scm = self.get_scm_from_type(type)
+        elif self.urlparser.is_url(url_or_dir):
+            scm = self.get_scm_from_url(url_or_dir)
         else:
             dir = abspath(expanduser(url_or_dir))
             if not exists(dir):
                 err_exit('No such file or directory: %(dir)s' % locals())
-            return self.get_scm_from_sandbox(dir)
+            scm = self.get_scm_from_sandbox(dir)
+        return scm
 

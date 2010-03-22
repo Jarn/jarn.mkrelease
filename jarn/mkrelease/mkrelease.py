@@ -303,7 +303,7 @@ class ReleaseMaker(object):
         directory = self.directory
         scmtype = self.scmtype
 
-        self.scm = self.scms.guess_scm(directory, scmtype)
+        self.scm = self.scms.get_scm(directory, scmtype)
 
         if self.scm.is_valid_url(directory):
             self.remoteurl = directory
