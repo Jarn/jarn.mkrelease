@@ -140,12 +140,35 @@ class Subversion(SCM):
             if parts[i] == 'trunk':
                 parts = parts[:i+1]
                 break
-            elif parts[i] in ('branches', 'tags'):
+            elif parts[i] in ('branches', 'tags', 'branch', 'tag'):
                 parts = parts[:i+2]
                 break
         else:
             err_exit('Failed to get branch from %(dir)s' % locals())
         return '/'.join(parts)
+
+    def get_base_url_from_sandbox(self, dir):
+        url = self.get_url_from_sandbox(dir)
+        parts = url.split('/')
+        for i in reversed(range(len(parts))):
+            if parts[i] in ('trunk', 'branches', 'tags', 'branch', 'tag'):
+                parts = parts[:i]
+                break
+        else:
+            err_exit('Failed to get layout from %(dir)s' % locals())
+        return '/'.join(parts)
+
+    def get_layout_from_sandbox(self, dir):
+        url = self.get_base_url_from_sandbox(dir)
+        rc, lines = self.process.popen(
+            'svn list "%(url)s"' % locals(), echo=False)
+        if rc == 0:
+            for line in lines:
+                if line[:-1] == 'tag':
+                    return ('trunk', 'branch', 'tag')
+                if line[:-1] == 'tags':
+                    return ('trunk', 'branches', 'tags')
+        err_exit('Failed to get layout from %(dir)s' % locals())
 
     def get_url_from_sandbox(self, dir):
         rc, lines = self.process.popen(
@@ -173,11 +196,12 @@ class Subversion(SCM):
         parts = url.split('/')
         if parts[-1] == 'trunk':
             parts = parts[:-1]
-        elif parts[-2] in ('branches', 'tags'):
+        elif parts[-2] in ('branches', 'tags', 'branch', 'tag'):
             parts = parts[:-2]
         else:
             err_exit('URL must point to trunk, branch, or tag: %(url)s' % locals())
-        return '/'.join(parts + ['tags', version])
+        layout = self.get_layout_from_sandbox(dir)
+        return '/'.join(parts + [layout[2], version])
 
     def tag_exists(self, dir, tagid):
         url, version = tagid.rsplit('/', 1)
