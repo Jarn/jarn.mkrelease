@@ -311,9 +311,6 @@ layouts:
 * The singular-form layout favored by codespeak.net: ``package.name/trunk``,
   ``package.name/branch``, ``package.name/tag``.
 
-If your repository looks different, you must tag by hand
-and run mkrelease with the ``-T`` option.
-
 Git
 ---
 
