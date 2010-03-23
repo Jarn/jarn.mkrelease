@@ -7,6 +7,9 @@ Changelog
 - Allow per-server configuration of ``-s`` and ``-i`` defaults.
   [stefan]
 
+- Support the codespeak.net Subversion repository layout.
+  [stefan]
+
 3.0.4 - 2010-03-16
 ------------------
 

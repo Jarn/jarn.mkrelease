@@ -302,10 +302,16 @@ Limitations
 Subversion
 ----------
 
-The release tag can only be created if the package follows the
-standard Subversion repository layout: ``package.name/trunk``,
-``package.name/branches``, and ``package.name/tags``.
-If you have a non-standard repository, you must tag by hand
+The release tag can only be created if the package follows one of two
+layouts:
+
+* The standard Subversion layout: ``package.name/trunk``,
+  ``package.name/branches``, ``package.name/tags``.
+
+* The singular-form layout favored by codespeak.net: ``package.name/trunk``,
+  ``package.name/branch``, ``package.name/tag``.
+
+If your repository looks different, you must tag by hand
 and run mkrelease with the ``-T`` option.
 
 Git
