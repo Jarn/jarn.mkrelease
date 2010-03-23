@@ -151,6 +151,8 @@ class SubversionSetup(SandboxAPI):
     def tag(self, dir, tagid):
         process = Process(quiet=True)
         process.system('svn cp -m"Tag" file://%s/trunk %s' % (self.packagedir, tagid))
+        process.system('svn co %s testtag' % tagid)
+        self.tagdir = join(self.tempdir, 'testtag')
 
     def branch(self, dir, branchid):
         process = Process(quiet=True)
@@ -185,6 +187,7 @@ class MercurialSetup(SandboxAPI):
     def tag(self, dir, tagid):
         process = Process(quiet=True)
         process.system('hg tag %s' % tagid)
+        process.system('hg checkout %s' % tagid)
 
     @chdir
     def branch(self, dir, branchid):
@@ -224,6 +227,7 @@ class GitSetup(SandboxAPI):
     def tag(self, dir, tagid):
         process = Process(quiet=True)
         process.system('git tag %s' % tagid)
+        process.system('git checkout %s' % tagid)
 
     @chdir
     def branch(self, dir, branchid):

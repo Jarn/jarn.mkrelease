@@ -332,19 +332,67 @@ class TagIdTests(SubversionSetup):
 
     def testTagIdFromTrunk(self):
         scm = Subversion()
-        self.assertEqual(scm.make_tagid(self.clonedir, '2.6'), 'file://%s/tags/2.6' % self.packagedir)
+        self.assertEqual(scm.make_tagid(self.clonedir, '2.6'),
+            'file://%s/tags/2.6' % self.packagedir)
 
     def testTagIdFromBranch(self):
-        scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://testpackage/branches/2.x']))
-        self.assertEqual(scm.make_tagid(self.clonedir, '2.6'), 'file://testpackage/tags/2.6')
+        scm = Subversion()
+        branchid = 'file://%s/branches/2.x' % self.packagedir
+        self.branch(self.clonedir, branchid)
+        self.assertEqual(scm.get_branch_from_sandbox(self.branchdir),
+            'file://%s/branches/2.x' % self.packagedir)
+        self.assertEqual(scm.make_tagid(self.branchdir, '2.6'),
+            'file://%s/tags/2.6' % self.packagedir)
 
     def testTagIdFromTag(self):
-        scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://testpackage/tags/2.6b2']))
-        self.assertEqual(scm.make_tagid(self.clonedir, '2.6'), 'file://testpackage/tags/2.6')
+        scm = Subversion()
+        tagid = 'file://%s/tags/2.6' % self.packagedir
+        self.tag(self.clonedir, tagid)
+        self.assertEqual(scm.tag_exists(self.tagdir, tagid), True)
+        self.assertEqual(scm.make_tagid(self.tagdir, '2.7'),
+            'file://%s/tags/2.7' % self.packagedir)
 
     @quiet
     def testTagIdFromBadUrl(self):
-        scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://testpackage']))
+        scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://svn/testpackage']))
+        self.assertRaises(SystemExit, scm.make_tagid, self.clonedir, '2.6')
+
+
+class CodespeakTagIdTests(SubversionSetup):
+
+    def setUp(self):
+        SubversionSetup.setUp(self)
+        process = Process(quiet=True)
+        process.system('svn mv -m"Rename" "file://%s/tags" "file://%s/tag"' %
+            (self.packagedir, self.packagedir))
+        process.system('svn mv -m"Rename" "file://%s/branches" "file://%s/branch"' %
+            (self.packagedir, self.packagedir))
+
+    def testTagIdFromTrunk(self):
+        scm = Subversion()
+        self.assertEqual(scm.make_tagid(self.clonedir, '2.6'),
+            'file://%s/tag/2.6' % self.packagedir)
+
+    def testTagIdFromBranch(self):
+        scm = Subversion()
+        branchid = 'file://%s/branch/2.x' % self.packagedir
+        self.branch(self.clonedir, branchid)
+        self.assertEqual(scm.get_branch_from_sandbox(self.branchdir),
+            'file://%s/branch/2.x' % self.packagedir)
+        self.assertEqual(scm.make_tagid(self.branchdir, '2.6'),
+            'file://%s/tag/2.6' % self.packagedir)
+
+    def testTagIdFromTag(self):
+        scm = Subversion()
+        tagid = 'file://%s/tag/2.6' % self.packagedir
+        self.tag(self.clonedir, tagid)
+        self.assertEqual(scm.tag_exists(self.tagdir, tagid), True)
+        self.assertEqual(scm.make_tagid(self.tagdir, '2.7'),
+            'file://%s/tag/2.7' % self.packagedir)
+
+    @quiet
+    def testTagIdFromBadUrl(self):
+        scm = Subversion(MockProcess(rc=0, lines=['', 'URL: file://svn/testpackage']))
         self.assertRaises(SystemExit, scm.make_tagid, self.clonedir, '2.6')
 
 
