@@ -1,3 +1,9 @@
+import locale
+locale.setlocale(locale.LC_ALL, '')
+
+import pkg_resources
+__version__ = pkg_resources.get_distribution('jarn.mkrelease').version
+
 import sys
 import os
 import getopt
@@ -16,7 +22,7 @@ from exit import msg_exit, err_exit
 pypiurl = "http://pypi.python.org/pypi"
 maxaliasdepth = 23
 
-version = "jarn.mkrelease 3.0.6"
+version = "jarn.mkrelease %s" % __version__
 usage = "Try 'mkrelease --help' for more information."
 help = """\
 Usage: mkrelease [options] [scm-url|scm-sandbox]
