@@ -30,6 +30,8 @@ version strings, etc) we typically have to:
 Now multiply by the number of packages waiting for release, and the moment of
 *I gotta script this* approaches at warp 9.
 
+Enter jarn.mkrelease.
+
 Installation
 ============
 
@@ -37,8 +39,8 @@ mkrelease requires Python 2.6 for its improved distutils support. Use
 ``easy_install jarn.mkrelease`` to install the ``mkrelease`` script.
 Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
 
-mkrelease is known to work with the 0.6 series of setuptools (0.6c11)
-and distribute (0.6.10).
+mkrelease is known to work with the 0.6 series of setuptools
+and distribute.
 
 Usage
 =====
