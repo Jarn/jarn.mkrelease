@@ -306,10 +306,10 @@ class ReleaseMaker(object):
     def get_package(self):
         """Get the URL or sandbox to release.
         """
-        directory = self.directory
         scmtype = self.scmtype
+        directory = self.directory
 
-        self.scm = self.scms.get_scm(directory, scmtype)
+        self.scm = self.scms.get_scm(scmtype, directory)
 
         if self.scm.is_valid_url(directory):
             self.remoteurl = directory
