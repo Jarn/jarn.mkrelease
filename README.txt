@@ -1,9 +1,9 @@
 ==============
 jarn.mkrelease
 ==============
--------------------
-Python egg releaser
--------------------
+---------------------------------------------------
+Build and distribute Python eggs in one simple step
+---------------------------------------------------
 
 **mkrelease** is a no-frills Python egg releaser. It was created to take
 the cumber out of building and distributing Python eggs.
@@ -11,7 +11,7 @@ the cumber out of building and distributing Python eggs.
 Motivation
 ==========
 
-Here at Jarn, we use zc.buildout and pinned egg versions for
+Here at Jarn we use zc.buildout and pinned egg versions for
 customer deployments. This means that for every update, we have to make
 proper egg releases of all modified packages.
 
@@ -29,8 +29,6 @@ version strings, etc) we typically have to:
 
 Now multiply by the number of packages waiting for release, and the moment of
 *I gotta script this* approaches at warp 9.
-
-Enter jarn.mkrelease.
 
 Installation
 ============
@@ -106,33 +104,38 @@ Options
 Examples
 ========
 
-Release my.package, using version information from its ``setup.py``,
-and distribute it to the default location::
-
-  $ mkrelease https://svn.jarn.com/public/my.package/trunk
-
-The same as above, but release the contents of the SCM sandbox in
-``src/my.package``::
-
-  $ mkrelease src/my.package
-
-Release my.package and distribute it via scp to
-``jarn.com:/var/dist/public``::
-
-  $ mkrelease -d jarn.com:/var/dist/public src/my.package
-
 Release my.package and upload it to PyPI::
 
   $ mkrelease -d pypi src/my.package
+
+Release my.package and upload it via scp to the jarn.com server::
+
+  $ mkrelease -d jarn.com:/var/dist/public src/my.package
+
+Release my.package using the repository URL instead of a local working copy::
+
+  $ mkrelease -d pypi https://svn.jarn.com/public/my.package/trunk
+
+Release a development egg of my.package (while suppressing setuptools output)::
+
+  $ mkrelease -qed jarn.com:/var/dist/public src/my.package
 
 Configuration
 =============
 
 mkrelease reads available index servers from the distutils configuration
-file ``~/.pypirc``. How this file must look is documented elsewhere_.
+file ``~/.pypirc``. This file must contain your PyPI account information::
 
-mkrelease furthermore reads its own configuration file
-``~/.mkrelease``. Here's an example::
+  [distutils]
+  index-servers =
+    pypi
+
+  [pypi]
+  username = fred
+  password = secret
+
+mkrelease also reads its own configuration file ``~/.mkrelease``.
+Here's an example::
 
   [defaults]
   distbase =
@@ -148,17 +151,15 @@ mkrelease furthermore reads its own configuration file
     pypi
 
 (Note that ``pypi`` refers to the index server `pypi` as configured in
-``~/.pypirc``. More on this later.)
+``~/.pypirc``.)
 
-Armed with the above configuration we can shorten example 3 to::
+Armed with this configuration we can shorten example 2 to::
 
   $ mkrelease -d public src/my.package
 
 And, because ``public`` is the default location, we can omit ``-d`` entirely::
 
   $ mkrelease src/my.package
-
-.. _elsewhere: http://docs.python.org/distutils/packageindex.html#the-pypirc-file
 
 Working with SCP
 ================
@@ -196,23 +197,16 @@ Working with Index Servers
 ==========================
 
 Another way of distributing Python eggs is by uploading to dedicated
-index servers, notably PyPI. We first need a ``~/.pypirc`` file::
-
-  [distutils]
-  index-servers =
-    pypi
-
-  [pypi]
-  username = fred
-  password = secret
-
-To release a package on PyPI we can now type::
+index servers, notably PyPI. Given the ``~/.pypirc`` file from above, all we
+have to do is type::
 
   $ mkrelease -d pypi src/my.package
 
 Index servers are not limited to PyPI though.
 For example, in the Plone world it is common practice to upload packages to
-plone.org as well as PyPI. Let's extend our ``~/.pypirc``::
+plone.org as well as PyPI.
+
+First, we extend our ``~/.pypirc`` to add a second index server::
 
   [distutils]
   index-servers =
@@ -230,9 +224,15 @@ plone.org as well as PyPI. Let's extend our ``~/.pypirc``::
 
 This allows us to write::
 
+  $ mkrelease -d pypi src/my.package
+  $ mkrelease -d ploneorg src/my.package
+
+The ``-d`` flag may be specified more than once::
+
   $ mkrelease -d pypi -d ploneorg src/my.package
 
-Finally, we can group the servers by defining an alias in ``~/.mkrelease``::
+We can also group the servers by defining an alias in
+``~/.mkrelease``::
 
   [aliases]
   plone =
@@ -244,7 +244,8 @@ And type::
   $ mkrelease -d plone src/my.package
 
 Note: Setuptools rebuilds the egg for every index server it uploads it to.
-This means that MD5 sums and GnuPG signatures will differ between servers.
+This means that MD5 sums and GnuPG signatures will differ between servers, no
+matter which command line format you use.
 If this is not what you want, upload to only one server and distribute from
 there by other means.
 
@@ -304,14 +305,14 @@ Limitations
 Subversion
 ----------
 
-The release tag can only be created if the package follows one of two
-layouts:
+The release tag can only be created if the package repository follows one of
+these layouts:
 
 * The standard Subversion layout: ``package.name/trunk``,
-  ``package.name/branches``, ``package.name/tags``.
+  ``package.name/branches``, and ``package.name/tags``.
 
 * The singular-form layout favored by codespeak.net: ``package.name/trunk``,
-  ``package.name/branch``, ``package.name/tag``.
+  ``package.name/branch``, and ``package.name/tag``.
 
 Git
 ---

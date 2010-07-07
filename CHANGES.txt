@@ -4,6 +4,8 @@ Changelog
 3.0.6 - Unreleased
 ------------------
 
+- Improve documentation and error messages.
+  [stefan]
 
 3.0.5 - 2010-03-23
 ------------------

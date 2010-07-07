@@ -4,7 +4,7 @@ version = '3.0.6'
 
 setup(name='jarn.mkrelease',
       version=version,
-      description='Python egg releaser',
+      description='Build and distribute Python eggs in one simple step',
       long_description=open('README.txt').read() + '\n' +
                        open('CHANGES.txt').read(),
       classifiers=[
