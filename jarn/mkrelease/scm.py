@@ -155,7 +155,7 @@ class Subversion(SCM):
                 parts = parts[:i]
                 break
         else:
-            err_exit('Failed to get layout from %(url)s' % locals())
+            err_exit('Failed to get repository layout from %(url)s' % locals())
         return '/'.join(parts)
 
     def get_layout_from_sandbox(self, dir):
@@ -168,7 +168,7 @@ class Subversion(SCM):
                     return ('trunk', 'branch', 'tag')
                 if line[:-1] == 'tags':
                     return ('trunk', 'branches', 'tags')
-        err_exit('Failed to get layout from %(url)s' % locals())
+        err_exit('Failed to get repository layout from %(url)s' % locals())
 
     def get_url_from_sandbox(self, dir):
         rc, lines = self.process.popen(
