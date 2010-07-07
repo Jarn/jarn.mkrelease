@@ -156,7 +156,7 @@ class Locations(object):
         if self.is_server(location):
             return [location]
         if location == 'pypi':
-            err_exit('No configuration found for server: pypi')
+            err_exit('No configuration found for server: pypi. Please check your ~/.pypirc.')
         if not self.has_host(location) and self.distbase:
             sep = '/'
             if self.distbase[-1] in (':', '/'):
@@ -178,7 +178,7 @@ class Locations(object):
             err_exit('mkrelease: option -d is required\n%s' % usage)
         for location in locations:
             if not self.is_server(location) and not self.has_host(location):
-                err_exit('Scp destination must contain host part: %(location)s' % locals())
+                err_exit('Scp destination must contain a host part: %(location)s' % locals())
 
 
 class ReleaseMaker(object):
