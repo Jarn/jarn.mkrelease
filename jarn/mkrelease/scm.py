@@ -297,8 +297,9 @@ class Mercurial(SCM):
     def checkin_sandbox(self, dir, name, version, push):
         rc = self.process.system(
             'hg commit -v -m"Prepare %(name)s %(version)s." .' % locals())
-        if rc != 0:
+        if rc not in (0, 1):
             err_exit('Commit failed')
+        rc = 0
         if push and self.is_remote_sandbox(dir):
             rc = self.process.system(
                 'hg push')

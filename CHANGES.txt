@@ -7,6 +7,9 @@ Changelog
 - Avoid underscores in dependency names.
   [stefan]
 
+- Handle return code changes in Mercurial 1.6.
+  [stefan]
+
 3.0.7 - 2010-07-07
 ------------------
 

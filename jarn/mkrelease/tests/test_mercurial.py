@@ -274,7 +274,7 @@ class CheckinSandboxTests(MercurialSetup):
 
     @quiet
     def testBadProcess(self):
-        scm = Mercurial(MockProcess(rc=1))
+        scm = Mercurial(MockProcess(rc=255))
         self.assertRaises(SystemExit, scm.checkin_sandbox, self.packagedir, 'testpackage', '2.6', False)
 
 
