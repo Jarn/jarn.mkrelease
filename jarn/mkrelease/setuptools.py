@@ -32,10 +32,33 @@ class Setuptools(object):
         err_exit('Bad setup.py')
 
     @chdir
-    def run_dist(self, dir, distcmd, infoflags, distflags, scmtype='', quiet=False):
-        echo = True
+    def run_egg_info(self, dir, infoflags, scmtype='', quiet=False):
+        if not self.process.quiet:
+            print 'running egg_info'
+
+        echo = tee.After('running egg_info' % locals())
         if quiet:
-            echo = tee.StartsWith('running')
+            echo = tee.And(echo, tee.StartsWith('running'))
+
+        rc, lines = self._run_setup_py(
+            ['egg_info'] + infoflags,
+            echo=echo,
+            scmtype=scmtype)
+
+        if rc == 0:
+            filename = self._parse_egg_info_results(lines)
+            if filename and isfile(filename):
+                return abspath(filename)
+        err_exit('egg_info failed')
+
+    @chdir
+    def run_dist(self, dir, infoflags, distcmd, distflags, scmtype='', quiet=False):
+        if not self.process.quiet:
+            print 'running', distcmd
+
+        echo = tee.After('running %(distcmd)s' % locals())
+        if quiet:
+            echo = tee.And(echo, tee.StartsWith('running'))
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + [distcmd] + distflags,
@@ -46,23 +69,50 @@ class Setuptools(object):
             filename = self._parse_dist_results(lines)
             if filename and isfile(filename):
                 return abspath(filename)
-        err_exit('Release failed')
+        err_exit('%(distcmd)s failed')
 
     @chdir
-    def run_upload(self, dir, location, distcmd, infoflags, distflags, uploadflags, scmtype=''):
+    def run_register(self, dir, infoflags, location, scmtype='', quiet=False):
+        if not self.process.quiet:
+            print 'running register'
+
+        echo = tee.After('running register')
+        if quiet:
+            echo = tee.And(echo, tee.Not(tee.StartsWith('Registering')))
+
+        serverflags = ['--repository="%s"' % location]
+
+        rc, lines = self._run_setup_py(
+            ['egg_info'] + infoflags + ['register'] + serverflags,
+            echo=echo,
+            scmtype=scmtype)
+
+        if rc == 0:
+            if self._parse_register_results(lines):
+                return rc
+        err_exit('register failed')
+
+    @chdir
+    def run_upload(self, dir, infoflags, distcmd, distflags, location, uploadflags, scmtype='', quiet=False):
+        if not self.process.quiet:
+            print 'running upload'
+
+        echo = tee.After('running upload')
+        if quiet:
+            echo = tee.And(echo, tee.Not(tee.StartsWith('Submitting')))
+
         serverflags = ['--repository="%s"' % location]
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + [distcmd] + distflags +
-            ['register'] + serverflags + ['upload'] + serverflags + uploadflags,
-            echo=tee.NotBefore('running register'),
+            ['upload'] + serverflags + uploadflags,
+            echo=echo,
             scmtype=scmtype)
 
         if rc == 0:
-            register_ok, upload_ok = self._parse_upload_results(lines)
-            if register_ok and upload_ok:
+            if self._parse_upload_results(lines):
                 return rc
-        err_exit('Upload failed')
+        err_exit('upload failed')
 
     def _run_setup_py(self, args, echo=True, echo2=True, scmtype=''):
         """Run setup.py with monkey-patched setuptools.
@@ -76,11 +126,9 @@ class Setuptools(object):
         If 'scmtype' is the empty string, the patch is not applied.
         """
         python = self.python
-        args = list(args)
-        scmtype = scmtype.lower()
-        patched = select_scm_patch % locals()
 
         if scmtype:
+            patched = scmtype_chooser % locals()
             setup_py = '-c"%(patched)s"' % locals()
         else:
             setup_py = 'setup.py %s' % ' '.join(args)
@@ -94,15 +142,20 @@ class Setuptools(object):
 
         return rc, lines
 
-    def _parse_dist_results(self, lines):
-        # This relies on --formats=zip (or egg)
+    def _parse_egg_info_results(self, lines):
         for line in lines:
-            if line.startswith("creating '") and "' and adding" in line:
+            if line.startswith("writing manifest file '"):
                 return line.split("'")[1]
         return ''
 
-    def _parse_upload_results(self, lines):
-        register_ok = upload_ok = False
+    def _parse_dist_results(self, lines):
+        # This relies on --formats=zip or --formats=egg
+        for line in lines:
+            if line.startswith("creating '") and "' and adding '" in line:
+                return line.split("'")[1]
+        return ''
+
+    def _parse_register_results(self, lines):
         current, expect = None, 'running register'
         for line in lines:
             if line == expect:
@@ -110,15 +163,22 @@ class Setuptools(object):
                     current, expect = expect, 'Server response (200): OK'
                 else:
                     if current == 'running register':
-                        register_ok = True
-                        current, expect = expect, 'running upload'
-                    elif current == 'running upload':
-                        upload_ok = True
-                        current, expect = expect, None
-        return register_ok, upload_ok
+                        return True
+        return False
+
+    def _parse_upload_results(self, lines):
+        current, expect = None, 'running upload'
+        for line in lines:
+            if line == expect:
+                if line != 'Server response (200): OK':
+                    current, expect = expect, 'Server response (200): OK'
+                else:
+                    if current == 'running upload':
+                        return True
+        return False
 
 
-select_scm_patch = """\
+scmtype_chooser = """\
 import os, sys
 import distutils
 import pkg_resources
@@ -134,7 +194,7 @@ def walk_revctrl(dirname=''):
                     yield item
     if not found:
         print >>sys.stderr, 'No %(scmtype)s file-finder ' \
-            '(setuptools_%(scmtype)s extension missing?)'
+            '(setuptools-%(scmtype)s extension missing?)'
         sys.exit(1)
 
 import setuptools.command.egg_info

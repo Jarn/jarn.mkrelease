@@ -20,9 +20,11 @@ class SCP(object):
         return distbase + sep + location
 
     def run_scp(self, distfile, location):
+        if not self.process.quiet:
+            print 'running scp'
         rc = self.process.os_system(
             'scp "%(distfile)s" "%(location)s"' % locals())
         if rc != 0:
-            err_exit('Scp failed')
+            err_exit('scp failed')
         return rc
 

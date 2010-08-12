@@ -335,8 +335,8 @@ class ReleaseMaker(object):
         """Build and distribute the egg.
         """
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
-        distcmd = self.distcmd
         infoflags = self.infoflags
+        distcmd = self.distcmd
         distflags = self.distflags
         scmtype = self.scm.name
 
@@ -364,8 +364,10 @@ class ReleaseMaker(object):
                 print 'Tagging', name, version
                 self.scm.create_tag(directory, tagid, name, version, self.push)
 
+            manifest = self.setuptools.run_egg_info(
+                directory, infoflags, scmtype, self.quiet)
             distfile = self.setuptools.run_dist(
-                directory, distcmd, infoflags, distflags, scmtype, self.quiet)
+                directory, infoflags, distcmd, distflags, scmtype, self.quiet)
 
             if not self.skipupload:
                 for location in self.locations:
@@ -373,8 +375,11 @@ class ReleaseMaker(object):
                         uploadflags = self.get_uploadflags(location)
                         if '--sign' in uploadflags and isfile(distfile+'.asc'):
                             os.remove(distfile+'.asc')
+                        self.setuptools.run_register(
+                            directory, infoflags, location, scmtype, self.quiet)
                         self.setuptools.run_upload(
-                            directory, location, distcmd, infoflags, distflags, uploadflags, scmtype)
+                            directory, infoflags, distcmd, distflags, location, uploadflags,
+                            scmtype, self.quiet)
                     else:
                         self.scp.run_scp(distfile, location)
         finally:

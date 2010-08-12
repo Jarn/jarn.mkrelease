@@ -76,22 +76,22 @@ class NotEmpty(object):
         return bool(line)
 
 
-class NotBefore(object):
-    """A tee filter suppressing output before 'startline'."""
+class Before(object):
+    """A tee filter printing lines before 'stopline'."""
 
-    def __init__(self, startline):
-        self.echo = False
-        self.startline = startline
+    def __init__(self, stopline):
+        self.echo = True
+        self.stopline = stopline
 
     def __call__(self, line):
-        if not self.echo:
-            if line == self.startline:
-                self.echo = True
+        if self.echo:
+            if line == self.stopline:
+                self.echo = False
         return self.echo
 
 
 class NotAfter(object):
-    """A tee filter suppressing output after 'stopline'."""
+    """A tee filter suppressing lines after 'stopline'."""
 
     def __init__(self, stopline):
         self.echo = True
@@ -105,36 +105,77 @@ class NotAfter(object):
         return self.echo
 
 
-class FromTo(object):
-    """A tee filter suppressing output before 'startline' and
-     after 'stopline' respectively."""
+class After(object):
+    """A tee filter printing lines after 'startline'."""
 
-    def __init__(self, startline, stopline):
+    def __init__(self, startline):
         self.echo = False
         self.startline = startline
-        self.stopline = stopline
 
     def __call__(self, line):
         if not self.echo:
             if line == self.startline:
                 self.echo = True
-        else:
-            if line == self.stopline:
-                self.echo = False
-                return True
+                return False
+        return self.echo
+
+
+class NotBefore(object):
+    """A tee filter suppressing lines before 'startline'."""
+
+    def __init__(self, startline):
+        self.echo = False
+        self.startline = startline
+
+    def __call__(self, line):
+        if not self.echo:
+            if line == self.startline:
+                self.echo = True
         return self.echo
 
 
 class StartsWith(object):
-    """A tee filter printing lines that start with one
-    of the patterns provided as constructor arguments."""
+    """A tee filter printing lines starting with one
+    of the patterns."""
 
-    def __init__(self, *args):
-        self.patterns = args
+    def __init__(self, *patterns):
+        self.patterns = patterns
 
     def __call__(self, line):
         for pattern in self.patterns:
             if line.startswith(pattern):
                 return True
         return False
+
+
+class Not(object):
+    """Negate a tee filter."""
+
+    def __init__(self, filter):
+        self.filter = filter
+
+    def __call__(self, line):
+        return not self.filter(line)
+
+
+class And(object):
+    """Apply filter1 and filter2."""
+
+    def __init__(self, filter1, filter2):
+        self.filter1 = filter1
+        self.filter2 = filter2
+
+    def __call__(self, line):
+        return self.filter1(line) and self.filter2(line)
+
+
+class Or(object):
+    """Apply filter1 or filter2."""
+
+    def __init__(self, filter1, filter2):
+        self.filter1 = filter1
+        self.filter2 = filter2
+
+    def __call__(self, line):
+        return self.filter1(line) or self.filter2(line)
 
