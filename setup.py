@@ -27,8 +27,8 @@ setup(name='jarn.mkrelease',
       test_suite='jarn.mkrelease.tests',
       install_requires=[
           'setuptools',
-          'setuptools_hg',
-          'setuptools_git',
+          'setuptools-hg',
+          'setuptools-git',
       ],
       entry_points = {
           'console_scripts': 'mkrelease=jarn.mkrelease.mkrelease:main',

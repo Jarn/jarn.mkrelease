@@ -4,6 +4,8 @@ Changelog
 3.0.8 - Unreleased
 ------------------
 
+- Avoid underscores in dependency names.
+  [stefan]
 
 3.0.7 - 2010-07-07
 ------------------
