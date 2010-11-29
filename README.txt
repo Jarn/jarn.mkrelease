@@ -157,7 +157,7 @@ Armed with this configuration we can shorten example 2 to::
 
   $ mkrelease -d public src/my.package
 
-And, because ``public`` is the default location, we can omit ``-d`` entirely::
+And because ``public`` is the default location, we can omit ``-d`` entirely::
 
   $ mkrelease src/my.package
 
@@ -196,9 +196,9 @@ host part. We can now write::
 Working with Index Servers
 ==========================
 
-Another way of distributing Python eggs is by uploading to dedicated
-index servers, notably PyPI. Given the ``~/.pypirc`` file from above, all we
-have to do is type::
+Another way of distributing Python eggs is by uploading them to dedicated
+index servers, notably PyPI. Given the ``~/.pypirc`` file from above
+we can release on PyPI by typing::
 
   $ mkrelease -d pypi src/my.package
 
@@ -206,7 +206,7 @@ Index servers are not limited to PyPI though.
 For example, in the Plone world it is common practice to upload packages to
 plone.org as well as PyPI.
 
-First, we extend our ``~/.pypirc`` to add a second index server::
+We extend our ``~/.pypirc`` to add a second index server::
 
   [distutils]
   index-servers =
@@ -224,14 +224,13 @@ First, we extend our ``~/.pypirc`` to add a second index server::
 
 This allows us to write::
 
-  $ mkrelease -d pypi src/my.package
   $ mkrelease -d ploneorg src/my.package
 
 The ``-d`` flag may be specified more than once::
 
   $ mkrelease -d pypi -d ploneorg src/my.package
 
-We can also group the servers by defining an alias in
+We can also group servers by defining an alias in
 ``~/.mkrelease``::
 
   [aliases]
@@ -244,8 +243,7 @@ And type::
   $ mkrelease -d plone src/my.package
 
 Note: Setuptools rebuilds the egg for every index server it uploads it to.
-This means that MD5 sums and GnuPG signatures will differ between servers, no
-matter which command line format you use.
+This means that MD5 sums and GnuPG signatures will differ between servers.
 If this is not what you want, upload to only one server and distribute from
 there by other means.
 
@@ -305,14 +303,14 @@ Limitations
 Subversion
 ----------
 
-The release tag can only be created if the package repository follows one of
+The release tag can only be created if the repository follows one of
 these layouts:
 
-* The standard Subversion layout: ``package.name/trunk``,
-  ``package.name/branches``, and ``package.name/tags``.
+* The standard Subversion layout: ``my.package/trunk``,
+  ``my.package/branches``, and ``my.package/tags``.
 
-* The singular-form layout favored by codespeak.net: ``package.name/trunk``,
-  ``package.name/branch``, and ``package.name/tag``.
+* The singular-form layout favored by codespeak.net: ``my.package/trunk``,
+  ``my.package/branch``, and ``my.package/tag``.
 
 Git
 ---
