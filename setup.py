@@ -30,7 +30,7 @@ setup(name='jarn.mkrelease',
           'setuptools-hg',
           'setuptools-git',
       ],
-      entry_points = {
+      entry_points={
           'console_scripts': 'mkrelease=jarn.mkrelease.mkrelease:main',
       },
 )
