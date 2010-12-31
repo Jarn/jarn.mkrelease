@@ -466,9 +466,9 @@ class GetVersionTests(unittest.TestCase):
 
     def testGetVersion(self):
         scm = Git()
-        self.failIfEqual(scm.get_version(), None)
+        self.failIfEqual(scm.get_version(), '')
 
-    def testVersionTuple(self):
+    def testVersionInfo(self):
         scm = Git()
-        self.failIfEqual(scm.version_tuple, ())
+        self.failIfEqual(scm.version_info, ())
 

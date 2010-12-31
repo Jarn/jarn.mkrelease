@@ -448,9 +448,9 @@ class GetVersionTests(unittest.TestCase):
 
     def testGetVersion(self):
         scm = Subversion()
-        self.failIfEqual(scm.get_version(), None)
+        self.failIfEqual(scm.get_version(), '')
 
-    def testVersionTuple(self):
+    def testVersionInfo(self):
         scm = Subversion()
-        self.failIfEqual(scm.version_tuple, ())
+        self.failIfEqual(scm.version_info, ())
 

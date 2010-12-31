@@ -5,7 +5,7 @@ jarn.mkrelease
 Build and distribute Python eggs in one simple step
 ---------------------------------------------------
 
-**mkrelease** is a no-frills Python egg releaser. It was created to take
+**mkrelease** is a no-frills Python egg releaser. It is designed to take
 the cumber out of building and distributing Python eggs.
 
 Motivation
@@ -137,7 +137,7 @@ file ``~/.pypirc``. This file must contain your PyPI account information::
 mkrelease also reads its own configuration file ``~/.mkrelease``.
 Here's an example::
 
-  [defaults]
+  [mkrelease]
   distbase =
   distdefault = public
 
@@ -178,7 +178,7 @@ see customer B's releases::
 Typing the full destination every time is tedious, even setting up an alias
 for each and every customer is, so we configure distbase instead::
 
-  [defaults]
+  [mkrelease]
   distbase = jarn.com:/var/dist
   distdefault = public
 

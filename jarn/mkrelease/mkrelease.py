@@ -19,12 +19,13 @@ from scp import SCP
 from scm import SCMFactory
 from exit import msg_exit, err_exit
 
-pypiurl = "http://pypi.python.org/pypi"
-maxaliasdepth = 23
+PYPIURL = "http://pypi.python.org/pypi"
+MAXALIASDEPTH = 23
 
-version = "jarn.mkrelease %s" % __version__
-usage = "Try 'mkrelease --help' for more information."
-help = """\
+VERSION = "jarn.mkrelease %s" % __version__
+USAGE = "Try 'mkrelease --help' for more information."
+
+HELP = """\
 Usage: mkrelease [options] [scm-url|scm-sandbox]
 
 Python egg releaser
@@ -65,44 +66,45 @@ class Defaults(object):
     def __init__(self):
         """Read config files.
         """
-        self.parser = ConfigParser.ConfigParser()
-        self.parser.read((expanduser('~/.pypirc'),
-                          expanduser('~/.mkrelease')))
+        parser = ConfigParser.ConfigParser()
+        parser.read((expanduser('~/.pypirc'), expanduser('~/.mkrelease')))
 
         def get(section, key, default=None):
-            if self.parser.has_option(section, key):
-                return self.parser.get(section, key)
+            if parser.has_option(section, key):
+                return parser.get(section, key)
             return default
 
         def getboolean(section, key, default=None):
-            if self.parser.has_option(section, key):
-                return self.parser.getboolean(section, key)
+            if parser.has_option(section, key):
+                return parser.getboolean(section, key)
             return default
 
-        self.distbase = get('defaults', 'distbase', '')
-        self.distdefault = get('defaults', 'distdefault', '')
+        main_section = 'mkrelease'
+        if not parser.has_section(main_section) and parser.has_section('defaults'):
+            main_section = 'defaults' # BBB
 
-        self.sign = getboolean('defaults', 'sign', False)
-        self.identity = get('defaults', 'identity', '')
+        self.distbase = get(main_section, 'distbase', '')
+        self.distdefault = get(main_section, 'distdefault', '')
+
+        self.sign = getboolean(main_section, 'sign', False)
+        self.identity = get(main_section, 'identity', '')
 
         self.aliases = {}
-        if self.parser.has_section('aliases'):
-            for key, value in self.parser.items('aliases'):
+        if parser.has_section('aliases'):
+            for key, value in parser.items('aliases'):
                 self.aliases[key] = value.split()
 
         class ServerInfo(object):
             def __init__(self, server):
-                self.url = get(server, 'repository', pypiurl)
+                self.url = get(server, 'repository', PYPIURL)
                 self.sign = getboolean(server, 'sign', None)
                 self.identity = get(server, 'identity', None)
 
         self.servers = {}
         for server in get('distutils', 'index-servers', '').split():
             info = ServerInfo(server)
-            self.servers.setdefault(server, info)
-            self.servers.setdefault(info.url, info)
-
-        self.python = sys.executable
+            self.servers[server] = info
+            self.servers[info.url] = info
 
 
 class Locations(object):
@@ -148,7 +150,7 @@ class Locations(object):
             return []
         if location in self.aliases:
             res = []
-            if depth > maxaliasdepth:
+            if depth > MAXALIASDEPTH:
                 err_exit('Maximum alias depth exceeded: %(location)s' % locals())
             for loc in self.aliases[location]:
                 res.extend(self.get_location(loc, depth+1))
@@ -156,7 +158,8 @@ class Locations(object):
         if self.is_server(location):
             return [location]
         if location == 'pypi':
-            err_exit('No configuration found for server: pypi. Please check your ~/.pypirc.')
+            err_exit('No configuration found for server: pypi\n'
+                     'Please create a ~/.pypirc file')
         if not self.has_host(location) and self.distbase:
             sep = '/'
             if self.distbase[-1] in (':', '/'):
@@ -175,7 +178,7 @@ class Locations(object):
         if locations is None:
             locations = self.locations
         if not locations:
-            err_exit('mkrelease: option -d is required\n%s' % usage)
+            err_exit('mkrelease: option -d is required\n%s' % USAGE)
         for location in locations:
             if not self.is_server(location) and not self.has_host(location):
                 err_exit('Scp destination must contain a host part: %(location)s' % locals())
@@ -200,8 +203,8 @@ class ReleaseMaker(object):
         self.directory = os.curdir
         self.defaults = Defaults()
         self.locations = Locations(self.defaults)
-        self.python = Python(self.defaults)
-        self.setuptools = Setuptools(self.defaults)
+        self.python = Python()
+        self.setuptools = Setuptools()
         self.scp = SCP()
         self.scms = SCMFactory()
         self.scm = None
@@ -216,7 +219,7 @@ class ReleaseMaker(object):
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary'))
         except getopt.GetoptError, e:
-            err_exit('mkrelease: %s\n%s' % (e.msg, usage))
+            err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
         for name, value in options:
             if name in ('-C', '--no-commit'):
@@ -238,9 +241,9 @@ class ReleaseMaker(object):
             elif name in ('-d', '--dist-location'):
                 self.locations.extend(self.locations.get_location(value))
             elif name in ('-v', '--version'):
-                msg_exit(version)
+                msg_exit(VERSION)
             elif name in ('-h', '--help'):
-                msg_exit(help)
+                msg_exit(HELP)
             elif name in ('--svn', '--hg', '--git'):
                 self.scmtype = name[2:]
             elif name in ('-e', '--develop'):
@@ -283,8 +286,7 @@ class ReleaseMaker(object):
     def get_python(self):
         """Get the Python interpreter.
         """
-        if not self.python.is_valid_distutils():
-            self.python.check_valid_python()
+        self.python.check_valid_python()
 
     def get_options(self):
         """Process the command line.
@@ -292,7 +294,7 @@ class ReleaseMaker(object):
         args = self.parse_options(self.args)
 
         if args:
-            self.directory = args.pop(0)
+            self.directory = args[0]
 
         if not self.locations:
             self.locations.extend(self.locations.get_default_location())
@@ -300,8 +302,8 @@ class ReleaseMaker(object):
         if not self.skipupload:
             self.locations.check_valid_locations()
 
-        if args:
-            err_exit('mkrelease: too many arguments\n%s' % usage)
+        if len(args) > 1:
+            err_exit('mkrelease: too many arguments\n%s' % USAGE)
 
     def get_package(self):
         """Get the URL or sandbox to release.

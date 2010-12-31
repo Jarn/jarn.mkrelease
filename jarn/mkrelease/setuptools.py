@@ -4,6 +4,7 @@ import tee
 from os.path import abspath, join, isfile
 
 from process import Process
+from python import Python
 from dirstack import chdir
 from exit import err_exit
 
@@ -11,9 +12,9 @@ from exit import err_exit
 class Setuptools(object):
     """Interface to setuptools functions."""
 
-    def __init__(self, defaults, process=None):
+    def __init__(self, process=None):
         self.process = process or Process()
-        self.python = defaults.python
+        self.python = Python()
 
     def is_valid_package(self, dir):
         return isfile(join(dir, 'setup.py'))

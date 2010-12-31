@@ -77,16 +77,16 @@ class SCM(object):
             err_exit('Tag exists: %(tagid)s' % locals())
 
     @lazy
-    def version_tuple(self):
+    def version_info(self):
         version = self.get_version()
-        r = []
+        info = []
         if version:
             for number in version.split('.'):
                 try:
-                    r.append(int(number))
+                    info.append(int(number))
                 except (TypeError, ValueError):
                     break
-        return tuple(r)
+        return tuple(info)
 
 
 class Subversion(SCM):
@@ -100,7 +100,7 @@ class Subversion(SCM):
             match = version_re.search(lines[0])
             if match is not None:
                 return match.group(1)
-        return None
+        return ''
 
     def is_valid_url(self, url):
         return url.startswith(
@@ -234,7 +234,7 @@ class Mercurial(SCM):
             match = version_re.search(lines[0])
             if match is not None:
                 return match.group(1)
-        return None
+        return ''
 
     def is_valid_url(self, url):
         return url.startswith(
@@ -353,7 +353,7 @@ class Git(SCM):
             match = version_re.search(lines[0])
             if match is not None:
                 return match.group(1)
-        return None
+        return ''
 
     def is_valid_url(self, url):
         return url.startswith(
@@ -374,7 +374,7 @@ class Git(SCM):
 
     @chdir
     def is_dirty_sandbox(self, dir):
-        if self.version_tuple[:2] >= (1, 7):
+        if self.version_info[:2] >= (1, 7):
             rc, lines = self.process.popen(
                 'git status --porcelain --untracked-files=no .', echo=False)
             if rc == 0:

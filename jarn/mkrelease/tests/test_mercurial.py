@@ -376,9 +376,9 @@ class GetVersionTests(unittest.TestCase):
 
     def testGetVersion(self):
         scm = Mercurial()
-        self.failIfEqual(scm.get_version(), None)
+        self.failIfEqual(scm.get_version(), '')
 
-    def testVersionTuple(self):
+    def testVersionInfo(self):
         scm = Mercurial()
-        self.failIfEqual(scm.version_tuple, ())
+        self.failIfEqual(scm.version_info, ())
 
