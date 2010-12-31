@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '3.0.9'
+version = '3.0.10'
 
 setup(name='jarn.mkrelease',
       version=version,
