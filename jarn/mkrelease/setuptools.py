@@ -129,7 +129,7 @@ class Setuptools(object):
         python = self.python
 
         if scmtype:
-            patched = scmtype_chooser % locals()
+            patched = SCM_CHOOSER % locals()
             setup_py = '-c"%(patched)s"' % locals()
         else:
             setup_py = 'setup.py %s' % ' '.join(args)
@@ -179,7 +179,7 @@ class Setuptools(object):
         return False
 
 
-scmtype_chooser = """\
+SCM_CHOOSER = """\
 import os, sys
 import distutils
 import pkg_resources
@@ -191,7 +191,7 @@ def walk_revctrl(dirname=''):
             found = True
             distutils.log.info('using ' + ep.name + ' file-finder')
             for item in ep.load()(dirname):
-                if not os.path.basename(item).startswith('.' + %(scmtype)r):
+                if not os.path.basename(item).startswith(('.svn', '.hg', '.git')):
                     yield item
     if not found:
         print >>sys.stderr, 'No %(scmtype)s file-finder ' \
