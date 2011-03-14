@@ -317,3 +317,6 @@ Git
 
 Git's short-hand notation for ``ssh://`` URLs is not supported.
 
+There is no support for git-svn sandboxes. Use the Subversion URL to
+make a release.
+
