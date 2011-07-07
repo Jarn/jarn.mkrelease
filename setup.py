@@ -29,6 +29,7 @@ setup(name='jarn.mkrelease',
           'setuptools',
           'setuptools-hg',
           'setuptools-git',
+          'lazy',
       ],
       entry_points={
           'console_scripts': 'mkrelease=jarn.mkrelease.mkrelease:main',
