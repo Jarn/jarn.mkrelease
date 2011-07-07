@@ -4,8 +4,12 @@ Changelog
 3.0.10 - Unreleased
 -------------------
 
-- Drop support for server URLs as dist-locations. Server URLs are not
-  unique.
+- Drop support for server URLs in dist-locations. Server URLs are
+  not unique.
+  [stefan]
+
+- Update the Mercurial test repository so tagging tests don't fail
+  under Mercurial 1.8.
   [stefan]
 
 3.0.9 - 2010-12-31
