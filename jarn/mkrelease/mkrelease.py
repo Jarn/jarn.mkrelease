@@ -104,7 +104,6 @@ class Defaults(object):
         for server in get('distutils', 'index-servers', '').split():
             info = ServerInfo(server)
             self.servers[server] = info
-            self.servers[info.url] = info
 
 
 class Locations(object):
