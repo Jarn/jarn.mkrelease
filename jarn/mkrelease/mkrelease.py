@@ -23,7 +23,7 @@ PYPIURL = "http://pypi.python.org/pypi"
 MAXALIASDEPTH = 23
 
 VERSION = "jarn.mkrelease %s" % __version__
-USAGE = "Try 'mkrelease --help' for more information."
+USAGE = "Try 'mkrelease --help' for more information"
 
 HELP = """\
 Usage: mkrelease [options] [scm-url|scm-sandbox]
