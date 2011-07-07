@@ -264,13 +264,12 @@ we want to release::
 Using GnuPG
 ===========
 
-Release my.package and sign the archive with GnuPG (the ``gpg``
-command must be available on the system PATH)::
+Release my.package and sign the archive with GnuPG::
 
   $ mkrelease -s -i fred@bedrock.com -d pypi src/my.package
 
 The ``-i`` flag is optional, and GnuPG will pick your default
-key if not given. In addition, defaults for ``-s`` and ``-i`` may be
+key if not given. In addition, defaults for ``-s`` and ``-i`` can be
 configured in ``~/.pypirc``::
 
   [distutils]
@@ -296,6 +295,8 @@ what you plan to use):
 * git
 
 * scp
+
+* gpg
 
 Limitations
 ===========
