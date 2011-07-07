@@ -52,6 +52,9 @@ Options:
   -e, --develop       Allow version number extensions.
   -b, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
+
+  -l, --list-locations
+                      List known dist-locations and exit.
   -h, --help          Print this help message and exit.
   -v, --version       Print the version string and exit.
 
@@ -213,10 +216,11 @@ class ReleaseMaker(object):
         """Parse command line options.
         """
         try:
-            options, args = getopt.gnu_getopt(args, 'CSTbd:ehi:npqsv',
+            options, args = getopt.gnu_getopt(args, 'CSTbd:ehi:lnpqsv',
                 ('no-commit', 'no-tag', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
-                 'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary'))
+                 'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
+                 'list-locations'))
         except getopt.GetoptError, e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -251,6 +255,9 @@ class ReleaseMaker(object):
             elif name in ('-b', '--binary'):
                 self.distcmd = 'bdist'
                 self.distflags = ['--formats="egg"']
+            elif name in ('-l', '--list-locations'):
+                known = sorted(set(self.defaults.servers.keys()+self.defaults.aliases.keys()))
+                msg_exit('\n'.join(known))
 
         return args
 

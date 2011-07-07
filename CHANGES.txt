@@ -12,6 +12,9 @@ Changelog
   under Mercurial 1.8.
   [stefan]
 
+- Add -l option to list known dist-locations (servers and aliases).
+  [stefan]
+
 3.0.9 - 2010-12-31
 ------------------
 
