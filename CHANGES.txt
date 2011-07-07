@@ -32,7 +32,7 @@ Changelog
 3.0.5 - 2010-03-23
 ------------------
 
-- Allow per-server configuration of ``-s`` and ``-i`` defaults.
+- Allow per-server configuration of -s and -i defaults.
   [stefan]
 
 - Support the codespeak.net Subversion repository layout.
