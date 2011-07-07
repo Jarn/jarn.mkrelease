@@ -98,7 +98,7 @@ Options
     The URL of a remote SCM repository.
 
 ``scm-sandbox``
-    A local SCM sandbox; defaults to the current working
+    A local SCM sandbox. Defaults to the current working
     directory.
 
 Examples
