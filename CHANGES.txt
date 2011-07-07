@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.10 - Unreleased
+3.0.10 - 2011-07-07
 -------------------
 
 - Add -l option to list known dist-locations (i.e. servers and aliases).
