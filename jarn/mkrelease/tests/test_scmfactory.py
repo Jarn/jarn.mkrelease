@@ -197,8 +197,8 @@ class UrlSplitTests(unittest.TestCase):
 
     def testSplitHttps(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('https://jarn.com/public'),
-                         ('https', '', 'jarn.com', '/public', '', ''))
+        self.assertEqual(urlparser.split('https://stefan:secret@jarn.com/public'),
+                         ('https', 'stefan:secret', 'jarn.com', '/public', '', ''))
 
     def testSplitFile(self):
         urlparser = URLParser()
