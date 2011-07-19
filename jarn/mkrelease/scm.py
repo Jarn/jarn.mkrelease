@@ -104,7 +104,7 @@ class Subversion(SCM):
 
     def is_valid_url(self, url):
         return url.startswith(
-            ('svn://', 'svn+ssh://', 'http://', 'https://', 'file://'))
+            ('svn://', 'svn+ssh://', 'http://', 'https://', 'file:'))
 
     def is_valid_sandbox(self, dir):
         if isdir(join(dir, '.svn')):
@@ -238,7 +238,7 @@ class Mercurial(SCM):
 
     def is_valid_url(self, url):
         return url.startswith(
-            ('ssh://', 'http://', 'https://', 'file://'))
+            ('ssh://', 'http://', 'https://', 'file:'))
 
     def is_valid_sandbox(self, dir):
         if isdir(dir):
@@ -357,7 +357,7 @@ class Git(SCM):
 
     def is_valid_url(self, url):
         return url.startswith(
-            ('git://', 'ssh://', 'rsync://', 'http://', 'https://', 'file://'))
+            ('git://', 'ssh://', 'rsync://', 'http://', 'https://', 'file:'))
 
     def is_valid_sandbox(self, dir):
         if isdir(dir):
