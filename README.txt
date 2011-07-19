@@ -5,6 +5,8 @@ jarn.mkrelease
 Build and distribute Python eggs in one simple step
 ---------------------------------------------------
 
+.. contents:: :depth: 1
+
 **mkrelease** is a no-frills Python egg releaser. It is designed to take
 the cumber out of building and distributing Python eggs.
 
