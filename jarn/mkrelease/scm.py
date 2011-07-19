@@ -1,5 +1,5 @@
 from operator import itemgetter
-from os.path import abspath, join, expanduser, dirname, exists, isdir
+from os.path import abspath, expanduser, dirname, exists, isdir
 
 from process import Process
 from urlparser import URLParser
@@ -111,7 +111,7 @@ class Subversion(SCM):
             ('svn://', 'svn+ssh://', 'http://', 'https://', 'file:'))
 
     def is_valid_sandbox(self, dir):
-        if isdir(join(dir, '.svn')):
+        if isdir(dir):
             rc, lines = self.process.popen(
                 'svn info "%(dir)s"' % locals(), echo=False, echo2=False)
             if rc == 0:
