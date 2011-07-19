@@ -56,7 +56,7 @@ Options:
   -q, --quiet         Suppress output of setuptools commands.
 
   -l, --list-locations
-                      List known dist-locations and exit.
+                      Print known dist-locations and exit.
   -h, --help          Print this help message and exit.
   -v, --version       Print the version string and exit.
 
