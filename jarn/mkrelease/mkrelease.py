@@ -17,6 +17,7 @@ from python import Python
 from setuptools import Setuptools
 from scp import SCP
 from scm import SCMFactory
+from urlparser import URLParser
 from exit import msg_exit, err_exit
 
 PYPIURL = "http://pypi.python.org/pypi"
@@ -209,6 +210,7 @@ class ReleaseMaker(object):
         self.setuptools = Setuptools()
         self.scp = SCP()
         self.scms = SCMFactory()
+        self.urlparser = URLParser()
         self.scm = None
         self.args = args
 
@@ -320,11 +322,11 @@ class ReleaseMaker(object):
         self.scm = self.scms.get_scm(scmtype, directory)
 
         if self.scm.is_valid_url(directory):
+            if directory.startswith('file:'):
+                directory = self.urlparser.abspath(directory)
+
             self.remoteurl = directory
             self.isremote = self.push = True
-
-            if directory.startswith('file://') and not directory.startswith('file:///'):
-                err_exit('File URLs must be absolute: %(directory)s' % locals())
         else:
             directory = abspath(expanduser(directory))
             self.isremote = False
