@@ -6,7 +6,7 @@ from urlparse import urlsplit
 class URLParser(object):
     """A minimal URL parser and splitter."""
 
-    scheme_re = re.compile('^(\S+?)://')
+    scheme_re = re.compile(r'^(\S+?)://')
 
     def get_scheme(self, url):
         match = self.scheme_re.match(url)
@@ -20,7 +20,7 @@ class URLParser(object):
     def split(self, url):
         scheme = self.get_scheme(url)
         if scheme:
-            # Split all URLs like http URLs
+            # Split all URLs like HTTP URLs
             url = 'http%s' % url[len(scheme):]
             ignored, host, path, qs, frag = urlsplit(url)
             user, host = self._split_host(host)
