@@ -243,3 +243,7 @@ testpackage.egg-info/top_level.txt""")
         st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], scmtype='git')
         self.failIf(isfile(join(self.clonedir, 'setup.pyc')))
 
+
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
+

@@ -262,3 +262,7 @@ class IsUrlTests(unittest.TestCase):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url(' http://'), False)
 
+
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
+

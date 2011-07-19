@@ -13,3 +13,7 @@ class Tests(SubversionSetup):
         #self.mkrelease('-CT -d epy testpackage'.split())
         pass
 
+
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
+
