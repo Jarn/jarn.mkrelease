@@ -12,6 +12,7 @@ import shutil
 import ConfigParser
 
 from os.path import abspath, join, expanduser, isfile
+from itertools import chain
 
 from python import Python
 from setuptools import Setuptools
@@ -251,6 +252,8 @@ class ReleaseMaker(object):
                 self.identity = value
             elif name in ('-d', '--dist-location'):
                 self.locations.extend(self.locations.get_location(value))
+            elif name in ('-l', '--list-locations'):
+                self.list_locations()
             elif name in ('-v', '--version'):
                 msg_exit(VERSION)
             elif name in ('-h', '--help'):
@@ -263,10 +266,19 @@ class ReleaseMaker(object):
             elif name in ('-b', '--binary'):
                 self.distcmd = 'bdist'
                 self.distflags = ['--formats="egg"']
-            elif name in ('-l', '--list-locations'):
-                msg_exit('\n'.join(sorted(self.defaults.known_locations)))
 
         return args
+
+    def list_locations(self):
+        """Print known locations and exit.
+        """
+        known = sorted(self.defaults.known_locations)
+        if self.defaults.distdefault:
+            for i, location in enumerate(known):
+                if location == self.defaults.distdefault:
+                    known[i] += ' (default)'
+                    break
+        msg_exit('\n'.join(known))
 
     def get_uploadflags(self, location):
         """Return uploadflags for the given server.
