@@ -21,7 +21,7 @@ class Setuptools(object):
 
     def check_valid_package(self, dir):
         if not self.is_valid_package(dir):
-            err_exit('Not eggified (no setup.py found): %(dir)s' % locals())
+            err_exit('No setup.py found in %(dir)s' % locals())
 
     @chdir
     def get_package_info(self, dir):
