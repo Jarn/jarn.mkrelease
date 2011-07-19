@@ -528,6 +528,9 @@ class SCMFactory(object):
 
     def get_scm_from_sandbox(self, dir):
         matches = []
+        dir = abspath(expanduser(dir))
+        if not exists(dir):
+            err_exit('No such file or directory: %(dir)s' % locals())
         for scm in self.scms:
             if scm().is_valid_sandbox(dir):
                 matches.append(scm())
@@ -573,6 +576,11 @@ class SCMFactory(object):
         if scheme in ('file',):
             if path.endswith('.git'):
                 return Git()
+            if host in ('', 'localhost'):
+                # Strip leading slash to allow tilde expansion
+                if host and path.startswith('/~'):
+                    path = path[1:]
+                return self.get_scm_from_sandbox(path)
             err_exit('Failed to guess SCM type: %(url)s\n'
                      'Please specify --svn, --hg, or --git' % locals())
         err_exit('Unsupported URL scheme: %(scheme)s' % locals())
@@ -583,9 +591,6 @@ class SCMFactory(object):
         elif self.urlparser.is_url(url_or_dir):
             scm = self.get_scm_from_url(url_or_dir)
         else:
-            dir = abspath(expanduser(url_or_dir))
-            if not exists(dir):
-                err_exit('No such file or directory: %(dir)s' % locals())
-            scm = self.get_scm_from_sandbox(dir)
+            scm = self.get_scm_from_sandbox(url_or_dir)
         return scm
 

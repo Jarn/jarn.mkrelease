@@ -102,7 +102,7 @@ class ScmFromUrlTests(unittest.TestCase):
     @quiet
     def testNotUnique(self):
         scms = SCMFactory()
-        self.assertRaises(SystemExit, scms.get_scm_from_url, 'file://')
+        self.assertRaises(SystemExit, scms.get_scm_from_url, 'http://')
 
     @quiet
     def testBadUrl(self):
@@ -156,7 +156,22 @@ class UrlSplitTests(unittest.TestCase):
     def testSplitRelativeFile(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.split('file:var/dist/public'),
-                         ('file', '', '', os.getcwd()+'/var/dist/public', '', ''))
+                         ('file', '', '', 'var/dist/public', '', ''))
+
+    def testSplitRelativeFileWithTilde(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.split('file:~stefan/public'),
+                         ('file', '', '', '~stefan/public', '', ''))
+
+    def testSplitLocalhostWithTilde(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.split('file://localhost/~stefan/public'),
+                         ('file', '', 'localhost', '/~stefan/public', '', ''))
+
+    def testSplitGitWithTilde(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.split('git://jarn.com/~stefan/public'),
+                         ('git', '', 'jarn.com', '/~stefan/public', '', ''))
 
     def testSplitUnsupported(self):
         urlparser = URLParser()
@@ -207,6 +222,18 @@ class IsUrlTests(unittest.TestCase):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('file:var/dist/public'), True)
 
+    def testRelativeFileWithTilde(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_url('file:~stefan/public'), True)
+
+    def testLocalhostWithTilde(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_url('file://localhost/~stefan/public'), True)
+
+    def testGitWithTilde(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_url('git://jarn.com/~stefan/public'), True)
+
     def testUnsupported(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('ftp://jarn.com/public'), True)
@@ -218,6 +245,46 @@ class IsUrlTests(unittest.TestCase):
     def testWhitespace(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url(' http://'), False)
+
+
+class AbspathTests(unittest.TestCase):
+
+    def testFile(self):
+        urlparser = URLParser()
+        cwd = os.getcwd()
+        self.assertEqual(urlparser.abspath('file://%s/var/dist/public' % cwd),
+                         'file://%s/var/dist/public' % cwd)
+
+    def testRelativeFile(self):
+        urlparser = URLParser()
+        cwd = os.getcwd()
+        self.assertEqual(urlparser.abspath('file:var/dist/public'),
+                         'file://%s/var/dist/public' % cwd)
+
+    def testExpandUser(self):
+        urlparser = URLParser()
+        logname = os.environ.get('LOGNAME')
+        home = os.environ.get('HOME')
+        self.assertEqual(urlparser.abspath('file:~%s/public' % logname),
+                         'file://%s/public' % home)
+
+    def testLocalhost(self):
+        urlparser = URLParser()
+        cwd = os.getcwd()
+        self.assertEqual(urlparser.abspath('file://localhost%s/var/dist/public' % cwd),
+                         'file://localhost%s/var/dist/public' % cwd)
+
+    def testLocalhostExpandUser(self):
+        urlparser = URLParser()
+        logname = os.environ.get('LOGNAME')
+        home = os.environ.get('HOME')
+        self.assertEqual(urlparser.abspath('file://localhost/~%s/public' % logname),
+                         'file://localhost%s/public' % home)
+
+    def testNonFile(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.abspath('svn://jarn.com/public'),
+                         'svn://jarn.com/public')
 
 
 class ScmFromTypeTests(unittest.TestCase):
