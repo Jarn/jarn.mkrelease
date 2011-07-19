@@ -254,10 +254,10 @@ class ReleaseMaker(object):
                 self.locations.extend(self.locations.get_location(value))
             elif name in ('-l', '--list-locations'):
                 self.list_locations()
-            elif name in ('-v', '--version'):
-                msg_exit(VERSION)
             elif name in ('-h', '--help'):
                 msg_exit(HELP)
+            elif name in ('-v', '--version'):
+                msg_exit(VERSION)
             elif name in ('--svn', '--hg', '--git'):
                 self.scmtype = name[2:]
             elif name in ('-e', '--develop'):
