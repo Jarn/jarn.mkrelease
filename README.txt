@@ -207,9 +207,11 @@ we can release on PyPI by typing::
 
   $ mkrelease -d pypi src/my.package
 
-Index servers are not limited to PyPI.
+Index servers are not limited to PyPI though.
 For example, in the Plone world it is common practice to upload packages to
-plone.org as well as PyPI.
+`plone.org`_ as well as to PyPI.
+
+.. _`plone.org`: http://plone.org/products
 
 We extend our ``~/.pypirc`` to add a second index server::
 
@@ -315,14 +317,11 @@ these layouts:
 * The standard Subversion layout: ``my.package/trunk``,
   ``my.package/branches``, and ``my.package/tags``.
 
-* The singular-form layout favored by codespeak.net: ``my.package/trunk``,
+* The singular-form layout variant: ``my.package/trunk``,
   ``my.package/branch``, and ``my.package/tag``.
 
 Git
 ---
 
 Git's short-hand notation for ``ssh://`` URLs is not supported.
-
-There is no support for git-svn sandboxes. Use the Subversion URL to
-make a release.
 
