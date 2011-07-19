@@ -1,4 +1,4 @@
-from os.path import abspath, join, expanduser, exists, isdir
+from os.path import abspath, join, expanduser, dirname, exists, isdir
 
 from process import Process
 from urlparser import URLParser
@@ -40,6 +40,9 @@ class SCM(object):
         raise NotImplementedError
 
     def get_url_from_sandbox(self, dir):
+        raise NotImplementedError
+
+    def get_root_from_sandbox(self, dir):
         raise NotImplementedError
 
     def checkin_sandbox(self, dir, name, version, push):
@@ -114,6 +117,14 @@ class Subversion(SCM):
                 return True
         return False
 
+    def is_same_sandbox(self, dir, root):
+        if isdir(join(dir, '.svn')):
+            rc, lines = self.process.popen(
+                'svn info "%(dir)s"' % locals(), echo=False, echo2=False)
+            if rc == 0 and lines:
+                return root == lines[2][17:]
+        return False
+
     def is_dirty_sandbox(self, dir):
         rc, lines = self.process.popen(
             'svn status "%(dir)s"' % locals(), echo=False)
@@ -176,6 +187,16 @@ class Subversion(SCM):
         if rc == 0 and lines:
             return lines[1][5:]
         err_exit('Failed to get URL from %(dir)s' % locals())
+
+    def get_root_from_sandbox(self, dir):
+        rc, lines = self.process.popen(
+            'svn info "%(dir)s"' % locals(), echo=False)
+        if rc == 0 and lines:
+            url, root = lines[1][5:], lines[2][17:]
+            if not self.is_same_sandbox(dirname(dir), root):
+                return dir
+            return self.get_root_from_sandbox(dirname(dir))
+        err_exit('Failed to get root from %(dir)s' % locals())
 
     def checkin_sandbox(self, dir, name, version, push):
         rc = self.process.system(
@@ -291,6 +312,10 @@ class Mercurial(SCM):
                 return lines[0]
         else:
             err_exit('Failed to get URL from %(dir)s' % locals())
+        return ''
+
+    @chdir
+    def get_root_from_sandbox(self, dir):
         return ''
 
     @chdir
@@ -447,6 +472,10 @@ class Git(SCM):
                         return line[len(key):]
             else:
                 err_exit('Failed to get URL from %(dir)s' % locals())
+        return ''
+
+    @chdir
+    def get_root_from_sandbox(self, dir):
         return ''
 
     @chdir
