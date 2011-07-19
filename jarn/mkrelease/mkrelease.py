@@ -316,8 +316,8 @@ class ReleaseMaker(object):
     def get_package(self):
         """Get the URL or sandbox to release.
         """
-        scmtype = self.scmtype
         directory = self.directory
+        scmtype = self.scmtype
 
         self.scm = self.scms.get_scm(scmtype, directory)
 
@@ -344,18 +344,19 @@ class ReleaseMaker(object):
     def make_release(self):
         """Build and distribute the egg.
         """
-        tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
+        directory = self.directory
         infoflags = self.infoflags
         distcmd = self.distcmd
         distflags = self.distflags
         scmtype = self.scm.name
 
+        tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
         try:
             if self.isremote:
-                directory = join(tempdir, 'checkout')
+                directory = join(tempdir, 'tmp')
                 self.scm.checkout_url(self.remoteurl, directory)
             else:
-                directory = abspath(expanduser(self.directory))
+                directory = abspath(expanduser(directory))
 
             self.scm.check_valid_sandbox(directory)
             self.setuptools.check_valid_package(directory)
