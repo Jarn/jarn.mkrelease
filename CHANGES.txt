@@ -8,6 +8,9 @@ Changelog
   environments.
   [stefan]
 
+- Improve SCM detection in situations where one or more SCMs are nested.
+  [stefan]
+
 - Add support for relative file URLs.
   [stefan]
 

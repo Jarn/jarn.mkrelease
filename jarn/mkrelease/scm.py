@@ -1,3 +1,4 @@
+from operator import itemgetter
 from os.path import abspath, join, expanduser, dirname, exists, isdir
 
 from process import Process
@@ -558,21 +559,21 @@ class SCMFactory(object):
         self.urlparser = urlparser or URLParser()
 
     def get_scm_from_type(self, type):
-        for scm in self.scms:
-            if scm.name == type:
-                return scm()
+        for klass in self.scms:
+            if klass.name == type:
+                return klass()
         err_exit('Unsupported SCM type: %(type)s' % locals())
 
     def get_scm_from_sandbox(self, dir):
-        matches = []
         dir = abspath(expanduser(dir))
         if not exists(dir):
             err_exit('No such file or directory: %(dir)s' % locals())
-        for scm in self.scms:
-            if scm().is_valid_sandbox(dir):
-                matches.append(scm())
+        matches = self._find_scms(dir)
         if not matches:
             err_exit('Not a sandbox: %(dir)s' % locals())
+        if len(matches) == 1:
+            return matches[0]
+        matches = self._filter_scms(dir, matches)
         if len(matches) == 1:
             return matches[0]
         if len(matches) == 2:
@@ -583,6 +584,23 @@ class SCMFactory(object):
             flags = '--%s, --%s, or --%s' % tuple([x.name for x in matches])
         err_exit('%(names)s found in %(dir)s\n'
                  'Please specify %(flags)s to resolve' % locals())
+
+    def _find_scms(self, dir):
+        matches = []
+        for klass in self.scms:
+            if klass().is_valid_sandbox(dir):
+                matches.append(klass())
+        return matches
+
+    def _filter_scms(self, dir, matches):
+        # Find the nearest SCM root
+        roots = []
+        for scm in matches:
+            root = scm.get_root_from_sandbox(dir)
+            roots.append((len(root), root, scm))
+        sort = sorted(roots, key=itemgetter(0))
+        longest = sort[-1][0]
+        return [x[2] for x in roots if x[0] == longest]
 
     def get_scm_from_url(self, url):
         scheme, user, host, path, qs, frag = self.urlparser.split(url)
