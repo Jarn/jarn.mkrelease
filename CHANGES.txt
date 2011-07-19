@@ -8,6 +8,9 @@ Changelog
   environments.
   [stefan]
 
+- Add support for relative file URLs.
+  [stefan]
+
 3.0.10 - 2011-07-07
 -------------------
 
