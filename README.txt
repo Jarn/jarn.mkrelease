@@ -325,3 +325,11 @@ Git
 
 Git's short-hand notation for ``ssh://`` URLs is not supported.
 
+Related
+=======
+
+See `jarn.viewdoc`_ for a quick way to preview the package
+documentation before a release.
+
+.. _`jarn.viewdoc`: http://pypi.python.org/pypi/jarn.viewdoc
+
