@@ -5,7 +5,7 @@ from os.path import abspath, join, isfile
 
 from process import Process
 from python import Python
-from dirstack import chdir
+from chdir import chdir
 from exit import err_exit
 
 

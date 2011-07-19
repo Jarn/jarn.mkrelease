@@ -2,7 +2,7 @@ from os.path import abspath, join, expanduser, exists, isdir
 
 from process import Process
 from urlparser import URLParser
-from dirstack import DirStack, chdir
+from chdir import DirStack, chdir
 from exit import err_exit, warn
 from lazy import lazy
 

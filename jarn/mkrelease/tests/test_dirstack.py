@@ -5,7 +5,7 @@ import shutil
 
 from os.path import realpath, join
 
-from jarn.mkrelease.dirstack import DirStack
+from jarn.mkrelease.chdir import DirStack
 
 
 class DirStackTests(unittest.TestCase):

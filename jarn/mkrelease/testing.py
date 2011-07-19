@@ -9,7 +9,7 @@ import StringIO
 from os.path import realpath, join, dirname, isdir
 
 from jarn.mkrelease.process import Process
-from jarn.mkrelease.dirstack import DirStack, chdir
+from jarn.mkrelease.chdir import DirStack, chdir
 
 
 class JailSetup(unittest.TestCase):
