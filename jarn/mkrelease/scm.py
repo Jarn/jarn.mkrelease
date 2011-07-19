@@ -118,12 +118,13 @@ class Subversion(SCM):
                 return True
         return False
 
-    def is_same_sandbox(self, dir, root):
-        if isdir(join(dir, '.svn')):
-            rc, lines = self.process.popen(
-                'svn info "%(dir)s"' % locals(), echo=False, echo2=False)
-            if rc == 0 and lines:
-                return root == lines[2][17:]
+    def is_same_sandbox(self, dir, child_url):
+        rc, lines = self.process.popen(
+            'svn info "%(dir)s"' % locals(), echo=False, echo2=False)
+        if rc == 0 and lines:
+            url = lines[1][5:]
+            if child_url.startswith(url):
+                return True
         return False
 
     def is_dirty_sandbox(self, dir):
@@ -149,8 +150,8 @@ class Subversion(SCM):
         rc, lines = self.process.popen(
             'svn info "%(dir)s"' % locals(), echo=False)
         if rc == 0 and lines:
-            url, root = lines[1][5:], lines[2][17:]
-            if not self.is_same_sandbox(dirname(dir), root):
+            url = lines[1][5:]
+            if not self.is_same_sandbox(dirname(dir), url):
                 return dir
             return self.get_root_from_sandbox(dirname(dir))
         err_exit('Failed to get root from %(dir)s' % locals())
