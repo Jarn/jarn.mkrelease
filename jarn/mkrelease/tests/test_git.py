@@ -79,6 +79,42 @@ class ValidSandboxTests(GitSetup):
         self.assertRaises(SystemExit, scm.check_valid_sandbox, self.packagedir)
 
 
+class RootFromSandboxTests(GitSetup):
+
+    def testGetRoot(self):
+        scm = Git()
+        self.assertEqual(scm.get_root_from_sandbox(self.packagedir),
+                         self.packagedir)
+
+    def testGetSubfolderRoot(self):
+        scm = Git()
+        self.assertEqual(scm.get_root_from_sandbox(join(self.packagedir, 'testpackage')),
+                         self.packagedir)
+
+    def testGetCloneRoot(self):
+        scm = Git()
+        self.clone()
+        self.assertEqual(scm.get_root_from_sandbox(self.clonedir),
+                         self.clonedir)
+
+    def testGetCloneSubfolderRoot(self):
+        scm = Git()
+        self.clone()
+        self.assertEqual(scm.get_root_from_sandbox(join(self.clonedir, 'testpackage')),
+                         self.clonedir)
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Git(Process(quiet=True))
+        self.destroy()
+        self.assertRaises(SystemExit, scm.get_root_from_sandbox, self.packagedir)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Git(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.get_root_from_sandbox, self.packagedir)
+
+
 class BranchFromSandboxTests(GitSetup):
 
     def testGetLocalBranch(self):

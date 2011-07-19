@@ -71,6 +71,42 @@ class ValidSandboxTests(MercurialSetup):
         self.assertRaises(SystemExit, scm.check_valid_sandbox, self.packagedir)
 
 
+class RootFromSandboxTests(MercurialSetup):
+
+    def testGetRoot(self):
+        scm = Mercurial()
+        self.assertEqual(scm.get_root_from_sandbox(self.packagedir),
+                         self.packagedir)
+
+    def testGetSubfolderRoot(self):
+        scm = Mercurial()
+        self.assertEqual(scm.get_root_from_sandbox(join(self.packagedir, 'testpackage')),
+                         self.packagedir)
+
+    def testGetCloneRoot(self):
+        scm = Mercurial()
+        self.clone()
+        self.assertEqual(scm.get_root_from_sandbox(self.clonedir),
+                         self.clonedir)
+
+    def testGetCloneSubfolderRoot(self):
+        scm = Mercurial()
+        self.clone()
+        self.assertEqual(scm.get_root_from_sandbox(join(self.clonedir, 'testpackage')),
+                         self.clonedir)
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Mercurial(Process(quiet=True))
+        self.destroy()
+        self.assertRaises(SystemExit, scm.get_root_from_sandbox, self.packagedir)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Mercurial(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.get_root_from_sandbox, self.packagedir)
+
+
 class BranchFromSandboxTests(MercurialSetup):
 
     def testGetLocalBranch(self):

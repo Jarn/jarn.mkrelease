@@ -71,6 +71,30 @@ class ValidSandboxTests(SubversionSetup):
         self.assertRaises(SystemExit, scm.check_valid_sandbox, self.clonedir)
 
 
+class RootFromSandboxTests(SubversionSetup):
+
+    def testGetRoot(self):
+        scm = Subversion()
+        self.assertEqual(scm.get_root_from_sandbox(self.clonedir),
+                         self.clonedir)
+
+    def testGetSubfolderRoot(self):
+        scm = Subversion()
+        self.assertEqual(scm.get_root_from_sandbox(join(self.clonedir, 'testpackage')),
+                         self.clonedir)
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Subversion(Process(quiet=True))
+        self.destroy(self.clonedir)
+        self.assertRaises(SystemExit, scm.get_root_from_sandbox, self.clonedir)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Subversion(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.get_root_from_sandbox, self.clonedir)
+
+
 class BranchFromSandboxTests(SubversionSetup):
 
     def testGetBranch(self):
@@ -131,30 +155,6 @@ class UrlFromSandboxTests(SubversionSetup):
     def testBadProcess(self):
         scm = Subversion(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.get_url_from_sandbox, self.clonedir)
-
-
-class RootFromSandboxTests(SubversionSetup):
-
-    def testGetRoot(self):
-        scm = Subversion()
-        self.assertEqual(scm.get_root_from_sandbox(self.clonedir),
-                         self.clonedir)
-
-    def testGetSubfolderRoot(self):
-        scm = Subversion()
-        self.assertEqual(scm.get_root_from_sandbox(join(self.clonedir, 'testpackage')),
-                         self.clonedir)
-
-    @quiet
-    def testBadSandbox(self):
-        scm = Subversion(Process(quiet=True))
-        self.destroy(self.clonedir)
-        self.assertRaises(SystemExit, scm.get_root_from_sandbox, self.clonedir)
-
-    @quiet
-    def testBadProcess(self):
-        scm = Subversion(MockProcess(rc=1))
-        self.assertRaises(SystemExit, scm.get_root_from_sandbox, self.clonedir)
 
 
 class RemoteSandboxTests(SubversionSetup):
