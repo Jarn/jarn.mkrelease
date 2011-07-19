@@ -396,9 +396,9 @@ class Git(SCM):
             dirstack.push(dir)
             try:
                 rc, lines = self.process.popen(
-                    'git branch', echo=False, echo2=False)
-                if rc == 0:
-                    return True
+                    'git rev-parse --is-inside-work-tree', echo=False, echo2=False)
+                if rc == 0 and lines:
+                    return lines[0] == 'true'
             finally:
                 dirstack.pop()
         return False
