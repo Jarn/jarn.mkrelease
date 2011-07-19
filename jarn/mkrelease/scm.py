@@ -36,13 +36,13 @@ class SCM(object):
     def is_remote_sandbox(self, dir):
         raise NotImplementedError
 
+    def get_root_from_sandbox(self, dir):
+        raise NotImplementedError
+
     def get_branch_from_sandbox(self, dir):
         raise NotImplementedError
 
     def get_url_from_sandbox(self, dir):
-        raise NotImplementedError
-
-    def get_root_from_sandbox(self, dir):
         raise NotImplementedError
 
     def checkin_sandbox(self, dir, name, version, push):
@@ -144,6 +144,16 @@ class Subversion(SCM):
     def is_remote_sandbox(self, dir):
         return bool(self.get_url_from_sandbox(dir))
 
+    def get_root_from_sandbox(self, dir):
+        rc, lines = self.process.popen(
+            'svn info "%(dir)s"' % locals(), echo=False)
+        if rc == 0 and lines:
+            url, root = lines[1][5:], lines[2][17:]
+            if not self.is_same_sandbox(dirname(dir), root):
+                return dir
+            return self.get_root_from_sandbox(dirname(dir))
+        err_exit('Failed to get root from %(dir)s' % locals())
+
     def get_branch_from_sandbox(self, dir):
         url = self.get_url_from_sandbox(dir)
         parts = url.split('/')
@@ -187,16 +197,6 @@ class Subversion(SCM):
         if rc == 0 and lines:
             return lines[1][5:]
         err_exit('Failed to get URL from %(dir)s' % locals())
-
-    def get_root_from_sandbox(self, dir):
-        rc, lines = self.process.popen(
-            'svn info "%(dir)s"' % locals(), echo=False)
-        if rc == 0 and lines:
-            url, root = lines[1][5:], lines[2][17:]
-            if not self.is_same_sandbox(dirname(dir), root):
-                return dir
-            return self.get_root_from_sandbox(dirname(dir))
-        err_exit('Failed to get root from %(dir)s' % locals())
 
     def checkin_sandbox(self, dir, name, version, push):
         rc = self.process.system(
@@ -295,6 +295,14 @@ class Mercurial(SCM):
         return bool(self.get_url_from_sandbox(dir))
 
     @chdir
+    def get_root_from_sandbox(self, dir):
+        rc, lines = self.process.popen(
+            'hg root', echo=False)
+        if rc == 0 and lines:
+            return lines[0]
+        err_exit('Failed to get root from %(dir)s' % locals())
+
+    @chdir
     def get_branch_from_sandbox(self, dir):
         rc, lines = self.process.popen(
             'hg branch', echo=False)
@@ -312,10 +320,6 @@ class Mercurial(SCM):
                 return lines[0]
         else:
             err_exit('Failed to get URL from %(dir)s' % locals())
-        return ''
-
-    @chdir
-    def get_root_from_sandbox(self, dir):
         return ''
 
     @chdir
@@ -422,6 +426,14 @@ class Git(SCM):
         return bool(self.get_remote_from_sandbox(dir))
 
     @chdir
+    def get_root_from_sandbox(self, dir):
+        rc, lines = self.process.popen(
+            'git rev-parse --show-toplevel', echo=False)
+        if rc == 0 and lines:
+            return lines[0]
+        err_exit('Failed to get root from %(dir)s' % locals())
+
+    @chdir
     def get_branch_from_sandbox(self, dir):
         rc, lines = self.process.popen(
             'git branch', echo=False)
@@ -472,10 +484,6 @@ class Git(SCM):
                         return line[len(key):]
             else:
                 err_exit('Failed to get URL from %(dir)s' % locals())
-        return ''
-
-    @chdir
-    def get_root_from_sandbox(self, dir):
         return ''
 
     @chdir
