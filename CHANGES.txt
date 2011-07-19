@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.1 - Unreleased
+3.1 - 2011-07-19
 ----------------
 
 - Pass the PYTHONPATH to subprocesses so mkrelease works in zc.buildout
