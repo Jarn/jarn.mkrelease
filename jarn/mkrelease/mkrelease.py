@@ -109,6 +109,12 @@ class Defaults(object):
             info = ServerInfo(server)
             self.servers[server] = info
 
+    @property
+    def known_locations(self):
+        """Set of known locations.
+        """
+        return set(chain(self.aliases, self.servers))
+
 
 class Locations(object):
 
@@ -258,8 +264,7 @@ class ReleaseMaker(object):
                 self.distcmd = 'bdist'
                 self.distflags = ['--formats="egg"']
             elif name in ('-l', '--list-locations'):
-                known = sorted(set(self.defaults.servers.keys()+self.defaults.aliases.keys()))
-                msg_exit('\n'.join(known))
+                msg_exit('\n'.join(sorted(self.defaults.known_locations)))
 
         return args
 
