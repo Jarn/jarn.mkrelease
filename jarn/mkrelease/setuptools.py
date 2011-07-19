@@ -3,8 +3,8 @@ import tee
 
 from os.path import abspath, join, isfile
 
-from process import Process
 from python import Python
+from process import Process
 from chdir import chdir
 from exit import err_exit
 
