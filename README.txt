@@ -5,17 +5,17 @@ jarn.mkrelease
 Build and distribute Python eggs in one simple step
 ---------------------------------------------------
 
-.. contents:: :depth: 1
-
 **mkrelease** is a no-frills Python egg releaser. It is designed to take
 the cumber out of building and distributing Python eggs.
+
+.. contents:: :depth: 1
 
 Motivation
 ==========
 
 Here at Jarn we use zc.buildout and pinned egg versions for
 customer deployments. This means that for every update, we have to make
-proper egg releases of all modified packages.
+proper egg releases of all packages involved.
 
 Turns out it's quite a bit of work to put a new egg on a
 distribution server! After preparing a package for release (update
@@ -207,7 +207,7 @@ we can release on PyPI by typing::
 
   $ mkrelease -d pypi src/my.package
 
-Index servers are not limited to PyPI though.
+Index servers are not limited to PyPI.
 For example, in the Plone world it is common practice to upload packages to
 plone.org as well as PyPI.
 
@@ -235,7 +235,7 @@ The ``-d`` flag may be specified more than once::
 
   $ mkrelease -d pypi -d ploneorg src/my.package
 
-We can also group servers by defining an alias in
+Alternatively, we can group the servers by defining an alias in
 ``~/.mkrelease``::
 
   [aliases]
@@ -271,7 +271,7 @@ Using GnuPG
 
 Release my.package and sign the archive with GnuPG::
 
-  $ mkrelease -s -i fred@bedrock.com -d pypi src/my.package
+  $ mkrelease -s -i fred@bedrock.com src/my.package
 
 The ``-i`` flag is optional, and GnuPG will pick your default
 key if not given. In addition, defaults for ``-s`` and ``-i`` can be
