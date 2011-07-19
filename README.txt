@@ -33,7 +33,7 @@ Now multiply by the number of packages waiting for release, and the moment of
 Installation
 ============
 
-mkrelease requires Python 2.6 for its improved distutils support. Use
+mkrelease requires Python 2.6 or 2.7. Use
 ``easy_install jarn.mkrelease`` to install the ``mkrelease`` script.
 Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
 
