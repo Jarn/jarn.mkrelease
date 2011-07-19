@@ -14,6 +14,11 @@ Changelog
 - Add support for relative file URLs.
   [stefan]
 
+- Depend on lazy_ instead of carrying a local implementation.
+  [stefan]
+
+.. _lazy: http://pypi.python.org/pypi/lazy
+
 3.0.10 - 2011-07-07
 -------------------
 
