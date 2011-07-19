@@ -13,8 +13,8 @@ class Setuptools(object):
     """Interface to setuptools functions."""
 
     def __init__(self, process=None):
-        self.process = process or Process()
         self.python = Python()
+        self.process = process or Process(env=self.python.get_env())
 
     def is_valid_package(self, dir):
         return isfile(join(dir, 'setup.py'))
