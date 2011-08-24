@@ -87,7 +87,7 @@ class SCM(object):
         if version:
             for number in version.split('.'):
                 try:
-                    info.append(int(number))
+                    info.append(int(number, 10))
                 except (TypeError, ValueError):
                     break
         return tuple(info)
