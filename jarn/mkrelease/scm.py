@@ -599,8 +599,8 @@ class SCMFactory(object):
         for scm in matches:
             root = scm.get_root_from_sandbox(dir)
             roots.append((len(root), root, scm))
-        sort = sorted(roots, key=itemgetter(0))
-        longest = sort[-1][0]
+        sorted_roots = sorted(roots, key=itemgetter(0))
+        longest = sorted_roots[-1][0]
         return [x[2] for x in roots if x[0] == longest]
 
     def get_scm_from_url(self, url):
