@@ -64,8 +64,11 @@ class SandboxSetup(JailSetup):
             raise
 
 
-class SandboxAPI(SandboxSetup):
-    """API for manipulating the sandbox."""
+class SCMSetup(SandboxSetup):
+    """Base class for SCM sandboxes.
+
+    Defines an API for sandbox manipulation.
+    """
 
     name = None
     clonedir = None
@@ -126,7 +129,7 @@ class SandboxAPI(SandboxSetup):
         raise NotImplementedError
 
 
-class SubversionSetup(SandboxAPI):
+class SubversionSetup(SCMSetup):
     """Set up a Subversion sandbox."""
 
     name = 'svn'
@@ -161,7 +164,7 @@ class SubversionSetup(SandboxAPI):
         self.branchdir = join(self.tempdir, 'testbranch')
 
 
-class MercurialSetup(SandboxAPI):
+class MercurialSetup(SCMSetup):
     """Set up a Mercurial sandbox."""
 
     name = 'hg'
@@ -187,16 +190,15 @@ class MercurialSetup(SandboxAPI):
     def tag(self, dir, tagid):
         process = Process(quiet=True)
         process.system('hg tag %s' % tagid)
-        process.system('hg checkout %s' % tagid)
+        process.system('hg update %s' % tagid)
 
     @chdir
     def branch(self, dir, branchid):
         process = Process(quiet=True)
         process.system('hg branch %s' % branchid)
-        process.system('hg checkout %s' % branchid)
 
 
-class GitSetup(SandboxAPI):
+class GitSetup(SCMSetup):
     """Set up a Git sandbox."""
 
     name = 'git'
@@ -207,8 +209,8 @@ class GitSetup(SandboxAPI):
         process = Process(quiet=True)
         process.system('git clone testpackage testclone')
         self.clonedir = join(self.tempdir, 'testclone')
-        # Park the server on a branch because "Updating the currently checked
-        # out branch may cause confusion..."
+        # Park the server on a branch because "Updating the currently
+        # checked-out branch may cause confusion."
         self.dirstack.push('testpackage')
         process.system('git checkout -b parking')
         self.dirstack.pop()
@@ -232,7 +234,8 @@ class GitSetup(SandboxAPI):
     @chdir
     def branch(self, dir, branchid):
         process = Process(quiet=True)
-        process.system('git checkout -b %s' % branchid)
+        process.system('git branch %s' % branchid)
+        process.system('git checkout %s' % branchid)
 
 
 class MockProcessError(Exception):
