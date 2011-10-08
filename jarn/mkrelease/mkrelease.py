@@ -370,7 +370,7 @@ class ReleaseMaker(object):
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
         try:
             if self.isremote:
-                directory = join(tempdir, 'tmp')
+                directory = join(tempdir, 'build')
                 self.scm.checkout_url(self.remoteurl, directory)
             else:
                 directory = abspath(expanduser(directory))
