@@ -316,6 +316,7 @@ class CheckinSandboxTests(MercurialSetup):
 
 class CheckoutUrlTests(MercurialSetup):
 
+    @quiet
     def testCheckoutUrl(self):
         scm = Mercurial(Process(quiet=True))
         self.assertEqual(scm.checkout_url(self.packagedir, 'testclone'), 0)
@@ -331,6 +332,53 @@ class CheckoutUrlTests(MercurialSetup):
     def testBadProcess(self):
         scm = Mercurial(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.checkout_url, self.packagedir, 'testclone')
+
+
+class SwitchBranchTests(MercurialSetup):
+
+    @quiet
+    def testSwitchBranch(self):
+        scm = Mercurial(Process(quiet=True))
+        self.branch(self.packagedir, '2.x')
+        self.modify(self.packagedir)
+        self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '0.0', True), 0)
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), '2.x')
+        self.assertEqual(scm.switch_branch(self.packagedir, 'default'), 0)
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'default')
+
+    @quiet
+    def testSwitchSameBranch(self):
+        scm = Mercurial()
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'default')
+        self.assertEqual(scm.switch_branch(self.packagedir, 'default'), 0)
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'default')
+
+    @quiet
+    def testSwitchRemoteBranch(self):
+        scm = Mercurial(Process(quiet=True))
+        self.branch(self.packagedir, '2.x')
+        self.modify(self.packagedir)
+        self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '0.0', True), 0)
+        self.clone()
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), 'default')
+        self.assertEqual(scm.switch_branch(self.clonedir, '2.x'), 0)
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), '2.x')
+
+    @quiet
+    def testSwitchUnknownBranch(self):
+        scm = Mercurial(Process(quiet=True))
+        self.assertRaises(SystemExit, scm.switch_branch, self.packagedir, '2.x')
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Mercurial(Process(quiet=True))
+        self.destroy()
+        self.assertRaises(SystemExit, scm.switch_branch, self.packagedir, '2.x')
+
+    @quiet
+    def testBadProcess(self):
+        scm = Mercurial(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.switch_branch, self.packagedir, '2.x')
 
 
 class TagExistsTests(MercurialSetup):

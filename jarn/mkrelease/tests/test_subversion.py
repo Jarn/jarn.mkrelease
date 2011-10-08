@@ -322,6 +322,7 @@ class CheckinSandboxTests(SubversionSetup):
 
 class CheckoutUrlTests(SubversionSetup):
 
+    @quiet
     def testCheckoutUrl(self):
         scm = Subversion(Process(quiet=True))
         self.assertEqual(scm.checkout_url('file://'+self.packagedir, 'testclone2'), 0)
@@ -337,6 +338,45 @@ class CheckoutUrlTests(SubversionSetup):
     def testBadProcess(self):
         scm = Subversion(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.checkout_url, 'file://'+self.packagedir, 'testclone2')
+
+
+class SwitchBranchTests(SubversionSetup):
+
+    @quiet
+    def testSwitchBranch(self):
+        scm = Subversion(Process(quiet=True))
+        trunkid = 'file://%s/trunk' % self.packagedir
+        branchid = 'file://%s/branches/2.x' % self.packagedir
+        self.branch(self.clonedir, branchid)
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), trunkid)
+        self.assertEqual(scm.switch_branch(self.clonedir, branchid), 0)
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), branchid)
+
+    def testSwitchSameBranch(self):
+        scm = Subversion()
+        trunkid = 'file://%s/trunk' % self.packagedir
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), trunkid)
+        self.assertEqual(scm.switch_branch(self.clonedir, trunkid), 0)
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), trunkid)
+
+    @quiet
+    def testSwitchUnknownBranch(self):
+        scm = Subversion(Process(quiet=True))
+        branchid = 'file://%s/branches/2.x' % self.packagedir
+        self.assertRaises(SystemExit, scm.switch_branch, self.clonedir, branchid)
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Subversion(Process(quiet=True))
+        branchid = 'file://%s/branches/2.x' % self.packagedir
+        self.destroy()
+        self.assertRaises(SystemExit, scm.switch_branch, self.clonedir, branchid)
+
+    @quiet
+    def testBadProcess(self):
+        scm = Subversion(MockProcess(rc=1))
+        branchid = 'file://%s/branches/2.x' % self.packagedir
+        self.assertRaises(SystemExit, scm.switch_branch, self.clonedir, branchid)
 
 
 class TagExistsTests(SubversionSetup):

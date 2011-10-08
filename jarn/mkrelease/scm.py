@@ -7,6 +7,7 @@ from chdir import DirStack, chdir
 from exit import err_exit, warn
 from lazy import lazy
 
+import tee
 import re
 version_re = re.compile(r'version ([0-9.]+)', re.IGNORECASE)
 
@@ -50,6 +51,9 @@ class SCM(object):
         raise NotImplementedError
 
     def checkout_url(self, url, dir):
+        raise NotImplementedError
+
+    def switch_branch(self, dir, branch):
         raise NotImplementedError
 
     def make_tagid(self, dir, version):
@@ -219,11 +223,22 @@ class Subversion(SCM):
         return rc
 
     def checkout_url(self, url, dir):
+        print 'Fetching', url
         rc = self.process.system(
             'svn checkout "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
             err_exit('Checkout failed')
         return rc
+
+    @chdir
+    def switch_branch(self, dir, branch):
+        if branch != self.get_branch_from_sandbox(dir):
+            print 'Switching to', branch
+            rc = self.process.system(
+                'svn switch "%(branch)s"' % locals())
+            if rc != 0:
+                err_exit('Switch failed')
+        return 0
 
     def make_tagid(self, dir, version):
         url = self.get_url_from_sandbox(dir)
@@ -350,11 +365,23 @@ class Mercurial(SCM):
         return rc
 
     def checkout_url(self, url, dir):
+        print 'Cloning', url
         rc = self.process.system(
-            'hg clone -v "%(url)s" "%(dir)s"' % locals())
+            'hg clone "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
             err_exit('Clone failed')
         return rc
+
+    @chdir
+    def switch_branch(self, dir, branch):
+        if branch != self.get_branch_from_sandbox(dir):
+            print 'Switching to branch', branch
+            rc = self.process.system(
+                'hg update "%(branch)s"' % locals())
+            if rc != 0:
+                err_exit('Update failed')
+        print 'Releasing branch', branch
+        return 0
 
     def make_tagid(self, dir, version):
         return version
@@ -521,11 +548,22 @@ class Git(SCM):
         return rc
 
     def checkout_url(self, url, dir):
-        rc = self.process.system(
-            'git clone "%(url)s" "%(dir)s"' % locals())
+        print 'Cloning from', url
+        rc, lines = self.process.popen(
+            ('git clone "%(url)s" "%(dir)s"' % locals()), echo=tee.Not(tee.Equals('done.')))
         if rc != 0:
             err_exit('Clone failed')
         return rc
+
+    @chdir
+    def switch_branch(self, dir, branch):
+        if branch != self.get_branch_from_sandbox(dir):
+            rc = self.process.system(
+                'git checkout "%(branch)s"' % locals())
+            if rc != 0:
+                err_exit('Checkout failed')
+        print 'Releasing branch', branch
+        return 0
 
     def make_tagid(self, dir, version):
         return version

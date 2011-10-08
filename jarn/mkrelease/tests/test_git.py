@@ -406,6 +406,7 @@ class CheckinSandboxTests(GitSetup):
 
 class CheckoutUrlTests(GitSetup):
 
+    @quiet
     def testCheckoutUrl(self):
         scm = Git(Process(quiet=True))
         self.assertEqual(scm.checkout_url(self.packagedir, 'testclone'), 0)
@@ -421,6 +422,49 @@ class CheckoutUrlTests(GitSetup):
     def testBadProcess(self):
         scm = Git(MockProcess(rc=1))
         self.assertRaises(SystemExit, scm.checkout_url, self.packagedir, 'testclone')
+
+
+class SwitchBranchTests(GitSetup):
+
+    @quiet
+    def testSwitchBranch(self):
+        scm = Git(Process(quiet=True))
+        self.branch(self.packagedir, '2.x')
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), '2.x')
+        self.assertEqual(scm.switch_branch(self.packagedir, 'master'), 0)
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'master')
+
+    @quiet
+    def testSwitchSameBranch(self):
+        scm = Git()
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'parking')
+        self.assertEqual(scm.switch_branch(self.packagedir, 'parking'), 0)
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'parking')
+
+    @quiet
+    def testSwitchRemoteBranch(self):
+        scm = Git(Process(quiet=True))
+        self.branch(self.packagedir, '2.x')
+        self.clone()
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), 'master')
+        self.assertEqual(scm.switch_branch(self.clonedir, '2.x'), 0)
+        self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), '2.x')
+
+    @quiet
+    def testSwitchUnknownBranch(self):
+        scm = Git(Process(quiet=True))
+        self.assertRaises(SystemExit, scm.switch_branch, self.packagedir, '2.x')
+
+    @quiet
+    def testBadSandbox(self):
+        scm = Git(Process(quiet=True))
+        self.destroy()
+        self.assertRaises(SystemExit, scm.switch_branch, self.packagedir, 'master')
+
+    @quiet
+    def testBadProcess(self):
+        scm = Git(MockProcess(rc=1))
+        self.assertRaises(SystemExit, scm.switch_branch, self.packagedir, 'master')
 
 
 class TagExistsTests(GitSetup):
