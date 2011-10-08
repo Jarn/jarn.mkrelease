@@ -76,6 +76,32 @@ class NotEmpty(object):
         return bool(line)
 
 
+class Equals(object):
+    """A tee filter printing lines matching one of 'patterns'."""
+
+    def __init__(self, *patterns):
+        self.patterns = patterns
+
+    def __call__(self, line):
+        for pattern in self.patterns:
+            if line == pattern:
+                return True
+        return False
+
+
+class StartsWith(object):
+    """A tee filter printing lines starting with one of 'patterns'."""
+
+    def __init__(self, *patterns):
+        self.patterns = patterns
+
+    def __call__(self, line):
+        for pattern in self.patterns:
+            if line.startswith(pattern):
+                return True
+        return False
+
+
 class Before(object):
     """A tee filter printing lines before 'stopline'."""
 
@@ -132,20 +158,6 @@ class NotBefore(object):
             if line == self.startline:
                 self.echo = True
         return self.echo
-
-
-class StartsWith(object):
-    """A tee filter printing lines starting with one
-    of the patterns."""
-
-    def __init__(self, *patterns):
-        self.patterns = patterns
-
-    def __call__(self, line):
-        for pattern in self.patterns:
-            if line.startswith(pattern):
-                return True
-        return False
 
 
 class Not(object):
