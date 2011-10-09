@@ -387,9 +387,9 @@ class ReleaseMaker(object):
                 print 'Releasing', name, version
 
             if not self.skiptag:
+                print 'Tagging', name, version
                 tagid = self.scm.make_tagid(directory, version)
                 self.scm.check_tag_exists(directory, tagid)
-                print 'Tagging', name, version
                 self.scm.create_tag(directory, tagid, name, version, self.push)
 
             manifest = self.setuptools.run_egg_info(
