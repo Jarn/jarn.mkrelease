@@ -50,13 +50,12 @@ Options:
   -i identity, --identity=identity
                       The GnuPG identity to sign with.
 
-  -p, --push          Push changes upstream (Mercurial and Git).
+  -p, --push          Push changes upstream.
   -e, --develop       Allow version number extensions.
   -b, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
 
-  -l, --list-locations
-                      Print known dist-locations and exit.
+  -l, --list          Print known dist-locations and exit.
   -h, --help          Print this help message and exit.
   -v, --version       Print the version string and exit.
 
