@@ -314,7 +314,7 @@ class Mercurial(SCM):
 
     @chdir
     def get_url_from_sandbox(self, dir):
-        self.get_branch_from_sandbox(dir) # Called here for its error checking
+        self.get_branch_from_sandbox(dir) # Called here for its error checking only
         rc, lines = self.process.popen(
             'hg show paths.default', echo=False)
         if rc == 0:
@@ -587,6 +587,7 @@ class SCMFactory(object):
                  'Please specify %(flags)s to resolve' % locals())
 
     def _find_scms(self, dir):
+        # Find valid SCM sandboxes in dir
         matches = []
         for klass in self.scms:
             if klass().is_valid_sandbox(dir):
@@ -594,7 +595,7 @@ class SCMFactory(object):
         return matches
 
     def _filter_scms(self, dir, matches):
-        # Find the nearest SCM root
+        # Find the nearest SCM root(s)
         roots = []
         for scm in matches:
             root = scm.get_root_from_sandbox(dir)
