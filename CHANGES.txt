@@ -4,6 +4,11 @@ Changelog
 3.2 - Unreleased
 ----------------
 
+- Rename --list-locations option to just --list.
+  [stefan]
+
+- Print 'Tagging' line before checking tag.
+  [stefan]
 
 3.1 - 2011-07-19
 ----------------
