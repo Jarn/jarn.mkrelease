@@ -37,7 +37,7 @@ class Setuptools(object):
         if not self.process.quiet:
             print 'running egg_info'
 
-        echo = tee.After('running egg_info' % locals())
+        echo = tee.After('running egg_info')
         if quiet:
             echo = tee.And(echo, tee.StartsWith('running'))
 
