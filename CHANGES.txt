@@ -10,6 +10,9 @@ Changelog
 - Print 'Tagging' line before checking tag.
   [stefan]
 
+- Detect Subversion repos from ``file://`` URLs.
+  [stefan]
+
 3.1 - 2011-07-19
 ----------------
 
