@@ -637,12 +637,24 @@ class SCMFactory(object):
                 # Strip leading slash to allow tilde expansion
                 if host and path.startswith('/~'):
                     path = path[1:]
+                # Far out shit below
+                if self._is_bare_git_repo(path):
+                    return Git()
                 if self._is_subversion_repo(path):
                     return Subversion()
                 return self.get_scm_from_sandbox(path)
             err_exit('Failed to guess SCM type: %(url)s\n'
                      'Please specify --svn, --hg, or --git' % locals())
         err_exit('Unsupported URL scheme: %(scheme)s' % locals())
+
+    def _is_bare_git_repo(self, dir):
+        # Detect a bare Git repo
+        def is_repo(dir):
+            return (isfile(join(dir, 'config')) and
+                    isdir(join(dir, 'refs', 'heads')) and
+                    isdir(join(dir, 'refs', 'tags')))
+        dir = abspath(expanduser(dir))
+        return is_repo(dir)
 
     def _is_subversion_repo(self, dir):
         # Find a Subversion repo on the path
