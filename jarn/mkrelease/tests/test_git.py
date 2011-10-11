@@ -311,7 +311,7 @@ class DirtySandboxTests(GitSetup):
         self.assertRaises(SystemExit, scm.check_dirty_sandbox, self.packagedir)
 
 
-class UncleanSandboxTests(DirtySandboxTests):
+class UncleanSandboxTests(GitSetup):
 
     def testCleanSandbox(self):
         scm = Git()
