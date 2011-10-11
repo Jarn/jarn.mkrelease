@@ -8,8 +8,6 @@ Build and distribute Python eggs in one simple step
 **mkrelease** is a no-frills Python egg releaser. It is designed to take
 the cumber out of building and distributing Python eggs.
 
-.. contents:: :depth: 1
-
 Motivation
 ==========
 
@@ -324,12 +322,4 @@ Git
 ---
 
 Git's short-hand notation for ``ssh://`` URLs is not supported.
-
-Related
-=======
-
-See `jarn.viewdoc`_ for a quick way to preview the package
-documentation before a release.
-
-.. _`jarn.viewdoc`: http://pypi.python.org/pypi/jarn.viewdoc
 
