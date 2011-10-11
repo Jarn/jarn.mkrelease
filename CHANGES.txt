@@ -16,6 +16,9 @@ Changelog
 - Detect bare Git repos from ``file://`` URLs.
   [stefan]
 
+- Subversion status output has changed in 1.6.
+  [stefan]
+
 3.1 - 2011-07-19
 ----------------
 

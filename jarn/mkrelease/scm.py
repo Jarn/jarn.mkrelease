@@ -131,16 +131,27 @@ class Subversion(SCM):
         rc, lines = self.process.popen(
             'svn status "%(dir)s"' % locals(), echo=False)
         if rc == 0:
-            lines = [x for x in lines if x[0:1] in ('M', 'A', 'R', 'D')]
-            return bool(lines)
+            for line in lines:
+                if line[0:1] in ('M', 'A', 'R', 'D'):
+                    return True
+                if line[1:2] in ('M',):
+                    return True
+            return False
         err_exit('Failed to get status from %(dir)s' % locals())
 
     def is_unclean_sandbox(self, dir):
         rc, lines = self.process.popen(
             'svn status "%(dir)s"' % locals(), echo=False)
         if rc == 0:
-            lines = [x for x in lines if x[0:1] in ('M', 'A', 'R', 'D', 'C', '!', '~')]
-            return bool(lines)
+            for line in lines:
+                if line[0:1] in ('M', 'A', 'R', 'D', 'C', '!', '~'):
+                    return True
+                if line[1:2] in ('M', 'C'):
+                    return True
+                if self.version_info[:2] >= (1, 6):
+                    if line[6:7] in ('C',):
+                        return True
+            return False
         err_exit('Failed to get status from %(dir)s' % locals())
 
     def is_remote_sandbox(self, dir):
