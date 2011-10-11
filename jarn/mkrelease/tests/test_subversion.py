@@ -190,6 +190,11 @@ class DirtySandboxTests(SubversionSetup):
         self.modify(self.clonedir)
         self.assertEqual(scm.is_dirty_sandbox(self.clonedir), True)
 
+    def testModifiedProp(self):
+        scm = Subversion()
+        self.modifyprop(self.clonedir)
+        self.assertEqual(scm.is_dirty_sandbox(self.clonedir), True)
+
     def testRemovedFile(self):
         scm = Subversion()
         self.remove(self.clonedir)
@@ -219,7 +224,7 @@ class DirtySandboxTests(SubversionSetup):
         self.assertRaises(SystemExit, scm.check_dirty_sandbox, self.clonedir)
 
 
-class UncleanSandboxTests(DirtySandboxTests):
+class UncleanSandboxTests(SubversionSetup):
 
     def testCleanSandbox(self):
         scm = Subversion()
@@ -228,6 +233,11 @@ class UncleanSandboxTests(DirtySandboxTests):
     def testModifiedFile(self):
         scm = Subversion()
         self.modify(self.clonedir)
+        self.assertEqual(scm.is_unclean_sandbox(self.clonedir), True)
+
+    def testModifiedProp(self):
+        scm = Subversion()
+        self.modifyprop(self.clonedir)
         self.assertEqual(scm.is_unclean_sandbox(self.clonedir), True)
 
     def testRemovedFile(self):
@@ -257,6 +267,17 @@ class UncleanSandboxTests(DirtySandboxTests):
         scm = Subversion()
         self.modify(self.clonedir)
         self.assertRaises(SystemExit, scm.check_unclean_sandbox, self.clonedir)
+
+    def testTreeConflict(self):
+        # Requires Subversion >= 1.6
+        def func(cmd):
+            if cmd == 'svn --version':
+                return 0, ['version 1.6.16']
+            else:
+                return 0, ['      C foo.py']
+                           #      ^ 7th column
+        scm = Subversion(MockProcess(func=func))
+        self.assertEqual(scm.is_unclean_sandbox(self.clonedir), True)
 
 
 class CheckinSandboxTests(SubversionSetup):

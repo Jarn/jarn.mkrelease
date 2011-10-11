@@ -163,6 +163,11 @@ class SubversionSetup(SCMSetup):
         process.system('svn co %s testbranch' % branchid)
         self.branchdir = join(self.tempdir, 'testbranch')
 
+    @chdir
+    def modifyprop(self, dir):
+        process = Process(quiet=True)
+        process.system('svn propset svn:format "text/x-python" setup.py')
+
 
 class MercurialSetup(SCMSetup):
     """Set up a Mercurial sandbox."""
