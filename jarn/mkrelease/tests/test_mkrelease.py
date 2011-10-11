@@ -1,4 +1,5 @@
 # THIS SHOULD BE DOCTESTS
+import unittest
 
 from jarn.mkrelease.mkrelease import main
 from jarn.mkrelease.testing import SubversionSetup

@@ -2,6 +2,7 @@ import sys
 import os
 import zipfile
 import pkg_resources
+import unittest
 
 from os.path import join, isfile
 
