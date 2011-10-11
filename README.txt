@@ -78,7 +78,7 @@ Options
     The GnuPG identity to sign with.
 
 ``-p, --push``
-    Push changes upstream.
+    Push changes upstream (Mercurial and Git.)
 
 ``-e, --develop``
     Allow version number extensions (i.e. don't ignore
@@ -91,7 +91,7 @@ Options
     Suppress output of setuptools commands.
 
 ``-l, --list``
-    Print known dist-locations and exit.
+    List known dist-locations and exit.
 
 ``-h, --help``
     Print the help message and exit.
