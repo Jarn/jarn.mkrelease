@@ -7,16 +7,13 @@ Changelog
 - Rename --list-locations option to just --list.
   [stefan]
 
-- Print 'Tagging' line before checking tag.
-  [stefan]
-
 - Detect Subversion repos from ``file://`` URLs.
   [stefan]
 
 - Detect bare Git repos from ``file://`` URLs.
   [stefan]
 
-- Subversion status output has changed in 1.6.
+- Adapt to new status output in Subversion 1.6.
   [stefan]
 
 3.1 - 2011-07-19
