@@ -99,6 +99,18 @@ class ScmFromUrlTests(unittest.TestCase):
         scms = SCMFactory()
         self.assertEqual(scms.get_scm_from_url('file:var/dist/public/foo.git').name, 'git')
 
+    def testGetSshGitHub(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm_from_url('ssh://git@github.com/jondoe/foo').name, 'git')
+
+    def testGetHttpGitHub(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm_from_url('http://github.com/jondoe/foo').name, 'git')
+
+    def testGetHttpsGitHub(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm_from_url('https://jondoe@github.com/jondoe/foo').name, 'git')
+
     @quiet
     def testNotUnique(self):
         scms = SCMFactory()
