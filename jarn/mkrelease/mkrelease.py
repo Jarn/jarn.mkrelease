@@ -375,6 +375,7 @@ class ReleaseMaker(object):
         infoflags = self.infoflags
         distcmd = self.distcmd
         distflags = self.distflags
+        branch = self.branch
         scmtype = self.scm.name
 
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
@@ -386,6 +387,8 @@ class ReleaseMaker(object):
                 directory = abspath(expanduser(directory))
 
             self.scm.check_valid_sandbox(directory)
+            if self.isremote and branch:
+                self.scm.switch_branch(directory, branch)
             if self.isremote and scmtype != 'svn':
                 branch = self.scm.get_branch_from_sandbox(directory)
                 print 'Releasing branch', branch
