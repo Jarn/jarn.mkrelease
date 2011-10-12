@@ -75,6 +75,9 @@ Options
 ``-i identity, --identity=identity``
     The GnuPG identity to sign with.
 
+``-b branch, --branch=branch``
+    Switch to branch after cloning from URL.
+
 ``-p, --push``
     Push sandbox modifications upstream.
 
@@ -82,7 +85,7 @@ Options
     Allow version number extensions (i.e. don't ignore
     respective setup.cfg options.)
 
-``-b, --binary``
+``-a, --binary``
     Release a binary (bdist) egg.
 
 ``-q, --quiet``
