@@ -7,7 +7,6 @@ from chdir import DirStack, chdir
 from exit import err_exit, warn
 from lazy import lazy
 
-import tee
 import re
 version_re = re.compile(r'version ([0-9.]+)', re.IGNORECASE)
 
@@ -380,7 +379,6 @@ class Mercurial(SCM):
                 'hg update "%(branch)s"' % locals())
             if rc != 0:
                 err_exit('Update failed')
-        print 'Releasing branch', branch
         return 0
 
     def make_tagid(self, dir, version):
@@ -549,8 +547,8 @@ class Git(SCM):
 
     def checkout_url(self, url, dir):
         print 'Cloning from', url
-        rc, lines = self.process.popen(
-            ('git clone "%(url)s" "%(dir)s"' % locals()), echo=tee.Not(tee.Equals('done.')))
+        rc = self.process.system(
+            'git clone "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
             err_exit('Clone failed')
         return rc
@@ -562,7 +560,6 @@ class Git(SCM):
                 'git checkout "%(branch)s"' % locals())
             if rc != 0:
                 err_exit('Checkout failed')
-        print 'Releasing branch', branch
         return 0
 
     def make_tagid(self, dir, version):
