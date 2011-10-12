@@ -376,6 +376,9 @@ class ReleaseMaker(object):
                 directory = abspath(expanduser(directory))
 
             self.scm.check_valid_sandbox(directory)
+            if self.isremote and scmtype != 'svn':
+                branch = self.scm.get_branch_from_sandbox(directory)
+                print 'Releasing branch', branch
             self.setuptools.check_valid_package(directory)
 
             if not (self.skipcheckin and self.skiptag):
