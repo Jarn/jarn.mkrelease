@@ -4,13 +4,13 @@ Changelog
 3.2 - Unreleased
 ----------------
 
+- Adapt to new status output in Subversion 1.6.
+  [stefan]
+
 - Detect Subversion repos from ``file://`` URLs.
   [stefan]
 
 - Detect bare Git repos from ``file://`` URLs.
-  [stefan]
-
-- Adapt to new status output in Subversion 1.6.
   [stefan]
 
 3.1 - 2011-07-19
@@ -23,7 +23,7 @@ Changelog
 - Improve SCM detection in situations where one or more SCMs are nested.
   [stefan]
 
-- Add support for relative file URLs.
+- Add support for relative ``file:`` URLs.
   [stefan]
 
 - Depend on lazy_ instead of carrying a local implementation.
