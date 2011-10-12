@@ -50,7 +50,7 @@ Options:
   -i identity, --identity=identity
                       The GnuPG identity to sign with.
 
-  -p, --push          Push changes upstream.
+  -p, --push          Push sandbox modifications upstream.
   -e, --develop       Allow version number extensions.
   -b, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
