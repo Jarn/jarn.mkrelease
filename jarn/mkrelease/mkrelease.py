@@ -273,9 +273,13 @@ class ReleaseMaker(object):
         """Print known locations and exit.
         """
         known = sorted(self.defaults.known_locations)
-        if self.defaults.distdefault:
+        default = self.defaults.distdefault
+        if default:
+            if default not in known:
+                known.append(default)
+                known.sort()
             for i, location in enumerate(known):
-                if location == self.defaults.distdefault:
+                if location == default:
                     known[i] += ' (default)'
                     break
         msg_exit('\n'.join(known))

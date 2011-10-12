@@ -7,6 +7,9 @@ Changelog
 - Adapt to new status output in Subversion 1.6.
   [stefan]
 
+- Always include ``distdefault`` in list-locations.
+  [stefan]
+
 - Detect Subversion repos from ``file://`` URLs.
   [stefan]
 
