@@ -585,7 +585,7 @@ class SCMFactory(object):
             err_exit('Not a sandbox: %(dir)s' % locals())
         if len(matches) == 1:
             return matches[0]
-        matches = self._filter_scms(dir, matches)
+        matches = self._find_closest(dir, matches)
         if len(matches) == 1:
             return matches[0]
         if len(matches) == 2:
@@ -598,15 +598,15 @@ class SCMFactory(object):
                  'Please specify %(flags)s to resolve' % locals())
 
     def _find_scms(self, dir):
-        # Find valid SCM sandboxes in dir
+        # Find SCMs in dir
         matches = []
         for klass in self.scms:
             if klass().is_valid_sandbox(dir):
                 matches.append(klass())
         return matches
 
-    def _filter_scms(self, dir, matches):
-        # Find the nearest SCM root(s)
+    def _find_closest(self, dir, matches):
+        # Find SCMs with closest root
         roots = []
         for scm in matches:
             root = scm.get_root_from_sandbox(dir)
@@ -614,6 +614,14 @@ class SCMFactory(object):
         sorted_roots = sorted(roots, key=itemgetter(0))
         longest = sorted_roots[-1][0]
         return [x[2] for x in roots if x[0] == longest]
+
+    def _find_clonable(self, dir, matches):
+        # Find clonable SCMs
+        return [x for x in matches if x.name != 'svn']
+
+    def _find_roots(self, dir, matches):
+        # Find SCMs with root in dir
+        return [x for x in matches if x.get_root_from_sandbox(dir) == dir]
 
     def get_scm_from_url(self, url):
         scheme, user, host, path, qs, frag = self.urlparser.split(url)
@@ -652,12 +660,11 @@ class SCMFactory(object):
                 # Strip leading slash to allow tilde expansion
                 if host and path.startswith('/~'):
                     path = path[1:]
-                # Far out shit below
                 if self._is_bare_git_repo(path):
                     return Git()
                 if self._is_subversion_repo(path):
                     return Subversion()
-                return self.get_scm_from_sandbox(path)
+                return self._get_scm_from_file_url(path)
             err_exit('Failed to guess SCM type: %(url)s\n'
                      'Please specify --svn, --hg, or --git' % locals())
         err_exit('Unsupported URL scheme: %(scheme)s' % locals())
@@ -684,6 +691,26 @@ class SCMFactory(object):
             if is_repo(dir):
                 return True
         return False
+
+    def _get_scm_from_file_url(self, dir):
+        # Return clonable repository roots only
+        dir = abspath(expanduser(dir))
+        if not exists(dir):
+            err_exit('No such file or directory: %(dir)s' % locals())
+        matches = self._find_scms(dir)
+        matches = self._find_clonable(dir, matches)
+        if not matches:
+            err_exit('Not a repository: %(dir)s' % locals())
+        matches = self._find_roots(dir, matches)
+        if not matches:
+            err_exit('Not a repository root: %(dir)s' % locals())
+        if len(matches) == 1:
+            return matches[0]
+        if len(matches) == 2:
+            names = '%s and %s' % tuple([x.__class__.__name__ for x in matches])
+            flags = '--%s or --%s' % tuple([x.name for x in matches])
+        err_exit('%(names)s found in %(dir)s\n'
+                 'Please specify %(flags)s to resolve' % locals())
 
     def get_scm(self, type, url_or_dir):
         if type:
