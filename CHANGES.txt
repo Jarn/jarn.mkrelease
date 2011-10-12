@@ -4,9 +4,6 @@ Changelog
 3.2 - Unreleased
 ----------------
 
-- Rename --list-locations option to just --list.
-  [stefan]
-
 - Detect Subversion repos from ``file://`` URLs.
   [stefan]
 

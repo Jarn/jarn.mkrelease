@@ -88,7 +88,7 @@ Options
 ``-q, --quiet``
     Suppress output of setuptools commands.
 
-``-l, --list``
+``-l, --list-locations``
     List known dist-locations and exit.
 
 ``-h, --help``
