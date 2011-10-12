@@ -111,7 +111,7 @@ class NotEmpty(object):
     """A tee filter suppressing empty lines."""
 
     def __call__(self, line):
-        return bool(line)
+        return not not line
 
 
 class Equals(object):
