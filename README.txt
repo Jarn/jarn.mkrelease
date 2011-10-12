@@ -76,7 +76,7 @@ Options
     The GnuPG identity to sign with.
 
 ``-p, --push``
-    Push changes upstream (Mercurial and Git.)
+    Push sandbox modifications upstream.
 
 ``-e, --develop``
     Allow version number extensions (i.e. don't ignore
