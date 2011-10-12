@@ -50,9 +50,12 @@ Options:
   -i identity, --identity=identity
                       The GnuPG identity to sign with.
 
+  -b branch, --branch=branch
+                      Switch to branch after cloning from URL.
+
   -p, --push          Push sandbox modifications upstream.
   -e, --develop       Allow version number extensions.
-  -b, --binary        Release a binary egg.
+  -a, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
 
   -l, --list-locations
@@ -206,6 +209,7 @@ class ReleaseMaker(object):
         self.quiet = False
         self.sign = False
         self.identity = ''
+        self.branch = ''
         self.scmtype = ''
         self.distcmd = 'sdist'
         self.infoflags = ['--no-svn-revision', '--no-date', '--tag-build=""']
@@ -225,11 +229,11 @@ class ReleaseMaker(object):
         """Parse command line options.
         """
         try:
-            options, args = getopt.gnu_getopt(args, 'CSTbd:ehi:lnpqsv',
+            options, args = getopt.gnu_getopt(args, 'CSTab:d:ehi:lnpqsv',
                 ('no-commit', 'no-tag', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
-                 'list-locations'))
+                 'list-locations', 'branch='))
         except getopt.GetoptError, e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -250,6 +254,8 @@ class ReleaseMaker(object):
                 self.sign = True
             elif name in ('-i', '--identity'):
                 self.identity = value
+            elif name in ('-b', '--branch'):
+                self.branch = value
             elif name in ('-d', '--dist-location'):
                 self.locations.extend(self.locations.get_location(value))
             elif name in ('-l', '--list-locations'):
@@ -263,7 +269,7 @@ class ReleaseMaker(object):
             elif name in ('-e', '--develop'):
                 self.skiptag = True
                 self.infoflags = []
-            elif name in ('-b', '--binary'):
+            elif name in ('-a', '--binary'):
                 self.distcmd = 'bdist'
                 self.distflags = ['--formats="egg"']
 
