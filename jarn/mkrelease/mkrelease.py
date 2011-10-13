@@ -19,7 +19,7 @@ from setuptools import Setuptools
 from scp import SCP
 from scm import SCMFactory
 from urlparser import URLParser
-from exit import msg_exit, err_exit
+from exit import msg_exit, err_exit, warn
 
 PYPIURL = "http://pypi.python.org/pypi"
 MAXALIASDEPTH = 23
@@ -28,7 +28,7 @@ VERSION = "jarn.mkrelease %s" % __version__
 USAGE = "Try 'mkrelease --help' for more information"
 
 HELP = """\
-Usage: mkrelease [options] [scm-url|scm-sandbox]
+Usage: mkrelease [options] [scm-url [scm-branch]|scm-sandbox]
 
 Python egg releaser
 
@@ -50,12 +50,9 @@ Options:
   -i identity, --identity=identity
                       The GnuPG identity to sign with.
 
-  -b branch, --branch=branch
-                      Switch to branch after cloning from URL.
-
   -p, --push          Push sandbox modifications upstream.
   -e, --develop       Allow version number extensions.
-  -a, --binary        Release a binary egg.
+  -b, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
 
   -l, --list-locations
@@ -64,6 +61,7 @@ Options:
   -v, --version       Print the version string and exit.
 
   scm-url             The URL of a remote SCM repository.
+  scm-branch          A branch to switch to after cloning from URL.
   scm-sandbox         A local SCM sandbox. Defaults to the current working
                       directory.
 """
@@ -229,11 +227,11 @@ class ReleaseMaker(object):
         """Parse command line options.
         """
         try:
-            options, args = getopt.gnu_getopt(args, 'CSTab:d:ehi:lnpqsv',
+            options, args = getopt.gnu_getopt(args, 'CSTbd:ehi:lnpqsv',
                 ('no-commit', 'no-tag', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
-                 'list-locations', 'branch='))
+                 'list-locations'))
         except getopt.GetoptError, e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -254,8 +252,6 @@ class ReleaseMaker(object):
                 self.sign = True
             elif name in ('-i', '--identity'):
                 self.identity = value
-            elif name in ('-b', '--branch'):
-                self.branch = value
             elif name in ('-d', '--dist-location'):
                 self.locations.extend(self.locations.get_location(value))
             elif name in ('-l', '--list-locations'):
@@ -269,7 +265,7 @@ class ReleaseMaker(object):
             elif name in ('-e', '--develop'):
                 self.skiptag = True
                 self.infoflags = []
-            elif name in ('-a', '--binary'):
+            elif name in ('-b', '--binary'):
                 self.distcmd = 'bdist'
                 self.distflags = ['--formats="egg"']
 
@@ -338,6 +334,9 @@ class ReleaseMaker(object):
             self.locations.check_valid_locations()
 
         if len(args) > 1:
+            self.branch = args[1]
+
+        if len(args) > 2:
             err_exit('mkrelease: too many arguments\n%s' % USAGE)
 
     def get_package(self):
@@ -357,6 +356,9 @@ class ReleaseMaker(object):
         else:
             directory = abspath(expanduser(directory))
             self.isremote = False
+
+            if self.branch:
+                warn('Branch argument ignored')
 
             self.scm.check_valid_sandbox(directory)
             self.setuptools.check_valid_package(directory)

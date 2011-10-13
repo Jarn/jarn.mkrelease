@@ -43,7 +43,7 @@ and distribute.
 Usage
 =====
 
-``mkrelease [options] [scm-url|scm-sandbox]``
+``mkrelease [options] [scm-url [scm-branch]|scm-sandbox]``
 
 Options
 =======
@@ -75,9 +75,6 @@ Options
 ``-i identity, --identity=identity``
     The GnuPG identity to sign with.
 
-``-b branch, --branch=branch``
-    Switch to branch after cloning from URL.
-
 ``-p, --push``
     Push sandbox modifications upstream.
 
@@ -102,6 +99,9 @@ Options
 
 ``scm-url``
     The URL of a remote SCM repository.
+
+``scm-branch``
+    A branch to switch to after cloning from URL.
 
 ``scm-sandbox``
     A local SCM sandbox. Defaults to the current working
