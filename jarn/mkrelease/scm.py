@@ -222,7 +222,6 @@ class Subversion(SCM):
         return rc
 
     def checkout_url(self, url, dir):
-        print 'Fetching', url
         rc = self.process.system(
             'svn checkout "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
@@ -364,7 +363,6 @@ class Mercurial(SCM):
         return rc
 
     def checkout_url(self, url, dir):
-        print 'Cloning', url
         rc = self.process.system(
             'hg clone "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
@@ -546,7 +544,6 @@ class Git(SCM):
         return rc
 
     def checkout_url(self, url, dir):
-        print 'Cloning from', url
         rc = self.process.system(
             'git clone "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
