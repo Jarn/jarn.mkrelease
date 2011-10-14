@@ -71,13 +71,11 @@ def popen(cmd, echo=True, echo2=True, env=None):
 
     The optional 'env' argument allows to pass an os.environ-like dict.
     """
-    filter = echo
     if not callable(echo):
-        filter = echo and On() or Off()
+        echo = echo and On() or Off()
 
-    filter2 = echo2
     if not callable(echo2):
-        filter2 = echo2 and On() or Off()
+        echo2 = echo2 and On() or Off()
 
     process = Popen(
         cmd,
@@ -87,8 +85,8 @@ def popen(cmd, echo=True, echo2=True, env=None):
         env=env
     )
 
-    with background_thread(tee2, (process, filter2)):
-        lines = tee(process, filter)
+    with background_thread(tee2, (process, echo2)):
+        lines = tee(process, echo)
 
     return process.returncode, lines
 
