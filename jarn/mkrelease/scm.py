@@ -231,7 +231,6 @@ class Subversion(SCM):
     @chdir
     def switch_branch(self, dir, branch):
         if branch != self.get_branch_from_sandbox(dir):
-            print 'Switching to', branch
             rc = self.process.system(
                 'svn switch "%(branch)s"' % locals())
             if rc != 0:
@@ -372,7 +371,6 @@ class Mercurial(SCM):
     @chdir
     def switch_branch(self, dir, branch):
         if branch != self.get_branch_from_sandbox(dir):
-            print 'Switching to branch', branch
             rc = self.process.system(
                 'hg update "%(branch)s"' % locals())
             if rc != 0:
@@ -554,7 +552,7 @@ class Git(SCM):
     def switch_branch(self, dir, branch):
         if branch != self.get_branch_from_sandbox(dir):
             rc = self.process.system(
-                'git checkout "%(branch)s"' % locals())
+                'git checkout -q "%(branch)s"' % locals())
             if rc != 0:
                 err_exit('Checkout failed')
         return 0
