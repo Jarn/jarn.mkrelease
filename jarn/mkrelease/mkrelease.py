@@ -19,7 +19,7 @@ from setuptools import Setuptools
 from scp import SCP
 from scm import SCMFactory
 from urlparser import URLParser
-from exit import msg_exit, err_exit, warn
+from exit import msg_exit, err_exit
 
 PYPIURL = "http://pypi.python.org/pypi"
 MAXALIASDEPTH = 23
@@ -28,7 +28,7 @@ VERSION = "jarn.mkrelease %s" % __version__
 USAGE = "Try 'mkrelease --help' for more information"
 
 HELP = """\
-Usage: mkrelease [options] [scm-url [scm-branch]|scm-sandbox]
+Usage: mkrelease [options] [scm-url [branch|tag]|scm-sandbox]
 
 Python egg releaser
 
@@ -61,7 +61,6 @@ Options:
   -v, --version       Print the version string and exit.
 
   scm-url             The URL of a remote SCM repository.
-  scm-branch          A branch to switch to after cloning from URL.
   scm-sandbox         A local SCM sandbox. Defaults to the current working
                       directory.
 """
@@ -334,7 +333,10 @@ class ReleaseMaker(object):
             self.locations.check_valid_locations()
 
         if len(args) > 1:
-            self.branch = args[1]
+            if self.urlparser.is_url(self.directory):
+                self.branch = args[1]
+            else:
+                err_exit('mkrelease: too many arguments\n%s' % USAGE)
 
         if len(args) > 2:
             err_exit('mkrelease: too many arguments\n%s' % USAGE)
@@ -356,9 +358,6 @@ class ReleaseMaker(object):
         else:
             directory = abspath(expanduser(directory))
             self.isremote = False
-
-            if self.branch:
-                warn('Branch argument ignored')
 
             self.scm.check_valid_sandbox(directory)
             self.setuptools.check_valid_package(directory)
@@ -389,11 +388,16 @@ class ReleaseMaker(object):
                 directory = abspath(expanduser(directory))
 
             self.scm.check_valid_sandbox(directory)
+
             if self.isremote and branch:
+                if branch.startswith('file:') and scmtype == 'svn':
+                    branch = self.urlparser.abspath(branch)
                 self.scm.switch_branch(directory, branch)
+
             if self.isremote and scmtype != 'svn':
                 branch = self.scm.get_branch_from_sandbox(directory)
                 print 'Releasing branch', branch
+
             self.setuptools.check_valid_package(directory)
 
             if not (self.skipcheckin and self.skiptag):

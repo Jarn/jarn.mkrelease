@@ -43,7 +43,7 @@ and distribute.
 Usage
 =====
 
-``mkrelease [options] [scm-url [scm-branch]|scm-sandbox]``
+``mkrelease [options] [scm-url [branch|tag]|scm-sandbox]``
 
 Options
 =======
@@ -82,7 +82,7 @@ Options
     Allow version number extensions (i.e. don't ignore
     respective setup.cfg options.)
 
-``-a, --binary``
+``-b, --binary``
     Release a binary (bdist) egg.
 
 ``-q, --quiet``
@@ -99,9 +99,6 @@ Options
 
 ``scm-url``
     The URL of a remote SCM repository.
-
-``scm-branch``
-    A branch to switch to after cloning from URL.
 
 ``scm-sandbox``
     A local SCM sandbox. Defaults to the current working
