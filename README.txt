@@ -260,12 +260,9 @@ Release my.package from an existing tag::
 
   $ mkrelease -T https://svn.jarn.com/public/my.package/tags/1.0
 
-Only Subversion allows us to specify the tag as part of the URL. With
-Mercurial and Git we need a local working copy, switched to the tag
-we want to release::
+With Mercurial and Git we can use the second argument to specify the tag::
 
-  $ git checkout -f 1.0
-  $ mkrelease -T
+  $ mkrelease -T ssh://git@github.com/Jarn/my.package 1.0
 
 Using GnuPG
 ===========

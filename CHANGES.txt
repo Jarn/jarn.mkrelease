@@ -7,6 +7,10 @@ Changelog
 - Adapt to new status output in Subversion 1.6.
   [stefan]
 
+- Allow to specify the branch or tag to check out from a Git or Mercurial
+  repository.
+  [stefan]
+
 - Always include ``distdefault`` in list-locations.
   [stefan]
 
