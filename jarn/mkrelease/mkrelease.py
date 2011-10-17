@@ -28,7 +28,7 @@ VERSION = "jarn.mkrelease %s" % __version__
 USAGE = "Try 'mkrelease --help' for more information"
 
 HELP = """\
-Usage: mkrelease [options] [scm-url [branch|tag]|scm-sandbox]
+Usage: mkrelease [options] [scm-url [rev]|scm-sandbox]
 
 Python egg releaser
 
@@ -60,7 +60,8 @@ Options:
   -h, --help          Print this help message and exit.
   -v, --version       Print the version string and exit.
 
-  scm-url             The URL of a remote SCM repository.
+  scm-url             The URL of a remote SCM repository. The rev argument
+                      specifies a branch or tag to check out.
   scm-sandbox         A local SCM sandbox. Defaults to the current working
                       directory.
 """

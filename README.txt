@@ -43,7 +43,7 @@ and distribute.
 Usage
 =====
 
-``mkrelease [options] [scm-url [branch|tag]|scm-sandbox]``
+``mkrelease [options] [scm-url [rev]|scm-sandbox]``
 
 Options
 =======
@@ -98,7 +98,8 @@ Options
     Print the version string and exit.
 
 ``scm-url``
-    The URL of a remote SCM repository.
+    The URL of a remote SCM repository. The optional ``rev`` argument
+    specifies a branch or tag to check out.
 
 ``scm-sandbox``
     A local SCM sandbox. Defaults to the current working
