@@ -406,7 +406,6 @@ class CheckinSandboxTests(GitSetup):
 
 class CheckoutUrlTests(GitSetup):
 
-    @quiet
     def testCheckoutUrl(self):
         scm = Git(Process(quiet=True))
         self.assertEqual(scm.checkout_url(self.packagedir, 'testclone'), 0)

@@ -322,7 +322,6 @@ class CheckinSandboxTests(SubversionSetup):
 
 class CheckoutUrlTests(SubversionSetup):
 
-    @quiet
     def testCheckoutUrl(self):
         scm = Subversion(Process(quiet=True))
         self.assertEqual(scm.checkout_url('file://'+self.packagedir, 'testclone2'), 0)

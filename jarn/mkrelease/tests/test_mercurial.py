@@ -316,7 +316,6 @@ class CheckinSandboxTests(MercurialSetup):
 
 class CheckoutUrlTests(MercurialSetup):
 
-    @quiet
     def testCheckoutUrl(self):
         scm = Mercurial(Process(quiet=True))
         self.assertEqual(scm.checkout_url(self.packagedir, 'testclone'), 0)
