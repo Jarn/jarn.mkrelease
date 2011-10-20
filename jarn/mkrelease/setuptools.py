@@ -1,5 +1,6 @@
 import os
 import tee
+import pkg_resources
 
 from os.path import abspath, join, isfile
 
@@ -14,7 +15,21 @@ class Setuptools(object):
 
     def __init__(self, process=None):
         self.python = Python()
-        self.process = process or Process(env=self.python.get_env())
+        self.process = process or Process(env=self.get_env())
+
+    def get_env(self):
+        # Make sure setuptools extensions are found if mkrelease has
+        # been installed with zc.buildout
+        path = []
+        for name in ('setuptools-hg', 'setuptools-git', 'setuptools-subversion'):
+            try:
+                dist = pkg_resources.get_distribution(name)
+            except pkg_resources.DistributionNotFound:
+                continue
+            path.append(dist.location)
+        env = os.environ.copy()
+        env['PYTHONPATH'] = ':'.join(path)
+        return env
 
     def is_valid_package(self, dir):
         return isfile(join(dir, 'setup.py'))

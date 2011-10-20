@@ -69,7 +69,7 @@ def popen(cmd, echo=True, echo2=True, env=None):
     The 'echo' and 'echo2' arguments may also be callables, in which
     case they are used as tee filters.
 
-    The optional 'env' argument allows to pass an os.environ-like dict.
+    The optional 'env' argument allows to pass a dict replacing os.environ.
     """
     if not callable(echo):
         echo = echo and On() or Off()

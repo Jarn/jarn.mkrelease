@@ -13,9 +13,6 @@ class Python(object):
     def __str__(self):
         return self.python
 
-    def get_env(self):
-        return {'PYTHONPATH': ':'.join(sys.path)}
-
     def is_valid_python(self):
         return sys.version_info[:2] >= (2, 6)
 
