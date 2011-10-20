@@ -203,19 +203,19 @@ import pkg_resources
 from os.path import basename
 
 def walk_revctrl(dirname=''):
-    found = False
+    finder = False
     items = []
     for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
         if %(scmtype)r in ep.name:
-            found = True
+            finder = True
             finder_items = []
-            distutils.log.info('using ' + ep.name + ' file-finder')
+            distutils.log.info('using %%s file-finder', ep.name)
             for item in ep.load()(dirname):
                 if not basename(item).startswith(('.svn', '.hg', '.git')):
                     finder_items.append(item)
             distutils.log.info('%%d files found', len(finder_items))
             items.extend(finder_items)
-    if not found:
+    if not finder:
         print >>sys.stderr, 'No %(scmtype)s file-finder ' \
             '(setuptools-%(scmtype)s extension missing?)'
         sys.exit(1)
