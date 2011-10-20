@@ -180,23 +180,32 @@ class Setuptools(object):
 
 
 SCM_CHOOSER = """\
-import os, sys
+import sys
 import distutils
 import pkg_resources
 
+from os.path import basename
+
 def walk_revctrl(dirname=''):
     found = False
+    items = []
     for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
         if %(scmtype)r in ep.name:
             found = True
+            finder_items = []
             distutils.log.info('using ' + ep.name + ' file-finder')
             for item in ep.load()(dirname):
-                if not os.path.basename(item).startswith(('.svn', '.hg', '.git')):
-                    yield item
+                if not basename(item).startswith(('.svn', '.hg', '.git')):
+                    finder_items.append(item)
+            distutils.log.info('%%d files found', len(finder_items))
+            items.extend(finder_items)
     if not found:
         print >>sys.stderr, 'No %(scmtype)s file-finder ' \
             '(setuptools-%(scmtype)s extension missing?)'
         sys.exit(1)
+    if not items:
+        sys.exit(1)
+    return items
 
 import setuptools.command.egg_info
 setuptools.command.egg_info.walk_revctrl = walk_revctrl
