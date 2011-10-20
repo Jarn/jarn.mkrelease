@@ -29,6 +29,7 @@ class Setuptools(object):
             path.append(dist.location)
         env = os.environ.copy()
         env['PYTHONPATH'] = ':'.join(path)
+        env['HG_SETUPTOOLS_FORCE_CMD'] = '1'
         return env
 
     def is_valid_package(self, dir):
