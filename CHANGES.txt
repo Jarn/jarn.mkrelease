@@ -4,6 +4,8 @@ Changelog
 3.3 - Unreleased
 ----------------
 
+- Add setuptools to the PYTHONPATH for subprocesses.
+  [stefan]
 
 3.2 - 2011-10-21
 ----------------
