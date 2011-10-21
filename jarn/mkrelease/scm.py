@@ -1,3 +1,6 @@
+import os
+import re
+
 from operator import itemgetter
 from os.path import abspath, join, expanduser, dirname, exists, isdir, isfile
 
@@ -7,7 +10,6 @@ from chdir import DirStack, chdir
 from exit import err_exit, warn
 from lazy import lazy
 
-import re
 version_re = re.compile(r'version ([0-9.]+)', re.IGNORECASE)
 
 
@@ -17,7 +19,14 @@ class SCM(object):
     name = ''
 
     def __init__(self, process=None):
-        self.process = process or Process()
+        self.process = process or Process(env=self.get_env())
+
+    def get_env(self):
+        if 'PYTHONPATH' not in os.environ:
+            return os.environ
+        env = os.environ.copy()
+        del env['PYTHONPATH']
+        return env
 
     def get_version(self):
         raise NotImplementedError

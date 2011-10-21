@@ -197,28 +197,38 @@ class Setuptools(object):
 
 
 SCM_CHOOSER = """\
-import sys
+import os, sys
 import distutils
 import pkg_resources
 
 from os.path import basename
 
+class pythonpath_off(object):
+    def __enter__(self):
+        self.path = os.environ.get('PYTHONPATH', '')
+        if self.path:
+            del os.environ['PYTHONPATH']
+    def __exit__(self, *ignored):
+        if self.path:
+            os.environ['PYTHONPATH'] = self.path
+
 def walk_revctrl(dirname=''):
-    finder = False
+    file_finder = None
     items = []
     for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
         if %(scmtype)r in ep.name:
-            finder = True
-            finder_items = []
             distutils.log.info('using %%s file-finder', ep.name)
-            for item in ep.load()(dirname):
-                if not basename(item).startswith(('.svn', '.hg', '.git')):
-                    finder_items.append(item)
+            file_finder = ep.load()
+            finder_items = []
+            with pythonpath_off():
+                for item in file_finder(dirname):
+                    if not basename(item).startswith(('.svn', '.hg', '.git')):
+                        finder_items.append(item)
             distutils.log.info('%%d files found', len(finder_items))
             items.extend(finder_items)
-    if not finder:
-        print >>sys.stderr, 'No %(scmtype)s file-finder ' \
-            '(setuptools-%(scmtype)s extension missing?)'
+    if file_finder is None:
+        print >>sys.stderr, 'No %(scmtype)s file-finder; ' \
+            'setuptools-%(scmtype)s extension missing?'
         sys.exit(1)
     if not items:
         sys.exit(1)
