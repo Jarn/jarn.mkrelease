@@ -51,8 +51,7 @@ class background_thread(object):
         self.args = args
 
     def __enter__(self):
-        self._t = threading.Thread(
-            target=self.target, args=self.args)
+        self._t = threading.Thread(target=self.target, args=self.args)
         self._t.start()
         return self._t
 
