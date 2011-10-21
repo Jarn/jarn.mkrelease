@@ -87,7 +87,7 @@ class Setuptools(object):
             filename = self._parse_dist_results(lines)
             if filename and isfile(filename):
                 return abspath(filename)
-        err_exit('%(distcmd)s failed')
+        err_exit('%(distcmd)s failed' % locals())
 
     @chdir
     def run_register(self, dir, infoflags, location, scmtype='', quiet=False):
