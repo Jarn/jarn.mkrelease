@@ -18,10 +18,11 @@ class Setuptools(object):
         self.process = process or Process(env=self.get_env())
 
     def get_env(self):
-        # Make sure setuptools extensions are found if mkrelease has
-        # been installed with zc.buildout
+        # Make sure setuptools and its extensions are found if mkrelease
+        # has been installed with zc.buildout
         path = []
-        for name in ('setuptools-hg', 'setuptools-git', 'setuptools-subversion'):
+        for name in ('setuptools', 'setuptools-hg', 'setuptools-git',
+                     'setuptools-subversion'):
             try:
                 dist = pkg_resources.get_distribution(name)
             except pkg_resources.DistributionNotFound:
