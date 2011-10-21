@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.2 - Unreleased
+3.2 - 2011-10-21
 ----------------
 
 - Fix the environment passed to subprocesses; Mercurial did not appreciate
