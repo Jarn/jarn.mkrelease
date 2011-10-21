@@ -2,4 +2,5 @@ bin
 dist
 include
 lib
+.installed.cfg
 .long-description.html
