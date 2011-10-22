@@ -28,8 +28,7 @@ def chdir(func):
     """
     def wrapped_func(self, dir, *args, **kw):
         dirstack = DirStack()
-        if dir:
-            dirstack.push(dir)
+        dirstack.push(dir or os.getcwd())
         try:
             return func(self, dir, *args, **kw)
         finally:
