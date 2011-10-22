@@ -432,7 +432,7 @@ class Git(SCM):
         if url.startswith(
             ('git://', 'ssh://', 'rsync://', 'http://', 'https://', 'file:')):
             return True
-        if not self.urlparser.is_url(url) and self.urlparser.is_git_ssh_url(url):
+        if self.urlparser.is_git_ssh_url(url):
             return True
         return False
 

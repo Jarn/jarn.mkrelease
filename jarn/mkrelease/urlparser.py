@@ -20,7 +20,8 @@ class URLParser(object):
         return bool(self.get_scheme(url))
 
     def is_git_ssh_url(self, url):
-        return self.git_ssh_re.match(url) is not None
+        return (not self.is_url(url) and
+                self.git_ssh_re.match(url) is not None)
 
     def abspath(self, url):
         scheme = self.get_scheme(url)
