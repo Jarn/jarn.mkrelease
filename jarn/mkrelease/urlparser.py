@@ -8,6 +8,7 @@ class URLParser(object):
     """A minimal URL parser and splitter."""
 
     scheme_re = re.compile(r'^(\S+?)://|^(file):')
+    git_ssh_re = re.compile(r'^(\S+?):(.*)')
 
     def get_scheme(self, url):
         match = self.scheme_re.match(url)
@@ -18,13 +19,8 @@ class URLParser(object):
     def is_url(self, url):
         return bool(self.get_scheme(url))
 
-    def split(self, url):
-        scheme = self.get_scheme(url)
-        if scheme:
-            ignored, host, path, qs, frag = urlsplit(url)
-            user, host = self._hostsplit(host)
-            return scheme, user, host, path, qs, frag
-        return '', '', '', url, '', ''
+    def is_git_ssh_url(self, url):
+        return self.git_ssh_re.match(url) is not None
 
     def abspath(self, url):
         scheme = self.get_scheme(url)
@@ -38,6 +34,14 @@ class URLParser(object):
                 host = self._hostunsplit(user, host)
                 return urlunsplit((scheme, host, path, qs, frag))
         return url
+
+    def split(self, url):
+        scheme = self.get_scheme(url)
+        if scheme:
+            ignored, host, path, qs, frag = urlsplit(url)
+            user, host = self._hostsplit(host)
+            return scheme, user, host, path, qs, frag
+        return '', '', '', url, '', ''
 
     def _hostsplit(self, host):
         if '@' in host:

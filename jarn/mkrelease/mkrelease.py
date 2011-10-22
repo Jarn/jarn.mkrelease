@@ -336,6 +336,8 @@ class ReleaseMaker(object):
         if len(args) > 1:
             if self.urlparser.is_url(self.directory):
                 self.branch = args[1]
+            elif self.urlparser.is_git_ssh_url(self.directory):
+                self.branch = args[1]
             else:
                 err_exit('mkrelease: too many arguments\n%s' % USAGE)
 

@@ -18,8 +18,9 @@ class SCM(object):
 
     name = ''
 
-    def __init__(self, process=None):
+    def __init__(self, process=None, urlparser=None):
         self.process = process or Process(env=self.get_env())
+        self.urlparser = urlparser or URLParser()
 
     def get_env(self):
         if 'PYTHONPATH' not in os.environ:
@@ -428,8 +429,12 @@ class Git(SCM):
         return ''
 
     def is_valid_url(self, url):
-        return url.startswith(
-            ('git://', 'ssh://', 'rsync://', 'http://', 'https://', 'file:'))
+        if url.startswith(
+            ('git://', 'ssh://', 'rsync://', 'http://', 'https://', 'file:')):
+            return True
+        if not self.urlparser.is_url(url) and self.urlparser.is_git_ssh_url(url):
+            return True
+        return False
 
     def is_valid_sandbox(self, dir):
         if isdir(dir):
@@ -756,6 +761,8 @@ class SCMFactory(object):
             scm = self.get_scm_from_type(type)
         elif self.urlparser.is_url(url_or_dir):
             scm = self.get_scm_from_url(url_or_dir)
+        elif self.urlparser.is_git_ssh_url(url_or_dir):
+            scm = Git()
         else:
             scm = self.get_scm_from_sandbox(url_or_dir)
         return scm
