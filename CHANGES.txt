@@ -7,6 +7,9 @@ Changelog
 - Add setuptools to the PYTHONPATH for subprocesses.
   [stefan]
 
+- Unset any PYTHONPATH while executing SCM commands.
+  [stefan]
+
 3.2 - 2011-10-21
 ----------------
 
