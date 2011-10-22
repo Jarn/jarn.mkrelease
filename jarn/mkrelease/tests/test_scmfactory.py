@@ -250,6 +250,10 @@ class IsUrlTests(unittest.TestCase):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('ftp://jarn.com/public'), True)
 
+    def testUnknown(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_url('foo://jarn.com/public'), True)
+
     def testBadUrl(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url('ssh:'), False)
@@ -265,18 +269,46 @@ class IsUrlTests(unittest.TestCase):
 
 class IsGitSshUrlTests(unittest.TestCase):
 
-    def testGitSshUrl(self):
+    def testGitSsh(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_git_ssh_url('git@github.com:Jarn/jarn.mkrelease'), True)
+
+    def testSsh(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url('ssh://'), False)
+
+    def testGit(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url('git://'), False)
+
+    def testUnsupported(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url('ftp://'), False)
+
+    def testUnknown(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url('foo://'), False)
+
+    def testFalsePositives(self):
+        # Everything with a colon matches the regex...
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url('foo:'), True)
+
+    def testColonOnly(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url(':'), False)
+
+    def testBadUrl(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url('ssh'), False)
+
+    def testWhitespace(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url(' git@github.com:Jarn/jarn.mkrelease'), False)
 
     def testEmptyString(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_git_ssh_url(''), False)
-
-    def testSshUrl(self):
-        # Note that all types of schemes match an "ssh" URL
-        urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('http://'), True)
 
 
 class AbspathTests(unittest.TestCase):
