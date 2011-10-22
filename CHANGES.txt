@@ -10,6 +10,9 @@ Changelog
 - Unset any PYTHONPATH while executing SCM commands.
   [stefan]
 
+- Support Git's short-form ``ssh://`` URLs.
+  [stefan]
+
 3.2 - 2011-10-21
 ----------------
 

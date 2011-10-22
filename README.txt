@@ -316,8 +316,3 @@ these layouts:
 * The singular-form layout variant: ``my.package/trunk``,
   ``my.package/branch``, and ``my.package/tag``.
 
-Git
----
-
-Git's short-hand notation for ``ssh://`` URLs is not supported.
-
