@@ -148,6 +148,15 @@ class SubversionGetScmTests(SubversionSetup):
         scms = SCMFactory()
         self.assertEqual(scms.get_scm(None, 'svn://jarn.com/public').name, 'svn')
 
+    def testGetFromFileUrl(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm(None, 'file://'+self.packagedir).name, 'svn')
+
+    @quiet
+    def testNonRepo(self):
+        scms = SCMFactory()
+        self.assertRaises(SystemExit, scms.get_scm, None, 'file://'+self.clonedir)
+
     def testGetFromSandbox(self):
         scms = SCMFactory()
         self.assertEqual(scms.get_scm(None, self.clonedir).name, 'svn')
@@ -173,6 +182,15 @@ class MercurialGetScmTests(MercurialSetup):
     def testGetFromUrl(self):
         scms = SCMFactory()
         self.assertEqual(scms.get_scm(None, 'ssh://jarn.com/hg/public').name, 'hg')
+
+    def testGetFromFileUrl(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm(None, 'file://'+self.packagedir).name, 'hg')
+
+    @quiet
+    def testNonTopLevel(self):
+        scms = SCMFactory()
+        self.assertRaises(SystemExit, scms.get_scm, None, 'file://'+self.packagedir+'/testpackage')
 
     def testGetFromSandbox(self):
         scms = SCMFactory()
@@ -201,6 +219,15 @@ class GitGetScmTests(GitSetup):
     def testGetFromUrl(self):
         scms = SCMFactory()
         self.assertEqual(scms.get_scm(None, 'git://jarn.com/public').name, 'git')
+
+    def testGetFromFileUrl(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm(None, 'file://'+self.packagedir).name, 'git')
+
+    @quiet
+    def testNonTopLevel(self):
+        scms = SCMFactory()
+        self.assertRaises(SystemExit, scms.get_scm, None, 'file://'+self.packagedir+'/testpackage')
 
     def testGetFromSshUrl(self):
         scms = SCMFactory()
