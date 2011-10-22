@@ -65,10 +65,7 @@ class SandboxSetup(JailSetup):
 
 
 class SCMSetup(SandboxSetup):
-    """Base class for SCM sandboxes.
-
-    Defines an API for sandbox manipulation.
-    """
+    """Manage an SCM sandbox."""
 
     name = None
     clonedir = None
@@ -130,7 +127,7 @@ class SCMSetup(SandboxSetup):
 
 
 class SubversionSetup(SCMSetup):
-    """Set up a Subversion sandbox."""
+    """Manage a Subversion sandbox."""
 
     name = 'svn'
     source = 'testrepo.svn.zip'
@@ -140,6 +137,11 @@ class SubversionSetup(SCMSetup):
         process = Process(quiet=True)
         process.system('svn checkout file://%s/trunk testclone' % self.packagedir)
         self.clonedir = join(self.tempdir, 'testclone')
+
+    @chdir
+    def modifyprop(self, dir):
+        process = Process(quiet=True)
+        process.system('svn propset svn:format "text/x-python" setup.py')
 
     @chdir
     def remove(self, dir):
@@ -163,14 +165,9 @@ class SubversionSetup(SCMSetup):
         process.system('svn co %s testbranch' % branchid)
         self.branchdir = join(self.tempdir, 'testbranch')
 
-    @chdir
-    def modifyprop(self, dir):
-        process = Process(quiet=True)
-        process.system('svn propset svn:format "text/x-python" setup.py')
-
 
 class MercurialSetup(SCMSetup):
-    """Set up a Mercurial sandbox."""
+    """Manage a Mercurial sandbox."""
 
     name = 'hg'
     source = 'testpackage.hg.zip'
@@ -204,7 +201,7 @@ class MercurialSetup(SCMSetup):
 
 
 class GitSetup(SCMSetup):
-    """Set up a Git sandbox."""
+    """Manage a Git sandbox."""
 
     name = 'git'
     source = 'testpackage.git.zip'
