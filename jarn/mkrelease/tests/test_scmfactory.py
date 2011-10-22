@@ -258,6 +258,26 @@ class IsUrlTests(unittest.TestCase):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_url(' http://'), False)
 
+    def testGitSshUrl(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_url('git@github.com:Jarn/jarn.mkrelease'), False)
+
+
+class IsGitSshUrlTests(unittest.TestCase):
+
+    def testGitSshUrl(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url('git@github.com:Jarn/jarn.mkrelease'), True)
+
+    def testEmptyString(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url(''), False)
+
+    def testSshUrl(self):
+        # Note that all types of schemes match an "ssh" URL
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url('http://'), True)
+
 
 class AbspathTests(unittest.TestCase):
 
@@ -361,6 +381,92 @@ class GitFromSandboxTests(GitSetup):
     def testAmbiguousSandbox(self):
         scms = SCMFactory()
         self.assertRaises(SystemExit, scms.get_scm_from_sandbox, self.packagedir)
+
+
+class SubversionGetScmTests(SubversionSetup):
+
+    def testGetFromType(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm('svn', self.clonedir).name, 'svn')
+
+    def testGetFromUrl(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm(None, 'svn://jarn.com/public').name, 'svn')
+
+    def testGetFromSandbox(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm(None, self.clonedir).name, 'svn')
+
+    @quiet
+    def testBadSandbox(self):
+        scms = SCMFactory()
+        self.destroy(self.clonedir)
+        self.assertRaises(SystemExit, scms.get_scm, None, self.clonedir)
+
+    @quiet
+    def testNoSuchFile(self):
+        scms = SCMFactory()
+        self.assertRaises(SystemExit, scms.get_scm, None, 'foobarbaz.peng')
+
+
+class MercurialGetScmTests(MercurialSetup):
+
+    def testGetFromType(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm('hg', self.packagedir).name, 'hg')
+
+    def testGetFromUrl(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm(None, 'ssh://jarn.com/hg/public').name, 'hg')
+
+    def testGetFromSandbox(self):
+        scms = SCMFactory()
+        self.destroy(name='svn')
+        self.assertEqual(scms.get_scm(None, self.packagedir).name, 'hg')
+
+    @quiet
+    def testAmbiguousSandbox(self):
+        scms = SCMFactory()
+        self.assertRaises(SystemExit, scms.get_scm, None, self.packagedir)
+
+    @quiet
+    def testBadSandbox(self):
+        scms = SCMFactory()
+        self.destroy(name='svn')
+        self.destroy(name='hg')
+        self.assertRaises(SystemExit, scms.get_scm, None, self.packagedir)
+
+
+class GitGetScmTests(GitSetup):
+
+    def testGetFromType(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm('git', self.packagedir).name, 'git')
+
+    def testGetFromUrl(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm(None, 'git://jarn.com/public').name, 'git')
+
+    def testGetFromSshUrl(self):
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm(None, 'git@github.com:Jarn/jarn.mkrelease').name, 'git')
+
+    def testGetFromSandbox(self):
+        scms = SCMFactory()
+        self.destroy(name='svn')
+        self.assertEqual(scms.get_scm(None, self.packagedir).name, 'git')
+
+    @quiet
+    def testAmbiguousSandbox(self):
+        scms = SCMFactory()
+        self.assertRaises(SystemExit, scms.get_scm, None, self.packagedir)
+
+    @quiet
+    def testBadSandbox(self):
+        scms = SCMFactory()
+        self.destroy(name='svn')
+        self.destroy(name='git')
+        self.assertRaises(SystemExit, scms.get_scm, None, self.packagedir)
 
 
 def test_suite():

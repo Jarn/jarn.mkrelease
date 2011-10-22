@@ -46,6 +46,10 @@ class ValidUrlTests(unittest.TestCase):
         scm = Git()
         self.assertEqual(scm.is_valid_url(''), False)
 
+    def testGitSshUrl(self):
+        scm = Git()
+        self.assertEqual(scm.is_valid_url('git@github.com:Jarn/jarn.mkrelease'), True)
+
 
 class ValidSandboxTests(GitSetup):
 

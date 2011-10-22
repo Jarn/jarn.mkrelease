@@ -42,6 +42,10 @@ class ValidUrlTests(unittest.TestCase):
         scm = Subversion()
         self.assertEqual(scm.is_valid_url(''), False)
 
+    def testGitSshUrl(self):
+        scm = Subversion()
+        self.assertEqual(scm.is_valid_url('git@github.com:Jarn/jarn.mkrelease'), False)
+
 
 class ValidSandboxTests(SubversionSetup):
 

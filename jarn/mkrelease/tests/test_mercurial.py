@@ -38,6 +38,10 @@ class ValidUrlTests(unittest.TestCase):
         scm = Mercurial()
         self.assertEqual(scm.is_valid_url(''), False)
 
+    def testGitSshUrl(self):
+        scm = Mercurial()
+        self.assertEqual(scm.is_valid_url('git@github.com:Jarn/jarn.mkrelease'), False)
+
 
 class ValidSandboxTests(MercurialSetup):
 
