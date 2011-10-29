@@ -21,7 +21,7 @@ class SCP(object):
 
     def run_scp(self, distfile, location):
         if not self.process.quiet:
-            print 'running scp'
+            print 'copying to %(location)s' % locals()
         rc = self.process.os_system(
             'scp "%(distfile)s" "%(location)s"' % locals())
         if rc != 0:
