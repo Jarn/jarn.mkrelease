@@ -208,12 +208,19 @@ class ReleaseMaker(object):
     def __init__(self, args):
         """Initialize.
         """
-        self.args = args
         self.reset_defaults()
+        self.args = args
 
     def reset_defaults(self, config_file=None):
         """[Re]set defaults.
         """
+        self.defaults = Defaults(config_file)
+        self.locations = Locations(self.defaults)
+        self.python = Python()
+        self.setuptools = Setuptools()
+        self.scp = SCP()
+        self.scms = SCMFactory()
+        self.urlparser = URLParser()
         self.skipcheckin = False
         self.skiptag = False
         self.skipupload = False
@@ -227,14 +234,7 @@ class ReleaseMaker(object):
         self.infoflags = ['--no-svn-revision', '--no-date', '--tag-build=""']
         self.distflags = ['--formats="zip"']
         self.directory = os.curdir
-        self.defaults = Defaults(config_file)
-        self.locations = Locations(self.defaults)
-        self.python = Python()
-        self.setuptools = Setuptools()
-        self.scp = SCP()
-        self.scms = SCMFactory()
         self.scm = None
-        self.urlparser = URLParser()
 
     def parse_options(self, args, depth=0):
         """Parse command line options.
