@@ -3,12 +3,17 @@ import re
 from os.path import abspath, expanduser
 from urlparse import urlsplit, urlunsplit
 
+from scp import SCP
+
 
 class URLParser(object):
     """A minimal URL parser and splitter."""
 
     scheme_re = re.compile(r'^(\S+?)://|^(file):')
     git_ssh_re = re.compile(r'^(\S+?):(.*)')
+
+    def __init__(self):
+        self.scp = SCP()
 
     def get_scheme(self, url):
         match = self.scheme_re.match(url)
@@ -21,7 +26,8 @@ class URLParser(object):
 
     def is_git_ssh_url(self, url):
         return (not self.is_url(url) and
-                self.git_ssh_re.match(url) is not None)
+                self.git_ssh_re.match(url) is not None and
+                self.scp.has_host(url))
 
     def abspath(self, url):
         scheme = self.get_scheme(url)

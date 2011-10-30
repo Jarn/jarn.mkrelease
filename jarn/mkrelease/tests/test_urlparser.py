@@ -222,6 +222,14 @@ class IsGitSshUrlTests(unittest.TestCase):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_git_ssh_url('foo:'), True)
 
+    def testSlashBeforeColon(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url('/foo:'), False)
+
+    def testSlashColonOnly(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_git_ssh_url('/:'), False)
+
     def testColonOnly(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_git_ssh_url(':'), False)
