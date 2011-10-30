@@ -132,6 +132,7 @@ class Locations(object):
         self.aliases = defaults.aliases
         self.servers = defaults.servers
         self.locations = []
+        self.scp = SCP()
 
     def __len__(self):
         """Return number of locations.
@@ -156,9 +157,13 @@ class Locations(object):
     def has_host(self, location):
         """Return True if 'location' contains a host part.
         """
-        colon = location.find(':')
-        slash = location.find('/')
-        return colon > 0 and (slash < 0 or slash > colon)
+        return self.scp.has_host(location)
+
+    def join(self, distbase, location):
+        """Join 'distbase' and 'location' in such way that the
+        result is a valid scp destination.
+        """
+        return self.scp.join(distbase, location)
 
     def get_location(self, location, depth=0):
         """Resolve aliases and apply distbase.
@@ -178,10 +183,7 @@ class Locations(object):
             err_exit('No configuration found for server: pypi\n'
                      'Please create a ~/.pypirc file')
         if not self.has_host(location) and self.distbase:
-            sep = '/'
-            if self.distbase[-1] in (':', '/'):
-                sep = ''
-            return [self.distbase + sep + location]
+            return [self.join(self.distbase, location)]
         return [location]
 
     def get_default_location(self):
