@@ -299,7 +299,7 @@ class ReleaseMaker(object):
             err_exit('File cannot be read: %(config_file)s' % locals())
 
     def list_locations(self):
-        """Print known locations and exit.
+        """Print known dist-locations and exit.
         """
         known = sorted(self.defaults.known_locations)
         default = self.defaults.distdefault
