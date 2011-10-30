@@ -11,7 +11,7 @@ import tempfile
 import shutil
 import ConfigParser
 
-from os.path import abspath, join, expanduser, isfile
+from os.path import abspath, join, expanduser, exists, isfile
 from itertools import chain
 
 from python import Python
@@ -55,6 +55,9 @@ Options:
   -b, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
 
+  -c config-file, --config-file=config-file
+                      Use config-file instead of the default ~/.mkrelease.
+
   -l, --list-locations
                       List known dist-locations and exit.
   -h, --help          Print this help message and exit.
@@ -69,11 +72,14 @@ Options:
 
 class Defaults(object):
 
-    def __init__(self):
+    def __init__(self, config_file=None):
         """Read config files.
         """
+        if config_file is None:
+            config_file = expanduser('~/.mkrelease')
+
         parser = ConfigParser.ConfigParser()
-        parser.read((expanduser('~/.pypirc'), expanduser('~/.mkrelease')))
+        parser.read((expanduser('~/.pypirc'), config_file))
 
         def get(section, key, default=None):
             if parser.has_option(section, key):
@@ -198,7 +204,13 @@ class Locations(object):
 class ReleaseMaker(object):
 
     def __init__(self, args):
-        """Set defaults.
+        """Initialize.
+        """
+        self.args = args
+        self.reset_defaults()
+
+    def reset_defaults(self, config_file=None):
+        """[Re]set defaults.
         """
         self.skipcheckin = False
         self.skiptag = False
@@ -213,25 +225,25 @@ class ReleaseMaker(object):
         self.infoflags = ['--no-svn-revision', '--no-date', '--tag-build=""']
         self.distflags = ['--formats="zip"']
         self.directory = os.curdir
-        self.defaults = Defaults()
+        self.defaults = Defaults(config_file)
         self.locations = Locations(self.defaults)
         self.python = Python()
         self.setuptools = Setuptools()
         self.scp = SCP()
         self.scms = SCMFactory()
-        self.urlparser = URLParser()
         self.scm = None
-        self.args = args
+        self.urlparser = URLParser()
 
-    def parse_options(self, args):
+    def parse_options(self, args, depth=0):
         """Parse command line options.
         """
         try:
-            options, args = getopt.gnu_getopt(args, 'CSTbd:ehi:lnpqsv',
+            options, remaining_args = getopt.gnu_getopt(args,
+                'CSTbc:d:ehi:lnpqsv',
                 ('no-commit', 'no-tag', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
-                 'list-locations'))
+                 'list-locations', 'config-file='))
         except getopt.GetoptError, e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -268,8 +280,23 @@ class ReleaseMaker(object):
             elif name in ('-b', '--binary'):
                 self.distcmd = 'bdist'
                 self.distflags = ['--formats="egg"']
+            elif name in ('-c', '--config-file') and depth == 0:
+                value = abspath(expanduser(value))
+                self.check_valid_config_file(value)
+                self.reset_defaults(value)
+                return self.parse_options(args, depth+1)
 
-        return args
+        return remaining_args
+
+    def check_valid_config_file(self, config_file):
+        """Check if 'config_file' can be read.
+        """
+        if not exists(config_file):
+            err_exit('No such file: %(config_file)s' % locals())
+        if not isfile(config_file):
+            err_exit('Not a file: %(config_file)s' % locals())
+        if not os.access(config_file, os.R_OK):
+            err_exit('File cannot be read: %(config_file)s' % locals())
 
     def list_locations(self):
         """Print known locations and exit.

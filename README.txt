@@ -88,6 +88,9 @@ Options
 ``-q, --quiet``
     Suppress output of setuptools commands.
 
+``-c config-file, --config-file=config-file``
+    Use config-file instead of the default ``~/.mkrelease``.
+
 ``-l, --list-locations``
     List known dist-locations and exit.
 

@@ -13,6 +13,9 @@ Changelog
 - Support Git's short-form ``ssh://`` URLs.
   [stefan]
 
+- Add -c option to specify a config file other than ~/.mkrelease.
+  [stefan]
+
 3.2 - 2011-10-21
 ----------------
 
