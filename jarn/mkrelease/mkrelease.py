@@ -100,6 +100,7 @@ class Defaults(object):
 
         self.sign = getboolean(main_section, 'sign', False)
         self.identity = get(main_section, 'identity', '')
+        self.push = getboolean(main_section, 'push', False)
 
         self.aliases = {}
         if parser.has_section('aliases'):
@@ -224,7 +225,7 @@ class ReleaseMaker(object):
         self.skipcheckin = False
         self.skiptag = False
         self.skipupload = False
-        self.push = False
+        self.push = self.defaults.push
         self.quiet = False
         self.sign = False
         self.identity = ''
