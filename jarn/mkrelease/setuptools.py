@@ -205,12 +205,12 @@ from os.path import basename
 
 class pythonpath_off(object):
     def __enter__(self):
-        self.path = os.environ.get('PYTHONPATH', '')
-        if self.path:
+        self.saved = os.environ.get('PYTHONPATH', '')
+        if self.saved:
             del os.environ['PYTHONPATH']
     def __exit__(self, *ignored):
-        if self.path:
-            os.environ['PYTHONPATH'] = self.path
+        if self.saved:
+            os.environ['PYTHONPATH'] = self.saved
 
 def walk_revctrl(dirname=''):
     file_finder = None
