@@ -541,18 +541,19 @@ class Git(SCM):
         if rc not in (0, 1):
             err_exit('Commit failed')
         rc = 0
-        remote = self.get_remote_from_sandbox(dir)
-        if push and remote:
+        if push:
             branch = self.get_branch_from_sandbox(dir)
-            tracked = self.get_tracked_branch_from_sandbox(dir)
-            if tracked:
-                rc = self.process.system(
-                    'git push "%(remote)s" "%(branch)s:%(tracked)s"' % locals())
-                if rc != 0:
-                    err_exit('Push failed')
-            else:
-                warn('%(branch)s does not track any branch - '
-                    'not pushing the commit' % locals())
+            remote = self.get_remote_from_sandbox(dir)
+            if remote:
+                tracked = self.get_tracked_branch_from_sandbox(dir)
+                if tracked:
+                    rc = self.process.system(
+                        'git push "%(remote)s" "%(branch)s:%(tracked)s"' % locals())
+                    if rc != 0:
+                        err_exit('Push failed')
+                    return rc
+            warn('%(branch)s does not track a remote branch; '
+                 'not pushing the commit' % locals())
         return rc
 
     def checkout_url(self, url, dir):
@@ -591,18 +592,19 @@ class Git(SCM):
             'git tag -m"Tagged %(name)s %(version)s." "%(tagid)s"' % locals())
         if rc != 0:
             err_exit('Tag failed')
-        remote = self.get_remote_from_sandbox(dir)
-        if push and remote:
+        if push:
             branch = self.get_branch_from_sandbox(dir)
-            tracked = self.get_tracked_branch_from_sandbox(dir)
-            if tracked:
-                rc = self.process.system(
-                    'git push "%(remote)s" tag "%(tagid)s"' % locals())
-                if rc != 0:
-                    err_exit('Push failed')
-            else:
-                warn('%(branch)s does not track any branch - '
-                    'not pushing the tag' % locals())
+            remote = self.get_remote_from_sandbox(dir)
+            if remote:
+                tracked = self.get_tracked_branch_from_sandbox(dir)
+                if tracked:
+                    rc = self.process.system(
+                        'git push "%(remote)s" tag "%(tagid)s"' % locals())
+                    if rc != 0:
+                        err_exit('Push failed')
+                    return rc
+            warn('%(branch)s does not track a remote branch; '
+                 'not pushing the tag' % locals())
         return rc
 
 
