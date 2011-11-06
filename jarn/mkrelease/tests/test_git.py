@@ -366,10 +366,12 @@ class CheckinSandboxTests(GitSetup):
         self.modify(self.packagedir)
         self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '2.6', False), 0)
 
+    @quiet
     def testCheckinAndPushCleanLocalSandbox(self):
         scm = Git(Process(quiet=True))
         self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '2.6', True), 0)
 
+    @quiet
     def testCheckinAndPushDirtyLocalSandbox(self):
         scm = Git(Process(quiet=True))
         self.modify(self.packagedir)
@@ -514,6 +516,7 @@ class CreateTagTests(GitSetup):
         self.assertEqual(scm.tag_exists(self.packagedir, '2.6'), True)
         self.assertRaises(SystemExit, scm.create_tag, self.packagedir, '2.6', 'testpackage', '2.6', False)
 
+    @quiet
     def testCreateAndPushLocalTag(self):
         scm = Git()
         self.assertEqual(scm.create_tag(self.packagedir, '2.6', 'testpackage', '2.6', True), 0)
