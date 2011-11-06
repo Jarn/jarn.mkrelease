@@ -10,6 +10,9 @@ Changelog
 - Always push to default in Mercurial.
   [stefan]
 
+- Don't read empty lines from terminating subprocesses.
+  [stefan]
+
 3.3 - 2011-10-31
 ----------------
 
