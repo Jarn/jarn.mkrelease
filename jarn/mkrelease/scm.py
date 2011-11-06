@@ -367,7 +367,7 @@ class Mercurial(SCM):
         if push:
             if self.is_remote_sandbox(dir):
                 rc = self.process.system(
-                    'hg push')
+                    'hg push default')
                 if rc != 0:
                     err_exit('Push failed')
             else:
@@ -413,7 +413,7 @@ class Mercurial(SCM):
         if push:
             if self.is_remote_sandbox(dir):
                 rc = self.process.system(
-                    'hg push')
+                    'hg push default')
                 if rc != 0:
                     err_exit('Push failed')
             else:
