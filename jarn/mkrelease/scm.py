@@ -401,7 +401,7 @@ class Mercurial(SCM):
             'hg tags', echo=False)
         if rc == 0:
             for line in lines:
-                if line and line.split()[0] == tagid:
+                if line.split()[0] == tagid:
                     return True
             return False
         err_exit('Failed to get tags from %(dir)s' % locals())
