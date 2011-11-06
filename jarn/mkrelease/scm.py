@@ -667,14 +667,6 @@ class SCMFactory(object):
         longest = sorted_roots[-1][0]
         return [x[2] for x in roots if x[0] == longest]
 
-    def _find_clonable(self, dir, matches):
-        # Find clonable SCMs
-        return [x for x in matches if x.name != 'svn']
-
-    def _find_roots(self, dir, matches):
-        # Find SCMs with root in dir
-        return [x for x in matches if x.get_root_from_sandbox(dir) == dir]
-
     def get_scm_from_url(self, url):
         scheme, user, host, path, qs, frag = self.urlparser.split(url)
         if scheme in ('svn', 'svn+ssh'):
@@ -722,7 +714,7 @@ class SCMFactory(object):
         err_exit('Unsupported URL scheme: %(scheme)s' % locals())
 
     def _is_bare_git_repo(self, dir):
-        # Detect a bare Git repo
+        # Detect bare Git repo
         def is_repo(dir):
             return (isfile(join(dir, 'config')) and
                     isdir(join(dir, 'refs', 'heads')) and
@@ -731,7 +723,7 @@ class SCMFactory(object):
         return is_repo(dir)
 
     def _is_subversion_repo(self, dir):
-        # Find a Subversion repo on the path
+        # Detect Subversion repo
         def is_repo(dir):
             return (isfile(join(dir, 'format')) and
                     isdir(join(dir, 'db', 'revs')) and
@@ -763,6 +755,12 @@ class SCMFactory(object):
             flags = '--%s or --%s' % tuple([x.name for x in matches])
         err_exit('%(names)s found in %(dir)s\n'
                  'Please specify %(flags)s to resolve' % locals())
+
+    def _find_clonable(self, dir, matches):
+        return [x for x in matches if x.name != 'svn']
+
+    def _find_roots(self, dir, matches):
+        return [x for x in matches if x.get_root_from_sandbox(dir) == dir]
 
     def get_scm(self, type, url_or_dir):
         if type:
