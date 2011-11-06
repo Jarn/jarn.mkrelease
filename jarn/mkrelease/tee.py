@@ -18,12 +18,13 @@ def tee(process, filter):
     lines = []
     while True:
         line = process.stdout.readline()
-        if not line and process.poll() is not None:
+        if line:
+            stripped_line = line.rstrip()
+            if filter(stripped_line):
+                sys.stdout.write(line)
+            lines.append(stripped_line)
+        elif process.poll() is not None:
             break
-        stripped_line = line.rstrip()
-        if filter(stripped_line):
-            sys.stdout.write(line)
-        lines.append(stripped_line)
     return lines
 
 
@@ -36,11 +37,12 @@ def tee2(process, filter):
     """
     while True:
         line = process.stderr.readline()
-        if not line and process.poll() is not None:
+        if line:
+            stripped_line = line.rstrip()
+            if filter(stripped_line):
+                sys.stderr.write(line)
+        elif process.poll() is not None:
             break
-        stripped_line = line.rstrip()
-        if filter(stripped_line):
-            sys.stderr.write(line)
 
 
 class background_thread(object):
