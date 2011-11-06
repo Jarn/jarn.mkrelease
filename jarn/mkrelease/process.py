@@ -21,7 +21,7 @@ class Process(object):
         return ''
 
     def system(self, cmd):
-        rc, lines = self.popen(cmd, echo=tee.NotEmpty())
+        rc, lines = self.popen(cmd)
         return rc
 
     def os_system(self, cmd):
