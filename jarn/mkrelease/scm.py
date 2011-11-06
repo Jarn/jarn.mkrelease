@@ -3,7 +3,9 @@ import re
 import tee
 
 from operator import itemgetter
-from os.path import abspath, join, expanduser, dirname, exists, isdir, isfile
+
+from os.path import abspath, join, expanduser, dirname
+from os.path import exists, isdir, isfile
 
 from process import Process
 from urlparser import URLParser
