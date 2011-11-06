@@ -1,5 +1,6 @@
 import os
 import re
+import tee
 
 from operator import itemgetter
 from os.path import abspath, join, expanduser, dirname, exists, isdir, isfile
@@ -272,8 +273,9 @@ class Subversion(SCM):
 
     def create_tag(self, dir, tagid, name, version, push):
         url = self.get_url_from_sandbox(dir)
-        rc = self.process.system(
-            'svn copy -m"Tagged %(name)s %(version)s." "%(url)s" "%(tagid)s"' % locals())
+        rc, lines = self.process.popen(
+            ('svn copy -m"Tagged %(name)s %(version)s." "%(url)s" "%(tagid)s"' % locals()),
+            echo=tee.NotEmpty())
         if rc != 0:
             err_exit('Tag failed')
         return rc
