@@ -4,6 +4,11 @@ Changelog
 3.4 - Unreleased
 ----------------
 
+- Warn if -p is given but no upstream location is found.
+  [stefan]
+
+- Always push to default in Mercurial.
+  [stefan]
 
 3.3 - 2011-10-31
 ----------------
