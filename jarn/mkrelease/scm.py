@@ -364,11 +364,14 @@ class Mercurial(SCM):
         if rc not in (0, 1):
             err_exit('Commit failed')
         rc = 0
-        if push and self.is_remote_sandbox(dir):
-            rc = self.process.system(
-                'hg push')
-            if rc != 0:
-                err_exit('Push failed')
+        if push:
+            if self.is_remote_sandbox(dir):
+                rc = self.process.system(
+                    'hg push')
+                if rc != 0:
+                    err_exit('Push failed')
+            else:
+                warn('No default path found; not pushing the commit')
         return rc
 
     def checkout_url(self, url, dir):
@@ -407,11 +410,14 @@ class Mercurial(SCM):
             'hg tag -m"Tagged %(name)s %(version)s." "%(tagid)s"' % locals())
         if rc != 0:
             err_exit('Tag failed')
-        if push and self.is_remote_sandbox(dir):
-            rc = self.process.system(
-                'hg push')
-            if rc != 0:
-                err_exit('Push failed')
+        if push:
+            if self.is_remote_sandbox(dir):
+                rc = self.process.system(
+                    'hg push')
+                if rc != 0:
+                    err_exit('Push failed')
+            else:
+                warn('No default path found; not pushing the tag')
         return rc
 
 
