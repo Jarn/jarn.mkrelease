@@ -1,6 +1,7 @@
 import os
 import tee
 import pkg_resources
+import ConfigParser
 
 from os.path import abspath, join, isfile
 
@@ -48,6 +49,14 @@ class Setuptools(object):
         if rc == 0 and len(lines) > 1:
             return lines[0], lines[1]
         err_exit('Bad setup.py')
+
+    @chdir
+    def get_config_value(self, dir, section, name, default=''):
+        parser = ConfigParser.ConfigParser()
+        parser.read('setup.cfg')
+        if parser.has_option(section, name):
+            return parser.get(section, name)
+        return default
 
     @chdir
     def run_egg_info(self, dir, infoflags, scmtype='', quiet=False):
