@@ -392,6 +392,8 @@ class ReleaseMaker(object):
             self.setuptools.check_valid_package(directory)
 
             name, version = self.setuptools.get_package_info(directory)
+            if not self.infoflags:
+                version += self.setuptools.get_config_value(directory, 'egg_info', 'tag_build')
             print 'Releasing', name, version
 
             if not self.skipcheckin:
@@ -434,6 +436,8 @@ class ReleaseMaker(object):
                 self.scm.check_unclean_sandbox(directory)
 
             name, version = self.setuptools.get_package_info(directory)
+            if not infoflags:
+                version += self.setuptools.get_config_value(directory, 'egg_info', 'tag_build')
             if self.isremote:
                 print 'Releasing', name, version
 
