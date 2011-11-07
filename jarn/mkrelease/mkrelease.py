@@ -71,12 +71,9 @@ Options:
 
 class Defaults(object):
 
-    def __init__(self, config_file=None):
+    def __init__(self, config_file):
         """Read config files.
         """
-        if config_file is None:
-            config_file = expanduser('~/.mkrelease')
-
         parser = ConfigParser.ConfigParser()
         parser.read((expanduser('~/.pypirc'), config_file))
 
@@ -207,11 +204,12 @@ class ReleaseMaker(object):
     def __init__(self, args):
         """Initialize.
         """
-        self.reset_defaults()
+        config_file = expanduser('~/.mkrelease')
+        self.reset_defaults(config_file)
         self.args = args
 
-    def reset_defaults(self, config_file=None):
-        """[Re]set defaults.
+    def reset_defaults(self, config_file):
+        """Set defaults.
         """
         self.defaults = Defaults(config_file)
         self.locations = Locations(self.defaults)
