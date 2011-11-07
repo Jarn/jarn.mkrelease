@@ -653,7 +653,7 @@ class SCMFactory(object):
                  'Please specify %(flags)s to resolve' % locals())
 
     def _find_scms(self, dir):
-        # Find SCMs in dir
+        # Find all SCMs in dir
         matches = []
         for klass in self.scms:
             if klass().is_valid_sandbox(dir):
