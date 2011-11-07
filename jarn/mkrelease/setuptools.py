@@ -14,8 +14,8 @@ class Setuptools(object):
     """Interface to setuptools functions."""
 
     def __init__(self, process=None):
-        self.python = Python()
         self.process = process or Process(env=self.get_env())
+        self.python = Python()
 
     def get_env(self):
         # Make sure setuptools and its extensions are found if mkrelease
