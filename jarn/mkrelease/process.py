@@ -3,7 +3,7 @@ import tee
 
 
 class Process(object):
-    """Process related functions using the tee module (mostly)."""
+    """Process related functions using the tee module."""
 
     def __init__(self, quiet=False, env=None):
         self.quiet = quiet

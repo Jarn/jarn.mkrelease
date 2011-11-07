@@ -43,7 +43,7 @@ class JailSetup(unittest.TestCase):
 
 
 class SandboxSetup(JailSetup):
-    """Make sure the jail contains an SCM sandbox."""
+    """Put an SCM sandbox into the jail."""
 
     source = None
     packagedir = None
