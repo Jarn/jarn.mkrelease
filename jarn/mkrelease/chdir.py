@@ -2,7 +2,7 @@ import os
 
 
 class DirStack(object):
-    """Manage a stack of current working directories."""
+    """Stack of current working directories."""
 
     def __init__(self):
         self.stack = []
@@ -11,32 +11,32 @@ class DirStack(object):
         return len(self.stack)
 
     def push(self, dir):
-        """Push cwd on stack and chdir to 'dir'.
+        """Push cwd on stack and change to 'dir'.
         """
         self.stack.append(os.getcwd())
         os.chdir(dir)
 
     def pop(self):
-        """Pop dir off stack and chdir to it.
+        """Pop dir off stack and change to it.
         """
         if len(self.stack):
             os.chdir(self.stack.pop())
 
 
-def chdir(func):
-    """Decorator executing 'func' in directory 'dir'.
+def chdir(method):
+    """Decorator executing method in directory 'dir'.
     """
-    def wrapped_func(self, dir, *args, **kw):
+    def wrapped_method(self, dir, *args, **kw):
         dirstack = DirStack()
-        dirstack.push(dir or os.getcwd())
+        dirstack.push(dir)
         try:
-            return func(self, dir, *args, **kw)
+            return method(self, dir, *args, **kw)
         finally:
             dirstack.pop()
 
-    wrapped_func.__name__ = func.__name__
-    wrapped_func.__module__ = func.__module__
-    wrapped_func.__doc__ = func.__doc__
-    wrapped_func.__dict__.update(func.__dict__)
-    return wrapped_func
+    wrapped_method.__name__ = method.__name__
+    wrapped_method.__module__ = method.__module__
+    wrapped_method.__doc__ = method.__doc__
+    wrapped_method.__dict__.update(method.__dict__)
+    return wrapped_method
 
