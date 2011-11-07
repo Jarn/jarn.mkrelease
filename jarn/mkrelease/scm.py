@@ -24,6 +24,7 @@ class SCM(object):
     def __init__(self, process=None, urlparser=None):
         self.process = process or Process(env=self.get_env())
         self.urlparser = urlparser or URLParser()
+        self.dirstack = DirStack()
 
     def get_env(self):
         if 'PYTHONPATH' not in os.environ:
@@ -302,15 +303,14 @@ class Mercurial(SCM):
 
     def is_valid_sandbox(self, dir):
         if isdir(dir):
-            dirstack = DirStack()
-            dirstack.push(dir)
+            self.dirstack.push(dir)
             try:
                 rc, lines = self.process.popen(
                     'hg status', echo=False, echo2=False)
                 if rc == 0:
                     return True
             finally:
-                dirstack.pop()
+                self.dirstack.pop()
         return False
 
     @chdir
@@ -448,15 +448,14 @@ class Git(SCM):
 
     def is_valid_sandbox(self, dir):
         if isdir(dir):
-            dirstack = DirStack()
-            dirstack.push(dir)
+            self.dirstack.push(dir)
             try:
                 rc, lines = self.process.popen(
                     'git rev-parse --is-inside-work-tree', echo=False, echo2=False)
                 if rc == 0 and lines:
                     return lines[0] == 'true'
             finally:
-                dirstack.pop()
+                self.dirstack.pop()
         return False
 
     @chdir
