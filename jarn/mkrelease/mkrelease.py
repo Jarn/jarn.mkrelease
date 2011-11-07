@@ -21,7 +21,6 @@ from scm import SCMFactory
 from urlparser import URLParser
 from exit import msg_exit, err_exit
 
-PYPIURL = "http://pypi.python.org/pypi"
 MAXALIASDEPTH = 23
 
 VERSION = "jarn.mkrelease %s" % __version__
@@ -109,7 +108,6 @@ class Defaults(object):
 
         class ServerInfo(object):
             def __init__(self, server):
-                self.url = get(server, 'repository', PYPIURL)
                 self.sign = getboolean(server, 'sign', None)
                 self.identity = get(server, 'identity', None)
 
