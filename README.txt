@@ -80,7 +80,7 @@ Options
 
 ``-e, --develop``
     Allow version number extensions (i.e. don't ignore
-    respective setup.cfg options.)
+    respective ``setup.cfg`` options.)
 
 ``-b, --binary``
     Release a binary (bdist) egg.
