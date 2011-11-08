@@ -19,7 +19,7 @@ from setuptools import Setuptools
 from scp import SCP
 from scm import SCMFactory
 from urlparser import URLParser
-from exit import msg_exit, err_exit
+from exit import msg_exit, err_exit, warn
 
 MAXALIASDEPTH = 23
 
@@ -84,7 +84,8 @@ class Defaults(object):
 
         def getboolean(section, key, default=None):
             if parser.has_option(section, key):
-                return parser.getboolean(section, key)
+                try: return parser.getboolean(section, key)
+                except ValueError, e: warn(e)
             return default
 
         main_section = 'mkrelease'
