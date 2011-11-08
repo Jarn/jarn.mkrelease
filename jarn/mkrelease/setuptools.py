@@ -12,7 +12,7 @@ from exit import err_exit
 
 
 class Setuptools(object):
-    """Interface to setuptools functions."""
+    """Interface to setuptools."""
 
     def __init__(self, process=None):
         self.process = process or Process(env=self.get_env())
@@ -34,6 +34,13 @@ class Setuptools(object):
         env['HG_SETUPTOOLS_FORCE_CMD'] = '1'
         return env
 
+    def get_config_value(self, dir, section, name, default=''):
+        parser = ConfigParser.ConfigParser()
+        parser.read(join(dir, 'setup.cfg'))
+        if parser.has_option(section, name):
+            return parser.get(section, name)
+        return default
+
     def is_valid_package(self, dir):
         return isfile(join(dir, 'setup.py'))
 
@@ -42,21 +49,16 @@ class Setuptools(object):
             err_exit('No setup.py found in %(dir)s' % locals())
 
     @chdir
-    def get_package_info(self, dir):
+    def get_package_info(self, dir, develop=False):
         python = self.python
         rc, lines = self.process.popen(
             '"%(python)s" setup.py --name --version' % locals(), echo=False)
-        if rc == 0 and len(lines) > 1:
-            return lines[0], lines[1]
+        if rc == 0 and len(lines) == 2:
+            name, version = lines
+            if develop:
+                version += self.get_config_value(dir, 'egg_info', 'tag_build')
+            return name, version
         err_exit('Bad setup.py')
-
-    @chdir
-    def get_config_value(self, dir, section, name, default=''):
-        parser = ConfigParser.ConfigParser()
-        parser.read('setup.cfg')
-        if parser.has_option(section, name):
-            return parser.get(section, name)
-        return default
 
     @chdir
     def run_egg_info(self, dir, infoflags, scmtype='', quiet=False):

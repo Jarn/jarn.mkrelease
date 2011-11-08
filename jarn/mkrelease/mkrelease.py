@@ -375,6 +375,7 @@ class ReleaseMaker(object):
         """
         directory = self.directory
         scmtype = self.scmtype
+        develop = not self.infoflags
 
         self.scm = self.scms.get_scm(scmtype, directory)
 
@@ -391,9 +392,7 @@ class ReleaseMaker(object):
             self.scm.check_valid_sandbox(directory)
             self.setuptools.check_valid_package(directory)
 
-            name, version = self.setuptools.get_package_info(directory)
-            if not self.infoflags:
-                version += self.setuptools.get_config_value(directory, 'egg_info', 'tag_build')
+            name, version = self.setuptools.get_package_info(directory, develop)
             print 'Releasing', name, version
 
             if not self.skipcheckin:
@@ -409,6 +408,7 @@ class ReleaseMaker(object):
         distflags = self.distflags
         branch = self.branch
         scmtype = self.scm.name
+        develop = not self.infoflags
 
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
         try:
@@ -435,9 +435,7 @@ class ReleaseMaker(object):
                 self.scm.check_dirty_sandbox(directory)
                 self.scm.check_unclean_sandbox(directory)
 
-            name, version = self.setuptools.get_package_info(directory)
-            if not infoflags:
-                version += self.setuptools.get_config_value(directory, 'egg_info', 'tag_build')
+            name, version = self.setuptools.get_package_info(directory, develop)
             if self.isremote:
                 print 'Releasing', name, version
 
