@@ -523,7 +523,7 @@ class Git(SCM):
             key = 'branch.%(branch)s.merge=' % locals()
             for line in reversed(lines):
                 if line.startswith(key):
-                    return line[len(key):][len('refs/heads/'):]
+                    return line[len(key)+len('refs/heads/'):]
         else:
             err_exit('Failed to get tracked branch from %(branch)s' % locals())
         return ''
@@ -665,10 +665,10 @@ class SCMFactory(object):
         roots = []
         for scm in matches:
             root = scm.get_root_from_sandbox(dir)
-            roots.append((len(root), root, scm))
+            roots.append((len(root), scm))
         sorted_roots = sorted(roots, key=itemgetter(0))
         longest = sorted_roots[-1][0]
-        return [x[2] for x in roots if x[0] == longest]
+        return [x[1] for x in roots if x[0] == longest]
 
     def get_scm_from_url(self, url):
         scheme, user, host, path, qs, frag = self.urlparser.split(url)
