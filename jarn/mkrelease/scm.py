@@ -13,13 +13,12 @@ from chdir import DirStack, chdir
 from exit import err_exit, warn
 from lazy import lazy
 
-version_re = re.compile(r'version ([0-9.]+)', re.IGNORECASE)
-
 
 class SCM(object):
     """Interface to source code management systems."""
 
     name = ''
+    version_re = re.compile(r'version ([0-9.]+)', re.IGNORECASE)
 
     def __init__(self, process=None, urlparser=None):
         self.process = process or Process(env=self.get_env())
@@ -118,7 +117,7 @@ class Subversion(SCM):
         rc, lines = self.process.popen(
             'svn --version', echo=False)
         if rc == 0 and lines:
-            match = version_re.search(lines[0])
+            match = self.version_re.search(lines[0])
             if match is not None:
                 return match.group(1)
         return ''
@@ -292,7 +291,7 @@ class Mercurial(SCM):
         rc, lines = self.process.popen(
             'hg --version', echo=False)
         if rc == 0 and lines:
-            match = version_re.search(lines[0])
+            match = self.version_re.search(lines[0])
             if match is not None:
                 return match.group(1)
         return ''
@@ -433,7 +432,7 @@ class Git(SCM):
         rc, lines = self.process.popen(
             'git --version', echo=False)
         if rc == 0 and lines:
-            match = version_re.search(lines[0])
+            match = self.version_re.search(lines[0])
             if match is not None:
                 return match.group(1)
         return ''
