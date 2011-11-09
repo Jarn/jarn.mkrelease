@@ -270,22 +270,22 @@ class ReleaseMaker(object):
                 self.distcmd = 'bdist'
                 self.distflags = ['--formats="egg"']
             elif name in ('-c', '--config-file') and depth == 0:
-                value = abspath(expanduser(value))
-                self.check_valid_config_file(value)
-                self.reset_defaults(value)
+                config_file = abspath(expanduser(value))
+                self.check_valid_file(config_file)
+                self.reset_defaults(config_file)
                 return self.parse_options(args, depth+1)
 
         return remaining_args
 
-    def check_valid_config_file(self, config_file):
-        """Check if 'config_file' can be read.
+    def check_valid_file(self, file):
+        """Check if 'file' can be read.
         """
-        if not exists(config_file):
-            err_exit('No such file: %(config_file)s' % locals())
-        if not isfile(config_file):
-            err_exit('Not a file: %(config_file)s' % locals())
-        if not os.access(config_file, os.R_OK):
-            err_exit('File cannot be read: %(config_file)s' % locals())
+        if not exists(file):
+            err_exit('No such file: %(file)s' % locals())
+        if not isfile(file):
+            err_exit('Not a file: %(file)s' % locals())
+        if not os.access(file, os.R_OK):
+            err_exit('File cannot be read: %(file)s' % locals())
 
     def list_locations(self):
         """Print known dist-locations and exit.
