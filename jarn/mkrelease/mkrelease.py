@@ -194,9 +194,8 @@ class ReleaseMaker(object):
     def __init__(self, args):
         """Initialize.
         """
-        config_file = expanduser('~/.mkrelease')
-        self.reset_defaults(config_file)
         self.args = args
+        self.reset_defaults(expanduser('~/.mkrelease'))
 
     def reset_defaults(self, config_file):
         """Set defaults.
