@@ -507,7 +507,7 @@ class Git(SCM):
             'git config -l', echo=False)
         if rc == 0 and lines:
             key = 'branch.%(branch)s.remote=' % locals()
-            for line in lines:
+            for line in reversed(lines):
                 if line.startswith(key):
                     return line[len(key):]
         else:
@@ -521,7 +521,7 @@ class Git(SCM):
             'git config -l', echo=False)
         if rc == 0 and lines:
             key = 'branch.%(branch)s.merge=' % locals()
-            for line in lines:
+            for line in reversed(lines):
                 if line.startswith(key):
                     return line[len(key):][len('refs/heads/'):]
         else:
@@ -536,7 +536,7 @@ class Git(SCM):
                 'git config -l', echo=False)
             if rc == 0 and lines:
                 key = 'remote.%(remote)s.url=' % locals()
-                for line in lines:
+                for line in reversed(lines):
                     if line.startswith(key):
                         return line[len(key):]
             else:
