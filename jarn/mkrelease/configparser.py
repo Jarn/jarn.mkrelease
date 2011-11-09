@@ -1,5 +1,4 @@
 from ConfigParser import SafeConfigParser
-
 from exit import warn
 
 
