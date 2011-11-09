@@ -28,6 +28,6 @@ class Process(object):
         if self.quiet:
             cmd = cmd + ' >%s 2>&1' % os.devnull
         if self.env:
-            cmd = ''.join('%s=%s ' % (k, v) for k, v in self.env.items()) + cmd
+            cmd = ''.join('export %s="%s"\n' % (k, v) for k, v in self.env.items()) + cmd
         return os.system(cmd)
 
