@@ -105,7 +105,7 @@ class Defaults(object):
 
     @property
     def known_locations(self):
-        """Set of known locations.
+        """A set of known locations.
         """
         return set(chain(self.aliases, self.servers))
 
