@@ -511,7 +511,7 @@ class Git(SCM):
                 if line.startswith(key):
                     return line[len(key):]
         else:
-            err_exit('Failed to get remote from %(dir)s' % locals())
+            err_exit('Failed to get remote from %(branch)s' % locals())
         return ''
 
     @chdir
@@ -525,7 +525,7 @@ class Git(SCM):
                 if line.startswith(key):
                     return line[len(key):][len('refs/heads/'):]
         else:
-            err_exit('Failed to get tracked branch from %(dir)s' % locals())
+            err_exit('Failed to get tracked branch from %(branch)s' % locals())
         return ''
 
     @chdir
