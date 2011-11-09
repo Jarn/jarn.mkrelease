@@ -73,10 +73,10 @@ def popen(cmd, echo=True, echo2=True, env=None):
     The optional 'env' argument allows to pass a dict replacing os.environ.
     """
     if not callable(echo):
-        echo = echo and On() or Off()
+        echo = On() if echo else Off()
 
     if not callable(echo2):
-        echo2 = echo2 and On() or Off()
+        echo2 = On() if echo2 else Off()
 
     process = Popen(
         cmd,
