@@ -1,12 +1,12 @@
 import os
 import tee
 import pkg_resources
-import ConfigParser
 
 from os.path import abspath, join, isfile
 
 from python import Python
 from process import Process
+from configparser import ConfigParser
 from chdir import chdir
 from exit import err_exit
 
@@ -34,13 +34,6 @@ class Setuptools(object):
         env['HG_SETUPTOOLS_FORCE_CMD'] = '1'
         return env
 
-    def get_config_value(self, dir, section, name, default=''):
-        parser = ConfigParser.ConfigParser()
-        parser.read(join(dir, 'setup.cfg'))
-        if parser.has_option(section, name):
-            return parser.get(section, name)
-        return default
-
     def is_valid_package(self, dir):
         return isfile(join(dir, 'setup.py'))
 
@@ -56,7 +49,9 @@ class Setuptools(object):
         if rc == 0 and len(lines) == 2:
             name, version = lines
             if develop:
-                version += self.get_config_value(dir, 'egg_info', 'tag_build')
+                parser = ConfigParser()
+                parser.read('setup.cfg')
+                version += parser.get('egg_info', 'tag_build', '')
             return name, version
         err_exit('Bad setup.py')
 

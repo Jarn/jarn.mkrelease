@@ -9,7 +9,6 @@ import os
 import getopt
 import tempfile
 import shutil
-import ConfigParser
 
 from os.path import abspath, join, expanduser, exists, isfile
 from itertools import chain
@@ -19,7 +18,8 @@ from setuptools import Setuptools
 from scp import SCP
 from scm import SCMFactory
 from urlparser import URLParser
-from exit import msg_exit, err_exit, warn
+from configparser import ConfigParser
+from exit import msg_exit, err_exit
 
 MAXALIASDEPTH = 23
 
@@ -74,30 +74,20 @@ class Defaults(object):
     def __init__(self, config_file):
         """Read config files.
         """
-        parser = ConfigParser.ConfigParser()
+        parser = ConfigParser()
         parser.read((expanduser('~/.pypirc'), config_file))
-
-        def get(section, key, default=None):
-            if parser.has_option(section, key):
-                return parser.get(section, key)
-            return default
-
-        def getboolean(section, key, default=None):
-            if parser.has_option(section, key):
-                try: return parser.getboolean(section, key)
-                except ValueError, e: warn(e)
-            return default
 
         main_section = 'mkrelease'
         if not parser.has_section(main_section) and parser.has_section('defaults'):
             main_section = 'defaults' # BBB
 
-        self.distbase = get(main_section, 'distbase', '')
-        self.distdefault = get(main_section, 'distdefault', '')
+        self.distbase = parser.get(main_section, 'distbase', '')
+        self.distdefault = parser.get(main_section, 'distdefault', '')
 
-        self.sign = getboolean(main_section, 'sign', False)
-        self.identity = get(main_section, 'identity', '')
-        self.push = getboolean(main_section, 'push', False)
+        self.sign = parser.getboolean(main_section, 'sign', False)
+        self.identity = parser.get(main_section, 'identity', '')
+
+        self.push = parser.getboolean(main_section, 'push', False)
 
         self.aliases = {}
         if parser.has_section('aliases'):
@@ -106,13 +96,12 @@ class Defaults(object):
 
         class ServerInfo(object):
             def __init__(self, server):
-                self.sign = getboolean(server, 'sign', None)
-                self.identity = get(server, 'identity', None)
+                self.sign = parser.getboolean(server, 'sign', None)
+                self.identity = parser.get(server, 'identity', None)
 
         self.servers = {}
-        for server in get('distutils', 'index-servers', '').split():
-            info = ServerInfo(server)
-            self.servers[server] = info
+        for server in parser.get('distutils', 'index-servers', '').split():
+            self.servers[server] = ServerInfo(server)
 
     @property
     def known_locations(self):
