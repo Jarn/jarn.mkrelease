@@ -13,7 +13,7 @@ class SCP(object):
         slash = location.find('/')
         return colon > 0 and (slash < 0 or slash > colon)
 
-    def join(distbase, location):
+    def join(self, distbase, location):
         sep = ''
         if distbase and distbase[-1] not in (':', '/'):
             sep = '/'
