@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.4 - Unreleased
+3.4 - 2011-11-10
 ----------------
 
 - Warn if -p is given but no upstream location is found.
