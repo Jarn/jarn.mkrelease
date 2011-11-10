@@ -10,7 +10,10 @@ Changelog
 - Always push to default in Mercurial.
   [stefan]
 
-- Don't read empty lines from terminating subprocesses.
+- Avoid reading empty lines from terminating subprocesses.
+  [stefan]
+
+- Fix bug in handling of distbase.
   [stefan]
 
 3.3 - 2011-10-31
