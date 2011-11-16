@@ -207,7 +207,7 @@ class ReleaseMaker(object):
         self.scp = SCP()
         self.scms = SCMFactory()
         self.urlparser = URLParser()
-        self.skipcheckin = False
+        self.skipcommit = False
         self.skiptag = False
         self.skipupload = False
         self.push = self.defaults.push
@@ -237,13 +237,13 @@ class ReleaseMaker(object):
 
         for name, value in options:
             if name in ('-C', '--no-commit'):
-                self.skipcheckin = True
+                self.skipcommit = True
             elif name in ('-T', '--no-tag'):
                 self.skiptag = True
             elif name in ('-S', '--no-upload'):
                 self.skipupload = True
             elif name in ('-n', '--dry-run'):
-                self.skipcheckin = self.skiptag = self.skipupload = True
+                self.skipcommit = self.skiptag = self.skipupload = True
             elif name in ('-p', '--push'):
                 self.push = True
             elif name in ('-q', '--quiet'):
@@ -384,7 +384,7 @@ class ReleaseMaker(object):
             name, version = self.setuptools.get_package_info(directory, develop)
             print 'Releasing', name, version
 
-            if not self.skipcheckin:
+            if not self.skipcommit:
                 if self.scm.is_dirty_sandbox(directory):
                     self.scm.commit_sandbox(directory, name, version, self.push)
 
@@ -420,7 +420,7 @@ class ReleaseMaker(object):
 
             self.setuptools.check_valid_package(directory)
 
-            if not (self.skipcheckin and self.skiptag):
+            if not (self.skipcommit and self.skiptag):
                 self.scm.check_dirty_sandbox(directory)
                 self.scm.check_unclean_sandbox(directory)
 
