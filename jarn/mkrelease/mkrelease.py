@@ -286,6 +286,21 @@ class ReleaseMaker(object):
         if not os.access(file, os.R_OK):
             err_exit('File cannot be read: %(file)s' % locals())
 
+    def list_locations(self):
+        """Print known dist-locations and exit.
+        """
+        known = sorted(self.defaults.known_locations)
+        default = self.defaults.distdefault
+        if default:
+            if default not in known:
+                known.append(default)
+                known.sort()
+            for i, location in enumerate(known):
+                if location == default:
+                    known[i] += ' (default)'
+                    break
+        msg_exit('\n'.join(known))
+
     def get_uploadflags(self, location):
         """Return uploadflags for the given server.
         """
@@ -313,21 +328,6 @@ class ReleaseMaker(object):
                 uploadflags.append('--identity="%s"' % self.defaults.identity)
 
         return uploadflags
-
-    def list_locations(self):
-        """Print known dist-locations and exit.
-        """
-        known = sorted(self.defaults.known_locations)
-        default = self.defaults.distdefault
-        if default:
-            if default not in known:
-                known.append(default)
-                known.sort()
-            for i, location in enumerate(known):
-                if location == default:
-                    known[i] += ' (default)'
-                    break
-        msg_exit('\n'.join(known))
 
     def get_python(self):
         """Get the Python interpreter.
