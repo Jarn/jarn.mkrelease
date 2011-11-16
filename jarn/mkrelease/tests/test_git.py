@@ -359,34 +359,34 @@ class CheckinSandboxTests(GitSetup):
 
     def testCheckinCleanSandbox(self):
         scm = Git(Process(quiet=True))
-        self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '2.6', False), 0)
+        self.assertEqual(scm.commit_sandbox(self.packagedir, 'testpackage', '2.6', False), 0)
 
     def testCheckinDirtySandbox(self):
         scm = Git(Process(quiet=True))
         self.modify(self.packagedir)
-        self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '2.6', False), 0)
+        self.assertEqual(scm.commit_sandbox(self.packagedir, 'testpackage', '2.6', False), 0)
 
     @quiet
     def testCheckinAndPushCleanLocalSandbox(self):
         scm = Git(Process(quiet=True))
-        self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '2.6', True), 0)
+        self.assertEqual(scm.commit_sandbox(self.packagedir, 'testpackage', '2.6', True), 0)
 
     @quiet
     def testCheckinAndPushDirtyLocalSandbox(self):
         scm = Git(Process(quiet=True))
         self.modify(self.packagedir)
-        self.assertEqual(scm.checkin_sandbox(self.packagedir, 'testpackage', '2.6', True), 0)
+        self.assertEqual(scm.commit_sandbox(self.packagedir, 'testpackage', '2.6', True), 0)
 
     def testCheckinAndPushCleanRemoteSandbox(self):
         scm = Git(Process(quiet=True))
         self.clone()
-        self.assertEqual(scm.checkin_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
+        self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
 
     def testCheckinAndPushDirtyRemoteSandbox(self):
         scm = Git(Process(quiet=True))
         self.clone()
         self.modify(self.clonedir)
-        self.assertEqual(scm.checkin_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
+        self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
         self.verify(self.clonedir)
         self.update(self.packagedir)
         self.verify(self.packagedir)
@@ -396,18 +396,18 @@ class CheckinSandboxTests(GitSetup):
         scm = Git(Process(quiet=True))
         self.clone()
         self.destroy()
-        self.assertRaises(SystemExit, scm.checkin_sandbox, self.clonedir, 'testpackage', '2.6', True)
+        self.assertRaises(SystemExit, scm.commit_sandbox, self.clonedir, 'testpackage', '2.6', True)
 
     @quiet
     def testBadSandbox(self):
         scm = Git(Process(quiet=True))
         self.destroy()
-        self.assertRaises(SystemExit, scm.checkin_sandbox, self.packagedir, 'testpackage', '2.6', False)
+        self.assertRaises(SystemExit, scm.commit_sandbox, self.packagedir, 'testpackage', '2.6', False)
 
     @quiet
     def testBadProcess(self):
         scm = Git(MockProcess(rc=255))
-        self.assertRaises(SystemExit, scm.checkin_sandbox, self.packagedir, 'testpackage', '2.6', False)
+        self.assertRaises(SystemExit, scm.commit_sandbox, self.packagedir, 'testpackage', '2.6', False)
 
 
 class CheckoutUrlTests(GitSetup):

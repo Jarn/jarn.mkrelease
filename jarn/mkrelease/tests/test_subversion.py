@@ -288,21 +288,21 @@ class CheckinSandboxTests(SubversionSetup):
 
     def testCheckinCleanSandbox(self):
         scm = Subversion(Process(quiet=True))
-        self.assertEqual(scm.checkin_sandbox(self.clonedir, 'testpackage', '2.6', False), 0)
+        self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', False), 0)
 
     def testCheckinDirtySandbox(self):
         scm = Subversion(Process(quiet=True))
         self.modify(self.clonedir)
-        self.assertEqual(scm.checkin_sandbox(self.clonedir, 'testpackage', '2.6', False), 0)
+        self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', False), 0)
 
     def testCheckinAndPushCleanSandbox(self):
         scm = Subversion(Process(quiet=True))
-        self.assertEqual(scm.checkin_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
+        self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
 
     def testCheckinAndPushDirtySandbox(self):
         scm = Subversion(Process(quiet=True))
         self.modify(self.clonedir)
-        self.assertEqual(scm.checkin_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
+        self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
         self.verify(self.clonedir)
 
     @quiet
@@ -310,18 +310,18 @@ class CheckinSandboxTests(SubversionSetup):
         scm = Subversion(Process(quiet=True))
         self.modify(self.clonedir)
         self.destroy(self.packagedir)
-        self.assertRaises(SystemExit, scm.checkin_sandbox, self.clonedir, 'testpackage', '2.6', True)
+        self.assertRaises(SystemExit, scm.commit_sandbox, self.clonedir, 'testpackage', '2.6', True)
 
     @quiet
     def testBadSandbox(self):
         scm = Subversion(Process(quiet=True))
         self.destroy(self.clonedir)
-        self.assertRaises(SystemExit, scm.checkin_sandbox, self.clonedir, 'testpackage', '2.6', False)
+        self.assertRaises(SystemExit, scm.commit_sandbox, self.clonedir, 'testpackage', '2.6', False)
 
     @quiet
     def testBadProcess(self):
         scm = Subversion(MockProcess(rc=1))
-        self.assertRaises(SystemExit, scm.checkin_sandbox, self.clonedir, 'testpackage', '2.6', False)
+        self.assertRaises(SystemExit, scm.commit_sandbox, self.clonedir, 'testpackage', '2.6', False)
 
 
 class CheckoutUrlTests(SubversionSetup):

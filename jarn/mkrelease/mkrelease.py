@@ -386,7 +386,7 @@ class ReleaseMaker(object):
 
             if not self.skipcheckin:
                 if self.scm.is_dirty_sandbox(directory):
-                    self.scm.checkin_sandbox(directory, name, version, self.push)
+                    self.scm.commit_sandbox(directory, name, version, self.push)
 
     def make_release(self):
         """Build and distribute the egg.

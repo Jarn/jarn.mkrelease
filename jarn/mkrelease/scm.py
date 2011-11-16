@@ -59,7 +59,7 @@ class SCM(object):
     def get_url_from_sandbox(self, dir):
         raise NotImplementedError
 
-    def checkin_sandbox(self, dir, name, version, push):
+    def commit_sandbox(self, dir, name, version, push):
         raise NotImplementedError
 
     def checkout_url(self, url, dir):
@@ -227,7 +227,7 @@ class Subversion(SCM):
             return lines[1][5:]
         err_exit('Failed to get URL from %(dir)s' % locals())
 
-    def checkin_sandbox(self, dir, name, version, push):
+    def commit_sandbox(self, dir, name, version, push):
         rc = self.process.system(
             'svn commit -m"Prepare %(name)s %(version)s." "%(dir)s"' % locals())
         if rc != 0:
@@ -361,7 +361,7 @@ class Mercurial(SCM):
         return ''
 
     @chdir
-    def checkin_sandbox(self, dir, name, version, push):
+    def commit_sandbox(self, dir, name, version, push):
         rc = self.process.system(
             'hg commit -v -m"Prepare %(name)s %(version)s." .' % locals())
         if rc not in (0, 1):
@@ -543,7 +543,7 @@ class Git(SCM):
         return ''
 
     @chdir
-    def checkin_sandbox(self, dir, name, version, push):
+    def commit_sandbox(self, dir, name, version, push):
         rc = self.process.system(
             'git commit -m"Prepare %(name)s %(version)s." .' % locals())
         if rc not in (0, 1):
