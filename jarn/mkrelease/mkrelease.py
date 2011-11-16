@@ -195,9 +195,9 @@ class ReleaseMaker(object):
         """Initialize.
         """
         self.args = args
-        self.reset_defaults(expanduser('~/.mkrelease'))
+        self.set_defaults(expanduser('~/.mkrelease'))
 
-    def reset_defaults(self, config_file):
+    def set_defaults(self, config_file):
         """Set defaults.
         """
         self.defaults = Defaults(config_file)
@@ -271,7 +271,7 @@ class ReleaseMaker(object):
             elif name in ('-c', '--config-file') and depth == 0:
                 config_file = abspath(expanduser(value))
                 self.check_valid_file(config_file)
-                self.reset_defaults(config_file)
+                self.set_defaults(config_file)
                 return self.parse_options(args, depth+1)
 
         return remaining_args
