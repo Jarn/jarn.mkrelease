@@ -34,7 +34,7 @@ class ConfigParser(SafeConfigParser, object):
         return default
 
     def _value_from_exc(self, exc):
-        # e.g.: invalid literal for int() with base 10: 'foo'
+        # e.g.: invalid literal for int() with base 10: 'a'
         msg = str(exc)
         colon = msg.find(':')
         if colon >= 0:
