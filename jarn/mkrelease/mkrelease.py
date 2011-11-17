@@ -82,7 +82,7 @@ class Defaults(object):
             main_section = 'defaults' # BBB
 
         self.distbase = parser.get(main_section, 'distbase', '')
-        self.distdefault = parser.get(main_section, 'distdefault', '')
+        self.distdefault = parser.get(main_section, 'distdefault', '').split()
 
         self.sign = parser.getboolean(main_section, 'sign', False)
         self.identity = parser.get(main_section, 'identity', '')
@@ -175,7 +175,10 @@ class Locations(object):
     def get_default_location(self):
         """Return the default location.
         """
-        return self.get_location(self.distdefault)
+        res = []
+        for loc in self.distdefault:
+            res.extend(self.get_location(loc))
+        return res
 
     def check_valid_locations(self, locations=None):
         """Fail if 'locations' is empty or contains bad scp destinations.
@@ -289,17 +292,16 @@ class ReleaseMaker(object):
     def list_locations(self):
         """Print known dist-locations and exit.
         """
-        known = sorted(self.defaults.known_locations)
-        default = self.defaults.distdefault
-        if default:
+        known = set(self.defaults.known_locations)
+        for default in self.defaults.distdefault:
             if default not in known:
-                known.append(default)
-                known.sort()
-            for i, location in enumerate(known):
-                if location == default:
-                    known[i] += ' (default)'
-                    break
-        msg_exit('\n'.join(known))
+                known.add(default)
+        for location in sorted(known):
+            if location in self.defaults.distdefault:
+                print location, '(default)'
+            else:
+                print location
+        sys.exit(0)
 
     def get_uploadflags(self, location):
         """Return uploadflags for the given server.
