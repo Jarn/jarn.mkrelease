@@ -216,6 +216,7 @@ class ReleaseMaker(object):
         self.push = self.defaults.push
         self.quiet = False
         self.sign = False
+        self.list = False
         self.identity = ''
         self.branch = ''
         self.scmtype = ''
@@ -258,7 +259,7 @@ class ReleaseMaker(object):
             elif name in ('-d', '--dist-location'):
                 self.locations.extend(self.locations.get_location(value))
             elif name in ('-l', '--list-locations'):
-                self.list_locations()
+                self.list = True
             elif name in ('-h', '--help'):
                 msg_exit(HELP)
             elif name in ('-v', '--version'):
@@ -343,6 +344,9 @@ class ReleaseMaker(object):
 
         if args:
             self.directory = args[0]
+
+        if self.list:
+            self.list_locations()
 
         if not self.locations:
             self.locations.extend(self.locations.get_default_location())
