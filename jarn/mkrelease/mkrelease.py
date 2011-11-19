@@ -81,26 +81,25 @@ class Defaults(object):
         if not parser.has_section(main_section) and parser.has_section('defaults'):
             main_section = 'defaults' # BBB
 
-        self.distbase = parser.get(main_section, 'distbase', '')
-        self.distdefault = parser.get(main_section, 'distdefault', '').split()
+        self.distbase = parser.getstring(main_section, 'distbase', '')
+        self.distdefault = parser.getlist(main_section, 'distdefault', [])
 
         self.sign = parser.getboolean(main_section, 'sign', False)
-        self.identity = parser.get(main_section, 'identity', '')
-
+        self.identity = parser.getstring(main_section, 'identity', '')
         self.push = parser.getboolean(main_section, 'push', False)
 
         self.aliases = {}
         if parser.has_section('aliases'):
             for key, value in parser.items('aliases'):
-                self.aliases[key] = value.split()
+                self.aliases[key] = parser.to_list(value)
 
         class ServerInfo(object):
             def __init__(self, server):
                 self.sign = parser.getboolean(server, 'sign', None)
-                self.identity = parser.get(server, 'identity', None)
+                self.identity = parser.getstring(server, 'identity', None)
 
         self.servers = {}
-        for server in parser.get('distutils', 'index-servers', '').split():
+        for server in parser.getlist('distutils', 'index-servers', []):
             self.servers[server] = ServerInfo(server)
 
     @property
@@ -293,7 +292,7 @@ class ReleaseMaker(object):
     def list_locations(self):
         """Print known dist-locations and exit.
         """
-        known = set(self.defaults.known_locations)
+        known = self.defaults.known_locations # [sic]
         for default in self.defaults.distdefault:
             if default not in known:
                 known.add(default)

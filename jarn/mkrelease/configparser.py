@@ -20,11 +20,26 @@ class ConfigParser(SafeConfigParser, object):
             return super(ConfigParser, self).get(section, option)
         return default
 
+    def getstring(self, section, option, default=None):
+        if self.has_option(section, option):
+            value = super(ConfigParser, self).get(section, option)
+            try:
+                return self.to_string(value)
+            except MultipleValueError, e:
+                warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
+        return default
+
+    def getlist(self, section, option, default=None):
+        if self.has_option(section, option):
+            value = super(ConfigParser, self).get(section, option)
+            return self.to_list(value)
+        return default
+
     def getboolean(self, section, option, default=None):
         if self.has_option(section, option):
             value = super(ConfigParser, self).get(section, option)
             try:
-                return self._to_boolean(value)
+                return self.to_boolean(value)
             except MultipleValueError, e:
                 warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
             except ValueError, e:
@@ -35,7 +50,7 @@ class ConfigParser(SafeConfigParser, object):
         if self.has_option(section, option):
             value = super(ConfigParser, self).get(section, option)
             try:
-                return self._to_int(value)
+                return self.to_int(value)
             except MultipleValueError, e:
                 warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
             except ValueError, e:
@@ -46,30 +61,38 @@ class ConfigParser(SafeConfigParser, object):
         if self.has_option(section, option):
             value = super(ConfigParser, self).get(section, option)
             try:
-                return self._to_float(value)
+                return self.to_float(value)
             except MultipleValueError, e:
                 warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
             except ValueError, e:
                 warn('Not a float: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
-    def _convertable(self, value):
-        v = value.lower().strip()
-        if len(v.split()) > 1:
-            raise MultipleValueError('Multiple values not allowed: %s' % value)
-        return v
+    def to_string(self, value):
+        return self.single_value(value)
 
-    def _to_boolean(self, value):
-        v = self._convertable(value)
+    def to_list(self, value):
+        return value.split()
+
+    def to_boolean(self, value):
+        v = self.single_value(value).lower()
         if v not in self._boolean_states:
             raise ValueError('Not a boolean: %s' % value)
         return self._boolean_states[v]
 
-    def _to_int(self, value):
-        return int(self._convertable(value))
+    def to_int(self, value):
+        v = self.single_value(value)
+        return int(v)
 
-    def _to_float(self, value):
-        return float(self._convertable(value))
+    def to_float(self, value):
+        v = self.single_value(value)
+        return float(v)
+
+    def single_value(self, value):
+        v = value.strip()
+        if len(v.split()) > 1:
+            raise MultipleValueError('Multiple values not allowed: %s' % value)
+        return v
 
     def _value_from_exc(self, exc):
         # e.g.: invalid literal for int() with base 10: 'a'
