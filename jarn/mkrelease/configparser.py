@@ -77,6 +77,12 @@ class ConfigParser(SafeConfigParser, object):
                 self.warn('Not a float: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
+    def single_value(self, value):
+        v = value.strip()
+        if len(v.split()) > 1:
+            raise MultipleValueError('Multiple values not allowed: %s' % value)
+        return v
+
     def to_string(self, value):
         return self.single_value(value)
 
@@ -99,12 +105,6 @@ class ConfigParser(SafeConfigParser, object):
     def to_float(self, value):
         v = self.single_value(value)
         return float(v)
-
-    def single_value(self, value):
-        v = value.strip()
-        if len(v.split()) > 1:
-            raise MultipleValueError('Multiple values not allowed: %s' % value)
-        return v
 
     def warn(self, msg):
         if self._warn_func is not None:
