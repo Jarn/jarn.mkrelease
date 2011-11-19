@@ -4,7 +4,10 @@ Changelog
 3.5 - Unreleased
 ----------------
 
-- Allow multiple values for ``distdefault`` config file option.
+- Allow multiple values for the ``distdefault`` config file option.
+  [stefan]
+
+- Defer list-locations until after all arguments have been parsed.
   [stefan]
 
 3.4 - 2011-11-10
