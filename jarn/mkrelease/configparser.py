@@ -13,7 +13,7 @@ class ConfigParser(SafeConfigParser, object):
         try:
             super(ConfigParser, self).read(filenames)
         except Error, e:
-            warn(e)
+            self.warn(e)
 
     def get(self, section, option, default=None):
         if self.has_option(section, option):
@@ -26,7 +26,7 @@ class ConfigParser(SafeConfigParser, object):
             try:
                 return self.to_string(value)
             except MultipleValueError, e:
-                warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
+                self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
         return default
 
     def getlist(self, section, option, default=None):
@@ -41,9 +41,9 @@ class ConfigParser(SafeConfigParser, object):
             try:
                 return self.to_boolean(value)
             except MultipleValueError, e:
-                warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
+                self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
             except ValueError, e:
-                warn('Not a boolean: %s = %r' % (option, self._value_from_exc(e)))
+                self.warn('Not a boolean: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
     def getint(self, section, option, default=None):
@@ -52,9 +52,9 @@ class ConfigParser(SafeConfigParser, object):
             try:
                 return self.to_int(value)
             except MultipleValueError, e:
-                warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
+                self.warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
             except ValueError, e:
-                warn('Not an integer: %s = %r' % (option, self._value_from_exc(e)))
+                self.warn('Not an integer: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
     def getfloat(self, section, option, default=None):
@@ -63,9 +63,9 @@ class ConfigParser(SafeConfigParser, object):
             try:
                 return self.to_float(value)
             except MultipleValueError, e:
-                warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
+                self.warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
             except ValueError, e:
-                warn('Not a float: %s = %r' % (option, self._value_from_exc(e)))
+                self.warn('Not a float: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
     def to_string(self, value):
@@ -94,6 +94,9 @@ class ConfigParser(SafeConfigParser, object):
             raise MultipleValueError('Multiple values not allowed: %s' % value)
         return v
 
+    def warn(self, msg):
+        warn(msg)
+
     def _value_from_exc(self, exc):
         # e.g.: invalid literal for int() with base 10: 'a'
         msg = str(exc)
@@ -106,3 +109,5 @@ class ConfigParser(SafeConfigParser, object):
             return value
         return ''
 
+
+del SafeConfigParser
