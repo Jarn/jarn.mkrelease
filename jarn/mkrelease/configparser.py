@@ -12,6 +12,10 @@ class ConfigParser(SafeConfigParser, object):
         super(ConfigParser, self).__init__()
         self._warn_func = warn_func
 
+    def warn(self, msg):
+        if self._warn_func is not None:
+            self._warn_func(msg)
+
     def read(self, filenames):
         try:
             super(ConfigParser, self).read(filenames)
@@ -105,10 +109,6 @@ class ConfigParser(SafeConfigParser, object):
     def to_float(self, value):
         v = self.single_value(value)
         return float(v)
-
-    def warn(self, msg):
-        if self._warn_func is not None:
-            self._warn_func(msg)
 
     def _value_from_exc(self, exc):
         # e.g.: invalid literal for int() with base 10: 'a'
