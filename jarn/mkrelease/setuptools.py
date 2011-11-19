@@ -51,7 +51,8 @@ class Setuptools(object):
             if develop:
                 parser = ConfigParser()
                 parser.read('setup.cfg')
-                version += parser.get('egg_info', 'tag_build', '')
+                version += parser.get('egg_info', 'tag_build', '').strip()
+            version = pkg_resources.safe_version(version)
             return name, version
         err_exit('Bad setup.py')
 
