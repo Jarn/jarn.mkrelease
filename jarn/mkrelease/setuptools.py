@@ -8,7 +8,7 @@ from python import Python
 from process import Process
 from configparser import ConfigParser
 from chdir import chdir
-from exit import err_exit
+from exit import err_exit, warn
 
 
 class Setuptools(object):
@@ -49,7 +49,7 @@ class Setuptools(object):
         if rc == 0 and len(lines) == 2:
             name, version = lines
             if develop:
-                parser = ConfigParser()
+                parser = ConfigParser(warn)
                 parser.read('setup.cfg')
                 version += parser.getstripped('egg_info', 'tag_build', '')
             return name, pkg_resources.safe_version(version)

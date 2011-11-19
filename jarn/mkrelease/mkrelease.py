@@ -19,7 +19,7 @@ from scp import SCP
 from scm import SCMFactory
 from urlparser import URLParser
 from configparser import ConfigParser
-from exit import msg_exit, err_exit
+from exit import err_exit, msg_exit, warn
 
 MAXALIASDEPTH = 23
 
@@ -74,7 +74,7 @@ class Defaults(object):
     def __init__(self, config_file):
         """Read config files.
         """
-        parser = ConfigParser()
+        parser = ConfigParser(warn)
         parser.read((expanduser('~/.pypirc'), config_file))
 
         main_section = 'mkrelease'

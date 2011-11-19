@@ -1,6 +1,5 @@
 from ConfigParser import SafeConfigParser
 from ConfigParser import Error
-from exit import warn
 
 
 class MultipleValueError(Error):
@@ -8,6 +7,10 @@ class MultipleValueError(Error):
 
 
 class ConfigParser(SafeConfigParser, object):
+
+    def __init__(self, warn_func=None):
+        super(ConfigParser, self).__init__()
+        self._warn_func = warn_func
 
     def read(self, filenames):
         try:
@@ -104,7 +107,8 @@ class ConfigParser(SafeConfigParser, object):
         return v
 
     def warn(self, msg):
-        warn(msg)
+        if self._warn_func is not None:
+            self._warn_func(msg)
 
     def _value_from_exc(self, exc):
         # e.g.: invalid literal for int() with base 10: 'a'
