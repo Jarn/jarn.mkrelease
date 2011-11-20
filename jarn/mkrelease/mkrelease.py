@@ -81,7 +81,7 @@ class Defaults(object):
         if not parser.has_section(main_section) and parser.has_section('defaults'):
             main_section = 'defaults' # BBB
 
-        self.distbase = parser.getstring(main_section, 'distbase', '', single=True)
+        self.distbase = parser.getstring(main_section, 'distbase', '', singlevalue=True)
         self.distdefault = parser.getlist(main_section, 'distdefault', [])
 
         self.sign = parser.getboolean(main_section, 'sign', False)

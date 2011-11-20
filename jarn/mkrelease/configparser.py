@@ -31,22 +31,27 @@ class ConfigParser(SafeConfigParser, object):
             return value
         return default
 
+    def getstring(self, section, option, default=None, singlevalue=False):
+        if singlevalue:
+            return self._getsinglevalue(section, option, default)
+        if self.has_option(section, option):
+            value = super(ConfigParser, self).get(section, option)
+            return self.to_string(value)
+        return default
+
     def getlist(self, section, option, default=None):
         if self.has_option(section, option):
             value = super(ConfigParser, self).get(section, option)
             return self.to_list(value)
         return default
 
-    def getstring(self, section, option, default=None, single=False):
+    def _getsinglevalue(self, section, option, default=None):
         if self.has_option(section, option):
             value = super(ConfigParser, self).get(section, option)
-            if single:
-                try:
-                    return self.to_single(value)
-                except MultipleValueError, e:
-                    self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
-            else:
-                return self.to_string(value)
+            try:
+                return self.to_single_value(value)
+            except MultipleValueError, e:
+                self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
         return default
 
     def getboolean(self, section, option, default=None):
@@ -82,15 +87,14 @@ class ConfigParser(SafeConfigParser, object):
                 self.warn('Not a float: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
-    def to_list(self, value):
-        return value.split()
-
     def to_string(self, value):
         return ' '.join(value.split())
 
-    def to_single(self, value):
-        v = self._single_value(value)
-        return v
+    def to_list(self, value):
+        return value.split()
+
+    def to_single_value(self, value):
+        return self._single_value(value)
 
     def to_boolean(self, value):
         v = self._single_value(value).lower()
