@@ -24,7 +24,8 @@ class ConfigParser(SafeConfigParser, object):
 
     def get(self, section, option, default=None):
         if self.has_option(section, option):
-            return super(ConfigParser, self).get(section, option)
+            value = super(ConfigParser, self).get(section, option)
+            return value
         return default
 
     def getstring(self, section, option, default=None):
@@ -37,6 +38,15 @@ class ConfigParser(SafeConfigParser, object):
         if self.has_option(section, option):
             value = super(ConfigParser, self).get(section, option)
             return self.to_list(value)
+        return default
+
+    def getsingle(self, section, option, default=None):
+        if self.has_option(section, option):
+            value = super(ConfigParser, self).get(section, option)
+            try:
+                return self.to_single(value)
+            except MultipleValueError, e:
+                self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
         return default
 
     def getboolean(self, section, option, default=None):
@@ -72,17 +82,15 @@ class ConfigParser(SafeConfigParser, object):
                 self.warn('Not a float: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
-    def single_value(self, value):
-        v = value.strip()
-        if len(v.split()) > 1:
-            raise MultipleValueError('Multiple values not allowed: %s' % value)
-        return v
-
     def to_string(self, value):
         return ' '.join(value.split())
 
     def to_list(self, value):
         return value.split()
+
+    def to_single(self, value):
+        v = self.single_value(value)
+        return v
 
     def to_boolean(self, value):
         v = self.single_value(value).lower()
@@ -97,6 +105,12 @@ class ConfigParser(SafeConfigParser, object):
     def to_float(self, value):
         v = self.single_value(value)
         return float(v)
+
+    def single_value(self, value):
+        v = value.strip()
+        if len(v.split()) > 1:
+            raise MultipleValueError('Multiple values not allowed: %s' % value)
+        return v
 
     def _value_from_exc(self, exc):
         # e.g.: invalid literal for int() with base 10: 'a'
