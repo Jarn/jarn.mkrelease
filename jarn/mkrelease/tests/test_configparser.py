@@ -146,100 +146,93 @@ f_val = 0.1
 
 class WarnFuncTests(JailSetup):
 
-    def setUp(self):
-        JailSetup.setUp(self)
-        self.warnings = []
-
-    def warn_func(self, msg):
-        self.warnings.append(msg)
-
     def test_warn_bad_format(self):
         self.mkfile('my.cfg', """
 this = wrong
 [section]
 s_val = fred
 """)
-        parser = ConfigParser(self.warn_func)
-        self.assertEqual(len(self.warnings), 0)
+        parser = ConfigParser()
+        self.assertEqual(len(parser.warnings), 0)
         parser.read('my.cfg')
-        self.assertEqual(len(self.warnings), 1)
+        self.assertEqual(len(parser.warnings), 1)
 
     def test_warn_string_multi(self):
         self.mkfile('my.cfg', """
 [section]
 s_val = fred flintstone
 """)
-        parser = ConfigParser(self.warn_func)
+        parser = ConfigParser()
         parser.read('my.cfg')
-        self.assertEqual(len(self.warnings), 0)
+        self.assertEqual(len(parser.warnings), 0)
         self.assertEqual(parser.getstring('section', 's_val', single=True), None)
-        self.assertEqual(len(self.warnings), 1)
+        self.assertEqual(len(parser.warnings), 1)
 
     def test_warn_boolean_multi(self):
         self.mkfile('my.cfg', """
 [section]
 b_val = yes no
 """)
-        parser = ConfigParser(self.warn_func)
+        parser = ConfigParser()
         parser.read('my.cfg')
-        self.assertEqual(len(self.warnings), 0)
+        self.assertEqual(len(parser.warnings), 0)
         self.assertEqual(parser.getboolean('section', 'b_val'), None)
-        self.assertEqual(len(self.warnings), 1)
+        self.assertEqual(len(parser.warnings), 1)
 
     def test_warn_boolean_value(self):
         self.mkfile('my.cfg', """
 [section]
 b_val = x
 """)
-        parser = ConfigParser(self.warn_func)
+        parser = ConfigParser()
         parser.read('my.cfg')
-        self.assertEqual(len(self.warnings), 0)
+        self.assertEqual(len(parser.warnings), 0)
         self.assertEqual(parser.getboolean('section', 'b_val'), None)
-        self.assertEqual(len(self.warnings), 1)
+        self.assertEqual(len(parser.warnings), 1)
 
     def test_warn_int_multi(self):
         self.mkfile('my.cfg', """
 [section]
 i_val = 1 2
 """)
-        parser = ConfigParser(self.warn_func)
+        parser = ConfigParser()
         parser.read('my.cfg')
-        self.assertEqual(len(self.warnings), 0)
+        self.assertEqual(len(parser.warnings), 0)
         self.assertEqual(parser.getint('section', 'i_val'), None)
-        self.assertEqual(len(self.warnings), 1)
+        self.assertEqual(len(parser.warnings), 1)
 
     def test_warn_int_value(self):
         self.mkfile('my.cfg', """
 [section]
 i_val = x
 """)
-        parser = ConfigParser(self.warn_func)
+        parser = ConfigParser()
         parser.read('my.cfg')
-        self.assertEqual(len(self.warnings), 0)
+        self.assertEqual(len(parser.warnings), 0)
         self.assertEqual(parser.getint('section', 'i_val'), None)
-        self.assertEqual(len(self.warnings), 1)
+        self.assertEqual(len(parser.warnings), 1)
 
     def test_warn_float_multi(self):
         self.mkfile('my.cfg', """
 [section]
 f_val = 0.1 0.2
 """)
-        parser = ConfigParser(self.warn_func)
+        parser = ConfigParser()
         parser.read('my.cfg')
-        self.assertEqual(len(self.warnings), 0)
+        self.assertEqual(len(parser.warnings), 0)
         self.assertEqual(parser.getfloat('section', 'f_val'), None)
-        self.assertEqual(len(self.warnings), 1)
+        self.assertEqual(len(parser.warnings), 1)
 
     def test_warn_float_value(self):
         self.mkfile('my.cfg', """
 [section]
 f_val = x
 """)
-        parser = ConfigParser(self.warn_func)
+        parser = ConfigParser()
         parser.read('my.cfg')
-        self.assertEqual(len(self.warnings), 0)
+        self.assertEqual(len(parser.warnings), 0)
         self.assertEqual(parser.getfloat('section', 'f_val'), None)
-        self.assertEqual(len(self.warnings), 1)
+        self.assertEqual(len(parser.warnings), 1)
 
 
 def test_suite():

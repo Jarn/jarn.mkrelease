@@ -10,17 +10,20 @@ class ConfigParser(SafeConfigParser, object):
 
     def __init__(self, warn_func=None):
         super(ConfigParser, self).__init__()
-        self._warn_func = warn_func
+        self.warnings = []
+        self.warn_func = warn_func
 
     def warn(self, msg):
-        if self._warn_func is not None:
-            self._warn_func(msg)
+        self.warnings.append(msg)
+        if self.warn_func is not None:
+            self.warn_func(msg)
 
     def read(self, filenames):
+        self.warnings = []
         try:
             super(ConfigParser, self).read(filenames)
         except Error, e:
-            self.warn(e)
+            self.warn(str(e))
 
     def get(self, section, option, default=None):
         if self.has_option(section, option):
