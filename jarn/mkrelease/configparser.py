@@ -42,6 +42,12 @@ class ConfigParser(SafeConfigParser, object):
             return self.to_stripped(value)
         return default
 
+    def getline(self, section, option, default=None):
+        if self.has_option(section, option):
+            value = super(ConfigParser, self).get(section, option)
+            return self.to_line(value)
+        return default
+
     def getlist(self, section, option, default=None):
         if self.has_option(section, option):
             value = super(ConfigParser, self).get(section, option)
@@ -92,6 +98,9 @@ class ConfigParser(SafeConfigParser, object):
 
     def to_stripped(self, value):
         return value.strip()
+
+    def to_line(self, value):
+        return ' '.join(value.split())
 
     def to_list(self, value):
         return value.split()
