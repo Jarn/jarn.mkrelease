@@ -36,12 +36,6 @@ class ConfigParser(SafeConfigParser, object):
                 self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
         return default
 
-    def getstripped(self, section, option, default=None):
-        if self.has_option(section, option):
-            value = super(ConfigParser, self).get(section, option)
-            return self.to_stripped(value)
-        return default
-
     def getline(self, section, option, default=None):
         if self.has_option(section, option):
             value = super(ConfigParser, self).get(section, option)
@@ -95,9 +89,6 @@ class ConfigParser(SafeConfigParser, object):
 
     def to_string(self, value):
         return self.single_value(value)
-
-    def to_stripped(self, value):
-        return value.strip()
 
     def to_line(self, value):
         return ' '.join(value.split())
