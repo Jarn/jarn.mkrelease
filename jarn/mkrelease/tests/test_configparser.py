@@ -1,6 +1,7 @@
 import unittest
 
 from jarn.mkrelease.configparser import ConfigParser
+
 from jarn.mkrelease.testing import JailSetup
 
 
@@ -14,10 +15,8 @@ s_val = fred
         parser = ConfigParser()
         parser.read('my.cfg')
         self.assertEqual(parser.get('section', 's_val'), 'fred')
-        self.assertEqual(parser.getstring('section', 's_val'), 'fred')
         self.assertEqual(parser.getlist('section', 's_val'), ['fred'])
-        self.assertEqual(parser._getsinglevalue('section', 's_val'), 'fred')
-        self.assertEqual(parser.getstring('section', 's_val', singlevalue=True), 'fred')
+        self.assertEqual(parser.getstring('section', 's_val'), 'fred')
         self.assertEqual(parser.getboolean('section', 's_val'), None)
         self.assertEqual(parser.getint('section', 's_val'), None)
         self.assertEqual(parser.getfloat('section', 's_val'), None)
@@ -31,10 +30,8 @@ s_val = fred
         parser = ConfigParser()
         parser.read('my.cfg')
         self.assertEqual(parser.get('section', 's_val'), None)
-        self.assertEqual(parser.getstring('section', 's_val'), None)
         self.assertEqual(parser.getlist('section', 's_val'), None)
-        self.assertEqual(parser._getsinglevalue('section', 's_val'), None)
-        self.assertEqual(parser.getstring('section', 's_val', singlevalue=True), None)
+        self.assertEqual(parser.getstring('section', 's_val'), None)
         self.assertEqual(parser.getboolean('section', 's_val'), None)
         self.assertEqual(parser.getint('section', 's_val'), None)
         self.assertEqual(parser.getfloat('section', 's_val'), None)
@@ -46,10 +43,8 @@ s_val = fred
         parser = ConfigParser()
         parser.read('my.cfg')
         self.assertEqual(parser.get('section', 's_val'), None)
-        self.assertEqual(parser.getstring('section', 's_val'), None)
         self.assertEqual(parser.getlist('section', 's_val'), None)
-        self.assertEqual(parser._getsinglevalue('section', 's_val'), None)
-        self.assertEqual(parser.getstring('section', 's_val', singlevalue=True), None)
+        self.assertEqual(parser.getstring('section', 's_val'), None)
         self.assertEqual(parser.getboolean('section', 's_val'), None)
         self.assertEqual(parser.getint('section', 's_val'), None)
         self.assertEqual(parser.getfloat('section', 's_val'), None)
@@ -62,10 +57,8 @@ e_val =
         parser = ConfigParser()
         parser.read('my.cfg')
         self.assertEqual(parser.get('section', 'e_val'), '')
-        self.assertEqual(parser.getstring('section', 'e_val'), '')
         self.assertEqual(parser.getlist('section', 'e_val'), [])
-        self.assertEqual(parser._getsinglevalue('section', 'e_val'), '')
-        self.assertEqual(parser.getstring('section', 'e_val', singlevalue=True), '')
+        self.assertEqual(parser.getstring('section', 'e_val'), '')
         self.assertEqual(parser.getboolean('section', 'e_val'), None)
         self.assertEqual(parser.getint('section', 'e_val'), None)
         self.assertEqual(parser.getfloat('section', 'e_val'), None)
@@ -78,10 +71,8 @@ m_val = fred flintstone
         parser = ConfigParser()
         parser.read('my.cfg')
         self.assertEqual(parser.get('section', 'm_val'), 'fred flintstone')
-        self.assertEqual(parser.getstring('section', 'm_val'), 'fred flintstone')
         self.assertEqual(parser.getlist('section', 'm_val'), ['fred', 'flintstone'])
-        self.assertEqual(parser._getsinglevalue('section', 'm_val'), None)
-        self.assertEqual(parser.getstring('section', 'm_val', singlevalue=True), None)
+        self.assertEqual(parser.getstring('section', 'm_val'), None)
         self.assertEqual(parser.getboolean('section', 'm_val'), None)
         self.assertEqual(parser.getint('section', 'm_val'), None)
         self.assertEqual(parser.getfloat('section', 'm_val'), None)
@@ -96,10 +87,8 @@ m_val =
         parser = ConfigParser()
         parser.read('my.cfg')
         self.assertEqual(parser.get('section', 'm_val'), '\nfred\nflintstone')
-        self.assertEqual(parser.getstring('section', 'm_val'), 'fred flintstone')
         self.assertEqual(parser.getlist('section', 'm_val'), ['fred', 'flintstone'])
-        self.assertEqual(parser._getsinglevalue('section', 'm_val'), None)
-        self.assertEqual(parser.getstring('section', 'm_val', singlevalue=True), None)
+        self.assertEqual(parser.getstring('section', 'm_val'), None)
         self.assertEqual(parser.getboolean('section', 'm_val'), None)
         self.assertEqual(parser.getint('section', 'm_val'), None)
         self.assertEqual(parser.getfloat('section', 'm_val'), None)
@@ -112,10 +101,8 @@ b_val = yes
         parser = ConfigParser()
         parser.read('my.cfg')
         self.assertEqual(parser.get('section', 'b_val'), 'yes')
-        self.assertEqual(parser.getstring('section', 'b_val'), 'yes')
         self.assertEqual(parser.getlist('section', 'b_val'), ['yes'])
-        self.assertEqual(parser._getsinglevalue('section', 'b_val'), 'yes')
-        self.assertEqual(parser.getstring('section', 'b_val', singlevalue=True), 'yes')
+        self.assertEqual(parser.getstring('section', 'b_val'), 'yes')
         self.assertEqual(parser.getboolean('section', 'b_val'), True)
         self.assertEqual(parser.getint('section', 'b_val'), None)
         self.assertEqual(parser.getfloat('section', 'b_val'), None)
@@ -128,10 +115,8 @@ i_val = 10
         parser = ConfigParser()
         parser.read('my.cfg')
         self.assertEqual(parser.get('section', 'i_val'), '10')
-        self.assertEqual(parser.getstring('section', 'i_val'), '10')
         self.assertEqual(parser.getlist('section', 'i_val'), ['10'])
-        self.assertEqual(parser._getsinglevalue('section', 'i_val'), '10')
-        self.assertEqual(parser.getstring('section', 'i_val', singlevalue=True), '10')
+        self.assertEqual(parser.getstring('section', 'i_val'), '10')
         self.assertEqual(parser.getboolean('section', 'i_val'), None)
         self.assertEqual(parser.getint('section', 'i_val'), 10)
         self.assertEqual(parser.getfloat('section', 'i_val'), 10.0)
@@ -144,10 +129,8 @@ f_val = 0.1
         parser = ConfigParser()
         parser.read('my.cfg')
         self.assertEqual(parser.get('section', 'f_val'), '0.1')
-        self.assertEqual(parser.getstring('section', 'f_val'), '0.1')
         self.assertEqual(parser.getlist('section', 'f_val'), ['0.1'])
-        self.assertEqual(parser._getsinglevalue('section', 'f_val'), '0.1')
-        self.assertEqual(parser.getstring('section', 'f_val', singlevalue=True), '0.1')
+        self.assertEqual(parser.getstring('section', 'f_val'), '0.1')
         self.assertEqual(parser.getboolean('section', 'f_val'), None)
         self.assertEqual(parser.getint('section', 'f_val'), None)
         self.assertEqual(parser.getfloat('section', 'f_val'), 0.1)
@@ -166,17 +149,6 @@ s_val = fred
         parser.read('my.cfg')
         self.assertEqual(len(parser.warnings), 1)
 
-    def test_warn_singlevalue_multi(self):
-        self.mkfile('my.cfg', """
-[section]
-s_val = fred flintstone
-""")
-        parser = ConfigParser()
-        parser.read('my.cfg')
-        self.assertEqual(len(parser.warnings), 0)
-        self.assertEqual(parser._getsinglevalue('section', 's_val'), None)
-        self.assertEqual(len(parser.warnings), 1)
-
     def test_warn_string_multi(self):
         self.mkfile('my.cfg', """
 [section]
@@ -185,7 +157,7 @@ s_val = fred flintstone
         parser = ConfigParser()
         parser.read('my.cfg')
         self.assertEqual(len(parser.warnings), 0)
-        self.assertEqual(parser.getstring('section', 's_val', singlevalue=True), None)
+        self.assertEqual(parser.getstring('section', 's_val'), None)
         self.assertEqual(len(parser.warnings), 1)
 
     def test_warn_boolean_multi(self):
