@@ -41,6 +41,10 @@ class JailSetup(unittest.TestCase):
     def mkdtemp(self):
         return tempfile.mkdtemp()
 
+    def mkfile(self, name, body=''):
+        with open(name, 'wb') as file:
+            file.write(body)
+
 
 class SandboxSetup(JailSetup):
     """Put an SCM sandbox into the jail."""
