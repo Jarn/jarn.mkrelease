@@ -89,24 +89,24 @@ class ConfigParser(SafeConfigParser, object):
         return value.split()
 
     def to_single(self, value):
-        v = self.single_value(value)
+        v = self._single_value(value)
         return v
 
     def to_boolean(self, value):
-        v = self.single_value(value).lower()
+        v = self._single_value(value).lower()
         if v not in self._boolean_states:
             raise ValueError('Not a boolean: %s' % value)
         return self._boolean_states[v]
 
     def to_int(self, value):
-        v = self.single_value(value)
+        v = self._single_value(value)
         return int(v)
 
     def to_float(self, value):
-        v = self.single_value(value)
+        v = self._single_value(value)
         return float(v)
 
-    def single_value(self, value):
+    def _single_value(self, value):
         v = value.strip()
         if len(v.split()) > 1:
             raise MultipleValueError('Multiple values not allowed: %s' % value)
