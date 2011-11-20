@@ -28,6 +28,12 @@ class ConfigParser(SafeConfigParser, object):
             return value
         return default
 
+    def getlist(self, section, option, default=None):
+        if self.has_option(section, option):
+            value = super(ConfigParser, self).get(section, option)
+            return self.to_list(value)
+        return default
+
     def getstring(self, section, option, default=None, single=False):
         if self.has_option(section, option):
             value = super(ConfigParser, self).get(section, option)
@@ -38,12 +44,6 @@ class ConfigParser(SafeConfigParser, object):
                     self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
             else:
                 return self.to_string(value)
-        return default
-
-    def getlist(self, section, option, default=None):
-        if self.has_option(section, option):
-            value = super(ConfigParser, self).get(section, option)
-            return self.to_list(value)
         return default
 
     def getboolean(self, section, option, default=None):
@@ -79,11 +79,11 @@ class ConfigParser(SafeConfigParser, object):
                 self.warn('Not a float: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
-    def to_string(self, value):
-        return ' '.join(value.split())
-
     def to_list(self, value):
         return value.split()
+
+    def to_string(self, value):
+        return ' '.join(value.split())
 
     def to_single(self, value):
         v = self._single_value(value)
