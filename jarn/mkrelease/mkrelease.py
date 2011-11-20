@@ -85,7 +85,7 @@ class Defaults(object):
         self.distdefault = parser.getlist(main_section, 'distdefault', [])
 
         self.sign = parser.getboolean(main_section, 'sign', False)
-        self.identity = parser.getline(main_section, 'identity', '')
+        self.identity = parser.getstring(main_section, 'identity', '')
         self.push = parser.getboolean(main_section, 'push', False)
 
         self.aliases = {}
@@ -96,7 +96,7 @@ class Defaults(object):
         class ServerInfo(object):
             def __init__(self, server):
                 self.sign = parser.getboolean(server, 'sign', None)
-                self.identity = parser.getline(server, 'identity', None)
+                self.identity = parser.getstring(server, 'identity', None)
 
         self.servers = {}
         for server in parser.getlist('distutils', 'index-servers', []):
