@@ -408,7 +408,7 @@ class ReleaseMaker(object):
         try:
             if self.isremote:
                 directory = join(tempdir, 'build')
-                self.scm.checkout_url(self.remoteurl, directory)
+                self.scm.clone_url(self.remoteurl, directory)
             else:
                 directory = abspath(expanduser(directory))
 

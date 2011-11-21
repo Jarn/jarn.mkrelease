@@ -320,23 +320,23 @@ class CommitSandboxTests(MercurialSetup):
         self.assertRaises(SystemExit, scm.commit_sandbox, self.packagedir, 'testpackage', '2.6', False)
 
 
-class CheckoutUrlTests(MercurialSetup):
+class CloneUrlTests(MercurialSetup):
 
-    def testCheckoutUrl(self):
+    def testCloneUrl(self):
         scm = Mercurial(Process(quiet=True))
-        self.assertEqual(scm.checkout_url(self.packagedir, 'testclone'), 0)
+        self.assertEqual(scm.clone_url(self.packagedir, 'testclone'), 0)
         self.assertEqual(isdir('testclone'), True)
 
     @quiet
     def testBadServer(self):
         scm = Mercurial(Process(quiet=True))
         self.destroy()
-        self.assertRaises(SystemExit, scm.checkout_url, self.packagedir, 'testclone')
+        self.assertRaises(SystemExit, scm.clone_url, self.packagedir, 'testclone')
 
     @quiet
     def testBadProcess(self):
         scm = Mercurial(MockProcess(rc=1))
-        self.assertRaises(SystemExit, scm.checkout_url, self.packagedir, 'testclone')
+        self.assertRaises(SystemExit, scm.clone_url, self.packagedir, 'testclone')
 
 
 class SwitchBranchTests(MercurialSetup):

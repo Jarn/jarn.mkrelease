@@ -62,7 +62,7 @@ class SCM(object):
     def commit_sandbox(self, dir, name, version, push):
         raise NotImplementedError
 
-    def checkout_url(self, url, dir):
+    def clone_url(self, url, dir):
         raise NotImplementedError
 
     def switch_branch(self, dir, branch):
@@ -234,7 +234,7 @@ class Subversion(SCM):
             err_exit('Commit failed')
         return rc
 
-    def checkout_url(self, url, dir):
+    def clone_url(self, url, dir):
         rc = self.process.system(
             'svn checkout "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
@@ -377,7 +377,7 @@ class Mercurial(SCM):
                 warn('No default path found; not pushing the commit')
         return rc
 
-    def checkout_url(self, url, dir):
+    def clone_url(self, url, dir):
         rc = self.process.system(
             'hg clone "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
@@ -564,7 +564,7 @@ class Git(SCM):
                  'not pushing the commit' % locals())
         return rc
 
-    def checkout_url(self, url, dir):
+    def clone_url(self, url, dir):
         rc = self.process.system(
             'git clone "%(url)s" "%(dir)s"' % locals())
         if rc != 0:

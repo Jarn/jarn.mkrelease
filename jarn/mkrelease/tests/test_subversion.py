@@ -324,23 +324,23 @@ class CommitSandboxTests(SubversionSetup):
         self.assertRaises(SystemExit, scm.commit_sandbox, self.clonedir, 'testpackage', '2.6', False)
 
 
-class CheckoutUrlTests(SubversionSetup):
+class CloneUrlTests(SubversionSetup):
 
-    def testCheckoutUrl(self):
+    def testCloneUrl(self):
         scm = Subversion(Process(quiet=True))
-        self.assertEqual(scm.checkout_url('file://'+self.packagedir, 'testclone2'), 0)
+        self.assertEqual(scm.clone_url('file://'+self.packagedir, 'testclone2'), 0)
         self.assertEqual(isdir('testclone2'), True)
 
     @quiet
     def testBadServer(self):
         scm = Subversion(Process(quiet=True))
         self.destroy(self.packagedir)
-        self.assertRaises(SystemExit, scm.checkout_url, 'file://'+self.packagedir, 'testclone2')
+        self.assertRaises(SystemExit, scm.clone_url, 'file://'+self.packagedir, 'testclone2')
 
     @quiet
     def testBadProcess(self):
         scm = Subversion(MockProcess(rc=1))
-        self.assertRaises(SystemExit, scm.checkout_url, 'file://'+self.packagedir, 'testclone2')
+        self.assertRaises(SystemExit, scm.clone_url, 'file://'+self.packagedir, 'testclone2')
 
 
 class SwitchBranchTests(SubversionSetup):
