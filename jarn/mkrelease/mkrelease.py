@@ -279,16 +279,6 @@ class ReleaseMaker(object):
 
         return remaining_args
 
-    def check_valid_file(self, file):
-        """Check if 'file' can be read.
-        """
-        if not exists(file):
-            err_exit('No such file: %(file)s' % locals())
-        if not isfile(file):
-            err_exit('Not a file: %(file)s' % locals())
-        if not os.access(file, os.R_OK):
-            err_exit('File cannot be read: %(file)s' % locals())
-
     def list_locations(self):
         """Print known dist-locations and exit.
         """
@@ -302,6 +292,16 @@ class ReleaseMaker(object):
             else:
                 print location
         sys.exit(0)
+
+    def check_valid_file(self, file):
+        """Check if 'file' can be read.
+        """
+        if not exists(file):
+            err_exit('No such file: %(file)s' % locals())
+        if not isfile(file):
+            err_exit('Not a file: %(file)s' % locals())
+        if not os.access(file, os.R_OK):
+            err_exit('File cannot be read: %(file)s' % locals())
 
     def get_uploadflags(self, location):
         """Return uploadflags for the given server.
