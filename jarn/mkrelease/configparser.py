@@ -83,7 +83,8 @@ class ConfigParser(SafeConfigParser, object):
         return value.split()
 
     def to_string(self, value):
-        return self._single_value(value)
+        v = self._single_value(value)
+        return v
 
     def to_boolean(self, value):
         v = self._single_value(value).lower()
