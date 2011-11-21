@@ -73,16 +73,6 @@ class SCMSetup(SandboxSetup):
 
     name = None
     clonedir = None
-    auto_clone = None
-
-    def setUp(self):
-        SandboxSetup.setUp(self)
-        if self.auto_clone:
-            try:
-                self.clone()
-            except:
-                self.cleanUp()
-                raise
 
     def clone(self):
         raise NotImplementedError
@@ -135,15 +125,28 @@ class SubversionSetup(SCMSetup):
 
     name = 'svn'
     source = 'testrepo.svn.zip'
-    auto_clone = True
+
+    def setUp(self):
+        SCMSetup.setUp(self)
+        try:
+            self._fake_clone()
+        except:
+            self.cleanUp()
+            raise
 
     def clone(self):
+        process = Process(quiet=True)
+        process.system('svn checkout file://%s/trunk testclone' % self.packagedir)
+        self.clonedir = join(self.tempdir, 'testclone')
+
+    def _fake_clone(self):
         # Fake a checkout, the real thing is too expensive
         process = Process(quiet=True)
-        package = join(dirname(__file__), 'tests', 'testpackage.svn.zip')
+        source = 'testpackage.svn.zip'
+        package = join(dirname(__file__), 'tests', source)
         archive = zipfile.ZipFile(package, 'r')
         archive.extractall()
-        os.rename('testpackage.svn', 'testclone')
+        os.rename(source[:-4], 'testclone')
         self.dirstack.push('testclone')
         url = process.popen('svn info')[1][1][5:]
         process.system('svn switch --relocate %s file://%s/trunk' % (url, self.packagedir))
@@ -183,7 +186,6 @@ class MercurialSetup(SCMSetup):
 
     name = 'hg'
     source = 'testpackage.hg.zip'
-    auto_clone = False
 
     def clone(self):
         process = Process(quiet=True)
@@ -217,7 +219,6 @@ class GitSetup(SCMSetup):
 
     name = 'git'
     source = 'testpackage.git.zip'
-    auto_clone = False
 
     def clone(self):
         process = Process(quiet=True)
