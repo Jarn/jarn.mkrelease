@@ -103,7 +103,7 @@ class ConfigParser(SafeConfigParser, object):
     def _single_value(self, value):
         v = value.strip()
         if len(v.split()) > 1:
-            raise MultipleValueError('Multiple values not allowed: %s' % value)
+            raise MultipleValueError('Multiple values not allowed: %s' % v)
         return v
 
     def _value_from_exc(self, exc):
