@@ -40,6 +40,9 @@ Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
 mkrelease is known to work with the 0.6 series of setuptools
 and distribute.
 
+Note: Until Python 2.7.3 is out, we recommend to install mkrelease with
+Python 2.6.
+
 Usage
 =====
 
