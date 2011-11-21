@@ -10,6 +10,9 @@ Changelog
 - Defer list-locations until after all arguments have been parsed.
   [stefan]
 
+- Tests now take half the time to run. Yay!
+  [stefan]
+
 3.4 - 2011-11-10
 ----------------
 
