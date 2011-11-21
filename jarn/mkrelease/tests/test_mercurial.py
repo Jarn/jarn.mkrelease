@@ -265,34 +265,34 @@ class UncleanSandboxTests(MercurialSetup):
         self.assertRaises(SystemExit, scm.check_unclean_sandbox, self.packagedir)
 
 
-class CheckinSandboxTests(MercurialSetup):
+class CommitSandboxTests(MercurialSetup):
 
-    def testCheckinCleanSandbox(self):
+    def testCommitCleanSandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.assertEqual(scm.commit_sandbox(self.packagedir, 'testpackage', '2.6', False), 0)
 
-    def testCheckinDirtySandbox(self):
+    def testCommitDirtySandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.modify(self.packagedir)
         self.assertEqual(scm.commit_sandbox(self.packagedir, 'testpackage', '2.6', False), 0)
 
     @quiet
-    def testCheckinAndPushCleanLocalSandbox(self):
+    def testCommitAndPushCleanLocalSandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.assertEqual(scm.commit_sandbox(self.packagedir, 'testpackage', '2.6', True), 0)
 
     @quiet
-    def testCheckinAndPushDirtyLocalSandbox(self):
+    def testCommitAndPushDirtyLocalSandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.modify(self.packagedir)
         self.assertEqual(scm.commit_sandbox(self.packagedir, 'testpackage', '2.6', True), 0)
 
-    def testCheckinAndPushCleanRemoteSandbox(self):
+    def testCommitAndPushCleanRemoteSandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.clone()
         self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
 
-    def testCheckinAndPushDirtyRemoteSandbox(self):
+    def testCommitAndPushDirtyRemoteSandbox(self):
         scm = Mercurial(Process(quiet=True))
         self.clone()
         self.modify(self.clonedir)

@@ -284,22 +284,22 @@ class UncleanSandboxTests(SubversionSetup):
         self.assertEqual(scm.is_unclean_sandbox(self.clonedir), True)
 
 
-class CheckinSandboxTests(SubversionSetup):
+class CommitSandboxTests(SubversionSetup):
 
-    def testCheckinCleanSandbox(self):
+    def testCommitCleanSandbox(self):
         scm = Subversion(Process(quiet=True))
         self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', False), 0)
 
-    def testCheckinDirtySandbox(self):
+    def testCommitDirtySandbox(self):
         scm = Subversion(Process(quiet=True))
         self.modify(self.clonedir)
         self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', False), 0)
 
-    def testCheckinAndPushCleanSandbox(self):
+    def testCommitAndPushCleanSandbox(self):
         scm = Subversion(Process(quiet=True))
         self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
 
-    def testCheckinAndPushDirtySandbox(self):
+    def testCommitAndPushDirtySandbox(self):
         scm = Subversion(Process(quiet=True))
         self.modify(self.clonedir)
         self.assertEqual(scm.commit_sandbox(self.clonedir, 'testpackage', '2.6', True), 0)
