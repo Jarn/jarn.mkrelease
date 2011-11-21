@@ -29,6 +29,24 @@ class URLParser(object):
                 self.git_ssh_re.match(url) is not None and
                 self.scp.has_host(url))
 
+    def split(self, url):
+        scheme = self.get_scheme(url)
+        if scheme:
+            ignored, host, path, qs, frag = urlsplit(url)
+            user, host = self.hostsplit(host)
+            return scheme, user, host, path, qs, frag
+        return '', '', '', url, '', ''
+
+    def hostsplit(self, host):
+        if '@' in host:
+            return host.split('@', 1)
+        return '', host
+
+    def hostunsplit(self, user, host):
+        if user:
+            return '%s@%s' % (user, host)
+        return host
+
     def abspath(self, url):
         scheme = self.get_scheme(url)
         if scheme == 'file':
@@ -38,25 +56,7 @@ class URLParser(object):
                 if host and path.startswith('/~'):
                     path = path[1:]
                 path = abspath(expanduser(path))
-                host = self._hostunsplit(user, host)
+                host = self.hostunsplit(user, host)
                 return urlunsplit((scheme, host, path, qs, frag))
         return url
-
-    def split(self, url):
-        scheme = self.get_scheme(url)
-        if scheme:
-            ignored, host, path, qs, frag = urlsplit(url)
-            user, host = self._hostsplit(host)
-            return scheme, user, host, path, qs, frag
-        return '', '', '', url, '', ''
-
-    def _hostsplit(self, host):
-        if '@' in host:
-            return host.split('@', 1)
-        return '', host
-
-    def _hostunsplit(self, user, host):
-        if user:
-            return '%s@%s' % (user, host)
-        return host
 
