@@ -138,8 +138,16 @@ class SubversionSetup(SCMSetup):
     auto_clone = True
 
     def clone(self):
+        # Fake a checkout, the real thing is too expensive
         process = Process(quiet=True)
-        process.system('svn checkout file://%s/trunk testclone' % self.packagedir)
+        package = join(dirname(__file__), 'tests', 'testpackage.svn.zip')
+        archive = zipfile.ZipFile(package, 'r')
+        archive.extractall()
+        os.rename('testpackage.svn', 'testclone')
+        self.dirstack.push('testclone')
+        url = process.popen('svn info')[1][1][5:]
+        process.system('svn switch --relocate %s file://%s/trunk' % (url, self.packagedir))
+        self.dirstack.pop()
         self.clonedir = join(self.tempdir, 'testclone')
 
     @chdir
