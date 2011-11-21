@@ -42,7 +42,7 @@ class JailSetup(unittest.TestCase):
         return tempfile.mkdtemp()
 
     def mkfile(self, name, body=''):
-        with open(name, 'wb') as file:
+        with open(name, 'wt') as file:
             file.write(body)
 
 
@@ -313,14 +313,14 @@ def readlines(filename):
 
     Lines are not newline terminated.
     """
-    with open(filename, 'rt') as f:
-        return f.read().strip().split('\n')
+    with open(filename, 'rt') as file:
+        return file.read().strip().split('\n')
 
 
 def appendlines(filename, lines):
     """Append 'lines' to file 'filename'.
     """
-    with open(filename, 'at') as f:
+    with open(filename, 'at') as file:
         for line in lines:
-            f.write(line+'\n')
+            file.write(line+'\n')
 
