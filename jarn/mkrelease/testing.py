@@ -313,20 +313,14 @@ def readlines(filename):
 
     Lines are not newline terminated.
     """
-    f = open(filename, 'rb')
-    try:
-        return f.read().strip().replace('\r', '\n').split('\n')
-    finally:
-        f.close()
+    with open(filename, 'rt') as f:
+        return f.read().strip().split('\n')
 
 
 def appendlines(filename, lines):
     """Append 'lines' to file 'filename'.
     """
-    f = open(filename, 'at')
-    try:
+    with open(filename, 'at') as f:
         for line in lines:
             f.write(line+'\n')
-    finally:
-        f.close()
 
