@@ -89,7 +89,7 @@ class ConfigParser(SafeConfigParser, object):
     def to_boolean(self, value):
         v = self._single_value(value).lower()
         if v not in self._boolean_states:
-            raise ValueError('Not a boolean: %s' % value)
+            raise ValueError('Not a boolean: %s' % v)
         return self._boolean_states[v]
 
     def to_int(self, value):
