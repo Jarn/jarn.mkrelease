@@ -111,7 +111,7 @@ class ConfigParser(SafeConfigParser, object):
         msg = str(exc)
         colon = msg.find(':')
         if colon >= 0:
-            value = msg[colon+1:].lstrip(' \t')
+            value = msg[colon+1:].lstrip()
             if (value.startswith("'") and value.endswith("'")) or \
                (value.startswith('"') and value.endswith('"')):
                 value = value[1:-1]
