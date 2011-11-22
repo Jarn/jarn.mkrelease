@@ -682,7 +682,7 @@ class SCMFactory(object):
                 return Mercurial()
             if host.startswith('git.') or path.startswith('/git/'):
                 return Git()
-            if host == 'github.com':
+            if user == 'git' or host == 'github.com':
                 return Git()
             err_exit('Failed to guess SCM type: %(url)s\n'
                      'Please specify --svn, --hg, or --git' % locals())
@@ -695,7 +695,7 @@ class SCMFactory(object):
                 return Mercurial()
             if host.startswith('git.') or path.startswith('/git/'):
                 return Git()
-            if host == 'github.com':
+            if user == 'git' or host == 'github.com':
                 return Git()
             err_exit('Failed to guess SCM type: %(url)s\n'
                      'Please specify --svn, --hg, or --git' % locals())
