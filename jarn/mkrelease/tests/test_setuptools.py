@@ -96,6 +96,7 @@ class SubversionTests(SubversionSetup):
 README.txt
 setup.py
 testpackage/__init__.py
+testpackage/subversion_only.c
 testpackage/subversion_only.py
 testpackage/subversion_only.txt
 testpackage.egg-info/PKG-INFO
@@ -163,6 +164,7 @@ class MercurialTests(MercurialSetup):
 README.txt
 setup.py
 testpackage/__init__.py
+testpackage/mercurial_only.c
 testpackage/mercurial_only.py
 testpackage/mercurial_only.txt
 testpackage.egg-info/PKG-INFO
@@ -232,6 +234,7 @@ class GitTests(GitSetup):
 README.txt
 setup.py
 testpackage/__init__.py
+testpackage/git_only.c
 testpackage/git_only.py
 testpackage/git_only.txt
 testpackage.egg-info/PKG-INFO
