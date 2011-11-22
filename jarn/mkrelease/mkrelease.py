@@ -374,8 +374,7 @@ class ReleaseMaker(object):
         self.scm = self.scms.get_scm(scmtype, directory)
 
         if self.scm.is_valid_url(directory):
-            if directory.startswith('file:'):
-                directory = self.urlparser.abspath(directory)
+            directory = self.urlparser.abspath(directory)
 
             self.remoteurl = directory
             self.isremote = self.push = True
@@ -415,7 +414,7 @@ class ReleaseMaker(object):
             self.scm.check_valid_sandbox(directory)
 
             if self.isremote and branch:
-                if branch.startswith('file:') and scmtype == 'svn':
+                if scmtype == 'svn':
                     branch = self.urlparser.abspath(branch)
                 self.scm.switch_branch(directory, branch)
 
