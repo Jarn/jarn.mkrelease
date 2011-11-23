@@ -355,6 +355,7 @@ class SwitchBranchTests(SubversionSetup):
         self.assertEqual(scm.switch_branch(self.clonedir, branchid), 0)
         self.assertEqual(scm.get_branch_from_sandbox(self.clonedir), branchid)
 
+    @quiet
     def testSwitchSameBranch(self):
         scm = Subversion()
         trunkid = 'file://%s/trunk' % self.packagedir

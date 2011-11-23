@@ -243,12 +243,11 @@ class Subversion(SCM):
 
     @chdir
     def switch_branch(self, dir, branch):
-        if branch != self.get_branch_from_sandbox(dir):
-            rc = self.process.system(
-                'svn switch "%(branch)s"' % locals())
-            if rc != 0:
-                err_exit('Switch failed')
-        return 0
+        rc = self.process.system(
+            'svn switch "%(branch)s"' % locals())
+        if rc != 0:
+            err_exit('Switch failed')
+        return rc
 
     def make_tagid(self, dir, version):
         url = self.get_url_from_sandbox(dir)
@@ -386,12 +385,11 @@ class Mercurial(SCM):
 
     @chdir
     def switch_branch(self, dir, branch):
-        if branch != self.get_branch_from_sandbox(dir):
-            rc = self.process.system(
-                'hg update "%(branch)s"' % locals())
-            if rc != 0:
-                err_exit('Update failed')
-        return 0
+        rc = self.process.system(
+            'hg update "%(branch)s"' % locals())
+        if rc != 0:
+            err_exit('Update failed')
+        return rc
 
     def make_tagid(self, dir, version):
         return version
@@ -573,12 +571,11 @@ class Git(SCM):
 
     @chdir
     def switch_branch(self, dir, branch):
-        if branch != self.get_branch_from_sandbox(dir):
-            rc = self.process.system(
-                'git checkout -q "%(branch)s"' % locals())
-            if rc != 0:
-                err_exit('Checkout failed')
-        return 0
+        rc = self.process.system(
+            'git checkout -q "%(branch)s"' % locals())
+        if rc != 0:
+            err_exit('Checkout failed')
+        return rc
 
     def make_tagid(self, dir, version):
         return version
