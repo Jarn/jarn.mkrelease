@@ -65,6 +65,9 @@ class SCM(object):
     def clone_url(self, url, dir):
         raise NotImplementedError
 
+    def make_branchid(self, dir, branch):
+        raise NotImplementedError
+
     def switch_branch(self, dir, branch):
         raise NotImplementedError
 
@@ -241,6 +244,9 @@ class Subversion(SCM):
             err_exit('Checkout failed')
         return rc
 
+    def make_branchid(self, dir, branch):
+        return self.urlparser.abspath(branch)
+
     @chdir
     def switch_branch(self, dir, branch):
         rc = self.process.system(
@@ -382,6 +388,9 @@ class Mercurial(SCM):
         if rc != 0:
             err_exit('Clone failed')
         return rc
+
+    def make_branchid(self, dir, branch):
+        return branch
 
     @chdir
     def switch_branch(self, dir, branch):
@@ -568,6 +577,9 @@ class Git(SCM):
         if rc != 0:
             err_exit('Clone failed')
         return rc
+
+    def make_branchid(self, dir, branch):
+        return branch or 'master'
 
     @chdir
     def switch_branch(self, dir, branch):
