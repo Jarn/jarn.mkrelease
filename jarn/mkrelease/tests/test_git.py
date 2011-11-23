@@ -429,6 +429,17 @@ class CloneUrlTests(GitSetup):
         self.assertRaises(SystemExit, scm.clone_url, self.packagedir, 'testclone')
 
 
+class BranchIdTests(GitSetup):
+
+    def testMakeBranchId(self):
+        scm = Git()
+        self.assertEqual(scm.make_branchid(self.packagedir, '2.x'), '2.x')
+
+    def testEmptyBranchId(self):
+        scm = Git()
+        self.assertEqual(scm.make_branchid(self.packagedir, ''), 'master')
+
+
 class SwitchBranchTests(GitSetup):
 
     @quiet

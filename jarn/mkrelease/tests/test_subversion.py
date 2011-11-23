@@ -343,6 +343,25 @@ class CloneUrlTests(SubversionSetup):
         self.assertRaises(SystemExit, scm.clone_url, 'file://'+self.packagedir, 'testclone2')
 
 
+class BranchIdTests(SubversionSetup):
+
+    def testMakeBranchId(self):
+        scm = Subversion()
+        branchid = 'file://%s/branches/2.x' % self.packagedir
+        self.assertEqual(scm.make_branchid(self.clonedir, branchid), branchid)
+
+    def testAbsPathBranchId(self):
+        scm = Subversion()
+        self.dirstack.push(self.packagedir)
+        branchid = 'file:branches/2.x'
+        self.assertEqual(scm.make_branchid(self.clonedir, branchid),
+            'file://%s/branches/2.x' % self.packagedir)
+
+    def testEmptyBranchId(self):
+        scm = Subversion()
+        self.assertEqual(scm.make_branchid(self.clonedir, ''), '')
+
+
 class SwitchBranchTests(SubversionSetup):
 
     @quiet

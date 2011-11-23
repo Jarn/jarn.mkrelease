@@ -339,6 +339,17 @@ class CloneUrlTests(MercurialSetup):
         self.assertRaises(SystemExit, scm.clone_url, self.packagedir, 'testclone')
 
 
+class BranchIdTests(MercurialSetup):
+
+    def testMakeBranchId(self):
+        scm = Mercurial()
+        self.assertEqual(scm.make_branchid(self.packagedir, '2.x'), '2.x')
+
+    def testEmptyBranchId(self):
+        scm = Mercurial()
+        self.assertEqual(scm.make_branchid(self.packagedir, ''), '')
+
+
 class SwitchBranchTests(MercurialSetup):
 
     @quiet
