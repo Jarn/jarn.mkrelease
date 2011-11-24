@@ -102,9 +102,8 @@ class Defaults(object):
         for server in parser.getlist('distutils', 'index-servers', []):
             self.servers[server] = ServerInfo(server)
 
-    @property
-    def known_locations(self):
-        """A set of known locations.
+    def get_known_locations(self):
+        """Return a set of known locations.
         """
         return set(chain(self.aliases, self.servers))
 
@@ -282,7 +281,7 @@ class ReleaseMaker(object):
     def list_locations(self):
         """Print known dist-locations and exit.
         """
-        known = self.defaults.known_locations # [sic]
+        known = self.defaults.get_known_locations()
         for default in self.defaults.distdefault:
             if default not in known:
                 known.add(default)
