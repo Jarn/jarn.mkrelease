@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.5 - Unreleased
+3.5 - 2011-11-25
 ----------------
 
 - Allow multiple values for the ``distdefault`` config file option.
