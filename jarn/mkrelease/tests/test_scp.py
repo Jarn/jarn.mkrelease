@@ -36,7 +36,3 @@ class JoinTests(unittest.TestCase):
         scp = SCP()
         self.assertEqual(scp.join('foo:/bar', 'baz'), 'foo:/bar/baz')
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

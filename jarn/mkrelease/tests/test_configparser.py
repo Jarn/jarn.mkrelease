@@ -226,7 +226,3 @@ f_val = x
         self.assertEqual(parser.getfloat('section', 'f_val'), None)
         self.assertEqual(len(parser.warnings), 1)
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

@@ -569,7 +569,3 @@ class GetVersionTests(unittest.TestCase):
         scm = Git()
         self.failIfEqual(scm.version_info, ())
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-
