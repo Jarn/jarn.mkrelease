@@ -4,6 +4,8 @@ Changelog
 3.6 - Unreleased
 ----------------
 
+- Handle return code changes in Mercurial 2.1.
+  [stefan]
 
 3.5 - 2011-11-25
 ----------------

@@ -369,15 +369,16 @@ class Mercurial(SCM):
     def commit_sandbox(self, dir, name, version, push):
         rc = self.process.system(
             'hg commit -v -m"Prepare %(name)s %(version)s." .' % locals())
-        if rc not in (0, 1):
+        if rc not in (0, 1):    # 1 means empty commit
             err_exit('Commit failed')
         rc = 0
         if push:
             if self.is_remote_sandbox(dir):
                 rc = self.process.system(
                     'hg push default')
-                if rc != 0:
+                if rc not in (0, 1):    # 1 means empty push
                     err_exit('Push failed')
+                rc = 0
             else:
                 warn('No default path found; not pushing the commit')
         return rc
