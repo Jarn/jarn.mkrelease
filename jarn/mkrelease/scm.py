@@ -25,15 +25,27 @@ class SCM(object):
         self.urlparser = urlparser or URLParser()
         self.dirstack = DirStack()
 
+    @lazy
+    def version_info(self):
+        version = self.get_version()
+        info = []
+        if version:
+            for number in version.split('.'):
+                try:
+                    info.append(int(number, 10))
+                except (TypeError, ValueError):
+                    break
+        return tuple(info)
+
+    def get_version(self):
+        raise NotImplementedError
+
     def get_env(self):
         if 'PYTHONPATH' not in os.environ:
             return os.environ
         env = os.environ.copy()
         del env['PYTHONPATH']
         return env
-
-    def get_version(self):
-        raise NotImplementedError
 
     def is_valid_url(self, url):
         raise NotImplementedError
@@ -98,18 +110,6 @@ class SCM(object):
     def check_tag_exists(self, dir, tagid):
         if self.tag_exists(dir, tagid):
             err_exit('Tag exists: %(tagid)s' % locals())
-
-    @lazy
-    def version_info(self):
-        version = self.get_version()
-        info = []
-        if version:
-            for number in version.split('.'):
-                try:
-                    info.append(int(number, 10))
-                except (TypeError, ValueError):
-                    break
-        return tuple(info)
 
 
 class Subversion(SCM):
