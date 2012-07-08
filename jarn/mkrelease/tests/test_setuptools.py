@@ -29,8 +29,9 @@ def get_manifest(archive):
 
 def get_finder(type):
     for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
-        if type in ep.name:
+        if type == ep.name:
             return ep.load()
+
 
 def get_env():
     return Setuptools().get_env()
@@ -38,20 +39,24 @@ def get_env():
 
 class SubversionTests(SubversionSetup):
 
+    @property
+    def type(self):
+        return 'svn' if self.scm.version_info[:2] >= (1, 7) else 'svn_cvs'
+
     def testSubversionFinder(self):
-        files = list(get_finder('svn')(self.clonedir))
+        files = list(get_finder(self.type)(self.clonedir))
         self.failUnless(join(self.clonedir, 'testpackage', 'subversion_only.py') in files)
         self.failUnless(join(self.clonedir, 'testpackage', 'subversion_only.txt') in files)
 
-    def testSubversionFinderNoDirname(self):
+    def testSubversionFinderNoArg(self):
         self.dirstack.push(self.clonedir)
-        files = list(get_finder('svn')())
+        files = list(get_finder(self.type)())
         self.failUnless(join('testpackage', 'subversion_only.py') in files)
         self.failUnless(join('testpackage', 'subversion_only.txt') in files)
 
-    def testSubversionFinderEmptyDirname(self):
+    def testSubversionFinderEmptyArg(self):
         self.dirstack.push(self.clonedir)
-        files = list(get_finder('svn')(''))
+        files = list(get_finder(self.type)(''))
         self.failUnless(join('testpackage', 'subversion_only.py') in files)
         self.failUnless(join('testpackage', 'subversion_only.txt') in files)
 
@@ -85,13 +90,13 @@ class SubversionTests(SubversionSetup):
     def testSubversionMetaFile(self):
         st = Setuptools(Process(quiet=True))
         # This uses svn to create the manifest.
-        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], scmtype='svn')
+        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], scmtype=self.type)
         self.assertEqual(contains(archive, '.svnignore'), False)
 
     def testSubversionManifest(self):
         st = Setuptools(Process(quiet=True))
         # This uses svn to create the manifest.
-        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], scmtype='svn')
+        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], scmtype=self.type)
         self.assertEqual(get_manifest(archive), """\
 README.txt
 setup.py
@@ -108,7 +113,7 @@ testpackage.egg-info/top_level.txt""")
 
     def testRemoveSetupPyc(self):
         st = Setuptools(Process(quiet=True))
-        st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], scmtype='svn')
+        st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], scmtype=self.type)
         self.failIf(isfile(join(self.clonedir, 'setup.pyc')))
 
 
@@ -120,14 +125,14 @@ class MercurialTests(MercurialSetup):
         self.failUnless(join('testpackage', 'mercurial_only.py') in files)
         self.failUnless(join('testpackage', 'mercurial_only.txt') in files)
 
-    def testMercurialFinderNoDirname(self):
+    def testMercurialFinderNoArg(self):
         self.clone()
         self.dirstack.push(self.clonedir)
         files = list(get_finder('hg')())
         self.failUnless(join('testpackage', 'mercurial_only.py') in files)
         self.failUnless(join('testpackage', 'mercurial_only.txt') in files)
 
-    def testMercurialFinderEmptyDirname(self):
+    def testMercurialFinderEmptyArg(self):
         self.clone()
         self.dirstack.push(self.clonedir)
         files = list(get_finder('hg')(''))
@@ -190,14 +195,14 @@ class GitTests(GitSetup):
         self.failUnless(join('testpackage', 'git_only.py') in files)
         self.failUnless(join('testpackage', 'git_only.txt') in files)
 
-    def testGitFinderNoDirname(self):
+    def testGitFinderNoArg(self):
         self.clone()
         self.dirstack.push(self.clonedir)
         files = list(get_finder('git')())
         self.failUnless(join('testpackage', 'git_only.py') in files)
         self.failUnless(join('testpackage', 'git_only.txt') in files)
 
-    def testGitFinderEmptyDirname(self):
+    def testGitFinderEmptyArg(self):
         self.clone()
         self.dirstack.push(self.clonedir)
         files = list(get_finder('git')(''))
