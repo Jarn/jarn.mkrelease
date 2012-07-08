@@ -22,9 +22,9 @@ def contains(archive, name):
 
 
 def get_manifest(archive):
-    manifest = zipfile.ZipFile(archive).open(
-        'testpackage-2.6/testpackage.egg-info/SOURCES.txt')
-    return manifest.read()
+    with zipfile.ZipFile(archive).open(
+        'testpackage-2.6/testpackage.egg-info/SOURCES.txt') as manifest:
+        return manifest.read()
 
 
 def get_finder(type):
