@@ -376,9 +376,13 @@ class Mercurial(SCM):
             if self.is_remote_sandbox(dir):
                 rc = self.process.system(
                     'hg push default')
-                if rc not in (0, 1):    # 1 means empty push
-                    err_exit('Push failed')
-                rc = 0
+                if self.version_info[:2] >= (2, 1):
+                    if rc not in (0, 1):    # 1 means empty push
+                        err_exit('Push failed')
+                    rc = 0
+                else:
+                    if rc != 0:
+                        err_exit('Push failed')
             else:
                 warn('No default path found; not pushing the commit')
         return rc
