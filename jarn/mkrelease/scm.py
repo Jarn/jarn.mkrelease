@@ -141,7 +141,10 @@ class Subversion(SCM):
         rc, lines = self.process.popen(
             'svn info "%(dir)s"' % locals(), echo=False, echo2=False)
         if rc == 0 and lines:
-            url = lines[1][5:]
+            if self.version_info[:2] >= (1, 7):
+                url = lines[2][5:]
+            else:
+                url = lines[1][5:]
             if child_url.startswith(url):
                 return True
         return False
@@ -180,7 +183,10 @@ class Subversion(SCM):
         rc, lines = self.process.popen(
             'svn info "%(dir)s"' % locals(), echo=False)
         if rc == 0 and lines:
-            url = lines[1][5:]
+            if self.version_info[:2] >= (1, 7):
+                url = lines[2][5:]
+            else:
+                url = lines[1][5:]
             if not self.is_same_sandbox(dirname(dir), url):
                 return dir
             return self.get_root_from_sandbox(dirname(dir))
@@ -227,7 +233,10 @@ class Subversion(SCM):
         rc, lines = self.process.popen(
             'svn info "%(dir)s"' % locals(), echo=False)
         if rc == 0 and lines:
-            return lines[1][5:]
+            if self.version_info[:2] >= (1, 7):
+                return lines[2][5:]
+            else:
+                return lines[1][5:]
         err_exit('Failed to get URL from %(dir)s' % locals())
 
     def commit_sandbox(self, dir, name, version, push):

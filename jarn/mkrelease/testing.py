@@ -7,6 +7,7 @@ import zipfile
 import StringIO
 
 from os.path import realpath, join, dirname, isdir
+from lazy import lazy
 
 from jarn.mkrelease.process import Process
 from jarn.mkrelease.chdir import DirStack, chdir
@@ -73,6 +74,11 @@ class SCMSetup(SandboxSetup):
 
     name = None
     clonedir = None
+
+    @lazy
+    def scm(self):
+        from jarn.mkrelease.scm import SCMFactory
+        return SCMFactory().get_scm_from_type(self.name)
 
     def clone(self):
         raise NotImplementedError
@@ -148,7 +154,14 @@ class SubversionSetup(SCMSetup):
         archive.extractall()
         os.rename(source[:-4], 'testclone')
         self.dirstack.push('testclone')
-        url = process.popen('svn info')[1][1][5:]
+
+        # Subversion 1.7
+        if self.scm.version_info[:2] >= (1, 7):
+            process.system('svn upgrade')
+            url = process.popen('svn info')[1][2][5:]
+        else:
+            url = process.popen('svn info')[1][1][5:]
+
         process.system('svn switch --relocate %s file://%s/trunk' % (url, self.packagedir))
         self.dirstack.pop()
         self.clonedir = join(self.tempdir, 'testclone')
