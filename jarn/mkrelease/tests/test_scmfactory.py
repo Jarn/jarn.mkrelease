@@ -291,3 +291,7 @@ class GitGetScmTests(GitSetup):
         self.destroy()
         self.assertRaises(SystemExit, scms.get_scm, None, self.packagedir)
 
+
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
+

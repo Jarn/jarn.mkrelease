@@ -128,3 +128,7 @@ class OsSystemTests(JailSetup):
         rc = process.os_system('$ "Hello world" 2> output')
         self.assertNotEqual(rc, 0)
 
+
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
+
