@@ -265,7 +265,7 @@ Release my.package from an existing tag::
 
 With Mercurial and Git we can use the second argument to specify the tag::
 
-  $ mkrelease -T ssh://git@github.com/Jarn/my.package 1.0
+  $ mkrelease -T git@github.com:Jarn/my.package 1.0
 
 Using GnuPG
 ===========
