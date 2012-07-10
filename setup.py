@@ -27,6 +27,7 @@ setup(name='jarn.mkrelease',
       test_suite='jarn.mkrelease.tests',
       install_requires=[
           'setuptools',
+          'setuptools-subversion',
           'setuptools-hg',
           'setuptools-git',
           'lazy',
