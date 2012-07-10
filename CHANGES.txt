@@ -7,6 +7,12 @@ Changelog
 - Handle return code changes in Mercurial 2.1.
   [stefan]
 
+- Add setuptools-subversion dependency.
+  [stefan]
+
+- Support Subversion 1.7 with the help of setuptools-subversion.
+  [stefan]
+
 3.5 - 2011-11-25
 ----------------
 
