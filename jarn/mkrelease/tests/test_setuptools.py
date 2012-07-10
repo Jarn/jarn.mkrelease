@@ -5,6 +5,7 @@ import pkg_resources
 import unittest
 
 from os.path import join, isfile
+from contextlib import closing
 
 from jarn.mkrelease.setuptools import Setuptools
 from jarn.mkrelease.process import Process
@@ -22,8 +23,8 @@ def contains(archive, name):
 
 
 def get_manifest(archive):
-    with zipfile.ZipFile(archive).open(
-        'testpackage-2.6/testpackage.egg-info/SOURCES.txt') as manifest:
+    with closing(zipfile.ZipFile(archive).open(
+        'testpackage-2.6/testpackage.egg-info/SOURCES.txt')) as manifest:
         return manifest.read()
 
 
