@@ -2,7 +2,7 @@
 jarn.mkrelease
 ==============
 ---------------------------------------------------
-Build and distribute Python eggs in one simple step
+Python egg releaser
 ---------------------------------------------------
 
 **mkrelease** is a no-frills Python egg releaser. It is designed to take
