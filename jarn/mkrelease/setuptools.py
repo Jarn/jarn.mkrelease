@@ -218,7 +218,7 @@ def walk_revctrl(dirname=''):
     file_finder = None
     items = []
     for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
-        if %(scmtype)r in ep.name:
+        if %(scmtype)r == ep.name:
             distutils.log.info('using %%s file-finder', ep.name)
             file_finder = ep.load()
             finder_items = []
