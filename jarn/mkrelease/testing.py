@@ -11,6 +11,7 @@ from lazy import lazy
 
 from jarn.mkrelease.process import Process
 from jarn.mkrelease.chdir import DirStack, chdir
+from jarn.mkrelease.scm import SCMFactory
 
 
 class JailSetup(unittest.TestCase):
@@ -77,31 +78,15 @@ class SCMSetup(SandboxSetup):
 
     @lazy
     def scm(self):
-        from jarn.mkrelease.scm import SCMFactory
-        return SCMFactory().get_scm_from_type(self.name)
+        return get_scm(self.name)
 
     def clone(self):
         raise NotImplementedError
 
-    def destroy(self, dir=None, name=None):
+    def destroy(self, dir=None):
         if dir is None:
             dir = self.packagedir
-        if name is None:
-            name = self.name
-        if name:
-            if name == 'svn':
-                self._destroy_svn(dir, name)
-            else:
-                shutil.rmtree(join(dir, '.'+name))
-
-    def _destroy_svn(self, dir, name):
-        if isdir(join(dir, 'db', 'revs')): # The svn repo
-            shutil.rmtree(join(dir, 'db'))
-        else:
-            for path, dirs, files in os.walk(dir):
-                if '.svn' in dirs:
-                    shutil.rmtree(join(path, '.svn'))
-                    dirs.remove('.svn')
+        shutil.rmtree(join(dir, '.'+self.name))
 
     def modify(self, dir):
         appendlines(join(dir, 'setup.py'), ['#foo'])
@@ -130,7 +115,6 @@ class SubversionSetup(SCMSetup):
     """Manage a Subversion sandbox."""
 
     name = 'svn'
-    source = 'testrepo.svn.zip'
 
     def setUp(self):
         SCMSetup.setUp(self)
@@ -140,31 +124,50 @@ class SubversionSetup(SCMSetup):
             self.cleanUp()
             raise
 
+    @lazy
+    def source(self):
+        if self.scm.version_info[:2] >= (1, 7):
+            return 'testrepo.svn17.zip'
+        return 'testrepo.svn16.zip'
+
     def clone(self):
         process = Process(quiet=True)
         process.system('svn checkout file://%s/trunk testclone' % self.packagedir)
         self.clonedir = join(self.tempdir, 'testclone')
 
+    @lazy
+    def _fake_source(self):
+        if self.scm.version_info[:2] >= (1, 7):
+            return 'testpackage.svn17.zip'
+        return 'testpackage.svn16.zip'
+
     def _fake_clone(self):
         # Fake a checkout, the real thing is too expensive
         process = Process(quiet=True)
-        source = 'testpackage.svn.zip'
+        source = self._fake_source
         package = join(dirname(__file__), 'tests', source)
         archive = zipfile.ZipFile(package, 'r')
         archive.extractall()
         os.rename(source[:-4], 'testclone')
         self.dirstack.push('testclone')
-
-        # Subversion 1.7
         if self.scm.version_info[:2] >= (1, 7):
-            process.system('svn upgrade')
             url = process.popen('svn info')[1][2][5:]
         else:
             url = process.popen('svn info')[1][1][5:]
-
         process.system('svn switch --relocate %s file://%s/trunk' % (url, self.packagedir))
         self.dirstack.pop()
         self.clonedir = join(self.tempdir, 'testclone')
+
+    def destroy(self, dir=None):
+        if dir is None:
+            dir = self.packagedir
+        if isdir(join(dir, 'db', 'revs')): # The svn repo
+            shutil.rmtree(join(dir, 'db'))
+        else:
+            for path, dirs, files in os.walk(dir):
+                if '.svn' in dirs:
+                    shutil.rmtree(join(path, '.svn'))
+                    dirs.remove('.svn')
 
     @chdir
     def modifyprop(self, dir):
@@ -336,4 +339,10 @@ def appendlines(filename, lines):
     with open(filename, 'at') as file:
         for line in lines:
             file.write(line+'\n')
+
+
+def get_scm(name):
+    """Return an SCM instance by name.
+    """
+    return SCMFactory().get_scm_from_type(name)
 
