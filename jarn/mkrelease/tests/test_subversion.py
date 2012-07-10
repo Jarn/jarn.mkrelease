@@ -392,7 +392,7 @@ class SwitchBranchTests(SubversionSetup):
     def testBadSandbox(self):
         scm = Subversion(Process(quiet=True))
         branchid = 'file://%s/branches/2.x' % self.packagedir
-        self.destroy()
+        self.destroy(self.clonedir)
         self.assertRaises(SystemExit, scm.switch_branch, self.clonedir, branchid)
 
     @quiet
