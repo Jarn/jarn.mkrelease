@@ -1,5 +1,6 @@
 import unittest
 
+from jarn.mkrelease.process import Process
 from jarn.mkrelease.scm import SCMFactory
 
 from jarn.mkrelease.testing import quiet
@@ -111,17 +112,33 @@ class SubversionFromSandboxTests(SubversionSetup):
         scms = SCMFactory()
         self.assertRaises(SystemExit, scms.get_scm_from_sandbox, 'foobarbaz.peng')
 
+    @quiet
+    def testAmbiguousSandbox(self):
+        scms = SCMFactory()
+        process = Process()
+        self.dirstack.push(self.clonedir)
+        process.system('git init .')
+        process.system('git add README.txt setup.py testpackage')
+        process.system('git commit -m"Import"')
+        self.dirstack.pop()
+        self.assertRaises(SystemExit, scms.get_scm_from_sandbox, self.clonedir)
+
 
 class MercurialFromSandboxTests(MercurialSetup):
 
     def testGetMercurial(self):
         scms = SCMFactory()
-        self.destroy(name='svn')
         self.assertEqual(scms.get_scm_from_sandbox(self.packagedir).name, 'hg')
 
     @quiet
     def testAmbiguousSandbox(self):
         scms = SCMFactory()
+        process = Process()
+        self.dirstack.push(self.packagedir)
+        process.system('git init .')
+        process.system('git add README.txt setup.py testpackage')
+        process.system('git commit -m"Import"')
+        self.dirstack.pop()
         self.assertRaises(SystemExit, scms.get_scm_from_sandbox, self.packagedir)
 
 
@@ -129,12 +146,17 @@ class GitFromSandboxTests(GitSetup):
 
     def testGetGit(self):
         scms = SCMFactory()
-        self.destroy(name='svn')
         self.assertEqual(scms.get_scm_from_sandbox(self.packagedir).name, 'git')
 
     @quiet
     def testAmbiguousSandbox(self):
         scms = SCMFactory()
+        process = Process()
+        self.dirstack.push(self.packagedir)
+        process.system('hg init .')
+        process.system('hg add README.txt setup.py testpackage')
+        process.system('hg commit -m"Import"')
+        self.dirstack.pop()
         self.assertRaises(SystemExit, scms.get_scm_from_sandbox, self.packagedir)
 
 
@@ -172,6 +194,17 @@ class SubversionGetScmTests(SubversionSetup):
         scms = SCMFactory()
         self.assertRaises(SystemExit, scms.get_scm, None, 'foobarbaz.peng')
 
+    @quiet
+    def testAmbiguousSandbox(self):
+        scms = SCMFactory()
+        process = Process()
+        self.dirstack.push(self.clonedir)
+        process.system('git init .')
+        process.system('git add README.txt setup.py testpackage')
+        process.system('git commit -m"Import"')
+        self.dirstack.pop()
+        self.assertRaises(SystemExit, scms.get_scm, None, self.clonedir)
+
 
 class MercurialGetScmTests(MercurialSetup):
 
@@ -194,19 +227,23 @@ class MercurialGetScmTests(MercurialSetup):
 
     def testGetFromSandbox(self):
         scms = SCMFactory()
-        self.destroy(name='svn')
         self.assertEqual(scms.get_scm(None, self.packagedir).name, 'hg')
 
     @quiet
     def testAmbiguousSandbox(self):
         scms = SCMFactory()
+        process = Process()
+        self.dirstack.push(self.packagedir)
+        process.system('git init .')
+        process.system('git add README.txt setup.py testpackage')
+        process.system('git commit -m"Import"')
+        self.dirstack.pop()
         self.assertRaises(SystemExit, scms.get_scm, None, self.packagedir)
 
     @quiet
     def testBadSandbox(self):
         scms = SCMFactory()
-        self.destroy(name='svn')
-        self.destroy(name='hg')
+        self.destroy()
         self.assertRaises(SystemExit, scms.get_scm, None, self.packagedir)
 
 
@@ -235,19 +272,23 @@ class GitGetScmTests(GitSetup):
 
     def testGetFromSandbox(self):
         scms = SCMFactory()
-        self.destroy(name='svn')
         self.assertEqual(scms.get_scm(None, self.packagedir).name, 'git')
 
     @quiet
     def testAmbiguousSandbox(self):
         scms = SCMFactory()
+        process = Process()
+        self.dirstack.push(self.packagedir)
+        process.system('hg init .')
+        process.system('hg add README.txt setup.py testpackage')
+        process.system('hg commit -m"Import"')
+        self.dirstack.pop()
         self.assertRaises(SystemExit, scms.get_scm, None, self.packagedir)
 
     @quiet
     def testBadSandbox(self):
         scms = SCMFactory()
-        self.destroy(name='svn')
-        self.destroy(name='git')
+        self.destroy()
         self.assertRaises(SystemExit, scms.get_scm, None, self.packagedir)
 
 
