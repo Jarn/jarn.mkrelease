@@ -78,7 +78,7 @@ class SCMSetup(SandboxSetup):
 
     @lazy
     def scm(self):
-        return get_scm(self.name)
+        return SCMFactory().get_scm_from_type(self.name)
 
     def clone(self):
         raise NotImplementedError
@@ -130,16 +130,16 @@ class SubversionSetup(SCMSetup):
             return 'testrepo.svn17.zip'
         return 'testrepo.svn16.zip'
 
-    def clone(self):
-        process = Process(quiet=True)
-        process.system('svn checkout file://%s/trunk testclone' % self.packagedir)
-        self.clonedir = join(self.tempdir, 'testclone')
-
     @lazy
     def _fake_source(self):
         if self.scm.version_info[:2] >= (1, 7):
             return 'testpackage.svn17.zip'
         return 'testpackage.svn16.zip'
+
+    def clone(self):
+        process = Process(quiet=True)
+        process.system('svn checkout file://%s/trunk testclone' % self.packagedir)
+        self.clonedir = join(self.tempdir, 'testclone')
 
     def _fake_clone(self):
         # Fake a checkout, the real thing is too expensive
@@ -339,10 +339,4 @@ def appendlines(filename, lines):
     with open(filename, 'at') as file:
         for line in lines:
             file.write(line+'\n')
-
-
-def get_scm(name):
-    """Return an SCM instance by name.
-    """
-    return SCMFactory().get_scm_from_type(name)
 
