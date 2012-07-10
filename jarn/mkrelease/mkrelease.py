@@ -453,8 +453,8 @@ class ReleaseMaker(object):
                         self.setuptools.run_register(
                             directory, infoflags, location, scmtype, self.quiet)
                         self.setuptools.run_upload(
-                            directory, infoflags, distcmd, distflags, location, uploadflags,
-                            scmtype, self.quiet)
+                            directory, infoflags, distcmd, distflags, location,
+                            uploadflags, scmtype, self.quiet)
                     else:
                         self.scp.run_scp(distfile, location)
         finally:
