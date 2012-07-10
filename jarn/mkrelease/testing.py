@@ -58,13 +58,10 @@ class SandboxSetup(JailSetup):
         JailSetup.setUp(self)
         try:
             package = join(dirname(__file__), 'tests', self.source)
+            archive = zipfile.ZipFile(package, 'r')
+            archive.extractall()
+            os.rename(self.source[:-4], 'testpackage')
             self.packagedir = join(self.tempdir, 'testpackage')
-            if self.source.endswith('.zip'):
-                archive = zipfile.ZipFile(package, 'r')
-                archive.extractall()
-                os.rename(self.source[:-4], 'testpackage')
-            else:
-                shutil.copytree(package, self.packagedir)
         except:
             self.cleanUp()
             raise
