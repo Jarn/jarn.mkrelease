@@ -152,7 +152,7 @@ class Setuptools(object):
         python = self.python
 
         if scmtype:
-            patched = SCM_CHOOSER % locals()
+            patched = WALK_REVCTRL % locals()
             setup_py = '-c"%(patched)s"' % locals()
         else:
             setup_py = 'setup.py %s' % ' '.join(args)
@@ -198,7 +198,7 @@ class Setuptools(object):
         return False
 
 
-SCM_CHOOSER = """\
+WALK_REVCTRL = """\
 import os, sys
 import distutils
 import pkg_resources
