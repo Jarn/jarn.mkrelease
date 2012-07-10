@@ -56,7 +56,7 @@ class Setuptools(object):
         err_exit('Bad setup.py')
 
     @chdir
-    def run_egg_info(self, dir, infoflags, scmtype='', quiet=False):
+    def run_egg_info(self, dir, infoflags, ff='', quiet=False):
         if not self.process.quiet:
             print 'running egg_info'
 
@@ -67,7 +67,7 @@ class Setuptools(object):
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags,
             echo=echo,
-            scmtype=scmtype)
+            ff=ff)
 
         if rc == 0:
             filename = self._parse_egg_info_results(lines)
@@ -76,7 +76,7 @@ class Setuptools(object):
         err_exit('egg_info failed')
 
     @chdir
-    def run_dist(self, dir, infoflags, distcmd, distflags, scmtype='', quiet=False):
+    def run_dist(self, dir, infoflags, distcmd, distflags, ff='', quiet=False):
         if not self.process.quiet:
             print 'running', distcmd
 
@@ -87,7 +87,7 @@ class Setuptools(object):
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + [distcmd] + distflags,
             echo=echo,
-            scmtype=scmtype)
+            ff=ff)
 
         if rc == 0:
             filename = self._parse_dist_results(lines)
@@ -96,7 +96,7 @@ class Setuptools(object):
         err_exit('%(distcmd)s failed' % locals())
 
     @chdir
-    def run_register(self, dir, infoflags, location, scmtype='', quiet=False):
+    def run_register(self, dir, infoflags, location, ff='', quiet=False):
         if not self.process.quiet:
             print 'running register'
 
@@ -109,7 +109,7 @@ class Setuptools(object):
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + ['register'] + serverflags,
             echo=echo,
-            scmtype=scmtype)
+            ff=ff)
 
         if rc == 0:
             if self._parse_register_results(lines):
@@ -117,7 +117,7 @@ class Setuptools(object):
         err_exit('register failed')
 
     @chdir
-    def run_upload(self, dir, infoflags, distcmd, distflags, location, uploadflags, scmtype='', quiet=False):
+    def run_upload(self, dir, infoflags, distcmd, distflags, location, uploadflags, ff='', quiet=False):
         if not self.process.quiet:
             print 'running upload'
 
@@ -131,27 +131,25 @@ class Setuptools(object):
             ['egg_info'] + infoflags + [distcmd] + distflags +
             ['upload'] + serverflags + uploadflags,
             echo=echo,
-            scmtype=scmtype)
+            ff=ff)
 
         if rc == 0:
             if self._parse_upload_results(lines):
                 return rc
         err_exit('upload failed')
 
-    def _run_setup_py(self, args, echo=True, echo2=True, scmtype=''):
+    def _run_setup_py(self, args, echo=True, echo2=True, ff=''):
         """Run setup.py with monkey-patched setuptools.
 
-        The patch forces setuptools to only use file-finders for the
-        selected 'scmtype'.
+        The patch forces setuptools to use the file-finder 'ff'.
+        If 'ff' is the empty string, the patch is not applied.
 
         'args' contains the *list* of arguments that should be passed
         to setup.py.
-
-        If 'scmtype' is the empty string, the patch is not applied.
         """
         python = self.python
 
-        if scmtype:
+        if ff:
             patched = WALK_REVCTRL % locals()
             setup_py = '-c"%(patched)s"' % locals()
         else:
@@ -218,7 +216,7 @@ def walk_revctrl(dirname=''):
     file_finder = None
     items = []
     for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
-        if %(scmtype)r == ep.name:
+        if %(ff)r == ep.name:
             distutils.log.info('using %%s file-finder', ep.name)
             file_finder = ep.load()
             finder_items = []
@@ -229,8 +227,9 @@ def walk_revctrl(dirname=''):
             distutils.log.info('%%d files found', len(finder_items))
             items.extend(finder_items)
     if file_finder is None:
-        print >>sys.stderr, 'No %(scmtype)s file-finder; ' \
-            'setuptools-%(scmtype)s extension missing?'
+        print >>sys.stderr, 'No %(ff)s file-finder; ' \
+            'setuptools-%%s extension missing?' %% \
+            'subversion' if %(ff)r.startswith('svn') else %(ff)r
         sys.exit(1)
     if not items:
         sys.exit(1)
