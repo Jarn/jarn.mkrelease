@@ -11,13 +11,13 @@ the cumber out of building and distributing Python eggs.
 Motivation
 ==========
 
-Here at Jarn we use zc.buildout and pinned egg versions for
-customer deployments. This means that for every update, we have to make
-proper egg releases of all packages involved.
+Python eggs are great and we strive to release all software in egg form.
+However, as projects grow larger and are comprised of more and more eggs,
+release requirements can become a burden.
 
-Turns out it's quite a bit of work to put a new egg on a
+This is because it takes some work to put a new egg on a
 distribution server! After preparing a package for release (update
-version strings, etc) we typically have to:
+version strings, etc.), we typically have to:
 
 1. Commit modified files.
 
@@ -27,8 +27,8 @@ version strings, etc) we typically have to:
 
 4. Distribute the egg via scp or upload it to an index server.
 
-Now multiply by the number of packages waiting for release, and the moment of
-*I gotta script this* approaches at warp 9.
+Now imagine having to do this a lot, and the need for automation becomes
+obvious.
 
 Installation
 ============
