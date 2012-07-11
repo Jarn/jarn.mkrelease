@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.6 - Unreleased
+3.6 - 2012-06-11
 ----------------
 
 - Handle return code changes in Mercurial 2.1.
