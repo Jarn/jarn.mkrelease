@@ -8,6 +8,10 @@ Python egg releaser
 **mkrelease** is a no-frills Python egg releaser. It is designed to take
 the cumber out of building and distributing Python eggs.
 
+Also see `jarn.viewdoc`_.
+
+.. _`jarn.viewdoc`: http://pypi.python.org/pypi/jarn.viewdoc
+
 Motivation
 ==========
 
