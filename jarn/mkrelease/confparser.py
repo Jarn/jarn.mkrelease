@@ -1,5 +1,11 @@
-from ConfigParser import SafeConfigParser
-from ConfigParser import Error
+import sys
+
+if sys.version_info[:2] >= (3, 2):
+    from ConfigParser import ConfigParser as SafeConfigParser
+    from ConfigParser import Error
+else:
+    from ConfigParser import SafeConfigParser
+    from ConfigParser import Error
 
 
 class MultipleValueError(Error):
