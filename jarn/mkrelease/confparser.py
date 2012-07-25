@@ -12,6 +12,9 @@ class ConfigParser(SafeConfigParser, object):
         super(ConfigParser, self).__init__()
         self.warnings = []
         self.warn_func = warn_func
+        # Python < 3.2
+        if hasattr(self, '_boolean_states'):
+            self.BOOLEAN_STATES = self._boolean_states
 
     def warn(self, msg):
         self.warnings.append(msg)
@@ -88,9 +91,9 @@ class ConfigParser(SafeConfigParser, object):
 
     def to_boolean(self, value):
         v = self._single_value(value).lower()
-        if v not in self._boolean_states:
+        if v not in self.BOOLEAN_STATES:
             raise ValueError('Not a boolean: %s' % v)
-        return self._boolean_states[v]
+        return self.BOOLEAN_STATES[v]
 
     def to_int(self, value):
         v = self._single_value(value)
