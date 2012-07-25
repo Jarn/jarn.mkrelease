@@ -40,7 +40,7 @@ class JailSetupTests(unittest.TestCase):
         test = JailSetupTestCase('dummyTest')
         test.setUp()
         # A temporary directory has been created
-        self.failUnless(os.path.isdir(test.tempdir))
+        self.assertTrue(os.path.isdir(test.tempdir))
         # And it is the current working directory
         self.assertEqual(test.tempdir, os.getcwd())
 
@@ -49,7 +49,7 @@ class JailSetupTests(unittest.TestCase):
         test.setUp()
         test.tearDown()
         # The temporary directory has been removed
-        self.failIf(os.path.exists(test.tempdir))
+        self.assertFalse(os.path.exists(test.tempdir))
         # And we are back in the directory we started in
         self.assertEqual(self.cwd, os.getcwd())
 
@@ -61,7 +61,7 @@ class JailSetupTests(unittest.TestCase):
         self.assertEqual(len(result.errors), 0)
         # The temporary directory has been removed
         for test in suite:
-            self.failIf(os.path.exists(test.tempdir))
+            self.assertFalse(os.path.exists(test.tempdir))
         # And we are back in the directory we started in
         self.assertEqual(self.cwd, os.getcwd())
 
@@ -79,7 +79,7 @@ class JailSetupTests(unittest.TestCase):
         # We are NOT back in the directory we started in. That's expected,
         # but once we get here we know we did at least not blow up; which
         # is the point of this test.
-        self.failIfEqual(self.cwd, os.getcwd())
+        self.assertNotEqual(self.cwd, os.getcwd())
 
 
 class PackageSetupTestCase(MercurialSetup):
@@ -99,7 +99,7 @@ class PackageSetupTests(unittest.TestCase):
         test = PackageSetupTestCase('dummyTest')
         test.setUp()
         test.tearDown()
-        self.failIf(os.path.exists(test.tempdir))
+        self.assertFalse(os.path.exists(test.tempdir))
 
 
 class MockProcessTests(unittest.TestCase):

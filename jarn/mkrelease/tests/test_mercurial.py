@@ -477,11 +477,11 @@ class GetVersionTests(unittest.TestCase):
 
     def testGetVersion(self):
         scm = Mercurial()
-        self.failIfEqual(scm.get_version(), '')
+        self.assertNotEqual(scm.get_version(), '')
 
     def testVersionInfo(self):
         scm = Mercurial()
-        self.failIfEqual(scm.version_info, ())
+        self.assertNotEqual(scm.version_info, ())
 
 
 def test_suite():
