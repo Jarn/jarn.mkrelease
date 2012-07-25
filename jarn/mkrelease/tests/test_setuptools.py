@@ -25,7 +25,10 @@ def contains(archive, name):
 def get_manifest(archive):
     with closing(zipfile.ZipFile(archive).open(
         'testpackage-2.6/testpackage.egg-info/SOURCES.txt')) as manifest:
-        return manifest.read()
+        text = manifest.read()
+        if sys.version_info[0] >= 3:
+            text = text.decode(sys.getfilesystemencoding())
+        return text
 
 
 def get_finder(type):
