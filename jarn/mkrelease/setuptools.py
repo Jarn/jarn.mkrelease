@@ -156,7 +156,10 @@ class Setuptools(object):
             setup_py = 'setup.py %s' % ' '.join(args)
 
         rc, lines = self.process.popen(
-            '"%(python)s" -B %(setup_py)s' % locals(), echo=echo, echo2=echo2)
+            '"%(python)s" %(setup_py)s' % locals(), echo=echo, echo2=echo2)
+
+        if isfile('setup.pyc'):
+            os.remove('setup.pyc')
 
         return rc, lines
 
