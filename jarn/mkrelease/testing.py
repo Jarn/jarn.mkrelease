@@ -10,7 +10,7 @@ from os.path import realpath, join, dirname, isdir
 from lazy import lazy
 
 from jarn.mkrelease.process import Process
-from jarn.mkrelease.chdir import DirStack, chdir
+from jarn.mkrelease.chdir import ChdirStack, chdir
 from jarn.mkrelease.scm import SCMFactory
 
 
@@ -21,7 +21,7 @@ class JailSetup(unittest.TestCase):
     tempdir = None
 
     def setUp(self):
-        self.dirstack = DirStack()
+        self.dirstack = ChdirStack()
         try:
             self.tempdir = realpath(self.mkdtemp())
             self.dirstack.push(self.tempdir)

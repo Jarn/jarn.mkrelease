@@ -5,16 +5,16 @@ import shutil
 
 from os.path import realpath, join
 
-from jarn.mkrelease.chdir import DirStack
+from jarn.mkrelease.chdir import ChdirStack
 
 
-class DirStackTests(unittest.TestCase):
+class ChdirStackTests(unittest.TestCase):
 
     def setUp(self):
         # Save cwd
         self.cwd = os.getcwd()
         # Create a dirstack
-        self.dirstack = DirStack()
+        self.dirstack = ChdirStack()
         # Create a sandbox
         self.testdir = realpath(tempfile.mkdtemp())
         os.chdir(self.testdir)

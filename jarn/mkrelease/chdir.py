@@ -1,7 +1,7 @@
 import os
 
 
-class DirStack(object):
+class ChdirStack(object):
     """Stack of current working directories."""
 
     def __init__(self):
@@ -27,7 +27,7 @@ def chdir(method):
     """Decorator executing method in directory 'dir'.
     """
     def wrapped_method(self, dir, *args, **kw):
-        dirstack = DirStack()
+        dirstack = ChdirStack()
         dirstack.push(dir)
         try:
             return method(self, dir, *args, **kw)

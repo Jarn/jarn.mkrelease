@@ -9,7 +9,7 @@ from os.path import exists, isdir, isfile
 
 from process import Process
 from urlparser import URLParser
-from chdir import DirStack, chdir
+from chdir import ChdirStack, chdir
 from exit import err_exit, warn
 from lazy import lazy
 
@@ -23,7 +23,7 @@ class SCM(object):
     def __init__(self, process=None, urlparser=None):
         self.process = process or Process(env=self.get_env())
         self.urlparser = urlparser or URLParser()
-        self.dirstack = DirStack()
+        self.dirstack = ChdirStack()
 
     @lazy
     def version_info(self):
