@@ -4,6 +4,9 @@ Changelog
 3.7 - Unreleased
 ----------------
 
+- Fix bug where Python source files were not compiled when the --binary
+  option was given.
+  [stefan]
 
 3.6 - 2012-07-11
 ----------------
