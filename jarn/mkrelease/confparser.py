@@ -12,12 +12,28 @@ class MultipleValueError(Error):
     pass
 
 
+class errors2warnings(object):
+    """Turn ConfigParser.Errors into warnings."""
+
+    def __init__(self, context):
+        self.context = context
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, type, value, tb):
+        if isinstance(value, Error):
+            self.context.warn(str(value))
+            return True
+
+
 class ConfigParser(SafeConfigParser, object):
 
-    def __init__(self, warn_func=None):
+    def __init__(self, warn_func=None, raw=True):
         super(ConfigParser, self).__init__()
         self.warnings = []
         self.warn_func = warn_func
+        self.raw = raw
         # Python < 3.2
         if hasattr(self, '_boolean_states'):
             self.BOOLEAN_STATES = self._boolean_states
@@ -29,63 +45,74 @@ class ConfigParser(SafeConfigParser, object):
 
     def read(self, filenames):
         self.warnings = []
-        try:
+        with errors2warnings(self):
             super(ConfigParser, self).read(filenames)
-        except Error, e:
-            self.warn(str(e))
+
+    def items(self, section, default=None):
+        if self.has_section(section):
+            with errors2warnings(self):
+                value = super(ConfigParser, self).items(section, raw=self.raw)
+                return value
+        return default
 
     def get(self, section, option, default=None):
         if self.has_option(section, option):
-            value = super(ConfigParser, self).get(section, option)
-            return value
+            with errors2warnings(self):
+                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                return value
         return default
 
     def getlist(self, section, option, default=None):
         if self.has_option(section, option):
-            value = super(ConfigParser, self).get(section, option)
-            return self.to_list(value)
+            with errors2warnings(self):
+                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                return self.to_list(value)
         return default
 
     def getstring(self, section, option, default=None):
         if self.has_option(section, option):
-            value = super(ConfigParser, self).get(section, option)
-            try:
-                return self.to_string(value)
-            except MultipleValueError, e:
-                self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
+            with errors2warnings(self):
+                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                try:
+                    return self.to_string(value)
+                except MultipleValueError, e:
+                    self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
         return default
 
     def getboolean(self, section, option, default=None):
         if self.has_option(section, option):
-            value = super(ConfigParser, self).get(section, option)
-            try:
-                return self.to_boolean(value)
-            except MultipleValueError, e:
-                self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
-            except ValueError, e:
-                self.warn('Not a boolean: %s = %r' % (option, self._value_from_exc(e)))
+            with errors2warnings(self):
+                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                try:
+                    return self.to_boolean(value)
+                except MultipleValueError, e:
+                    self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
+                except ValueError, e:
+                    self.warn('Not a boolean: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
     def getint(self, section, option, default=None):
         if self.has_option(section, option):
-            value = super(ConfigParser, self).get(section, option)
-            try:
-                return self.to_int(value)
-            except MultipleValueError, e:
-                self.warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
-            except ValueError, e:
-                self.warn('Not an integer: %s = %r' % (option, self._value_from_exc(e)))
+            with errors2warnings(self):
+                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                try:
+                    return self.to_int(value)
+                except MultipleValueError, e:
+                    self.warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
+                except ValueError, e:
+                    self.warn('Not an integer: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
     def getfloat(self, section, option, default=None):
         if self.has_option(section, option):
-            value = super(ConfigParser, self).get(section, option)
-            try:
-                return self.to_float(value)
-            except MultipleValueError, e:
-                self.warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
-            except ValueError, e:
-                self.warn('Not a float: %s = %r' % (option, self._value_from_exc(e)))
+            with errors2warnings(self):
+                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                try:
+                    return self.to_float(value)
+                except MultipleValueError, e:
+                    self.warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
+                except ValueError, e:
+                    self.warn('Not a float: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
     def to_list(self, value):
