@@ -1,8 +1,8 @@
 import sys
 
 if sys.version_info[:2] >= (3, 2):
-    from ConfigParser import ConfigParser as SafeConfigParser
-    from ConfigParser import Error
+    from configparser import ConfigParser as SafeConfigParser
+    from configparser import Error
 else:
     from ConfigParser import SafeConfigParser
     from ConfigParser import Error
