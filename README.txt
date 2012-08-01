@@ -41,8 +41,11 @@ mkrelease requires Python 2.6 or higher. Use
 ``easy_install jarn.mkrelease`` to install the ``mkrelease`` script.
 Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
 
-mkrelease is known to work with the 0.6 series of setuptools
-and distribute. For Python 3 distribute is required.
+mkrelease is known to work with the 0.6 series of setuptools_
+and distribute_. For Python 3 distribute is required.
+
+.. _setuptools: http://pypi.python.org/pypi/setuptools
+.. _distribute: http://pypi.python.org/pypi/distribute
 
 Usage
 =====
