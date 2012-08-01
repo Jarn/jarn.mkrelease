@@ -4,8 +4,7 @@ Changelog
 3.7 - Unreleased
 ----------------
 
-- Fix bug where Python source files were not compiled when the --binary
-  option was given.
+- Fix compilation of Python source files when the -b option is given.
   [stefan]
 
 3.6 - 2012-07-11
