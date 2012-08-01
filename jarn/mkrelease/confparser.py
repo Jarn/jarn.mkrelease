@@ -15,15 +15,15 @@ class MultipleValueError(Error):
 class errors2warnings(object):
     """Turn ConfigParser.Errors into warnings."""
 
-    def __init__(self, context):
-        self.context = context
+    def __init__(self, parser):
+        self.parser = parser
 
     def __enter__(self):
         pass
 
     def __exit__(self, type, value, tb):
         if isinstance(value, Error):
-            self.context.warn(str(value))
+            self.parser.warn(str(value))
             return True
 
 
