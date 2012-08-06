@@ -27,6 +27,7 @@ def tee(process, filter):
                 sys.stdout.write(line)
             lines.append(stripped_line)
         elif process.poll() is not None:
+            process.stdout.close()
             break
     return lines
 
@@ -47,6 +48,7 @@ def tee2(process, filter):
             if filter(stripped_line):
                 sys.stderr.write(line)
         elif process.poll() is not None:
+            process.stderr.close()
             break
 
 
