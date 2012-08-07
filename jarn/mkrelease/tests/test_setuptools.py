@@ -9,7 +9,7 @@ from contextlib import closing
 
 from jarn.mkrelease.setuptools import Setuptools
 from jarn.mkrelease.process import Process
-from jarn.mkrelease.utils import contentdecode
+from jarn.mkrelease.utils import decode
 
 from jarn.mkrelease.testing import SubversionSetup
 from jarn.mkrelease.testing import MercurialSetup
@@ -28,7 +28,7 @@ def get_manifest(archive):
         'testpackage-2.6/testpackage.egg-info/SOURCES.txt')) as manifest:
         text = manifest.read()
         if sys.version_info[0] >= 3:
-            text = contentdecode(text)
+            return decode(text, errors='strict')
         return text
 
 
