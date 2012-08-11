@@ -37,7 +37,6 @@ def getinputencoding(stream=None):
         stream = sys.stdin
     encoding = stream.encoding
     if not encoding:
-        # We are reading from a pipe
         encoding = getpreferredencoding()
     return encoding
 
@@ -51,7 +50,6 @@ def getoutputencoding(stream=None):
         stream = sys.stdout
     encoding = stream.encoding
     if not encoding:
-        # We are writing to a pipe
         encoding = getpreferredencoding()
     return encoding
 
