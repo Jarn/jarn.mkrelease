@@ -123,6 +123,16 @@ class UrlSplitTests(unittest.TestCase):
         self.assertEqual(urlparser.split('ssh:stefan@jarn.com/public'),
                          ('', '', '', 'ssh:stefan@jarn.com/public', '', ''))
 
+    def testSplitScp(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.split('scp://stefan@jarn.com/var/dist/public'),
+                         ('scp', 'stefan', 'jarn.com', '/var/dist/public', '', ''))
+
+    def testSplitSftp(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.split('sftp://stefan@jarn.com/var/dist/public'),
+                         ('sftp', 'stefan', 'jarn.com', '/var/dist/public', '', ''))
+
 
 class IsUrlTests(unittest.TestCase):
 
