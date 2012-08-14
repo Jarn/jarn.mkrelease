@@ -462,7 +462,7 @@ class Git(SCM):
         if url.startswith(
             ('git://', 'ssh://', 'rsync://', 'http://', 'https://', 'file:')):
             return True
-        if self.urlparser.is_git_ssh_url(url):
+        if self.urlparser.is_ssh_url(url):
             return True
         return False
 
@@ -792,7 +792,7 @@ class SCMFactory(object):
             scm = self.get_scm_from_type(type)
         elif self.urlparser.is_url(url_or_dir):
             scm = self.get_scm_from_url(url_or_dir)
-        elif self.urlparser.is_git_ssh_url(url_or_dir):
+        elif self.urlparser.is_ssh_url(url_or_dir):
             scm = Git()
         else:
             scm = self.get_scm_from_sandbox(url_or_dir)

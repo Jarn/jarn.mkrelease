@@ -195,56 +195,56 @@ class IsUrlTests(unittest.TestCase):
         self.assertEqual(urlparser.is_url('git@github.com:Jarn/jarn.mkrelease'), False)
 
 
-class IsGitSshUrlTests(unittest.TestCase):
+class IsSshUrlTests(unittest.TestCase):
 
     def testGitSsh(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('git@github.com:Jarn/jarn.mkrelease'), True)
+        self.assertEqual(urlparser.is_ssh_url('git@github.com:Jarn/jarn.mkrelease'), True)
 
     def testSsh(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('ssh://'), False)
+        self.assertEqual(urlparser.is_ssh_url('ssh://'), False)
 
     def testGit(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('git://'), False)
+        self.assertEqual(urlparser.is_ssh_url('git://'), False)
 
     def testUnsupported(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('ftp://'), False)
+        self.assertEqual(urlparser.is_ssh_url('ftp://'), False)
 
     def testUnknown(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('foo://'), False)
+        self.assertEqual(urlparser.is_ssh_url('foo://'), False)
 
     def testFalsePositives(self):
         # Everything with a colon matches the regex...
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('foo:'), True)
+        self.assertEqual(urlparser.is_ssh_url('foo:'), True)
 
     def testSlashBeforeColon(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('/foo:'), False)
+        self.assertEqual(urlparser.is_ssh_url('/foo:'), False)
 
     def testSlashColonOnly(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('/:'), False)
+        self.assertEqual(urlparser.is_ssh_url('/:'), False)
 
     def testColonOnly(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url(':'), False)
+        self.assertEqual(urlparser.is_ssh_url(':'), False)
 
     def testBadUrl(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('ssh'), False)
+        self.assertEqual(urlparser.is_ssh_url('ssh'), False)
 
     def testWhitespace(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url(' git@github.com:Jarn/jarn.mkrelease'), False)
+        self.assertEqual(urlparser.is_ssh_url(' git@github.com:Jarn/jarn.mkrelease'), False)
 
     def testEmptyString(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url(''), False)
+        self.assertEqual(urlparser.is_ssh_url(''), False)
 
 
 class AbspathTests(unittest.TestCase):

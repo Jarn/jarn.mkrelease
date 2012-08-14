@@ -10,7 +10,7 @@ class URLParser(object):
     """A minimal URL parser and splitter."""
 
     scheme_re = re.compile(r'^(\S+?)://|^(file):')
-    git_ssh_re = re.compile(r'^(\S+?):(.*)')
+    ssh_re = re.compile(r'^(\S+?):(.*)')
 
     def __init__(self):
         self.scp = SCP()
@@ -24,9 +24,9 @@ class URLParser(object):
     def is_url(self, url):
         return bool(self.get_scheme(url))
 
-    def is_git_ssh_url(self, url):
+    def is_ssh_url(self, url):
         return (not self.is_url(url) and
-                self.git_ssh_re.match(url) is not None and
+                self.ssh_re.match(url) is not None and
                 self.scp.has_host(url))
 
     def split(self, url):
