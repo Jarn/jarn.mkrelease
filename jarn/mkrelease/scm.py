@@ -254,7 +254,9 @@ class Subversion(SCM):
         return rc
 
     def make_branchid(self, dir, branch):
-        return self.urlparser.abspath(branch)
+        if self.urlparser.get_scheme(branch) == 'file':
+            return self.urlparser.abspath(branch)
+        return branch
 
     @chdir
     def switch_branch(self, dir, branch):
