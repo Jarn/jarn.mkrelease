@@ -3,17 +3,12 @@ import re
 from os.path import abspath, expanduser
 from urlparse import urlsplit, urlunsplit
 
-from scp import SCP
-
 
 class URLParser(object):
     """A minimal URL parser and splitter."""
 
     scheme_re = re.compile(r'^(\S+?)://|^(file):')
-    ssh_re = re.compile(r'^(\S+?):(.*)')
-
-    def __init__(self):
-        self.scp = SCP()
+    ssh_re = re.compile(r'^([^\s/]+?):(.*)')
 
     def get_scheme(self, url):
         match = self.scheme_re.match(url)
@@ -24,11 +19,6 @@ class URLParser(object):
     def is_url(self, url):
         return bool(self.get_scheme(url))
 
-    def is_ssh_url(self, url):
-        return (not self.is_url(url) and
-                self.ssh_re.match(url) is not None and
-                self.scp.has_host(url))
-
     def split(self, url):
         scheme = self.get_scheme(url)
         if scheme:
@@ -36,6 +26,10 @@ class URLParser(object):
             user, host = self.hostsplit(host)
             return scheme, user, host, path, qs, frag
         return '', '', '', url, '', ''
+
+    def unsplit(self, scheme, user, host, path, qs, frag):
+        host = self.hostunsplit(user, host)
+        return urlunsplit((scheme, host, path, qs, frag))
 
     def hostsplit(self, host):
         if '@' in host:
@@ -47,6 +41,16 @@ class URLParser(object):
             return '%s@%s' % (user, host)
         return host
 
+    def usersplit(self, user):
+        if ':' in user:
+            return user.split(':', 1)
+        return user, ''
+
+    def userunsplit(self, user, password):
+        if password:
+            return '%s:%s' % (user, password)
+        return user
+
     def abspath(self, url):
         scheme = self.get_scheme(url)
         if scheme == 'file':
@@ -56,7 +60,17 @@ class URLParser(object):
                 if host and path.startswith('/~'):
                     path = path[1:]
                 path = abspath(expanduser(path))
-                host = self.hostunsplit(user, host)
-                return urlunsplit((scheme, host, path, qs, frag))
+                return self.unsplit(scheme, user, host, path, qs, frag)
+        return url
+
+    def is_ssh_url(self, url):
+        return not self.is_url(url) and self.ssh_re.match(url) is not None
+
+    def to_ssh_url(self, url):
+        scheme = self.get_scheme(url)
+        if scheme in ('scp', 'sftp', 'ssh'):
+            ignored, user, host, path, qs, frag = self.split(url)
+            user, password = self.usersplit(user)
+            return self.hostunsplit(user, host) + ':' + path
         return url
 
