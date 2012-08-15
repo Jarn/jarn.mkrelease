@@ -211,8 +211,8 @@ the safe alternative.
 Working with SFTP
 =================
 
-Besides scp mkrelease also offers sftp support. To use sftp
-over scp, specify the dist-location in URL form::
+Besides scp mkrelease also offers sftp support. To use sftp,
+specify the dist-location in URL form::
 
   $ mkrelease -d sftp://jarn.com/var/dist/public src/my.package
 
@@ -229,6 +229,10 @@ The URL form also works in aliases::
   [aliases]
   public =
       sftp://jarn.com/var/dist/public
+
+Note: The sftp client does not prompt for a password in batch mode. This
+means that in order to use sftp, non-interactive login must be configured
+on the destination host.
 
 Working with Index Servers
 ==========================
