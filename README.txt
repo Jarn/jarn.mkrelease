@@ -211,8 +211,8 @@ the safe alternative.
 Working with SFTP
 =================
 
-Besides scp mkrelease now also offers sftp support. To use sftp
-over scp, specify the dist-location like this::
+Besides scp mkrelease also offers sftp support. To use sftp
+over scp, specify the dist-location in URL form::
 
   $ mkrelease -d sftp://jarn.com/var/dist/public src/my.package
 
@@ -220,22 +220,20 @@ For orthogonality, scp URLs are allowed as well::
 
   $ mkrelease -d scp://jarn.com/var/dist/public src/my.package
 
-The URL form may also be used in aliases::
+The URL form also works in aliases::
 
   [mkrelease]
   distbase =
-  distdefault = public
+  distdefault =
 
   [aliases]
   public =
       sftp://jarn.com/var/dist/public
 
-Note: All URLs must be absolute.
-
 Working with Index Servers
 ==========================
 
-Another way of distributing Python eggs is to upload them to dedicated
+Another way of distributing Python eggs is by uploading them to dedicated
 index servers, notably PyPI. Given the ``~/.pypirc`` file from above
 we can release on PyPI by typing::
 
