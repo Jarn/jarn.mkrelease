@@ -139,7 +139,7 @@ file ``~/.pypirc``. This file must contain your PyPI account information::
 
   [distutils]
   index-servers =
-    pypi
+      pypi
 
   [pypi]
   username = fred
@@ -154,12 +154,12 @@ Here's an example::
 
   [aliases]
   public =
-    jarn.com:/var/dist/public
+      jarn.com:/var/dist/public
   customerA =
-    jarn.com:/var/dist/customerA
+      jarn.com:/var/dist/customerA
   world =
-    public
-    pypi
+      public
+      pypi
 
 (Note that ``pypi`` refers to the index server `pypi` as configured in
 ``~/.pypirc``.)
@@ -195,8 +195,8 @@ for each and every customer is, so we configure distbase instead::
 
   [aliases]
   world =
-    public
-    pypi
+      public
+      pypi
 
 The distbase is prepended if an scp destination does not contain a
 host part. We can now write::
@@ -228,7 +228,7 @@ The URL form may also be used in aliases::
 
   [aliases]
   public =
-    sftp://jarn.com/var/dist/public
+      sftp://jarn.com/var/dist/public
 
 Note: All URLs must be absolute.
 
@@ -251,8 +251,8 @@ We extend our ``~/.pypirc`` to add a second index server::
 
   [distutils]
   index-servers =
-    pypi
-    ploneorg
+      pypi
+      ploneorg
 
   [pypi]
   username = fred
@@ -276,8 +276,8 @@ Alternatively, we can group the servers by defining an alias in
 
   [aliases]
   plone =
-    pypi
-    ploneorg
+      pypi
+      ploneorg
 
 And type::
 
@@ -312,7 +312,7 @@ configured in ``~/.pypirc``, on a per-server basis::
 
   [distutils]
   index-servers =
-    pypi
+      pypi
 
   [pypi]
   username = fred
