@@ -69,9 +69,9 @@ Options
     cannot be guessed from the argument.
 
 ``-d dist-location, --dist-location=dist-location``
-    An scp destination specification, or an index server
-    configured in ``~/.pypirc``, or an alias name for either.
-    This option may be specified more than once.
+    An scp or sftp destination specification, an index
+    server configured in ``~/.pypirc``, or an alias name for
+    either. This option may be specified more than once.
 
 ``-s, --sign``
     Sign the release with GnuPG.
@@ -204,10 +204,38 @@ host part. We can now write::
   $ mkrelease -d public src/my.package
   $ mkrelease -d customerB src/my.package
 
+Note: Setting distbase carries a certain amount of danger, in that
+typos can result in unwanted uploads to unwanted places. Aliases are
+the safe alternative.
+
+Working with SFTP
+=================
+
+Besides scp mkrelease now also offers sftp support. To use sftp
+over scp, specify the dist-location like this::
+
+  $ mkrelease -d sftp://jarn.com/var/dist/public src/my.package
+
+For orthogonality, scp URLs are allowed as well::
+
+  $ mkrelease -d scp://jarn.com/var/dist/public src/my.package
+
+The URL form may also be used in aliases::
+
+  [mkrelease]
+  distbase =
+  distdefault = public
+
+  [aliases]
+  public =
+    sftp://jarn.com/var/dist/public
+
+Note: All URLs must be absolute.
+
 Working with Index Servers
 ==========================
 
-Another way of distributing Python eggs is by uploading them to dedicated
+Another way of distributing Python eggs is to upload them to dedicated
 index servers, notably PyPI. Given the ``~/.pypirc`` file from above
 we can release on PyPI by typing::
 
@@ -239,7 +267,7 @@ This allows us to write::
 
   $ mkrelease -d ploneorg src/my.package
 
-The ``-d`` flag may be specified more than once::
+The ``-d`` option may be specified more than once::
 
   $ mkrelease -d pypi -d ploneorg src/my.package
 
@@ -263,7 +291,7 @@ there by other means.
 Releasing a Tag
 ===============
 
-Release my.package from an existing tag::
+Release my.package from an existing Subversion tag::
 
   $ mkrelease -T https://svn.jarn.com/public/my.package/tags/1.0
 
@@ -280,7 +308,7 @@ Release my.package and sign the archive with GnuPG::
 
 The ``-i`` flag is optional, and GnuPG will pick your default
 key if not given. In addition, defaults for ``-s`` and ``-i`` can be
-configured in ``~/.pypirc``::
+configured in ``~/.pypirc``, on a per-server basis::
 
   [distutils]
   index-servers =
@@ -305,6 +333,8 @@ what you plan to use):
 * git
 
 * scp
+
+* sftp
 
 * gpg
 

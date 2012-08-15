@@ -41,9 +41,9 @@ Options:
                       cannot be guessed from the argument.
 
   -d dist-location, --dist-location=dist-location
-                      An scp destination specification, or an index server
-                      configured in ~/.pypirc, or an alias name for either.
-                      This option may be specified more than once.
+                      An scp or sftp destination specification, an index
+                      server configured in ~/.pypirc, or an alias name for
+                      either. This option may be specified more than once.
 
   -s, --sign          Sign the release with GnuPG.
   -i identity, --identity=identity
