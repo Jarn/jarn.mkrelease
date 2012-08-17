@@ -252,6 +252,10 @@ class IsSshUrlTests(unittest.TestCase):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_ssh_url('$&%:'), True)
 
+    def testNonConsecutive(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_ssh_url('f o:'), False)
+
     def testBadUrl(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_ssh_url('ssh'), False)
