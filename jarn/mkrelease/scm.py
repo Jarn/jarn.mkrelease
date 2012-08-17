@@ -695,7 +695,7 @@ class SCMFactory(object):
         return [x[1] for x in roots if x[0] == longest]
 
     def get_scm_from_url(self, url):
-        scheme, user, host, path, qs, frag = self.urlparser.split(url)
+        scheme, user, host, path, qs, frag = self.urlparser.urlsplit(url)
         if scheme in ('svn', 'svn+ssh'):
             return Subversion()
         if scheme in ('git', 'rsync'):

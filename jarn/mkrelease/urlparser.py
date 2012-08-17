@@ -19,7 +19,7 @@ class URLParser(object):
     def is_url(self, url):
         return bool(self.get_scheme(url))
 
-    def split(self, url):
+    def urlsplit(self, url):
         scheme = self.get_scheme(url)
         if scheme:
             ignored, host, path, qs, frag = urlsplit(url)
@@ -27,7 +27,7 @@ class URLParser(object):
             return scheme, user, host, path, qs, frag
         return '', '', '', url, '', ''
 
-    def unsplit(self, scheme, user, host, path, qs, frag):
+    def urlunsplit(self, scheme, user, host, path, qs, frag):
         host = self.hostunsplit(user, host)
         return urlunsplit((scheme, host, path, qs, frag))
 
@@ -54,13 +54,13 @@ class URLParser(object):
     def abspath(self, url):
         scheme = self.get_scheme(url)
         if scheme == 'file':
-            ignored, user, host, path, qs, frag = self.split(url)
+            ignored, user, host, path, qs, frag = self.urlsplit(url)
             if host in ('', 'localhost'):
                 # Strip leading slash to allow tilde expansion
                 if host and path.startswith('/~'):
                     path = path[1:]
                 path = abspath(expanduser(path))
-                return self.unsplit(scheme, user, host, path, qs, frag)
+                return self.urlunsplit(scheme, user, host, path, qs, frag)
         return url
 
     def is_ssh_url(self, url):
@@ -69,7 +69,7 @@ class URLParser(object):
     def to_ssh_url(self, url):
         scheme = self.get_scheme(url)
         if scheme in ('scp', 'sftp', 'ssh'):
-            ignored, user, host, path, qs, frag = self.split(url)
+            ignored, user, host, path, qs, frag = self.urlsplit(url)
             user, password = self.usersplit(user)
             return self.hostunsplit(user, host) + ':' + path
         return url
