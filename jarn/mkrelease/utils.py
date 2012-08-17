@@ -58,7 +58,7 @@ def decode(string, encoding=None, errors=None):
     """Decode from specified encoding.
 
     ``encoding`` defaults to the preferred encoding.
-    ``errors`` defaults to 'replace'.
+    ``errors`` defaults to the preferred error handler.
     """
     if encoding is None:
         encoding = getpreferredencoding()
@@ -71,7 +71,7 @@ def encode(string, encoding=None, errors=None):
     """Encode to specified encoding.
 
     ``encoding`` defaults to the preferred encoding.
-    ``errors`` defaults to 'replace'.
+    ``errors`` defaults to the preferred error handler.
     """
     if encoding is None:
         encoding = getpreferredencoding()
