@@ -469,12 +469,11 @@ class ReleaseMaker(object):
                             uploadflags, scmtype, self.quiet)
                     elif self.locations.is_dist_url(location):
                         scheme = self.urlparser.get_scheme(location)
+                        location = self.urlparser.to_ssh_url(location)
                         if scheme == 'sftp':
-                            self.scp.run_sftp(
-                                distfile, self.urlparser.to_ssh_url(location))
+                            self.scp.run_sftp(distfile, location)
                         else:
-                            self.scp.run_scp(
-                                distfile, self.urlparser.to_ssh_url(location))
+                            self.scp.run_scp(distfile, location)
                     else:
                         self.scp.run_scp(distfile, location)
         finally:
