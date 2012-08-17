@@ -465,8 +465,8 @@ class ReleaseMaker(object):
                         self.setuptools.run_register(
                             directory, infoflags, location, scmtype, self.quiet)
                         self.setuptools.run_upload(
-                            directory, infoflags, distcmd, distflags, location,
-                            uploadflags, scmtype, self.quiet)
+                            directory, infoflags, distcmd, distflags, location, uploadflags,
+                            scmtype, self.quiet)
                     elif self.locations.is_dist_url(location):
                         scheme = self.urlparser.get_scheme(location)
                         location = self.urlparser.to_ssh_url(location)
