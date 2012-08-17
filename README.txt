@@ -206,7 +206,7 @@ host part. We can now write::
 
 Note: Setting distbase carries a certain amount of danger, in that
 typos can result in unwanted uploads to unwanted places. Aliases are
-the safe alternative.
+a safe alternative.
 
 Working with SFTP
 =================
@@ -220,19 +220,15 @@ For orthogonality, scp URLs are allowed as well::
 
   $ mkrelease -d scp://jarn.com/var/dist/public src/my.package
 
-The URL form also works in aliases::
-
-  [mkrelease]
-  distbase =
-  distdefault =
+The format also works in aliases::
 
   [aliases]
   public =
       sftp://jarn.com/var/dist/public
 
-Note: The sftp client does not prompt for a password in batch mode. This
-means that in order to use sftp, non-interactive login must be configured
-on the destination host.
+Note: The sftp client does not prompt for a password in batch mode.
+This means that to use sftp, non-interactive login must be
+configured for the destination.
 
 Working with Index Servers
 ==========================
@@ -310,7 +306,7 @@ Release my.package and sign the archive with GnuPG::
 
 The ``-i`` flag is optional, and GnuPG will pick your default
 key if not given. In addition, defaults for ``-s`` and ``-i`` can be
-configured in ``~/.pypirc``, on a per-server basis::
+configured in ``~/.pypirc``::
 
   [distutils]
   index-servers =
