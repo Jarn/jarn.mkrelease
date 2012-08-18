@@ -1,4 +1,5 @@
-from tempfile import NamedTemporaryFile
+import tempfile
+import tee
 
 from process import Process
 from exit import err_exit
@@ -22,12 +23,14 @@ class SCP(object):
     def run_sftp(self, distfile, location):
         if not self.process.quiet:
             print 'sftp-ing to %(location)s' % locals()
-        with NamedTemporaryFile(prefix='sftp-') as file:
+        with tempfile.NamedTemporaryFile(prefix='sftp-') as file:
             file.write('put "%(distfile)s"\n' % locals())
-            file.write('bye\n')
+            file.write('quit\n')
+            file.flush()
             cmdfile = file.name
-            rc = self.process.os_system(
-                'sftp -b "%(cmdfile)s" "%(location)s"' % locals())
+            rc, lines = self.process.popen(
+                'sftp -b "%(cmdfile)s" "%(location)s"' % locals(),
+                echo=tee.StartsWith('Uploading'))
             if rc != 0:
                 err_exit('sftp failed')
             return rc
