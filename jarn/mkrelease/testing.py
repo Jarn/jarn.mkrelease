@@ -4,6 +4,7 @@ import unittest
 import tempfile
 import shutil
 import zipfile
+import functools
 import StringIO
 
 from os.path import realpath, join, dirname, isdir
@@ -306,7 +307,7 @@ class MockProcess(Process):
 def quiet(func):
     """Decorator swallowing stdout and stderr output.
     """
-    def wrapped_func(*args, **kw):
+    def wrapper(*args, **kw):
         saved = sys.stdout, sys.stderr
         sys.stdout = sys.stderr = StringIO.StringIO()
         try:
@@ -314,11 +315,7 @@ def quiet(func):
         finally:
             sys.stdout, sys.stderr = saved
 
-    wrapped_func.__name__ = func.__name__
-    wrapped_func.__module__ = func.__module__
-    wrapped_func.__doc__ = func.__doc__
-    wrapped_func.__dict__.update(func.__dict__)
-    return wrapped_func
+    return functools.wraps(func)(wrapper)
 
 
 def readlines(filename):
