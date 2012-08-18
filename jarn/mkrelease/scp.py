@@ -1,7 +1,10 @@
 import tempfile
 import tee
 
+from os.path import split
+
 from process import Process
+from chdir import ChdirStack
 from exit import err_exit
 
 
@@ -10,6 +13,7 @@ class SCP(object):
 
     def __init__(self, process=None):
         self.process = process or Process()
+        self.dirstack = ChdirStack()
 
     def run_scp(self, distfile, location):
         if not self.process.quiet:
@@ -23,15 +27,20 @@ class SCP(object):
     def run_sftp(self, distfile, location):
         if not self.process.quiet:
             print 'sftp-ing to %(location)s' % locals()
-        with tempfile.NamedTemporaryFile(prefix='sftp-') as file:
-            file.write('put "%(distfile)s"\n' % locals())
-            file.write('quit\n')
-            file.flush()
-            cmdfile = file.name
-            rc, lines = self.process.popen(
-                'sftp -b "%(cmdfile)s" "%(location)s"' % locals(),
-                echo=tee.StartsWith('Uploading'))
-            if rc != 0:
-                err_exit('sftp failed')
-            return rc
+        dir, distfile = split(distfile)
+        self.dirstack.push(dir)
+        try:
+            with tempfile.NamedTemporaryFile(prefix='sftp-') as file:
+                file.write('put "%(distfile)s"\n' % locals())
+                file.write('bye\n')
+                file.flush()
+                cmdfile = file.name
+                rc, lines = self.process.popen(
+                    'sftp -b "%(cmdfile)s" "%(location)s"' % locals(),
+                    echo=tee.StartsWith('Uploading'))
+                if rc != 0:
+                    err_exit('sftp failed')
+                return rc
+        finally:
+            self.dirstack.pop()
 
