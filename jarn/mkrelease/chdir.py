@@ -14,7 +14,7 @@ class ChdirStack(object):
         """Push cwd on stack and change to 'dir'.
         """
         self.stack.append(os.getcwd())
-        os.chdir(dir)
+        os.chdir(dir or os.getcwd())
 
     def pop(self):
         """Pop dir off stack and change to it.
