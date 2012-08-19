@@ -1,4 +1,5 @@
 import tempfile
+import time
 import tee
 
 from os.path import split
@@ -13,34 +14,42 @@ class SCP(object):
 
     def __init__(self, process=None):
         self.process = process or Process()
-        self.dirstack = ChdirStack()
 
-    def run_scp(self, distfile, location):
+    def run_scp(self, distfile, location, quiet=False):
         if not self.process.quiet:
-            print 'scp-ing to %(location)s' % locals()
-        rc = self.process.os_system(
-            'scp "%(distfile)s" "%(location)s"' % locals())
+            print 'running scp'
+            time.sleep(0.4)
+            dir, basename = split(distfile)
+            print 'Uploading dist/%(basename)s to %(location)s' % locals()
+
+        rc, lines = self.process.popen(
+            'scp "%(distfile)s" "%(location)s"' % locals(),
+            echo=False)
         if rc != 0:
             err_exit('scp failed')
+        if not self.process.quiet and not quiet:
+            print 'OK'
         return rc
 
-    def run_sftp(self, distfile, location):
+    def run_sftp(self, distfile, location, quiet=False):
         if not self.process.quiet:
-            print 'sftp-ing to %(location)s' % locals()
-        dir, distfile = split(distfile)
-        self.dirstack.push(dir)
-        try:
-            with tempfile.NamedTemporaryFile(prefix='sftp-') as file:
-                file.write('put "%(distfile)s"\n' % locals())
-                file.write('bye\n')
-                file.flush()
-                cmdfile = file.name
-                rc, lines = self.process.popen(
-                    'sftp -b "%(cmdfile)s" "%(location)s"' % locals(),
-                    echo=tee.StartsWith('Uploading'))
-                if rc != 0:
-                    err_exit('sftp failed')
-                return rc
-        finally:
-            self.dirstack.pop()
+            print 'running sftp'
+            time.sleep(0.3)
+            dir, basename = split(distfile)
+            print 'Uploading dist/%(basename)s to %(location)s' % locals()
+
+        with tempfile.NamedTemporaryFile(prefix='sftp-') as file:
+            file.write('put "%(distfile)s"\n' % locals())
+            file.write('bye\n')
+            file.flush()
+            cmdfile = file.name
+            rc, lines = self.process.popen(
+                'sftp -b "%(cmdfile)s" "%(location)s"' % locals(),
+                echo=False)
+
+        if rc != 0:
+            err_exit('sftp failed')
+        if not self.process.quiet and not quiet:
+            print 'OK'
+        return rc
 

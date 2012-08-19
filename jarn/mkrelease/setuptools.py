@@ -102,7 +102,7 @@ class Setuptools(object):
 
         echo = tee.After('running register')
         if quiet:
-            echo = tee.And(echo, tee.Not(tee.StartsWith('Registering')))
+            echo = tee.And(echo, tee.Not(tee.StartsWith('Server response')))
 
         serverflags = ['--repository="%s"' % location]
 
@@ -123,7 +123,7 @@ class Setuptools(object):
 
         echo = tee.After('running upload')
         if quiet:
-            echo = tee.And(echo, tee.Not(tee.StartsWith('Submitting')))
+            echo = tee.And(echo, tee.Not(tee.StartsWith('Server response')))
 
         serverflags = ['--repository="%s"' % location]
 
