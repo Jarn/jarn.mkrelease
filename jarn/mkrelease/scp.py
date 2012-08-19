@@ -17,7 +17,7 @@ class SCP(object):
 
     def delay(self):
         # Reduce output jerkiness
-        time.sleep(random.choice([0.2, 0.3, 0.4]))
+        time.sleep(random.choice([0.3, 0.4]))
 
     def run_scp(self, distfile, location):
         if not self.process.quiet:
