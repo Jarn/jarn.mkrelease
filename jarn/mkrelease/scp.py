@@ -16,6 +16,7 @@ class SCP(object):
         self.process = process or Process()
 
     def delay(self):
+        # Reduce output jerkiness
         time.sleep(random.choice([0.2, 0.3, 0.4]))
 
     def run_scp(self, distfile, location):
@@ -41,7 +42,7 @@ class SCP(object):
             dir, basename = split(distfile)
             print 'Uploading dist/%(basename)s to %(location)s' % locals()
 
-        with tempfile.NamedTemporaryFile(prefix='sftp-') as file:
+        with tempfile.NamedTemporaryFile() as file:
             file.write('put "%(distfile)s"\n' % locals())
             file.write('bye\n')
             file.flush()
