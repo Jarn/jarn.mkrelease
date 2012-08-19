@@ -2,7 +2,7 @@ import tempfile
 import time
 import random
 
-from os.path import split
+from os.path import basename
 
 from process import Process
 from chdir import ChdirStack
@@ -23,8 +23,8 @@ class SCP(object):
         if not self.process.quiet:
             print 'running scp_upload'
             self.delay()
-            dir, basename = split(distfile)
-            print 'Uploading dist/%(basename)s to %(location)s' % locals()
+            name = basename(distfile)
+            print 'Uploading dist/%(name)s to %(location)s' % locals()
 
         rc, lines = self.process.popen(
             'scp "%(distfile)s" "%(location)s"' % locals(),
@@ -39,8 +39,8 @@ class SCP(object):
         if not self.process.quiet:
             print 'running sftp_upload'
             self.delay()
-            dir, basename = split(distfile)
-            print 'Uploading dist/%(basename)s to %(location)s' % locals()
+            name = basename(distfile)
+            print 'Uploading dist/%(name)s to %(location)s' % locals()
 
         with tempfile.NamedTemporaryFile() as file:
             file.write('put "%(distfile)s"\n' % locals())
