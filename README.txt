@@ -158,8 +158,8 @@ Here's an example::
   customerA =
       jarn.com:/var/dist/customerA
   world =
-      public
       pypi
+      public
 
 (Note that ``pypi`` refers to the index server `pypi` as configured in
 ``~/.pypirc``.)
@@ -195,8 +195,8 @@ for each and every customer is, so we configure distbase instead::
 
   [aliases]
   world =
-      public
       pypi
+      public
 
 The distbase is prepended if an scp destination does not contain a
 host part. We can now write::
