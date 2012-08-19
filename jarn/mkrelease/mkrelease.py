@@ -471,11 +471,11 @@ class ReleaseMaker(object):
                         scheme = self.urlparser.get_scheme(location)
                         location = self.urlparser.to_ssh_url(location)
                         if scheme == 'sftp':
-                            self.scp.run_sftp(distfile, location, self.quiet)
+                            self.scp.run_sftp(distfile, location)
                         else:
-                            self.scp.run_scp(distfile, location, self.quiet)
+                            self.scp.run_scp(distfile, location)
                     else:
-                        self.scp.run_scp(distfile, location, self.quiet)
+                        self.scp.run_scp(distfile, location)
         finally:
             shutil.rmtree(tempdir)
 
