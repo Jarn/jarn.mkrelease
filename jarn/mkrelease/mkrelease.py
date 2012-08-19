@@ -199,7 +199,7 @@ class Locations(object):
             if (not self.is_server(location) and
                 not self.is_dist_url(location) and
                 not self.has_host(location)):
-                err_exit('Invalid dist-location: %(location)s' % locals())
+                err_exit('Unknown location: %(location)s' % locals())
 
 
 class ReleaseMaker(object):
