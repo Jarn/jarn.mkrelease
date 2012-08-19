@@ -3,6 +3,9 @@ import threading
 
 from subprocess import Popen, PIPE
 
+__all__ = ['popen', 'On', 'Off', 'NotEmpty', 'Equals', 'StartsWith',
+           'Before', 'NotAfter', 'After', 'NotBefore', 'Not', 'And', 'Or']
+
 
 def tee(process, filter):
     """Read lines from process.stdout and echo them to sys.stdout.
