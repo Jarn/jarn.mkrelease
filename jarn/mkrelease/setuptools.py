@@ -100,8 +100,11 @@ class Setuptools(object):
         if not self.process.quiet:
             print 'running register'
 
-        echo = And(After('running register'), Not(StartsWith('Server response')))
-        serverflags = ['--repository="%s"' % location]
+        echo = After('running register')
+        if quiet:
+            echo = And(echo, Not(StartsWith('Server response (200)')))
+
+        serverflags = ['--repository="%(location)s"' % locals()]
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + ['register'] + serverflags,
@@ -110,7 +113,7 @@ class Setuptools(object):
 
         if rc == 0:
             if self._parse_register_results(lines):
-                if not self.process.quiet:
+                if not self.process.quiet and quiet:
                     print 'OK'
                 return rc
         err_exit('ERROR: register failed')
@@ -120,8 +123,11 @@ class Setuptools(object):
         if not self.process.quiet:
             print 'running upload'
 
-        echo = And(After('running upload'), Not(StartsWith('Server response')))
-        serverflags = ['--repository="%s"' % location]
+        echo = After('running upload')
+        if quiet:
+            echo = And(echo, Not(StartsWith('Server response (200)')))
+
+        serverflags = ['--repository="%(location)s"' % locals()]
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + [distcmd] + distflags +
@@ -131,7 +137,7 @@ class Setuptools(object):
 
         if rc == 0:
             if self._parse_upload_results(lines):
-                if not self.process.quiet:
+                if not self.process.quiet and quiet:
                     print 'OK'
                 return rc
         err_exit('ERROR: upload failed')
