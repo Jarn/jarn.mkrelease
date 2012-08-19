@@ -1,4 +1,5 @@
 import os
+import distutils.command
 import pkg_resources
 
 from os.path import abspath, join, isfile
@@ -84,8 +85,13 @@ class Setuptools(object):
         if quiet:
             echo = And(echo, StartsWith('running'))
 
+        checkcmd = []
+        if 'check' in distutils.command.__all__:
+            checkcmd = ['check']
+
         rc, lines = self._run_setup_py(
-            ['egg_info'] + infoflags + [distcmd] + distflags,
+            ['egg_info'] + infoflags + checkcmd +
+            [distcmd] + distflags,
             echo=echo,
             ff=ff)
 
@@ -104,10 +110,15 @@ class Setuptools(object):
         if quiet:
             echo = And(echo, Not(StartsWith('Server response (200)')))
 
+        checkcmd = []
+        if 'check' in distutils.command.__all__:
+            checkcmd = ['check']
+
         serverflags = ['--repository="%(location)s"' % locals()]
 
         rc, lines = self._run_setup_py(
-            ['egg_info'] + infoflags + ['register'] + serverflags,
+            ['egg_info'] + infoflags + checkcmd +
+            ['register'] + serverflags,
             echo=echo,
             ff=ff)
 
