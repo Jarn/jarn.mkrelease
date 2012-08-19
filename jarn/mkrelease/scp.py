@@ -5,7 +5,6 @@ import random
 from os.path import basename
 
 from process import Process
-from chdir import ChdirStack
 from exit import err_exit
 
 
@@ -26,13 +25,16 @@ class SCP(object):
             name = basename(distfile)
             print 'Uploading dist/%(name)s to %(location)s' % locals()
 
-        rc, lines = self.process.popen(
-            'scp "%(distfile)s" "%(location)s"' % locals(),
-            echo=False)
-        if rc == 0:
-            if not self.process.quiet:
-                print 'OK'
-            return rc
+        try:
+            rc, lines = self.process.popen(
+                'scp "%(distfile)s" "%(location)s"' % locals(),
+                echo=False)
+            if rc == 0:
+                if not self.process.quiet:
+                    print 'OK'
+                return rc
+        except KeyboardInterrupt:
+            pass
         err_exit('ERROR: scp failed')
 
     def run_sftp(self, distfile, location):
@@ -47,12 +49,16 @@ class SCP(object):
             file.write('bye\n')
             file.flush()
             cmdfile = file.name
-            rc, lines = self.process.popen(
-                'sftp -b "%(cmdfile)s" "%(location)s"' % locals(),
-                echo=False)
-            if rc == 0:
-                if not self.process.quiet:
-                    print 'OK'
-                return rc
+
+            try:
+                rc, lines = self.process.popen(
+                    'sftp -b "%(cmdfile)s" "%(location)s"' % locals(),
+                    echo=False)
+                if rc == 0:
+                    if not self.process.quiet:
+                        print 'OK'
+                    return rc
+            except KeyboardInterrupt:
+                pass
             err_exit('ERROR: sftp failed')
 
