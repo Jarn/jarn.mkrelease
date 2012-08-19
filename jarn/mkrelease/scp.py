@@ -1,7 +1,6 @@
 import tempfile
 import time
 import random
-import tee
 
 from os.path import split
 

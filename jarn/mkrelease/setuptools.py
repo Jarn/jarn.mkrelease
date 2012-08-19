@@ -1,5 +1,4 @@
 import os
-import tee
 import pkg_resources
 
 from os.path import abspath, join, isfile
@@ -9,6 +8,7 @@ from process import Process
 from configparser import ConfigParser
 from chdir import chdir
 from exit import err_exit, warn
+from tee import *
 
 
 class Setuptools(object):
@@ -60,9 +60,9 @@ class Setuptools(object):
         if not self.process.quiet:
             print 'running egg_info'
 
-        echo = tee.After('running egg_info')
+        echo = After('running egg_info')
         if quiet:
-            echo = tee.And(echo, tee.StartsWith('running'))
+            echo = And(echo, StartsWith('running'))
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags,
@@ -80,9 +80,9 @@ class Setuptools(object):
         if not self.process.quiet:
             print 'running', distcmd
 
-        echo = tee.After('running %(distcmd)s' % locals())
+        echo = After('running %(distcmd)s' % locals())
         if quiet:
-            echo = tee.And(echo, tee.StartsWith('running'))
+            echo = And(echo, StartsWith('running'))
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + [distcmd] + distflags,
@@ -100,10 +100,7 @@ class Setuptools(object):
         if not self.process.quiet:
             print 'running register'
 
-        echo = tee.After('running register')
-        if quiet:
-            echo = tee.And(echo, tee.Not(tee.StartsWith('Server response')))
-
+        echo = And(After('running register'), Not(StartsWith('Server response')))
         serverflags = ['--repository="%s"' % location]
 
         rc, lines = self._run_setup_py(
@@ -113,7 +110,7 @@ class Setuptools(object):
 
         if rc == 0:
             if self._parse_register_results(lines):
-                if not self.process.quiet and quiet:
+                if not self.process.quiet:
                     print 'OK'
                 return rc
         err_exit('ERROR: register failed')
@@ -123,10 +120,7 @@ class Setuptools(object):
         if not self.process.quiet:
             print 'running upload'
 
-        echo = tee.After('running upload')
-        if quiet:
-            echo = tee.And(echo, tee.Not(tee.StartsWith('Server response')))
-
+        echo = And(After('running upload'), Not(StartsWith('Server response')))
         serverflags = ['--repository="%s"' % location]
 
         rc, lines = self._run_setup_py(
@@ -137,7 +131,7 @@ class Setuptools(object):
 
         if rc == 0:
             if self._parse_upload_results(lines):
-                if not self.process.quiet and quiet:
+                if not self.process.quiet:
                     print 'OK'
                 return rc
         err_exit('ERROR: upload failed')
