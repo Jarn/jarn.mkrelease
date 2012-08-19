@@ -113,6 +113,8 @@ class Setuptools(object):
 
         if rc == 0:
             if self._parse_register_results(lines):
+                if not self.process.quiet and quiet:
+                    print 'OK'
                 return rc
         err_exit('register failed')
 
@@ -135,6 +137,8 @@ class Setuptools(object):
 
         if rc == 0:
             if self._parse_upload_results(lines):
+                if not self.process.quiet and quiet:
+                    print 'OK'
                 return rc
         err_exit('upload failed')
 
