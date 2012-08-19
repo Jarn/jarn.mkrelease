@@ -1,5 +1,6 @@
 import tempfile
 import time
+import random
 import tee
 
 from os.path import split
@@ -15,10 +16,13 @@ class SCP(object):
     def __init__(self, process=None):
         self.process = process or Process()
 
+    def delay(self):
+        time.sleep(random.choice([0.2, 0.3, 0.4]))
+
     def run_scp(self, distfile, location):
         if not self.process.quiet:
-            print 'running scp'
-            time.sleep(0.4)
+            print 'running scp_upload'
+            self.delay()
             dir, basename = split(distfile)
             print 'Uploading dist/%(basename)s to %(location)s' % locals()
 
@@ -33,8 +37,8 @@ class SCP(object):
 
     def run_sftp(self, distfile, location):
         if not self.process.quiet:
-            print 'running sftp'
-            time.sleep(0.3)
+            print 'running sftp_upload'
+            self.delay()
             dir, basename = split(distfile)
             print 'Uploading dist/%(basename)s to %(location)s' % locals()
 
