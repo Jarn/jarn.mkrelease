@@ -74,7 +74,7 @@ class Setuptools(object):
             filename = self._parse_egg_info_results(lines)
             if filename and isfile(filename):
                 return abspath(filename)
-        err_exit('ERROR: egg_info failed')
+        err_exit('egg_info failed')
 
     @chdir
     def run_dist(self, dir, infoflags, distcmd, distflags, ff='', quiet=False):
@@ -99,7 +99,7 @@ class Setuptools(object):
             filename = self._parse_dist_results(lines)
             if filename and isfile(filename):
                 return abspath(filename)
-        err_exit('ERROR: %(distcmd)s failed' % locals())
+        err_exit('%(distcmd)s failed' % locals())
 
     @chdir
     def run_register(self, dir, infoflags, location, ff='', quiet=False):
