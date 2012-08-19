@@ -29,7 +29,7 @@ class SCP(object):
             if not self.process.quiet:
                 print 'OK'
             return rc
-        err_exit('scp failed')
+        err_exit('ERROR: scp failed')
 
     def run_sftp(self, distfile, location):
         if not self.process.quiet:
@@ -50,5 +50,5 @@ class SCP(object):
                 if not self.process.quiet:
                     print 'OK'
                 return rc
-            err_exit('sftp failed')
+            err_exit('ERROR: sftp failed')
 
