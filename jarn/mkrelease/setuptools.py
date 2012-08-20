@@ -11,6 +11,8 @@ from chdir import chdir
 from exit import err_exit, warn
 from tee import *
 
+OK_RESPONSE = 'Server response (200): OK'
+
 
 class Setuptools(object):
     """Interface to setuptools."""
@@ -108,7 +110,7 @@ class Setuptools(object):
 
         echo = After('running register')
         if quiet:
-            echo = And(echo, Not(StartsWith('Server response (200)')))
+            echo = And(echo, Not(Equals(OK_RESPONSE)))
 
         checkcmd = []
         if 'check' in distutils.command.__all__:
@@ -136,7 +138,7 @@ class Setuptools(object):
 
         echo = After('running upload')
         if quiet:
-            echo = And(echo, Not(StartsWith('Server response (200)')))
+            echo = And(echo, Not(Equals(OK_RESPONSE)))
 
         serverflags = ['--repository="%(location)s"' % locals()]
 
@@ -195,8 +197,8 @@ class Setuptools(object):
         current, expect = None, 'running register'
         for line in lines:
             if line == expect:
-                if line != 'Server response (200): OK':
-                    current, expect = expect, 'Server response (200): OK'
+                if expect != OK_RESPONSE:
+                    current, expect = expect, OK_RESPONSE
                 else:
                     if current == 'running register':
                         return True
@@ -206,8 +208,8 @@ class Setuptools(object):
         current, expect = None, 'running upload'
         for line in lines:
             if line == expect:
-                if line != 'Server response (200): OK':
-                    current, expect = expect, 'Server response (200): OK'
+                if expect != OK_RESPONSE:
+                    current, expect = expect, OK_RESPONSE
                 else:
                     if current == 'running upload':
                         return True
