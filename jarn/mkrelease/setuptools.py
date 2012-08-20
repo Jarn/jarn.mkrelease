@@ -161,14 +161,14 @@ class Setuptools(object):
         The patch forces setuptools to use the file-finder 'ff'.
         If 'ff' is the empty string, the patch is not applied.
 
-        'args' contains the *list* of arguments that should be passed
-        to setup.py.
+        'args' is the list of arguments that should be passed to
+        setup.py.
         """
         python = self.python
 
         if ff:
-            patched = WALK_REVCTRL % locals()
-            setup_py = '-c"%(patched)s"' % locals()
+            patch = WALK_REVCTRL % locals()
+            setup_py = '-c"%(patch)s"' % locals()
         else:
             setup_py = 'setup.py %s' % ' '.join(args)
 
