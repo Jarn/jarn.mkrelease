@@ -13,6 +13,9 @@ Changelog
 - Allow ``sftp://`` and ``scp://`` URLs as dist-locations.
   [stefan]
 
+- Run check command as part of sdist and register commands.
+  [stefan]
+
 3.6 - 2012-07-11
 ----------------
 
