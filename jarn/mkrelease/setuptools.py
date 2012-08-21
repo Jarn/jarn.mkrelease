@@ -1,5 +1,5 @@
 import os
-import tee
+import distutils.command
 import pkg_resources
 
 from os.path import abspath, join, isfile
@@ -9,6 +9,9 @@ from process import Process
 from configparser import ConfigParser
 from chdir import chdir
 from exit import err_exit, warn
+from tee import *
+
+OK_RESPONSE = 'Server response (200): OK'
 
 
 class Setuptools(object):
@@ -60,9 +63,9 @@ class Setuptools(object):
         if not self.process.quiet:
             print 'running egg_info'
 
-        echo = tee.After('running egg_info')
+        echo = After('running egg_info')
         if quiet:
-            echo = tee.And(echo, tee.StartsWith('running'))
+            echo = And(echo, StartsWith('running'))
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags,
@@ -80,12 +83,17 @@ class Setuptools(object):
         if not self.process.quiet:
             print 'running', distcmd
 
-        echo = tee.After('running %(distcmd)s' % locals())
+        echo = After('running %(distcmd)s' % locals())
         if quiet:
-            echo = tee.And(echo, tee.StartsWith('running'))
+            echo = And(echo, StartsWith('running'))
+
+        checkcmd = []
+        if 'check' in distutils.command.__all__:
+            checkcmd = ['check']
 
         rc, lines = self._run_setup_py(
-            ['egg_info'] + infoflags + [distcmd] + distflags,
+            ['egg_info'] + infoflags + checkcmd +
+            [distcmd] + distflags,
             echo=echo,
             ff=ff)
 
@@ -100,32 +108,39 @@ class Setuptools(object):
         if not self.process.quiet:
             print 'running register'
 
-        echo = tee.After('running register')
+        echo = After('running register')
         if quiet:
-            echo = tee.And(echo, tee.Not(tee.StartsWith('Registering')))
+            echo = And(echo, Not(Equals(OK_RESPONSE)))
 
-        serverflags = ['--repository="%s"' % location]
+        checkcmd = []
+        if 'check' in distutils.command.__all__:
+            checkcmd = ['check']
+
+        serverflags = ['--repository="%(location)s"' % locals()]
 
         rc, lines = self._run_setup_py(
-            ['egg_info'] + infoflags + ['register'] + serverflags,
+            ['egg_info'] + infoflags + checkcmd +
+            ['register'] + serverflags,
             echo=echo,
             ff=ff)
 
         if rc == 0:
             if self._parse_register_results(lines):
+                if not self.process.quiet and quiet:
+                    print 'OK'
                 return rc
-        err_exit('register failed')
+        err_exit('ERROR: register failed')
 
     @chdir
     def run_upload(self, dir, infoflags, distcmd, distflags, location, uploadflags, ff='', quiet=False):
         if not self.process.quiet:
             print 'running upload'
 
-        echo = tee.After('running upload')
+        echo = After('running upload')
         if quiet:
-            echo = tee.And(echo, tee.Not(tee.StartsWith('Submitting')))
+            echo = And(echo, Not(Equals(OK_RESPONSE)))
 
-        serverflags = ['--repository="%s"' % location]
+        serverflags = ['--repository="%(location)s"' % locals()]
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + [distcmd] + distflags +
@@ -135,8 +150,10 @@ class Setuptools(object):
 
         if rc == 0:
             if self._parse_upload_results(lines):
+                if not self.process.quiet and quiet:
+                    print 'OK'
                 return rc
-        err_exit('upload failed')
+        err_exit('ERROR: upload failed')
 
     def _run_setup_py(self, args, echo=True, echo2=True, ff=''):
         """Run setup.py with monkey-patched setuptools.
@@ -144,14 +161,14 @@ class Setuptools(object):
         The patch forces setuptools to use the file-finder 'ff'.
         If 'ff' is the empty string, the patch is not applied.
 
-        'args' contains the *list* of arguments that should be passed
-        to setup.py.
+        'args' is the list of arguments that should be passed to
+        setup.py.
         """
         python = self.python
 
         if ff:
-            patched = WALK_REVCTRL % locals()
-            setup_py = '-c"%(patched)s"' % locals()
+            patch = WALK_REVCTRL % locals()
+            setup_py = '-c"%(patch)s"' % locals()
         else:
             setup_py = 'setup.py %s' % ' '.join(args)
 
@@ -177,25 +194,19 @@ class Setuptools(object):
         return ''
 
     def _parse_register_results(self, lines):
-        current, expect = None, 'running register'
-        for line in lines:
-            if line == expect:
-                if line != 'Server response (200): OK':
-                    current, expect = expect, 'Server response (200): OK'
-                else:
-                    if current == 'running register':
-                        return True
-        return False
+        return self._parse_results(lines, 'running register')
 
     def _parse_upload_results(self, lines):
-        current, expect = None, 'running upload'
+        return self._parse_results(lines, 'running upload')
+
+    def _parse_results(self, lines, match):
+        current, expect = '', match
         for line in lines:
             if line == expect:
-                if line != 'Server response (200): OK':
-                    current, expect = expect, 'Server response (200): OK'
-                else:
-                    if current == 'running upload':
-                        return True
+                if expect == match:
+                    current, expect = match, OK_RESPONSE
+                elif current == match:
+                    return True
         return False
 
 

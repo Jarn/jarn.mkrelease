@@ -7,6 +7,15 @@ Changelog
 - Fix compilation of Python source files when the -b option is given.
   [stefan]
 
+- Add SFTP support.
+  [stefan]
+
+- Allow ``sftp://`` and ``scp://`` URLs as dist-locations.
+  [stefan]
+
+- Run check command as part of sdist and register commands.
+  [stefan]
+
 3.6 - 2012-07-11
 ----------------
 

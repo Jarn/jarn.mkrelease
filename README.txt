@@ -69,9 +69,9 @@ Options
     cannot be guessed from the argument.
 
 ``-d dist-location, --dist-location=dist-location``
-    An scp destination specification, or an index server
-    configured in ``~/.pypirc``, or an alias name for either.
-    This option may be specified more than once.
+    An scp or sftp destination specification, an index
+    server configured in ``~/.pypirc``, or an alias name for
+    either. This option may be specified more than once.
 
 ``-s, --sign``
     Sign the release with GnuPG.
@@ -139,7 +139,7 @@ file ``~/.pypirc``. This file must contain your PyPI account information::
 
   [distutils]
   index-servers =
-    pypi
+      pypi
 
   [pypi]
   username = fred
@@ -154,12 +154,12 @@ Here's an example::
 
   [aliases]
   public =
-    jarn.com:/var/dist/public
+      jarn.com:/var/dist/public
   customerA =
-    jarn.com:/var/dist/customerA
+      jarn.com:/var/dist/customerA
   world =
-    public
-    pypi
+      pypi
+      public
 
 (Note that ``pypi`` refers to the index server `pypi` as configured in
 ``~/.pypirc``.)
@@ -195,14 +195,40 @@ for each and every customer is, so we configure distbase instead::
 
   [aliases]
   world =
-    public
-    pypi
+      pypi
+      public
 
 The distbase is prepended if an scp destination does not contain a
 host part. We can now write::
 
   $ mkrelease -d public src/my.package
   $ mkrelease -d customerB src/my.package
+
+Note: Setting distbase carries a certain amount of danger, in that
+typos can result in unwanted uploads to unwanted places. Aliases are
+a safe alternative.
+
+Working with SFTP
+=================
+
+Besides scp mkrelease also offers sftp support. To use sftp,
+specify the dist-location in URL form::
+
+  $ mkrelease -d sftp://jarn.com/var/dist/public src/my.package
+
+For orthogonality, scp URLs are allowed as well::
+
+  $ mkrelease -d scp://jarn.com/var/dist/public src/my.package
+
+The format also works in aliases::
+
+  [aliases]
+  public =
+      sftp://jarn.com/var/dist/public
+
+Note: The sftp client does not prompt for a password in batch mode.
+This means that to use sftp, non-interactive login must be
+configured for the destination.
 
 Working with Index Servers
 ==========================
@@ -223,8 +249,8 @@ We extend our ``~/.pypirc`` to add a second index server::
 
   [distutils]
   index-servers =
-    pypi
-    ploneorg
+      pypi
+      ploneorg
 
   [pypi]
   username = fred
@@ -239,7 +265,7 @@ This allows us to write::
 
   $ mkrelease -d ploneorg src/my.package
 
-The ``-d`` flag may be specified more than once::
+The ``-d`` option may be specified more than once::
 
   $ mkrelease -d pypi -d ploneorg src/my.package
 
@@ -248,8 +274,8 @@ Alternatively, we can group the servers by defining an alias in
 
   [aliases]
   plone =
-    pypi
-    ploneorg
+      pypi
+      ploneorg
 
 And type::
 
@@ -263,7 +289,7 @@ there by other means.
 Releasing a Tag
 ===============
 
-Release my.package from an existing tag::
+Release my.package from an existing Subversion tag::
 
   $ mkrelease -T https://svn.jarn.com/public/my.package/tags/1.0
 
@@ -284,7 +310,7 @@ configured in ``~/.pypirc``::
 
   [distutils]
   index-servers =
-    pypi
+      pypi
 
   [pypi]
   username = fred
@@ -305,6 +331,8 @@ what you plan to use):
 * git
 
 * scp
+
+* sftp
 
 * gpg
 

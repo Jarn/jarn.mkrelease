@@ -126,8 +126,8 @@ class Subversion(SCM):
         return ''
 
     def is_valid_url(self, url):
-        return url.startswith(
-            ('svn://', 'svn+ssh://', 'http://', 'https://', 'file:'))
+        return self.urlparser.get_scheme(url) in \
+            ('svn', 'svn+ssh', 'http', 'https', 'file')
 
     def is_valid_sandbox(self, dir):
         if isdir(dir):
@@ -254,7 +254,9 @@ class Subversion(SCM):
         return rc
 
     def make_branchid(self, dir, branch):
-        return self.urlparser.abspath(branch)
+        if self.urlparser.get_scheme(branch) == 'file':
+            return self.urlparser.abspath(branch)
+        return branch
 
     @chdir
     def switch_branch(self, dir, branch):
@@ -311,8 +313,8 @@ class Mercurial(SCM):
         return ''
 
     def is_valid_url(self, url):
-        return url.startswith(
-            ('ssh://', 'http://', 'https://', 'file:'))
+        return self.urlparser.get_scheme(url) in \
+            ('ssh', 'http', 'https', 'file')
 
     def is_valid_sandbox(self, dir):
         if isdir(dir):
@@ -459,10 +461,10 @@ class Git(SCM):
         return ''
 
     def is_valid_url(self, url):
-        if url.startswith(
-            ('git://', 'ssh://', 'rsync://', 'http://', 'https://', 'file:')):
+        if self.urlparser.get_scheme(url) in \
+            ('git', 'ssh', 'rsync', 'http', 'https', 'file'):
             return True
-        if self.urlparser.is_git_ssh_url(url):
+        if self.urlparser.is_ssh_url(url):
             return True
         return False
 
@@ -693,7 +695,7 @@ class SCMFactory(object):
         return [x[1] for x in roots if x[0] == longest]
 
     def get_scm_from_url(self, url):
-        scheme, user, host, path, qs, frag = self.urlparser.split(url)
+        scheme, user, host, path, qs, frag = self.urlparser.urlsplit(url)
         if scheme in ('svn', 'svn+ssh'):
             return Subversion()
         if scheme in ('git', 'rsync'):
@@ -792,7 +794,7 @@ class SCMFactory(object):
             scm = self.get_scm_from_type(type)
         elif self.urlparser.is_url(url_or_dir):
             scm = self.get_scm_from_url(url_or_dir)
-        elif self.urlparser.is_git_ssh_url(url_or_dir):
+        elif self.urlparser.is_ssh_url(url_or_dir):
             scm = Git()
         else:
             scm = self.get_scm_from_sandbox(url_or_dir)

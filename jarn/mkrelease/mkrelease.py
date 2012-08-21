@@ -41,9 +41,9 @@ Options:
                       cannot be guessed from the argument.
 
   -d dist-location, --dist-location=dist-location
-                      An scp destination specification, or an index server
-                      configured in ~/.pypirc, or an alias name for either.
-                      This option may be specified more than once.
+                      An scp or sftp destination specification, an index
+                      server configured in ~/.pypirc, or an alias name for
+                      either. This option may be specified more than once.
 
   -s, --sign          Sign the release with GnuPG.
   -i identity, --identity=identity
@@ -116,7 +116,7 @@ class Locations(object):
         self.aliases = defaults.aliases
         self.servers = defaults.servers
         self.locations = []
-        self.scp = SCP()
+        self.urlparser = URLParser()
 
     def __len__(self):
         """Return number of locations.
@@ -138,16 +138,24 @@ class Locations(object):
         """
         return location in self.servers
 
+    def is_dist_url(self, location):
+        """Return True if 'location' is an scp or sftp URL.
+        """
+        return self.urlparser.get_scheme(location) in ('scp', 'sftp')
+
     def has_host(self, location):
         """Return True if 'location' contains a host part.
         """
-        return self.scp.has_host(location)
+        return self.urlparser.is_ssh_url(location)
 
     def join(self, distbase, location):
         """Join 'distbase' and 'location' in such way that the
         result is a valid scp destination.
         """
-        return self.scp.join(distbase, location)
+        sep = ''
+        if distbase and distbase[-1] not in (':', '/'):
+            sep = '/'
+        return distbase + sep + location
 
     def get_location(self, location, depth=0):
         """Resolve aliases and apply distbase.
@@ -166,6 +174,8 @@ class Locations(object):
         if location == 'pypi':
             err_exit('No configuration found for server: pypi\n'
                      'Please create a ~/.pypirc file')
+        if self.urlparser.is_url(location):
+            return [location]
         if not self.has_host(location) and self.distbase:
             return [self.join(self.distbase, location)]
         return [location]
@@ -174,20 +184,22 @@ class Locations(object):
         """Return the default location.
         """
         res = []
-        for loc in self.distdefault:
-            res.extend(self.get_location(loc))
+        for location in self.distdefault:
+            res.extend(self.get_location(location))
         return res
 
     def check_valid_locations(self, locations=None):
-        """Fail if 'locations' is empty or contains bad scp destinations.
+        """Fail if 'locations' is empty or contains bad destinations.
         """
         if locations is None:
             locations = self.locations
         if not locations:
             err_exit('mkrelease: option -d is required\n%s' % USAGE)
         for location in locations:
-            if not self.is_server(location) and not self.has_host(location):
-                err_exit('Scp destination must contain a host part: %(location)s' % locals())
+            if (not self.is_server(location) and
+                not self.is_dist_url(location) and
+                not self.has_host(location)):
+                err_exit('Unknown location: %(location)s' % locals())
 
 
 class ReleaseMaker(object):
@@ -355,7 +367,7 @@ class ReleaseMaker(object):
         if len(args) > 1:
             if self.urlparser.is_url(self.directory):
                 self.branch = args[1]
-            elif self.urlparser.is_git_ssh_url(self.directory):
+            elif self.urlparser.is_ssh_url(self.directory):
                 self.branch = args[1]
             else:
                 err_exit('mkrelease: too many arguments\n%s' % USAGE)
@@ -453,8 +465,15 @@ class ReleaseMaker(object):
                         self.setuptools.run_register(
                             directory, infoflags, location, scmtype, self.quiet)
                         self.setuptools.run_upload(
-                            directory, infoflags, distcmd, distflags, location,
-                            uploadflags, scmtype, self.quiet)
+                            directory, infoflags, distcmd, distflags, location, uploadflags,
+                            scmtype, self.quiet)
+                    elif self.locations.is_dist_url(location):
+                        scheme = self.urlparser.get_scheme(location)
+                        location = self.urlparser.to_ssh_url(location)
+                        if scheme == 'sftp':
+                            self.scp.run_sftp(distfile, location)
+                        else:
+                            self.scp.run_scp(distfile, location)
                     else:
                         self.scp.run_scp(distfile, location)
         finally:

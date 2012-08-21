@@ -55,73 +55,83 @@ class UrlSplitTests(unittest.TestCase):
 
     def testSplitSvn(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('svn://jarn.com/public'),
+        self.assertEqual(urlparser.urlsplit('svn://jarn.com/public'),
                          ('svn', '', 'jarn.com', '/public', '', ''))
 
     def testSplitSvnSsh(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('svn+ssh://stefan@jarn.com/public'),
+        self.assertEqual(urlparser.urlsplit('svn+ssh://stefan@jarn.com/public'),
                          ('svn+ssh', 'stefan', 'jarn.com', '/public', '', ''))
 
     def testSplitGit(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('git://jarn.com/public'),
+        self.assertEqual(urlparser.urlsplit('git://jarn.com/public'),
                          ('git', '', 'jarn.com', '/public', '', ''))
 
     def testSplitRsync(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('rsync://jarn.com/public'),
+        self.assertEqual(urlparser.urlsplit('rsync://jarn.com/public'),
                          ('rsync', '', 'jarn.com', '/public', '', ''))
 
     def testSplitSsh(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('ssh://stefan@jarn.com//hg/public'),
+        self.assertEqual(urlparser.urlsplit('ssh://stefan@jarn.com//hg/public'),
                          ('ssh', 'stefan', 'jarn.com', '//hg/public', '', ''))
 
     def testSplitHttp(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('http://jarn.com/public'),
+        self.assertEqual(urlparser.urlsplit('http://jarn.com/public'),
                          ('http', '', 'jarn.com', '/public', '', ''))
 
     def testSplitHttps(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('https://stefan:secret@jarn.com/public'),
+        self.assertEqual(urlparser.urlsplit('https://stefan:secret@jarn.com/public'),
                          ('https', 'stefan:secret', 'jarn.com', '/public', '', ''))
 
     def testSplitFile(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('file:///var/dist/public'),
+        self.assertEqual(urlparser.urlsplit('file:///var/dist/public'),
                          ('file', '', '', '/var/dist/public', '', ''))
 
     def testSplitRelativeFile(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('file:var/dist/public'),
+        self.assertEqual(urlparser.urlsplit('file:var/dist/public'),
                          ('file', '', '', 'var/dist/public', '', ''))
 
     def testSplitRelativeFileWithTilde(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('file:~stefan/public'),
+        self.assertEqual(urlparser.urlsplit('file:~stefan/public'),
                          ('file', '', '', '~stefan/public', '', ''))
 
     def testSplitLocalhostWithTilde(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('file://localhost/~stefan/public'),
+        self.assertEqual(urlparser.urlsplit('file://localhost/~stefan/public'),
                          ('file', '', 'localhost', '/~stefan/public', '', ''))
 
     def testSplitGitWithTilde(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('git://jarn.com/~stefan/public'),
+        self.assertEqual(urlparser.urlsplit('git://jarn.com/~stefan/public'),
                          ('git', '', 'jarn.com', '/~stefan/public', '', ''))
 
     def testSplitUnsupported(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('ftp://jarn.com/public'),
+        self.assertEqual(urlparser.urlsplit('ftp://jarn.com/public'),
                          ('ftp', '', 'jarn.com', '/public', '', ''))
 
     def testSplitBadUrl(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.split('ssh:stefan@jarn.com/public'),
+        self.assertEqual(urlparser.urlsplit('ssh:stefan@jarn.com/public'),
                          ('', '', '', 'ssh:stefan@jarn.com/public', '', ''))
+
+    def testSplitScp(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.urlsplit('scp://stefan@jarn.com/var/dist/public'),
+                         ('scp', 'stefan', 'jarn.com', '/var/dist/public', '', ''))
+
+    def testSplitSftp(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.urlsplit('sftp://stefan@jarn.com/var/dist/public'),
+                         ('sftp', 'stefan', 'jarn.com', '/var/dist/public', '', ''))
 
 
 class IsUrlTests(unittest.TestCase):
@@ -195,56 +205,107 @@ class IsUrlTests(unittest.TestCase):
         self.assertEqual(urlparser.is_url('git@github.com:Jarn/jarn.mkrelease'), False)
 
 
-class IsGitSshUrlTests(unittest.TestCase):
+class IsSshUrlTests(unittest.TestCase):
 
     def testGitSsh(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('git@github.com:Jarn/jarn.mkrelease'), True)
+        self.assertEqual(urlparser.is_ssh_url('git@github.com:Jarn/jarn.mkrelease'), True)
 
     def testSsh(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('ssh://'), False)
+        self.assertEqual(urlparser.is_ssh_url('ssh://'), False)
 
     def testGit(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('git://'), False)
+        self.assertEqual(urlparser.is_ssh_url('git://'), False)
 
     def testUnsupported(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('ftp://'), False)
+        self.assertEqual(urlparser.is_ssh_url('ftp://'), False)
 
     def testUnknown(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('foo://'), False)
+        self.assertEqual(urlparser.is_ssh_url('foo://'), False)
 
     def testFalsePositives(self):
         # Everything with a colon matches the regex...
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('foo:'), True)
+        self.assertEqual(urlparser.is_ssh_url('foo:'), True)
+
+    def testColonAndPathOnly(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_ssh_url(':foo'), False)
 
     def testSlashBeforeColon(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('/foo:'), False)
+        self.assertEqual(urlparser.is_ssh_url('/foo:'), False)
 
     def testSlashColonOnly(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('/:'), False)
+        self.assertEqual(urlparser.is_ssh_url('/:'), False)
 
     def testColonOnly(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url(':'), False)
+        self.assertEqual(urlparser.is_ssh_url(':'), False)
+
+    def testNonAlphanumeric(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_ssh_url('$&%:'), True)
+
+    def testNonConsecutive(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_ssh_url('f o:'), False)
 
     def testBadUrl(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url('ssh'), False)
+        self.assertEqual(urlparser.is_ssh_url('ssh'), False)
 
     def testWhitespace(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url(' git@github.com:Jarn/jarn.mkrelease'), False)
+        self.assertEqual(urlparser.is_ssh_url(' git@github.com:Jarn/jarn.mkrelease'), False)
 
     def testEmptyString(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.is_git_ssh_url(''), False)
+        self.assertEqual(urlparser.is_ssh_url(''), False)
+
+
+class ToSshUrlTests(unittest.TestCase):
+
+    def testSsh(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url('ssh://stefan@jarn.com/var/dist/public'),
+                         'stefan@jarn.com:/var/dist/public')
+
+    def testScp(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url('scp://stefan@jarn.com/var/dist/public'),
+                         'stefan@jarn.com:/var/dist/public')
+
+    def testSftp(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url('sftp://stefan@jarn.com/var/dist/public'),
+                         'stefan@jarn.com:/var/dist/public')
+
+    def testIdempotence(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url('stefan@jarn.com:var/dist/public'),
+                         'stefan@jarn.com:var/dist/public')
+        self.assertEqual(urlparser.to_ssh_url('stefan@jarn.com:/var/dist/public'),
+                         'stefan@jarn.com:/var/dist/public')
+
+    def testBadUrl(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url('https://stefan@jarn.com/var/dist/public'),
+                         'https://stefan@jarn.com/var/dist/public')
+
+    def testWhitespace(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url(' ssh://stefan@jarn.com/var/dist/public'),
+                         ' ssh://stefan@jarn.com/var/dist/public')
+
+    def testEmptyString(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url(''), '')
 
 
 class AbspathTests(unittest.TestCase):
