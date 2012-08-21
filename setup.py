@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '3.7'
+version = '3.8'
 
 setup(name='jarn.mkrelease',
       version=version,
@@ -29,7 +29,7 @@ setup(name='jarn.mkrelease',
       test_suite='jarn.mkrelease.tests',
       install_requires=[
           'setuptools',
-          'setuptools-subversion',
+          'setuptools-subversion >= 2.1',
           'setuptools-hg',
           'setuptools-git',
           'lazy',

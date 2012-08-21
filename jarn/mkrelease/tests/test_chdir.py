@@ -48,6 +48,11 @@ class ChdirStackTests(unittest.TestCase):
         self.assertEqual(os.getcwd(), self.testdir)
         self.assertEqual(self.dirstack.stack, [])
 
+    def testPushEmptyDir(self):
+        self.dirstack.push('')
+        self.assertEqual(self.dirstack.stack, [self.testdir])
+        self.assertEqual(os.getcwd(), self.testdir)
+
     def testPushBadDir(self):
         self.assertRaises(OSError, self.dirstack.push, 'peng')
 

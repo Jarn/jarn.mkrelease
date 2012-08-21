@@ -4,6 +4,10 @@ import threading
 from subprocess import Popen, PIPE
 from utils import decode
 
+__all__ = ['popen', 'On', 'Off', 'NotEmpty', 'Equals',
+           'StartsWith', 'EndsWith', 'Before', 'NotAfter',
+           'After', 'NotBefore', 'Not', 'And', 'Or']
+
 
 def tee(process, filter):
     """Read lines from process.stdout and echo them to sys.stdout.
@@ -102,6 +106,9 @@ def popen(cmd, echo=True, echo2=True, env=None):
 class On(object):
     """A tee filter printing all lines."""
 
+    def __init__(self):
+        pass
+
     def __call__(self, line):
         return True
 
@@ -109,12 +116,18 @@ class On(object):
 class Off(object):
     """A tee filter suppressing all lines."""
 
+    def __init__(self):
+        pass
+
     def __call__(self, line):
         return False
 
 
 class NotEmpty(object):
     """A tee filter suppressing empty lines."""
+
+    def __init__(self):
+        pass
 
     def __call__(self, line):
         return not not line
@@ -127,10 +140,7 @@ class Equals(object):
         self.patterns = patterns
 
     def __call__(self, line):
-        for pattern in self.patterns:
-            if line == pattern:
-                return True
-        return False
+        return line in self.patterns
 
 
 class StartsWith(object):
@@ -140,10 +150,17 @@ class StartsWith(object):
         self.patterns = patterns
 
     def __call__(self, line):
-        for pattern in self.patterns:
-            if line.startswith(pattern):
-                return True
-        return False
+        return line.startswith(self.patterns)
+
+
+class EndsWith(object):
+    """A tee filter printing lines ending with one of 'patterns'."""
+
+    def __init__(self, *patterns):
+        self.patterns = patterns
+
+    def __call__(self, line):
+        return line.endswith(self.patterns)
 
 
 class Before(object):
