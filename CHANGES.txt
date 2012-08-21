@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.7 - Unreleased
+3.7 - 2012-08-22
 ----------------
 
 - Fix compilation of Python source files when the -b option is given.
