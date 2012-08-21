@@ -243,7 +243,7 @@ def walk_revctrl(dirname=''):
     if file_finder is None:
         print >>sys.stderr, 'No %(ff)s file-finder; ' \
             'setuptools-%%s extension missing?' %% \
-            'subversion' if %(ff)r.startswith('svn') else %(ff)r
+            ('subversion' if %(ff)r.startswith('svn') else %(ff)r)
         sys.exit(1)
     if not items:
         sys.exit(1)
