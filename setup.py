@@ -32,7 +32,7 @@ setup(name='jarn.mkrelease',
           'setuptools-subversion >= 2.1',
           'setuptools-hg',
           'setuptools-git',
-          'lazy',
+          'lazy >= 1.1',
       ],
       entry_points={
           'console_scripts': 'mkrelease=jarn.mkrelease.mkrelease:main',
