@@ -20,8 +20,6 @@ def tee(process, filter):
     receiving the line as argument. If the filter returns True, the
     line is echoed to sys.stdout.
     """
-    # We simply use readline here, more fancy IPC is not warranted
-    # in the context of this package.
     global _tee2_exit_flag
     lines = []
 
