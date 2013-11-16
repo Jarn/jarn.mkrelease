@@ -124,15 +124,21 @@ class SubversionSetup(SCMSetup):
 
     @lazy
     def source(self):
-        if self.scm.version_info[:2] >= (1, 7):
+        if self.scm.version_info[:2] >= (1, 8):
+            return 'testrepo.svn18.zip'
+        elif self.scm.version_info[:2] >= (1, 7):
             return 'testrepo.svn17.zip'
-        return 'testrepo.svn16.zip'
+        else:
+            return 'testrepo.svn16.zip'
 
     @lazy
     def _fake_source(self):
-        if self.scm.version_info[:2] >= (1, 7):
+        if self.scm.version_info[:2] >= (1, 8):
+            return 'testpackage.svn18.zip'
+        elif self.scm.version_info[:2] >= (1, 7):
             return 'testpackage.svn17.zip'
-        return 'testpackage.svn16.zip'
+        else:
+            return 'testpackage.svn16.zip'
 
     def clone(self):
         process = Process(quiet=True)
