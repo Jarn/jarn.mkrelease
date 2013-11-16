@@ -49,13 +49,14 @@ class SubversionTests(SubversionSetup):
         return 'svn' if self.scm.version_info[:2] >= (1, 7) else 'svn_cvs'
 
     def testSubversionFinder(self):
+        self.dirstack.push(self.clonedir) # XXX
         files = list(get_finder(self.type)(self.clonedir))
-        if self.type == 'svn_cvs':
-            self.assertTrue(join(self.clonedir, 'testpackage', 'subversion_only.py') in files)
-            self.assertTrue(join(self.clonedir, 'testpackage', 'subversion_only.txt') in files)
-        else:
+        if self.scm.version_info[:2] >= (1, 7):
             self.assertTrue(join('testpackage', 'subversion_only.py') in files)
             self.assertTrue(join('testpackage', 'subversion_only.txt') in files)
+        else:
+            self.assertTrue(join(self.clonedir, 'testpackage', 'subversion_only.py') in files)
+            self.assertTrue(join(self.clonedir, 'testpackage', 'subversion_only.txt') in files)
 
     def testSubversionFinderNoArg(self):
         self.dirstack.push(self.clonedir)
