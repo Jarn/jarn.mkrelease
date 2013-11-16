@@ -8,6 +8,8 @@ __all__ = ['popen', 'On', 'Off', 'NotEmpty', 'Equals',
            'StartsWith', 'EndsWith', 'Before', 'NotAfter',
            'After', 'NotBefore', 'Not', 'And', 'Or']
 
+_tee2_exit_flag = False
+
 
 def tee(process, filter):
     """Read lines from process.stdout and echo them to sys.stdout.
@@ -20,7 +22,9 @@ def tee(process, filter):
     """
     # We simply use readline here, more fancy IPC is not warranted
     # in the context of this package.
+    global _tee2_exit_flag
     lines = []
+
     while True:
         line = process.stdout.readline()
         if line:
@@ -31,6 +35,7 @@ def tee(process, filter):
                 sys.stdout.write(line)
             lines.append(stripped_line)
         elif process.poll() is not None:
+            _tee2_exit_flag = True
             process.stdout.close()
             break
     return lines
@@ -43,6 +48,9 @@ def tee2(process, filter):
     receiving the line as argument. If the filter returns True, the
     line is echoed to sys.stderr.
     """
+    global _tee2_exit_flag
+    _tee2_exit_flag = False
+
     while True:
         line = process.stderr.readline()
         if line:
@@ -51,7 +59,7 @@ def tee2(process, filter):
             stripped_line = line.rstrip()
             if filter(stripped_line):
                 sys.stderr.write(line)
-        elif process.poll() is not None:
+        elif _tee2_exit_flag:
             process.stderr.close()
             break
 
