@@ -170,7 +170,10 @@ class SubversionSetup(SCMSetup):
     @chdir
     def modifyprop(self, dir):
         process = Process(quiet=True)
-        process.system('svn propset svn:format "text/x-python" setup.py')
+        if self.scm.version_info[:2] >= (1, 8):
+            process.system('svn propset format "text/x-python" setup.py')
+        else:
+            process.system('svn propset svn:format "text/x-python" setup.py')
 
     @chdir
     def remove(self, dir):
