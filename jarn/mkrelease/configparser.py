@@ -1,11 +1,13 @@
+from __future__ import absolute_import
+
 import sys
 
+from ConfigParser import Error
+
 if sys.version_info[:2] >= (3, 2):
-    from configparser import ConfigParser as SafeConfigParser
-    from configparser import Error
+    from configparser import ConfigParser as _BaseParser
 else:
-    from ConfigParser import SafeConfigParser
-    from ConfigParser import Error
+    from ConfigParser import SafeConfigParser as _BaseParser
 
 
 class MultipleValueError(Error):
@@ -27,7 +29,7 @@ class errors2warnings(object):
             return True
 
 
-class ConfigParser(SafeConfigParser, object):
+class ConfigParser(_BaseParser, object):
 
     def __init__(self, warn_func=None, raw=True):
         super(ConfigParser, self).__init__()
@@ -154,5 +156,3 @@ class ConfigParser(SafeConfigParser, object):
             return value
         return ''
 
-
-del SafeConfigParser
