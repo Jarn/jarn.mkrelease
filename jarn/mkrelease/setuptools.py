@@ -6,7 +6,7 @@ from os.path import abspath, join, isfile
 
 from python import Python
 from process import Process
-from configparser import ConfigParser
+from confparser import ConfigParser
 from chdir import chdir
 from exit import err_exit, warn
 from tee import *
@@ -211,6 +211,7 @@ class Setuptools(object):
 
 
 WALK_REVCTRL = """\
+from __future__ import print_function
 import os, sys
 import distutils
 import pkg_resources
@@ -241,9 +242,9 @@ def walk_revctrl(dirname=''):
             distutils.log.info('%%d files found', len(finder_items))
             items.extend(finder_items)
     if file_finder is None:
-        print >>sys.stderr, 'No %(ff)s file-finder; ' \
-            'setuptools-%%s extension missing?' %% \
-            ('subversion' if %(ff)r.startswith('svn') else %(ff)r)
+        print('No %(ff)s file-finder; setuptools-%%s extension missing?' %%
+            ('subversion' if %(ff)r.startswith('svn') else %(ff)r),
+            file=sys.stderr)
         sys.exit(1)
     if not items:
         sys.exit(1)

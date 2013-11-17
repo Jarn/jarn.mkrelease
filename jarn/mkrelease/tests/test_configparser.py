@@ -1,6 +1,6 @@
 import unittest
 
-from jarn.mkrelease.configparser import ConfigParser
+from jarn.mkrelease.confparser import ConfigParser
 
 from jarn.mkrelease.testing import JailSetup
 

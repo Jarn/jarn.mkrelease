@@ -9,6 +9,7 @@ from contextlib import closing
 
 from jarn.mkrelease.setuptools import Setuptools
 from jarn.mkrelease.process import Process
+from jarn.mkrelease.utils import decode
 
 from jarn.mkrelease.testing import SubversionSetup
 from jarn.mkrelease.testing import MercurialSetup
@@ -25,7 +26,10 @@ def contains(archive, name):
 def get_manifest(archive):
     with closing(zipfile.ZipFile(archive).open(
         'testpackage-2.6/testpackage.egg-info/SOURCES.txt')) as manifest:
-        return manifest.read()
+        text = manifest.read()
+        if sys.version_info[0] >= 3:
+            return decode(text, errors='strict')
+        return text
 
 
 def get_finder(type):
@@ -45,25 +49,26 @@ class SubversionTests(SubversionSetup):
         return 'svn' if self.scm.version_info[:2] >= (1, 7) else 'svn_cvs'
 
     def testSubversionFinder(self):
+        self.dirstack.push(self.clonedir) # XXX
         files = list(get_finder(self.type)(self.clonedir))
-        if self.type == 'svn_cvs':
-            self.failUnless(join(self.clonedir, 'testpackage', 'subversion_only.py') in files)
-            self.failUnless(join(self.clonedir, 'testpackage', 'subversion_only.txt') in files)
+        if self.scm.version_info[:2] >= (1, 7):
+            self.assertTrue(join('testpackage', 'subversion_only.py') in files)
+            self.assertTrue(join('testpackage', 'subversion_only.txt') in files)
         else:
-            self.failUnless(join('testpackage', 'subversion_only.py') in files)
-            self.failUnless(join('testpackage', 'subversion_only.txt') in files)
+            self.assertTrue(join(self.clonedir, 'testpackage', 'subversion_only.py') in files)
+            self.assertTrue(join(self.clonedir, 'testpackage', 'subversion_only.txt') in files)
 
     def testSubversionFinderNoArg(self):
         self.dirstack.push(self.clonedir)
         files = list(get_finder(self.type)())
-        self.failUnless(join('testpackage', 'subversion_only.py') in files)
-        self.failUnless(join('testpackage', 'subversion_only.txt') in files)
+        self.assertTrue(join('testpackage', 'subversion_only.py') in files)
+        self.assertTrue(join('testpackage', 'subversion_only.txt') in files)
 
     def testSubversionFinderEmptyArg(self):
         self.dirstack.push(self.clonedir)
         files = list(get_finder(self.type)(''))
-        self.failUnless(join('testpackage', 'subversion_only.py') in files)
-        self.failUnless(join('testpackage', 'subversion_only.txt') in files)
+        self.assertTrue(join('testpackage', 'subversion_only.py') in files)
+        self.assertTrue(join('testpackage', 'subversion_only.txt') in files)
 
     def testSubversionSdistPy(self):
         st = Setuptools(Process(quiet=True))
@@ -126,27 +131,27 @@ testpackage.egg-info/top_level.txt""")
     def testRemoveSetupPyc(self):
         st = Setuptools(Process(quiet=True))
         st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff=self.type)
-        self.failIf(isfile(join(self.clonedir, 'setup.pyc')))
+        self.assertFalse(isfile(join(self.clonedir, 'setup.pyc')))
 
 
 class MercurialTests(MercurialSetup):
 
     def testMercurialFinder(self):
         files = list(get_finder('hg')(self.packagedir))
-        self.failUnless(join('testpackage', 'mercurial_only.py') in files)
-        self.failUnless(join('testpackage', 'mercurial_only.txt') in files)
+        self.assertTrue(join('testpackage', 'mercurial_only.py') in files)
+        self.assertTrue(join('testpackage', 'mercurial_only.txt') in files)
 
     def testMercurialFinderNoArg(self):
         self.dirstack.push(self.packagedir)
         files = list(get_finder('hg')())
-        self.failUnless(join('testpackage', 'mercurial_only.py') in files)
-        self.failUnless(join('testpackage', 'mercurial_only.txt') in files)
+        self.assertTrue(join('testpackage', 'mercurial_only.py') in files)
+        self.assertTrue(join('testpackage', 'mercurial_only.txt') in files)
 
     def testMercurialFinderEmptyArg(self):
         self.dirstack.push(self.packagedir)
         files = list(get_finder('hg')(''))
-        self.failUnless(join('testpackage', 'mercurial_only.py') in files)
-        self.failUnless(join('testpackage', 'mercurial_only.txt') in files)
+        self.assertTrue(join('testpackage', 'mercurial_only.py') in files)
+        self.assertTrue(join('testpackage', 'mercurial_only.txt') in files)
 
     def testMercurialSdistPy(self):
         st = Setuptools(Process(quiet=True, env=get_env()))
@@ -188,7 +193,7 @@ testpackage.egg-info/top_level.txt""")
     def testRemoveSetupPyc(self):
         st = Setuptools(Process(quiet=True, env=get_env()))
         st.run_dist(self.packagedir, [], 'sdist', ['--formats=zip'], ff='hg')
-        self.failIf(isfile(join(self.packagedir, 'setup.pyc')))
+        self.assertFalse(isfile(join(self.packagedir, 'setup.pyc')))
 
 
 class GitTests(GitSetup):
@@ -196,20 +201,20 @@ class GitTests(GitSetup):
     def testGitFinder(self):
         self.dirstack.push(self.packagedir) # XXX
         files = list(get_finder('git')(self.packagedir))
-        self.failUnless(join('testpackage', 'git_only.py') in files)
-        self.failUnless(join('testpackage', 'git_only.txt') in files)
+        self.assertTrue(join('testpackage', 'git_only.py') in files)
+        self.assertTrue(join('testpackage', 'git_only.txt') in files)
 
     def testGitFinderNoArg(self):
         self.dirstack.push(self.packagedir)
         files = list(get_finder('git')())
-        self.failUnless(join('testpackage', 'git_only.py') in files)
-        self.failUnless(join('testpackage', 'git_only.txt') in files)
+        self.assertTrue(join('testpackage', 'git_only.py') in files)
+        self.assertTrue(join('testpackage', 'git_only.txt') in files)
 
     def testGitFinderEmptyArg(self):
         self.dirstack.push(self.packagedir)
         files = list(get_finder('git')(''))
-        self.failUnless(join('testpackage', 'git_only.py') in files)
-        self.failUnless(join('testpackage', 'git_only.txt') in files)
+        self.assertTrue(join('testpackage', 'git_only.py') in files)
+        self.assertTrue(join('testpackage', 'git_only.txt') in files)
 
     def testGitSdistPy(self):
         st = Setuptools(Process(quiet=True, env=get_env()))
@@ -251,7 +256,7 @@ testpackage.egg-info/top_level.txt""")
     def testRemoveSetupPyc(self):
         st = Setuptools(Process(quiet=True, env=get_env()))
         st.run_dist(self.packagedir, [], 'sdist', ['--formats=zip'], ff='git')
-        self.failIf(isfile(join(self.packagedir, 'setup.pyc')))
+        self.assertFalse(isfile(join(self.packagedir, 'setup.pyc')))
 
 
 def test_suite():

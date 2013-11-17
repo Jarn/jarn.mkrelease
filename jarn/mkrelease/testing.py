@@ -4,6 +4,7 @@ import unittest
 import tempfile
 import shutil
 import zipfile
+import functools
 import StringIO
 
 from os.path import realpath, join, dirname, isdir
@@ -123,15 +124,21 @@ class SubversionSetup(SCMSetup):
 
     @lazy
     def source(self):
-        if self.scm.version_info[:2] >= (1, 7):
+        if self.scm.version_info[:2] >= (1, 8):
+            return 'testrepo.svn18.zip'
+        elif self.scm.version_info[:2] >= (1, 7):
             return 'testrepo.svn17.zip'
-        return 'testrepo.svn16.zip'
+        else:
+            return 'testrepo.svn16.zip'
 
     @lazy
     def _fake_source(self):
-        if self.scm.version_info[:2] >= (1, 7):
+        if self.scm.version_info[:2] >= (1, 8):
+            return 'testpackage.svn18.zip'
+        elif self.scm.version_info[:2] >= (1, 7):
             return 'testpackage.svn17.zip'
-        return 'testpackage.svn16.zip'
+        else:
+            return 'testpackage.svn16.zip'
 
     def clone(self):
         process = Process(quiet=True)
@@ -169,7 +176,10 @@ class SubversionSetup(SCMSetup):
     @chdir
     def modifyprop(self, dir):
         process = Process(quiet=True)
-        process.system('svn propset svn:format "text/x-python" setup.py')
+        if self.scm.version_info[:2] >= (1, 8):
+            process.system('svn propset format "text/x-python" setup.py')
+        else:
+            process.system('svn propset svn:format "text/x-python" setup.py')
 
     @chdir
     def remove(self, dir):
@@ -306,7 +316,7 @@ class MockProcess(Process):
 def quiet(func):
     """Decorator swallowing stdout and stderr output.
     """
-    def wrapped_func(*args, **kw):
+    def wrapper(*args, **kw):
         saved = sys.stdout, sys.stderr
         sys.stdout = sys.stderr = StringIO.StringIO()
         try:
@@ -314,11 +324,7 @@ def quiet(func):
         finally:
             sys.stdout, sys.stderr = saved
 
-    wrapped_func.__name__ = func.__name__
-    wrapped_func.__module__ = func.__module__
-    wrapped_func.__doc__ = func.__doc__
-    wrapped_func.__dict__.update(func.__dict__)
-    return wrapped_func
+    return functools.wraps(func)(wrapper)
 
 
 def readlines(filename):

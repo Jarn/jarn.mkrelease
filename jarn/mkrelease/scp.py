@@ -1,3 +1,4 @@
+import sys
 import tempfile
 import time
 import random
@@ -6,6 +7,7 @@ from os.path import basename
 
 from process import Process
 from exit import err_exit
+from utils import encode
 
 
 class SCP(object):
@@ -45,8 +47,10 @@ class SCP(object):
             print 'Uploading dist/%(name)s to %(location)s' % locals()
 
         with tempfile.NamedTemporaryFile() as file:
-            file.write('put "%(distfile)s"\n' % locals())
-            file.write('bye\n')
+            cmds = 'put "%(distfile)s"\nbye\n' % locals()
+            if sys.version_info[0] >= 3:
+                cmds = encode(cmds)
+            file.write(cmds)
             file.flush()
             cmdfile = file.name
 

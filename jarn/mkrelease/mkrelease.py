@@ -18,7 +18,7 @@ from setuptools import Setuptools
 from scp import SCP
 from scm import SCMFactory
 from urlparser import URLParser
-from configparser import ConfigParser
+from confparser import ConfigParser
 from exit import err_exit, msg_exit, warn
 
 MAXALIASDEPTH = 23
