@@ -10,17 +10,17 @@ the cumber out of building and distributing Python eggs.
 
 Also see `jarn.viewdoc`_.
 
-.. _`jarn.viewdoc`: http://pypi.python.org/pypi/jarn.viewdoc
+.. _`jarn.viewdoc`: https://pypi.python.org/pypi/jarn.viewdoc
 
 Motivation
 ==========
 
-Python eggs are great and we strive to release all software in egg form.
+Python eggs are great, and we strive to release all software in egg form.
 However, as projects grow larger and are comprised of more and more eggs,
 release requirements can become a burden.
 
 This is because it takes some work to put a new egg on a
-distribution server! After preparing a package for release (update
+distribution server. After preparing a package for release (update
 version strings, etc.), we typically have to:
 
 1. Commit modified files.
@@ -40,12 +40,6 @@ Installation
 mkrelease requires Python 2.6 or higher. Use
 ``easy_install jarn.mkrelease`` to install the ``mkrelease`` script.
 Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
-
-mkrelease is known to work with the 0.6 series of setuptools_
-and distribute_. For Python 3 distribute is required.
-
-.. _setuptools: http://pypi.python.org/pypi/setuptools
-.. _distribute: http://pypi.python.org/pypi/distribute
 
 Usage
 =====
@@ -207,10 +201,6 @@ host part. We can now write::
   $ mkrelease -d public src/my.package
   $ mkrelease -d customerB src/my.package
 
-Note: Setting distbase carries a certain amount of danger, in that
-typos can result in unwanted uploads to unwanted places. Aliases are
-a safe alternative.
-
 Working with SFTP
 =================
 
@@ -246,7 +236,7 @@ Index servers are not limited to PyPI though.
 For example, in the Plone world it is common practice to upload packages to
 `plone.org`_ as well as to PyPI.
 
-.. _`plone.org`: http://plone.org/products
+.. _`plone.org`: https://plone.org/products
 
 We extend our ``~/.pypirc`` to add a second index server::
 
@@ -260,7 +250,7 @@ We extend our ``~/.pypirc`` to add a second index server::
   password = secret
 
   [ploneorg]
-  repository = http://plone.org/products
+  repository = https://plone.org/products
   username = fred
   password = secret
 
