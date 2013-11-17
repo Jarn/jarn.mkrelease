@@ -1,10 +1,10 @@
 Changelog
 =========
 
-3.8 - Unreleased
+4.0 - Unreleased
 ----------------
 
-- Add support for Python 3.1 - 3.3 thanks to distribute.
+- Support Python 3.1 - 3.3.
   [stefan]
 
 3.7 - 2012-08-22
