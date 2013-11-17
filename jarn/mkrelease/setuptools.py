@@ -6,7 +6,7 @@ from os.path import abspath, join, isfile
 
 from python import Python
 from process import Process
-from confparser import ConfigParser
+from configparser import ConfigParser
 from chdir import chdir
 from exit import err_exit, warn
 from tee import *
