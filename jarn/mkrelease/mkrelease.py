@@ -13,13 +13,13 @@ import shutil
 from os.path import abspath, join, expanduser, exists, isfile
 from itertools import chain
 
-from .python import Python
-from .setuptools import Setuptools
-from .scp import SCP
-from .scm import SCMFactory
-from .urlparser import URLParser
-from .configparser import ConfigParser
-from .exit import err_exit, msg_exit, warn
+from python import Python
+from setuptools import Setuptools
+from scp import SCP
+from scm import SCMFactory
+from urlparser import URLParser
+from configparser import ConfigParser
+from exit import err_exit, msg_exit, warn
 
 MAXALIASDEPTH = 23
 
