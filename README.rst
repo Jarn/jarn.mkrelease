@@ -160,7 +160,7 @@ Here's an example::
       pypi
       public
 
-(Note that ``pypi`` refers to the index server `pypi` as configured in
+(Note that ``pypi`` refers to the index server *pypi* as configured in
 ``~/.pypirc`` above.)
 
 Armed with this configuration we can shorten example 2 to::
