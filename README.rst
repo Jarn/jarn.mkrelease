@@ -31,14 +31,16 @@ version strings, etc.), we typically have to:
 
 4. Distribute the egg via scp or upload it to an index server.
 
-Now imagine having to do this a lot, and the need for automation becomes
+Now imagine doing this a lot, and the need for automation becomes
 obvious.
 
 Installation
 ============
 
-mkrelease requires Python 2.6 or higher. Use
-``easy_install jarn.mkrelease`` to install the ``mkrelease`` script.
+mkrelease works with Python 2.6 - 3.3 and all released versions of setuptools
+and distribute.
+
+Use ``easy_install jarn.mkrelease`` to install the ``mkrelease`` script.
 Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
 
 Usage
@@ -124,9 +126,9 @@ Release my.package using the repository URL instead of a local working copy::
 
   $ mkrelease -d pypi https://svn.jarn.com/public/my.package/trunk
 
-Release a development egg of my.package (while suppressing setuptools output)::
+Release a development egg of my.package while suppressing setuptools output::
 
-  $ mkrelease -qed jarn.com:/var/dist/public src/my.package
+  $ mkrelease -qed jarn.com:/var/dist/private src/my.package
 
 Configuration
 =============
@@ -159,7 +161,7 @@ Here's an example::
       public
 
 (Note that ``pypi`` refers to the index server `pypi` as configured in
-``~/.pypirc``.)
+``~/.pypirc`` above.)
 
 Armed with this configuration we can shorten example 2 to::
 
@@ -169,11 +171,11 @@ And because ``public`` is the default location, we can omit ``-d`` entirely::
 
   $ mkrelease src/my.package
 
-Working with SCP
-================
+Working with SCP and SFTP
+=========================
 
 The simplest distribution location is a server directory shared through
-Apache. Releasing an egg means scp-ing it to the appropriate place on the
+Apache. Releasing an egg just means scp-ing it to the appropriate place on the
 server::
 
   $ mkrelease -d jarn.com:/var/dist/public src/my.package
@@ -195,40 +197,30 @@ for each and every customer is, so we configure distbase instead::
       pypi
       public
 
-The distbase is prepended if an scp destination does not contain a
+The distbase is prepended when an scp destination does not contain a
 host part. We can now write::
 
   $ mkrelease -d public src/my.package
   $ mkrelease -d customerB src/my.package
 
-Working with SFTP
-=================
-
-Besides scp mkrelease also offers sftp support. To use sftp,
-specify the dist-location in URL form::
+To upload via sftp instead of scp, specify the destination in URL form::
 
   $ mkrelease -d sftp://jarn.com/var/dist/public src/my.package
 
-For orthogonality, scp URLs are allowed as well::
+For consistency scp URLs are supported as well::
 
   $ mkrelease -d scp://jarn.com/var/dist/public src/my.package
 
-The format also works in aliases::
-
-  [aliases]
-  public =
-      sftp://jarn.com/var/dist/public
-
-Note: The sftp client does not prompt for a password in batch mode.
-This means that to use sftp, non-interactive login must be
-configured for the destination.
+Note: Unlike scp, the sftp client does not prompt for login credentials.
+This means that for sftp non-interactive login must be configured on
+the destination server.
 
 Working with Index Servers
 ==========================
 
 Another way of distributing Python eggs is by uploading them to dedicated
 index servers, notably PyPI. Given the ``~/.pypirc`` file from above
-we can release on PyPI by typing::
+we can release to PyPI by typing::
 
   $ mkrelease -d pypi src/my.package
 
@@ -243,36 +235,36 @@ We extend our ``~/.pypirc`` to add a second index server::
   [distutils]
   index-servers =
       pypi
-      ploneorg
+      plone
 
   [pypi]
   username = fred
   password = secret
 
-  [ploneorg]
+  [plone]
   repository = https://plone.org/products
   username = fred
   password = secret
 
-This allows us to write::
+This allows us to release to plone.org by typing::
 
-  $ mkrelease -d ploneorg src/my.package
+  $ mkrelease -d plone src/my.package
 
-The ``-d`` option may be specified more than once::
+The ``-d`` option can be specified more than once::
 
-  $ mkrelease -d pypi -d ploneorg src/my.package
+  $ mkrelease -d pypi -d plone src/my.package
 
-Alternatively, we can group the servers by defining an alias in
+Alternatively, we can group the servers by creating an alias in
 ``~/.mkrelease``::
 
   [aliases]
-  plone =
+  plone-world =
       pypi
-      ploneorg
+      plone
 
 And type::
 
-  $ mkrelease -d plone src/my.package
+  $ mkrelease -d plone-world src/my.package
 
 Note: Setuptools rebuilds the egg for every index server it uploads it to.
 This means that MD5 sums and GnuPG signatures will differ between servers.
