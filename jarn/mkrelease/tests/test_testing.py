@@ -54,25 +54,25 @@ class JailSetupTests(unittest.TestCase):
         self.assertEqual(self.cwd, os.getcwd())
 
     def testFailingTest(self):
-        suite = unittest.makeSuite(JailSetupTestCase, 'dummyTest')
+        test = JailSetupTestCase('dummyTest')
+        suite = unittest.TestSuite((test,))
         result = unittest.TestResult()
         suite.run(result)
         self.assertEqual(len(result.failures), 1)
         self.assertEqual(len(result.errors), 0)
         # The temporary directory has been removed
-        for test in suite:
-            self.assertFalse(os.path.exists(test.tempdir))
+        self.assertFalse(os.path.exists(test.tempdir))
         # And we are back in the directory we started in
         self.assertEqual(self.cwd, os.getcwd())
 
-    def testWalkback(self):
+    def testUnrollDirStack(self):
         suite = unittest.makeSuite(JailSetupTestCase, 'pushingTest')
         result = unittest.TestResult()
         suite.run(result)
         # We are back in the directory we started in
         self.assertEqual(self.cwd, os.getcwd())
 
-    def testDoomsday(self):
+    def testDestroyedFixture(self):
         suite = unittest.makeSuite(JailSetupTestCase, 'doomingTest')
         result = unittest.TestResult()
         suite.run(result)
