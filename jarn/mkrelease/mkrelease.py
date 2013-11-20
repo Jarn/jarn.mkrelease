@@ -236,6 +236,17 @@ class ReleaseMaker(object):
         self.directory = os.curdir
         self.scm = None
 
+    def reset_defaults(self, config_file):
+        """Reset defaults.
+        """
+        if not exists(config_file):
+            err_exit('No such file: %(config_file)s' % locals())
+        if not isfile(config_file):
+            err_exit('Not a file: %(config_file)s' % locals())
+        if not os.access(config_file, os.R_OK):
+            err_exit('File cannot be read: %(config_file)s' % locals())
+        self.set_defaults(config_file)
+
     def parse_options(self, args, depth=0):
         """Parse command line options.
         """
@@ -283,9 +294,7 @@ class ReleaseMaker(object):
                 self.distcmd = 'bdist'
                 self.distflags = ['--formats="egg"']
             elif name in ('-c', '--config-file') and depth == 0:
-                config_file = abspath(expanduser(value))
-                self.check_valid_file(config_file)
-                self.set_defaults(config_file)
+                self.reset_defaults(abspath(expanduser(value)))
                 return self.parse_options(args, depth+1)
 
         return remaining_args
@@ -303,16 +312,6 @@ class ReleaseMaker(object):
             else:
                 print location
         sys.exit(0)
-
-    def check_valid_file(self, file):
-        """Check if 'file' can be read.
-        """
-        if not exists(file):
-            err_exit('No such file: %(file)s' % locals())
-        if not isfile(file):
-            err_exit('Not a file: %(file)s' % locals())
-        if not os.access(file, os.R_OK):
-            err_exit('File cannot be read: %(file)s' % locals())
 
     def get_uploadflags(self, location):
         """Return uploadflags for the given server.
