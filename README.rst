@@ -76,14 +76,14 @@ Options
     Sign the release with GnuPG.
 
 ``-i identity, --identity=identity``
-    The GnuPG identity to sign with.
+    The GnuPG identity to sign with. Implies ``-s``.
 
 ``-p, --push``
     Push sandbox modifications upstream.
 
 ``-e, --develop``
     Allow version number extensions (i.e. don't ignore
-    respective ``setup.cfg`` options.)
+    respective ``setup.cfg`` options). Implies ``-T``.
 
 ``-b, --binary``
     Release a binary (bdist) egg.

@@ -47,10 +47,10 @@ Options:
 
   -s, --sign          Sign the release with GnuPG.
   -i identity, --identity=identity
-                      The GnuPG identity to sign with.
+                      The GnuPG identity to sign with. Implies -s.
 
   -p, --push          Push sandbox modifications upstream.
-  -e, --develop       Allow version number extensions.
+  -e, --develop       Allow version number extensions. Implies -T.
   -b, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
 
