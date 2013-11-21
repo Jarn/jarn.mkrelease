@@ -37,7 +37,7 @@ obvious.
 Installation
 ============
 
-mkrelease works with Python 2.6 - 3.3 and all released versions of setuptools
+mkrelease works with Python 2.6 - 3.4 and all released versions of setuptools
 and distribute.
 
 Use ``easy_install jarn.mkrelease`` to install the ``mkrelease`` script.
@@ -171,8 +171,8 @@ And because ``public`` is the default location, we can omit ``-d`` entirely::
 
   $ mkrelease src/my.package
 
-Working with SCP and SFTP
-=========================
+Working with SCP
+================
 
 The simplest distribution location is a server directory shared through
 Apache. Releasing an egg just means scp-ing it to the appropriate place on the
@@ -202,6 +202,9 @@ host part. We can now write::
 
   $ mkrelease -d public src/my.package
   $ mkrelease -d customerB src/my.package
+
+Working with SFTP
+=================
 
 To upload via sftp instead of scp, specify the destination in URL form::
 
@@ -291,17 +294,24 @@ Release my.package and sign the archive with GnuPG::
 
 The ``-i`` flag is optional, and GnuPG will pick your default
 key if not given. In addition, defaults for ``-s`` and ``-i`` can be
-configured in ``~/.pypirc``::
+configured in ``~/.pypirc``, on a per-server basis::
 
   [distutils]
   index-servers =
       pypi
+      plone
 
   [pypi]
   username = fred
   password = secret
   sign = yes
   identity = fred@bedrock.com
+
+  [plone]
+  repository = https://plone.org/products
+  username = fred
+  password = secret
+  sign = no
 
 Requirements
 ============
