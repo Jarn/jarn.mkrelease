@@ -123,7 +123,7 @@ class BranchFromSandboxTests(GitSetup):
 
     def testGetLocalBranch(self):
         scm = Git()
-        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'parking') # See testing.py
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'master')
 
     def testGetLocalBranchFromBranch(self):
         scm = Git()
@@ -453,9 +453,9 @@ class SwitchBranchTests(GitSetup):
     @quiet
     def testSwitchSameBranch(self):
         scm = Git()
-        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'parking')
-        self.assertEqual(scm.switch_branch(self.packagedir, 'parking'), 0)
-        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'parking')
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'master')
+        self.assertEqual(scm.switch_branch(self.packagedir, 'master'), 0)
+        self.assertEqual(scm.get_branch_from_sandbox(self.packagedir), 'master')
 
     @quiet
     def testSwitchRemoteBranch(self):

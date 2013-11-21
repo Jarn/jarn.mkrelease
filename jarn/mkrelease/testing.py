@@ -247,10 +247,13 @@ class GitSetup(SCMSetup):
         process = Process(quiet=True)
         process.system('git clone testpackage testclone')
         self.clonedir = join(self.tempdir, 'testclone')
-        # Park the server on a branch because "Updating the currently
-        # checked-out branch may cause confusion."
+        # Park the server on a branch
         self.dirstack.push('testpackage')
-        process.system('git checkout -b parking')
+        process.system('git checkout parking')
+        self.dirstack.pop()
+        # Make sure the clone is on master
+        self.dirstack.push('testclone')
+        process.system('git checkout master')
         self.dirstack.pop()
 
     @chdir
