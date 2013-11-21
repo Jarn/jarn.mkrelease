@@ -1,10 +1,10 @@
 Changelog
 =========
 
-4.0 - Unreleased
+3.8 - 2013-11-21
 ----------------
 
-- Support Python 3.1 - 3.3.
+- Support Python 3.x.
   [stefan]
 
 3.7 - 2012-08-22
