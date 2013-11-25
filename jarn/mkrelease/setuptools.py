@@ -26,7 +26,7 @@ class Setuptools(object):
         # has been installed with zc.buildout
         path = []
         for name in ('setuptools', 'setuptools-hg', 'setuptools-git',
-                     'setuptools-subversion'):
+                     'setuptools-subversion', 'wheel'):
             try:
                 dist = pkg_resources.get_distribution(name)
             except pkg_resources.DistributionNotFound:
@@ -87,6 +87,10 @@ class Setuptools(object):
         if quiet:
             echo = And(echo, StartsWith('running'))
 
+        echo2 = On()
+        if quiet and distcmd == 'bdist_wheel':
+            echo2 = Not(And(StartsWith('Skipping'), EndsWith('(namespace package)')))
+
         checkcmd = []
         if 'check' in distutils.command.__all__:
             checkcmd = ['check']
@@ -95,10 +99,11 @@ class Setuptools(object):
             ['egg_info'] + infoflags + checkcmd +
             [distcmd] + distflags,
             echo=echo,
+            echo2=echo2,
             ff=ff)
 
         if rc == 0:
-            filename = self._parse_dist_results(lines)
+            filename = self._parse_dist_results(lines, distcmd)
             if filename and isfile(filename):
                 return abspath(filename)
         err_exit('%(distcmd)s failed' % locals())
@@ -186,11 +191,35 @@ class Setuptools(object):
                 return line.split("'")[1]
         return ''
 
-    def _parse_dist_results(self, lines):
+    def _parse_dist_results(self, lines, distcmd):
+        if distcmd == 'bdist_wheel':
+            return self._parse_wheel_results(lines)
+        else:
+            return self._parse_sdist_bdist_results(lines)
+
+    def _parse_sdist_bdist_results(self, lines):
         # This relies on --formats=zip or --formats=egg
         for line in lines:
             if line.startswith("creating '") and "' and adding '" in line:
                 return line.split("'")[1]
+        return ''
+
+    def _parse_wheel_results(self, lines):
+        # This relies on --keep-temp
+        wheelfile = ''
+        for line in lines:
+            if line.startswith("creating ") and line.endswith('WHEEL'):
+                wheelfile = line[9:]
+        if wheelfile:
+            tag = ''
+            with open(wheelfile, 'rt') as file:
+                for line in file:
+                    line = line.rstrip()
+                    if line.startswith('Tag: '):
+                        tag = line[5:]
+            if tag:
+                pkgname = '-'.join(self.get_package_info(os.curdir) + (tag,)) + '.whl'
+                return join('dist', pkgname)
         return ''
 
     def _parse_register_results(self, lines):

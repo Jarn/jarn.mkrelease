@@ -33,6 +33,7 @@ setup(name='jarn.mkrelease',
           'setuptools-hg >= 0.4',
           'setuptools-git >= 1.0',
           'lazy >= 1.1',
+          'wheel',
       ],
       entry_points={
           'console_scripts': 'mkrelease=jarn.mkrelease.mkrelease:main',
