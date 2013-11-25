@@ -307,7 +307,7 @@ class ReleaseMaker(object):
             if default not in known:
                 known.add(default)
         if not known:
-            msg_exit('No locations')
+            err_exit('No locations', 0)
         for location in sorted(known):
             if location in self.defaults.distdefault:
                 print location, '(default)'
