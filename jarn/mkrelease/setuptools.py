@@ -194,12 +194,12 @@ class Setuptools(object):
         return ''
 
     def _parse_register_results(self, lines):
-        return self._parse_results(lines, 'running register')
+        return self._parse_server_response(lines, 'running register')
 
     def _parse_upload_results(self, lines):
-        return self._parse_results(lines, 'running upload')
+        return self._parse_server_response(lines, 'running upload')
 
-    def _parse_results(self, lines, match):
+    def _parse_server_response(self, lines, match):
         current, expect = '', match
         for line in lines:
             if line == expect:
