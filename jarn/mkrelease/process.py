@@ -1,5 +1,6 @@
 import os
-import tee
+
+from tee import popen
 
 
 class Process(object):
@@ -13,7 +14,7 @@ class Process(object):
         # env *replaces* os.environ
         if self.quiet:
             echo = echo2 = False
-        return tee.popen(cmd, echo, echo2, env=self.env)
+        return popen(cmd, echo, echo2, env=self.env)
 
     def pipe(self, cmd):
         rc, lines = self.popen(cmd, echo=False)
