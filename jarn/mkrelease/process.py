@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 import os
 
-from tee import popen
+from .tee import popen
 
 
 class Process(object):
@@ -31,6 +33,6 @@ class Process(object):
         if self.quiet:
             cmd = cmd + ' >%s 2>&1' % os.devnull
         if self.env:
-            cmd = ''.join('export %s="%s"\n' % (k, v) for k, v in self.env.iteritems()) + cmd
+            cmd = ''.join('export %s="%s"\n' % (k, v) for k, v in self.env.items()) + cmd
         return os.system(cmd)
 

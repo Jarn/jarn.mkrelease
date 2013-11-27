@@ -5,7 +5,11 @@ import tempfile
 import shutil
 import zipfile
 import functools
-import StringIO
+
+if sys.version_info[0] >= 3:
+    from io import StringIO
+else:
+    from StringIO import StringIO
 
 from os.path import realpath, join, dirname, isdir
 from lazy import lazy
@@ -321,7 +325,7 @@ def quiet(func):
     """
     def wrapper(*args, **kw):
         saved = sys.stdout, sys.stderr
-        sys.stdout = sys.stderr = StringIO.StringIO()
+        sys.stdout = sys.stderr = StringIO()
         try:
             return func(*args, **kw)
         finally:

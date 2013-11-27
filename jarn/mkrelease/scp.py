@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from __future__ import print_function
+
 import sys
 import tempfile
 import time
@@ -5,9 +8,9 @@ import random
 
 from os.path import basename
 
-from process import Process
-from exit import err_exit
-from utils import encode
+from .process import Process
+from .exit import err_exit
+from .utils import encode
 
 
 class SCP(object):
@@ -22,10 +25,10 @@ class SCP(object):
 
     def run_scp(self, distfile, location):
         if not self.process.quiet:
-            print 'running scp_upload'
+            print('running scp_upload')
             self.delay()
             name = basename(distfile)
-            print 'Uploading dist/%(name)s to %(location)s' % locals()
+            print('Uploading dist/%(name)s to %(location)s' % locals())
 
         try:
             rc, lines = self.process.popen(
@@ -33,7 +36,7 @@ class SCP(object):
                 echo=False)
             if rc == 0:
                 if not self.process.quiet:
-                    print 'OK'
+                    print('OK')
                 return rc
         except KeyboardInterrupt:
             pass
@@ -41,10 +44,10 @@ class SCP(object):
 
     def run_sftp(self, distfile, location):
         if not self.process.quiet:
-            print 'running sftp_upload'
+            print('running sftp_upload')
             self.delay()
             name = basename(distfile)
-            print 'Uploading dist/%(name)s to %(location)s' % locals()
+            print('Uploading dist/%(name)s to %(location)s' % locals())
 
         with tempfile.NamedTemporaryFile() as file:
             cmds = 'put "%(distfile)s"\nbye\n' % locals()
@@ -60,7 +63,7 @@ class SCP(object):
                     echo=False)
                 if rc == 0:
                     if not self.process.quiet:
-                        print 'OK'
+                        print('OK')
                     return rc
             except KeyboardInterrupt:
                 pass

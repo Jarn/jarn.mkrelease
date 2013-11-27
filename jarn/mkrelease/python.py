@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 import sys
 
-from exit import err_exit
+from .exit import err_exit
 
 
 class Python(object):

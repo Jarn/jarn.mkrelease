@@ -1,15 +1,18 @@
+from __future__ import absolute_import
+from __future__ import print_function
+
 import os
 import distutils.command
 import pkg_resources
 
 from os.path import abspath, join, isfile
 
-from python import Python
-from process import Process
-from configparser import ConfigParser
-from chdir import chdir
-from exit import err_exit, warn
-from tee import *
+from .python import Python
+from .process import Process
+from .configparser import ConfigParser
+from .chdir import chdir
+from .exit import err_exit, warn
+from .tee import *
 
 OK_RESPONSE = 'Server response (200): OK'
 
@@ -61,7 +64,7 @@ class Setuptools(object):
     @chdir
     def run_egg_info(self, dir, infoflags, ff='', quiet=False):
         if not self.process.quiet:
-            print 'running egg_info'
+            print('running egg_info')
 
         echo = After('running egg_info')
         if quiet:
@@ -81,7 +84,7 @@ class Setuptools(object):
     @chdir
     def run_dist(self, dir, infoflags, distcmd, distflags, ff='', quiet=False):
         if not self.process.quiet:
-            print 'running', distcmd
+            print('running', distcmd)
 
         echo = After('running %(distcmd)s' % locals())
         if quiet:
@@ -106,7 +109,7 @@ class Setuptools(object):
     @chdir
     def run_register(self, dir, infoflags, location, ff='', quiet=False):
         if not self.process.quiet:
-            print 'running register'
+            print('running register')
 
         echo = After('running register')
         if quiet:
@@ -127,14 +130,14 @@ class Setuptools(object):
         if rc == 0:
             if self._parse_register_results(lines):
                 if not self.process.quiet and quiet:
-                    print 'OK'
+                    print('OK')
                 return rc
         err_exit('ERROR: register failed')
 
     @chdir
     def run_upload(self, dir, infoflags, distcmd, distflags, location, uploadflags, ff='', quiet=False):
         if not self.process.quiet:
-            print 'running upload'
+            print('running upload')
 
         echo = After('running upload')
         if quiet:
@@ -151,7 +154,7 @@ class Setuptools(object):
         if rc == 0:
             if self._parse_upload_results(lines):
                 if not self.process.quiet and quiet:
-                    print 'OK'
+                    print('OK')
                 return rc
         err_exit('ERROR: upload failed')
 

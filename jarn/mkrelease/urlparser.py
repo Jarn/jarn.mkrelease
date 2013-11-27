@@ -1,7 +1,12 @@
+import sys
 import re
 
 from os.path import abspath, expanduser
-from urlparse import urlsplit, urlunsplit
+
+if sys.version_info[0] >= 3:
+    from urllib.parse import urlsplit, urlunsplit
+else:
+    from urlparse import urlsplit, urlunsplit
 
 
 class URLParser(object):

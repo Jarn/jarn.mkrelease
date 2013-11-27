@@ -37,10 +37,4 @@ setup(name='jarn.mkrelease',
       entry_points={
           'console_scripts': 'mkrelease=jarn.mkrelease.mkrelease:main',
       },
-      use_2to3=True,
-      use_2to3_exclude_fixers=[
-        'lib2to3.fixes.fix_filter',
-        'lib2to3.fixes.fix_xrange',
-        'lib2to3.fixes.fix_callable',
-      ],
 )
