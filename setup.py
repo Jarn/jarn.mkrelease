@@ -41,5 +41,6 @@ setup(name='jarn.mkrelease',
       use_2to3_exclude_fixers=[
         'lib2to3.fixes.fix_filter',
         'lib2to3.fixes.fix_xrange',
+        'lib2to3.fixes.fix_callable',
       ],
 )
