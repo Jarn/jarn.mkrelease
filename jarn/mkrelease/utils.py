@@ -1,6 +1,7 @@
 import sys
 import locale
 import functools
+import collections
 
 preferrederrors = 'replace'
 
@@ -80,4 +81,9 @@ def encode(string, encoding=None, errors=None):
     if errors is None:
         errors = getpreferrederrors()
     return string.encode(encoding, errors)
+
+
+def callable(object):
+    """Replace callable built-in missing in Python 3.0 - 3.1."""
+    return isinstance(object, collections.Callable)
 

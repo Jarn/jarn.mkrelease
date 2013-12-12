@@ -9,9 +9,7 @@ from .utils import decode
 try:
     callable
 except NameError:
-    def callable(object):
-        import collections
-        return isinstance(object, collections.Callable)
+    from .utils import callable
 
 __all__ = ['popen', 'On', 'Off', 'NotEmpty', 'Equals',
            'StartsWith', 'EndsWith', 'Before', 'NotAfter',
