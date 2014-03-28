@@ -4,3 +4,4 @@ include
 lib
 .installed.cfg
 .long-description.html
+develop-eggs
