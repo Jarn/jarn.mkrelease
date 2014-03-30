@@ -1,4 +1,6 @@
+import os
 import unittest
+import urlparse
 
 from jarn.mkrelease.process import Process
 from jarn.mkrelease.scm import SCMFactory
@@ -122,6 +124,24 @@ class SubversionFromSandboxTests(SubversionSetup):
         process.system('git commit -m"Import"')
         self.dirstack.pop()
         self.assertRaises(SystemExit, scms.get_scm_from_sandbox, self.clonedir)
+
+    def testGetGitifySubversion(self):
+        """
+        Support git-svn-helpers/gitify style dual git/svn checkouts/clones.
+        """
+        # Simulate a git-svn-helpers/gitify style dual svn/git checkout/clone
+        svn_url = urlparse.urlunsplit(('file', '', self.packagedir, '', ''))
+        git_svn_clonedir = self.clonedir + '.git-svn'
+        process = Process(quiet=True)
+        process.system(
+            'git svn clone -s {0} {1}'.format(svn_url, git_svn_clonedir))
+        os.rename(
+            os.path.join(git_svn_clonedir, '.git'),
+            os.path.join(self.clonedir, '.git'))
+
+        scms = SCMFactory()
+        self.assertEqual(scms.get_scm_from_url(svn_url).name, 'svn')
+        self.assertEqual(scms.get_scm_from_sandbox(self.clonedir).name, 'svn')
 
 
 class MercurialFromSandboxTests(MercurialSetup):

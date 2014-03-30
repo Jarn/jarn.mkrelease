@@ -1,5 +1,7 @@
+import io
 import os
 import re
+import rfc822
 import tee
 
 from operator import itemgetter
@@ -668,6 +670,10 @@ class SCMFactory(object):
         if len(matches) == 1:
             return matches[0]
         if len(matches) == 2:
+            svn = self._is_git_svn_dual_checkout(dir, *matches)
+            if svn is not None:
+                return svn
+
             names = '%s and %s' % tuple([x.__class__.__name__ for x in matches])
             flags = '--%s or --%s' % tuple([x.name for x in matches])
         elif len(matches) == 3:
@@ -763,6 +769,37 @@ class SCMFactory(object):
                 return True
         return False
 
+    def _is_git_svn_dual_checkout(self, dir_, svn, git):
+        """Check for git-svn-helpers/gitify style dual checkout."""
+        if not (
+                isinstance(svn, Subversion) and
+                isinstance(git, Git)):
+            return
+
+        svn_returncode, svn_lines = svn.process.popen(
+            'svn info "%(dir_)s"' % locals(), echo=False, echo2=False)
+
+        git.dirstack.push(dir_)
+        try:
+            git_returncode, git_lines = git.process.popen(
+                'git svn info' % locals(),
+                echo=False, echo2=False)
+        finally:
+            git.dirstack.pop()
+
+        if svn_returncode == 0 and git_returncode == 0:
+            svn_fields, git_fields = (
+                dict((key, value) for key, value in
+                     rfc822.Message(
+                         io.StringIO(u'\n'.join(lines[:-1]))
+                     ).items() if key in (
+                         'url', 'repository root', 'repository uuid'))
+                for lines in (svn_lines, git_lines))
+            if svn_fields == git_fields:
+                # Matching git and svn checkouts, assume this is a dual
+                # checkout and that SVN should be used for release
+                return svn
+
     def _get_scm_from_file_url(self, dir):
         # Return clonable repository roots only
         dir = abspath(expanduser(dir))
@@ -778,6 +815,10 @@ class SCMFactory(object):
         if len(matches) == 1:
             return matches[0]
         if len(matches) == 2:
+            svn = self._is_git_svn_dual_checkout(dir, *matches)
+            if svn is not None:
+                return svn
+
             names = '%s and %s' % tuple([x.__class__.__name__ for x in matches])
             flags = '--%s or --%s' % tuple([x.name for x in matches])
         err_exit('%(names)s found in %(dir)s\n'
