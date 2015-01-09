@@ -4,6 +4,11 @@ Changelog
 3.9 - Unreleased
 ----------------
 
+- Print 'no locations' message to stderr.
+  [stefan]
+
+- Handle return code changes in Mercurial 3.1.1.
+  [stefan]
 
 3.8 - 2013-11-21
 ----------------
