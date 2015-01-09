@@ -369,7 +369,7 @@ class Mercurial(SCM):
         self.get_branch_from_sandbox(dir) # Called here for its error checking only
         rc, lines = self.process.popen(
             'hg show paths.default', echo=False)
-        if rc == 0:
+        if rc in (0, 1):    # 1 means no paths.default (3.1.1)
             if lines:
                 return lines[0]
         else:
@@ -387,13 +387,9 @@ class Mercurial(SCM):
             if self.is_remote_sandbox(dir):
                 rc = self.process.system(
                     'hg push default')
-                if self.version_info[:2] >= (2, 1):
-                    if rc not in (0, 1):    # 1 means empty push
-                        err_exit('Push failed')
-                    rc = 0
-                else:
-                    if rc != 0:
-                        err_exit('Push failed')
+                if rc not in (0, 1):    # 1 means empty push (2.1)
+                    err_exit('Push failed')
+                rc = 0
             else:
                 warn('No default path found; not pushing the commit')
         return rc
@@ -569,7 +565,7 @@ class Git(SCM):
     def commit_sandbox(self, dir, name, version, push):
         rc = self.process.system(
             'git commit -m"Prepare %(name)s %(version)s." .' % locals())
-        if rc not in (0, 1):
+        if rc not in (0, 1):    # 1 means empty commit
             err_exit('Commit failed')
         rc = 0
         if push:
