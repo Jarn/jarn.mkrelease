@@ -449,9 +449,6 @@ class ReleaseMaker(object):
                 self.scm.check_tag_exists(directory, tagid)
                 self.scm.create_tag(directory, tagid, name, version, self.push)
 
-            if scmtype == 'svn' and self.scm.version_info[:2] < (1, 7):
-                scmtype = 'svn_cvs'
-
             manifest = self.setuptools.run_egg_info(
                 directory, infoflags, scmtype, self.quiet)
             distfile = self.setuptools.run_dist(

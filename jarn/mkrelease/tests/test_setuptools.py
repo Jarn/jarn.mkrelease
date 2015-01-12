@@ -44,13 +44,9 @@ def get_env():
 
 class SubversionTests(SubversionSetup):
 
-    @property
-    def type(self):
-        return 'svn' if self.scm.version_info[:2] >= (1, 7) else 'svn_cvs'
-
     def testSubversionFinder(self):
         self.dirstack.push(self.clonedir) # XXX
-        files = list(get_finder(self.type)(self.clonedir))
+        files = list(get_finder('svn')(self.clonedir))
         if self.scm.version_info[:2] >= (1, 7):
             self.assertTrue(join('testpackage', 'subversion_only.py') in files)
             self.assertTrue(join('testpackage', 'subversion_only.txt') in files)
@@ -60,29 +56,29 @@ class SubversionTests(SubversionSetup):
 
     def testSubversionFinderNoArg(self):
         self.dirstack.push(self.clonedir)
-        files = list(get_finder(self.type)())
+        files = list(get_finder('svn')())
         self.assertTrue(join('testpackage', 'subversion_only.py') in files)
         self.assertTrue(join('testpackage', 'subversion_only.txt') in files)
 
     def testSubversionFinderEmptyArg(self):
         self.dirstack.push(self.clonedir)
-        files = list(get_finder(self.type)(''))
+        files = list(get_finder('svn')(''))
         self.assertTrue(join('testpackage', 'subversion_only.py') in files)
         self.assertTrue(join('testpackage', 'subversion_only.txt') in files)
 
     def testSubversionSdistPy(self):
         st = Setuptools(Process(quiet=True))
-        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff=self.type)
+        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(contains(archive, 'subversion_only.py'), True)
 
     def testSubversionSdistTxt(self):
         st = Setuptools(Process(quiet=True))
-        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff=self.type)
+        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(contains(archive, 'subversion_only.txt'), True)
 
     def testSubversionSdistC(self):
         st = Setuptools(Process(quiet=True))
-        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff=self.type)
+        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(contains(archive, 'subversion_only.c'), True)
 
     def testDefaultSdistPy(self):
@@ -108,12 +104,12 @@ class SubversionTests(SubversionSetup):
 
     def testSubversionMetaFile(self):
         st = Setuptools(Process(quiet=True))
-        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff=self.type)
+        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(contains(archive, '.svnignore'), False)
 
     def testSubversionManifest(self):
         st = Setuptools(Process(quiet=True))
-        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff=self.type)
+        archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(get_manifest(archive), """\
 README.txt
 setup.py
@@ -130,7 +126,7 @@ testpackage.egg-info/top_level.txt""")
 
     def testRemoveSetupPyc(self):
         st = Setuptools(Process(quiet=True))
-        st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff=self.type)
+        st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertFalse(isfile(join(self.clonedir, 'setup.pyc')))
 
 
