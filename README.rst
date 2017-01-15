@@ -37,7 +37,7 @@ obvious.
 Installation
 ============
 
-mkrelease works with Python 2.6 - 3.4 and all released versions of setuptools
+mkrelease works with Python 2.6 - 3.6 and all released versions of setuptools
 and distribute.
 
 Use ``easy_install jarn.mkrelease`` to install the ``mkrelease`` script.

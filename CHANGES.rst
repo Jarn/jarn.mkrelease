@@ -10,7 +10,7 @@ Changelog
 - Handle return code changes in Mercurial 3.1.1.
   [stefan]
 
-- Support Python 2.6 - 3.4 without 2to3.
+- Support Python 2.6 - 3.6 without 2to3.
   [stefan]
 
 3.8 - 2013-11-21
