@@ -1,12 +1,13 @@
-from __future__ import absolute_import
-
 import sys
 
-from ConfigParser import Error
-
 if sys.version_info[:2] >= (3, 2):
+    from configparser import Error
     from configparser import ConfigParser as _BaseParser
+elif sys.version_info[0] >= 3:
+    from configparser import Error
+    from configparser import SafeConfigParser as _BaseParser
 else:
+    from ConfigParser import Error
     from ConfigParser import SafeConfigParser as _BaseParser
 
 
@@ -77,7 +78,7 @@ class ConfigParser(_BaseParser, object):
                 value = super(ConfigParser, self).get(section, option, raw=self.raw)
                 try:
                     return self.to_string(value)
-                except MultipleValueError, e:
+                except MultipleValueError as e:
                     self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
         return default
 
@@ -87,9 +88,9 @@ class ConfigParser(_BaseParser, object):
                 value = super(ConfigParser, self).get(section, option, raw=self.raw)
                 try:
                     return self.to_boolean(value)
-                except MultipleValueError, e:
+                except MultipleValueError as e:
                     self.warn("Multiple values not allowed: %s = %r" % (option, self._value_from_exc(e)))
-                except ValueError, e:
+                except ValueError as e:
                     self.warn('Not a boolean: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
@@ -99,9 +100,9 @@ class ConfigParser(_BaseParser, object):
                 value = super(ConfigParser, self).get(section, option, raw=self.raw)
                 try:
                     return self.to_int(value)
-                except MultipleValueError, e:
+                except MultipleValueError as e:
                     self.warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
-                except ValueError, e:
+                except ValueError as e:
                     self.warn('Not an integer: %s = %r' % (option, self._value_from_exc(e)))
         return default
 
@@ -111,9 +112,9 @@ class ConfigParser(_BaseParser, object):
                 value = super(ConfigParser, self).get(section, option, raw=self.raw)
                 try:
                     return self.to_float(value)
-                except MultipleValueError, e:
+                except MultipleValueError as e:
                     self.warn('Multiple values not allowed: %s = %r' % (option, self._value_from_exc(e)))
-                except ValueError, e:
+                except ValueError as e:
                     self.warn('Not a float: %s = %r' % (option, self._value_from_exc(e)))
         return default
 

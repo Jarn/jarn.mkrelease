@@ -1,17 +1,19 @@
+from __future__ import absolute_import
+
 import os
 import re
-import tee
 
 from operator import itemgetter
+from lazy import lazy
 
 from os.path import abspath, join, expanduser, dirname
 from os.path import exists, isdir, isfile
 
-from process import Process
-from urlparser import URLParser
-from chdir import ChdirStack, chdir
-from exit import err_exit, warn
-from lazy import lazy
+from .process import Process
+from .urlparser import URLParser
+from .chdir import ChdirStack, chdir
+from .tee import NotEmpty
+from .exit import err_exit, warn
 
 
 class SCM(object):
@@ -293,7 +295,7 @@ class Subversion(SCM):
         url = self.get_url_from_sandbox(dir)
         rc, lines = self.process.popen(
             ('svn copy -m"Tagged %(name)s %(version)s." "%(url)s" "%(tagid)s"' % locals()),
-            echo=tee.NotEmpty())
+            echo=NotEmpty())
         if rc != 0:
             err_exit('Tag failed')
         return rc

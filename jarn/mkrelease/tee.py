@@ -1,8 +1,15 @@
+from __future__ import absolute_import
+
 import sys
 import threading
 
 from subprocess import Popen, PIPE
-from utils import decode
+from .utils import decode
+
+try:
+    callable
+except NameError:
+    from .utils import callable
 
 __all__ = ['popen', 'On', 'Off', 'NotEmpty', 'Equals',
            'StartsWith', 'EndsWith', 'Before', 'NotAfter',

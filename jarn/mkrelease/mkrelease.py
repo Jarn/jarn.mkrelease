@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from __future__ import print_function
+
 import locale
 locale.setlocale(locale.LC_ALL, '')
 
@@ -13,13 +16,13 @@ import shutil
 from os.path import abspath, join, expanduser, exists, isfile
 from itertools import chain
 
-from python import Python
-from setuptools import Setuptools
-from scp import SCP
-from scm import SCMFactory
-from urlparser import URLParser
-from configparser import ConfigParser
-from exit import err_exit, msg_exit, warn
+from .python import Python
+from .setuptools import Setuptools
+from .scp import SCP
+from .scm import SCMFactory
+from .urlparser import URLParser
+from .configparser import ConfigParser
+from .exit import err_exit, msg_exit, warn
 
 MAXALIASDEPTH = 23
 
@@ -257,7 +260,7 @@ class ReleaseMaker(object):
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
                  'list-locations', 'config-file='))
-        except getopt.GetoptError, e:
+        except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
         for name, value in options:
@@ -310,9 +313,9 @@ class ReleaseMaker(object):
             err_exit('No locations', 0)
         for location in sorted(known):
             if location in self.defaults.distdefault:
-                print location, '(default)'
+                print(location, '(default)')
             else:
-                print location
+                print(location)
         sys.exit(0)
 
     def get_uploadflags(self, location):
@@ -398,7 +401,7 @@ class ReleaseMaker(object):
             self.setuptools.check_valid_package(directory)
 
             name, version = self.setuptools.get_package_info(directory, develop)
-            print 'Releasing', name, version
+            print('Releasing', name, version)
 
             if not self.skipcommit:
                 if self.scm.is_dirty_sandbox(directory):
@@ -431,7 +434,7 @@ class ReleaseMaker(object):
                     self.scm.switch_branch(directory, branch)
                 if scmtype != 'svn':
                     branch = self.scm.get_branch_from_sandbox(directory)
-                    print 'Releasing branch', branch
+                    print('Releasing branch', branch)
 
             self.setuptools.check_valid_package(directory)
 
@@ -441,10 +444,10 @@ class ReleaseMaker(object):
 
             name, version = self.setuptools.get_package_info(directory, develop)
             if self.isremote:
-                print 'Releasing', name, version
+                print('Releasing', name, version)
 
             if not self.skiptag:
-                print 'Tagging', name, version
+                print('Tagging', name, version)
                 tagid = self.scm.make_tagid(directory, version)
                 self.scm.check_tag_exists(directory, tagid)
                 self.scm.create_tag(directory, tagid, name, version, self.push)
@@ -482,7 +485,7 @@ class ReleaseMaker(object):
         self.get_options()
         self.get_package()
         self.make_release()
-        print 'done'
+        print('done')
 
 
 def main(args=None):
@@ -490,7 +493,7 @@ def main(args=None):
         args = sys.argv[1:]
     try:
         ReleaseMaker(args).run()
-    except SystemExit, e:
+    except SystemExit as e:
         return e.code
     return 0
 

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import unittest
 import sys
 import os
@@ -149,8 +151,8 @@ class QuietTests(unittest.TestCase):
 
     @quiet
     def testQuiet(self):
-        print 'This should not show'
-        print >>sys.stderr, 'This should not show either'
+        print('This should not show')
+        print('This should not show either', file=sys.stderr)
 
 
 def test_suite():
