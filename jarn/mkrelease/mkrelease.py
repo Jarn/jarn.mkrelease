@@ -37,8 +37,9 @@ Python egg releaser
 Options:
   -C, --no-commit     Do not commit modified files from the sandbox.
   -T, --no-tag        Do not tag the release in SCM.
+  -R, --no-register   Do not register the release with dist-location.
   -S, --no-upload     Do not upload the release to dist-location.
-  -n, --dry-run       Dry-run; equivalent to -CTS.
+  -n, --dry-run       Dry-run; equivalent to -CTRS.
 
   --svn, --hg, --git  Select the SCM type. Only required if the SCM type
                       cannot be guessed from the argument.
@@ -225,6 +226,7 @@ class ReleaseMaker(object):
         self.urlparser = URLParser()
         self.skipcommit = False
         self.skiptag = False
+        self.skipregister = False
         self.skipupload = False
         self.push = self.defaults.push
         self.quiet = False
@@ -255,8 +257,8 @@ class ReleaseMaker(object):
         """
         try:
             options, remaining_args = getopt.gnu_getopt(args,
-                'CSTbc:d:ehi:lnpqsv',
-                ('no-commit', 'no-tag', 'no-upload', 'dry-run',
+                'CRSTbc:d:ehi:lnpqsv',
+                ('no-commit', 'no-tag', 'no-register', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
                  'list-locations', 'config-file='))
@@ -268,10 +270,12 @@ class ReleaseMaker(object):
                 self.skipcommit = True
             elif name in ('-T', '--no-tag'):
                 self.skiptag = True
+            elif name in ('-R', '--no-register'):
+                self.skipregister = True
             elif name in ('-S', '--no-upload'):
                 self.skipupload = True
             elif name in ('-n', '--dry-run'):
-                self.skipcommit = self.skiptag = self.skipupload = True
+                self.skipcommit = self.skiptag = self.skipregister = self.skipupload = True
             elif name in ('-p', '--push'):
                 self.push = True
             elif name in ('-q', '--quiet'):
@@ -365,7 +369,7 @@ class ReleaseMaker(object):
         if not self.locations:
             self.locations.extend(self.locations.get_default_location())
 
-        if not self.skipupload:
+        if not (self.skipregister and self.skipupload):
             self.locations.check_valid_locations()
 
         if len(args) > 1:
@@ -457,26 +461,29 @@ class ReleaseMaker(object):
             distfile = self.setuptools.run_dist(
                 directory, infoflags, distcmd, distflags, scmtype, self.quiet)
 
-            if not self.skipupload:
-                for location in self.locations:
-                    if self.locations.is_server(location):
+            for location in self.locations:
+                if self.locations.is_server(location):
+                    if not self.skipregister:
+                        self.setuptools.run_register(
+                            directory, infoflags, location, scmtype, self.quiet)
+                    if not self.skipupload:
                         uploadflags = self.get_uploadflags(location)
                         if '--sign' in uploadflags and isfile(distfile+'.asc'):
                             os.remove(distfile+'.asc')
-                        self.setuptools.run_register(
-                            directory, infoflags, location, scmtype, self.quiet)
                         self.setuptools.run_upload(
                             directory, infoflags, distcmd, distflags, location, uploadflags,
                             scmtype, self.quiet)
-                    elif self.locations.is_dist_url(location):
-                        scheme = self.urlparser.get_scheme(location)
-                        location = self.urlparser.to_ssh_url(location)
-                        if scheme == 'sftp':
-                            self.scp.run_sftp(distfile, location)
+                else:
+                    if not self.skipupload:
+                        if self.locations.is_dist_url(location):
+                            scheme = self.urlparser.get_scheme(location)
+                            location = self.urlparser.to_ssh_url(location)
+                            if scheme == 'sftp':
+                                self.scp.run_sftp(distfile, location)
+                            else:
+                                self.scp.run_scp(distfile, location)
                         else:
                             self.scp.run_scp(distfile, location)
-                    else:
-                        self.scp.run_scp(distfile, location)
         finally:
             shutil.rmtree(tempdir)
 
