@@ -64,7 +64,7 @@ Options
     Do not upload the release to dist-location.
 
 ``-n, --dry-run``
-    Dry-run; equivalent to ``-CTS``.
+    Dry-run; equivalent to ``-CTRS``.
 
 ``--svn, --hg, --git``
     Select the SCM type. Only required if the SCM type
