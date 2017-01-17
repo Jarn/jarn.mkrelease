@@ -69,3 +69,9 @@ class SCP(object):
                 pass
             err_exit('ERROR: sftp failed')
 
+    def run_upload(self, distfile, location, scptype):
+        if scptype == 'sftp':
+            return self.run_sftp(distfile, location)
+        else:
+            return self.run_scp(distfile, location)
+

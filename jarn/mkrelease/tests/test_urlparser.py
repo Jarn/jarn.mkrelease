@@ -264,6 +264,10 @@ class IsSshUrlTests(unittest.TestCase):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_ssh_url(' git@github.com:Jarn/jarn.mkrelease'), False)
 
+    def testUserOnly(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.is_ssh_url('stefan@:/var/dist/public'), True)
+
     def testEmptyString(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.is_ssh_url(''), False)
@@ -274,38 +278,63 @@ class ToSshUrlTests(unittest.TestCase):
     def testSsh(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.to_ssh_url('ssh://stefan@jarn.com/var/dist/public'),
-                         'stefan@jarn.com:/var/dist/public')
+                         ('ssh', 'stefan@jarn.com:/var/dist/public'))
 
     def testScp(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.to_ssh_url('scp://stefan@jarn.com/var/dist/public'),
-                         'stefan@jarn.com:/var/dist/public')
+                         ('scp', 'stefan@jarn.com:/var/dist/public'))
 
     def testSftp(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.to_ssh_url('sftp://stefan@jarn.com/var/dist/public'),
-                         'stefan@jarn.com:/var/dist/public')
+                         ('sftp', 'stefan@jarn.com:/var/dist/public'))
 
     def testIdempotence(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.to_ssh_url('stefan@jarn.com:var/dist/public'),
-                         'stefan@jarn.com:var/dist/public')
+                         ('', 'stefan@jarn.com:var/dist/public'))
         self.assertEqual(urlparser.to_ssh_url('stefan@jarn.com:/var/dist/public'),
-                         'stefan@jarn.com:/var/dist/public')
+                         ('', 'stefan@jarn.com:/var/dist/public'))
 
     def testBadUrl(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.to_ssh_url('https://stefan@jarn.com/var/dist/public'),
-                         'https://stefan@jarn.com/var/dist/public')
+                         ('https', 'https://stefan@jarn.com/var/dist/public'))
+
+    def testNoUrl(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url('scp://'),
+                         ('scp', ':'))
+
+    def testNoHost(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url('scp:///var/dist/public'),
+                         ('scp', ':/var/dist/public'))
+
+    def testNoPath(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url('scp://stefan@jarn.com'),
+                         ('scp', 'stefan@jarn.com:'))
+
+    def testNoUser(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url('scp://jarn.com/var/dist/public'),
+                         ('scp', 'jarn.com:/var/dist/public'))
+
+    def testUserOnly(self):
+        urlparser = URLParser()
+        self.assertEqual(urlparser.to_ssh_url('scp://stefan@/var/dist/public'),
+                         ('scp', 'stefan@:/var/dist/public'))
 
     def testWhitespace(self):
         urlparser = URLParser()
         self.assertEqual(urlparser.to_ssh_url(' ssh://stefan@jarn.com/var/dist/public'),
-                         ' ssh://stefan@jarn.com/var/dist/public')
+                         ('', ' ssh://stefan@jarn.com/var/dist/public'))
 
     def testEmptyString(self):
         urlparser = URLParser()
-        self.assertEqual(urlparser.to_ssh_url(''), '')
+        self.assertEqual(urlparser.to_ssh_url(''), ('', ''))
 
 
 class AbspathTests(unittest.TestCase):
