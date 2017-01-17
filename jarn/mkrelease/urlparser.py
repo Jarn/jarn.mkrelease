@@ -76,6 +76,6 @@ class URLParser(object):
         if scheme in ('scp', 'sftp', 'ssh'):
             ignored, user, host, path, qs, frag = self.urlsplit(url)
             user, password = self.usersplit(user)
-            return self.hostunsplit(user, host) + ':' + path
-        return url
+            return scheme, self.hostunsplit(user, host) + ':' + path
+        return scheme, url
 

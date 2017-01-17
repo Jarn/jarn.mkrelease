@@ -57,6 +57,9 @@ Options
 ``-T, --no-tag``
     Do not tag the release in SCM.
 
+``-R, --no-register``
+    Do not register the release with dist-location.
+
 ``-S, --no-upload``
     Do not upload the release to dist-location.
 
