@@ -4,13 +4,16 @@ Changelog
 3.9 - Unreleased
 ----------------
 
+- Support Python 2.6 - 3.6 without 2to3.
+  [stefan]
+
+- Add -R option to skip the register step.
+  [stefan]
+
 - Print 'no locations' message to stderr.
   [stefan]
 
 - Handle return code changes in Mercurial 3.1.1.
-  [stefan]
-
-- Support Python 2.6 - 3.6 without 2to3.
   [stefan]
 
 3.8 - 2013-11-21
