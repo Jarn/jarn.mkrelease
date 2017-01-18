@@ -23,6 +23,12 @@ class SCP(object):
         # Reduce output jerkiness
         time.sleep(random.choice([0.3, 0.4]))
 
+    def run_upload(self, scheme, distfile, location):
+        if scheme == 'sftp':
+            return self.run_sftp(distfile, location)
+        else:
+            return self.run_scp(distfile, location)
+
     def run_scp(self, distfile, location):
         if not self.process.quiet:
             print('running scp_upload')
@@ -68,10 +74,4 @@ class SCP(object):
             except KeyboardInterrupt:
                 pass
             err_exit('ERROR: sftp failed')
-
-    def run_upload(self, distfile, location, scptype):
-        if scptype == 'sftp':
-            return self.run_sftp(distfile, location)
-        else:
-            return self.run_scp(distfile, location)
 

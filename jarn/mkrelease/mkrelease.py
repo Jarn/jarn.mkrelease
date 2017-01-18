@@ -477,9 +477,9 @@ class ReleaseMaker(object):
                     if not self.skipupload:
                         if self.locations.is_dist_url(location):
                             scheme, location = self.urlparser.to_ssh_url(location)
-                            self.scp.run_upload(distfile, location, scheme)
+                            self.scp.run_upload(scheme, distfile, location)
                         else:
-                            self.scp.run_upload(distfile, location, 'scp')
+                            self.scp.run_upload('scp', distfile, location)
         finally:
             shutil.rmtree(tempdir)
 
