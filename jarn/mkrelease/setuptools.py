@@ -143,12 +143,16 @@ class Setuptools(object):
         if quiet:
             echo = And(echo, Not(Equals(OK_RESPONSE)))
 
+        # distutils >= 3.4
+        echo2 = Not(StartsWith('error: Upload failed'))
+
         serverflags = ['--repository="%(location)s"' % locals()]
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + [distcmd] + distflags +
             ['upload'] + serverflags + uploadflags,
             echo=echo,
+            echo2=echo2,
             ff=ff)
 
         if rc == 0:
