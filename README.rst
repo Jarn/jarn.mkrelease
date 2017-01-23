@@ -8,10 +8,6 @@ Python egg releaser
 **mkrelease** is a no-frills Python egg releaser. It is designed to take
 the cumber out of building and distributing Python eggs.
 
-Also see `jarn.viewdoc`_.
-
-.. _`jarn.viewdoc`: https://pypi.python.org/pypi/jarn.viewdoc
-
 Motivation
 ==========
 
@@ -40,7 +36,7 @@ Installation
 mkrelease works with Python 2.6 - 3.6 and all released versions of setuptools
 and distribute.
 
-Use ``easy_install jarn.mkrelease`` to install the ``mkrelease`` script.
+Use ``pip install jarn.mkrelease`` to install the ``mkrelease`` script.
 Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
 
 Usage
@@ -127,7 +123,7 @@ Release my.package and upload it via scp to the jarn.com server::
 
 Release my.package using the repository URL instead of a local working copy::
 
-  $ mkrelease -d pypi https://svn.jarn.com/public/my.package/trunk
+  $ mkrelease -d pypi git@github.com:Jarn/my.package
 
 Release a development egg of my.package while suppressing setuptools output::
 
@@ -144,8 +140,10 @@ file ``~/.pypirc``. This file must contain your PyPI account information::
       pypi
 
   [pypi]
+  repository = https://upload.pypi.org/legacy/
   username = fred
   password = secret
+  register = no
 
 mkrelease also reads its own configuration file ``~/.mkrelease``.
 Here's an example::
@@ -163,8 +161,8 @@ Here's an example::
       pypi
       public
 
-(Note that ``pypi`` refers to the index server *pypi* as configured in
-``~/.pypirc`` above.)
+Note: ``pypi`` refers to the index server *pypi* as configured in
+``~/.pypirc`` above.
 
 Armed with this configuration we can shorten example 2 to::
 
@@ -178,8 +176,8 @@ Working with SCP
 ================
 
 The simplest distribution location is a server directory shared through
-Apache. Releasing an egg just means scp-ing it to the appropriate place on the
-server::
+e.g. Apache. Releasing an egg just means scp-ing it to the appropriate place
+on the server::
 
   $ mkrelease -d jarn.com:/var/dist/public src/my.package
 
@@ -213,13 +211,13 @@ To upload via sftp instead of scp, specify the destination in URL form::
 
   $ mkrelease -d sftp://jarn.com/var/dist/public src/my.package
 
-For consistency scp URLs are supported as well::
+For consistency, scp URLs are supported as well::
 
   $ mkrelease -d scp://jarn.com/var/dist/public src/my.package
 
 Note: Unlike scp, the sftp client does not prompt for login credentials.
-This means that for sftp non-interactive login must be configured on
-the destination server.
+This means that the destination server must be set up for non-interactive
+login or the upload will fail.
 
 Working with Index Servers
 ==========================
@@ -231,46 +229,43 @@ we can release to PyPI by typing::
   $ mkrelease -d pypi src/my.package
 
 Index servers are not limited to PyPI though.
-For example, in the Plone world it is common practice to upload packages to
-`plone.org`_ as well as to PyPI.
+There is test.pypi.org, and there are alternative index servers like
+`devpi`_.
 
-.. _`plone.org`: https://plone.org/products
+.. _`devpi`: http://doc.devpi.net/latest/
 
-We extend our ``~/.pypirc`` to add a second index server::
+We extend our ``~/.pypirc`` to add additional servers::
 
   [distutils]
   index-servers =
       pypi
-      plone
+      test
+      dev
 
   [pypi]
+  repository = https://upload.pypi.org/legacy/
+  username = fred
+  password = secret
+  register = no
+
+  [test]
+  repository = https://test.pypi.org/legacy/
+  username = fred
+  password = secret
+  register = no
+
+  [dev]
+  repository = http://localhost:3141/fred/dev/
   username = fred
   password = secret
 
-  [plone]
-  repository = https://plone.org/products
-  username = fred
-  password = secret
+This allows us to release to test.pypi.org by typing::
 
-This allows us to release to plone.org by typing::
-
-  $ mkrelease -d plone src/my.package
+  $ mkrelease -d test src/my.package
 
 The ``-d`` option can be specified more than once::
 
-  $ mkrelease -d pypi -d plone src/my.package
-
-Alternatively, we can group the servers by creating an alias in
-``~/.mkrelease``::
-
-  [aliases]
-  plone-world =
-      pypi
-      plone
-
-And type::
-
-  $ mkrelease -d plone-world src/my.package
+  $ mkrelease -d pypi -d dev src/my.package
 
 Note: Setuptools rebuilds the egg for every index server it uploads it to.
 This means that MD5 sums and GnuPG signatures will differ between servers.
@@ -297,24 +292,19 @@ Release my.package and sign the archive with GnuPG::
 
 The ``-i`` flag is optional, and GnuPG will pick your default
 key if not given. In addition, defaults for ``-s`` and ``-i`` can be
-configured in ``~/.pypirc``, on a per-server basis::
+configured in ``~/.pypirc``::
 
   [distutils]
   index-servers =
       pypi
-      plone
 
   [pypi]
+  repository = https://upload.pypi.org/legacy/
   username = fred
   password = secret
+  register = no
   sign = yes
   identity = fred@bedrock.com
-
-  [plone]
-  repository = https://plone.org/products
-  username = fred
-  password = secret
-  sign = no
 
 Requirements
 ============
