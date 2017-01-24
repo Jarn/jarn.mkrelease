@@ -42,7 +42,7 @@ Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
 Usage
 =====
 
-``mkrelease [options] [scm-url [rev]|scm-sandbox]``
+``mkrelease [options] [scm-sandbox | scm-url [rev]]``
 
 Options
 =======
@@ -102,13 +102,13 @@ Options
 ``-v, --version``
     Print the version string and exit.
 
-``scm-url``
-    The URL of a remote SCM repository. The optional ``rev`` argument
-    specifies a branch or tag to check out.
-
 ``scm-sandbox``
     A local SCM sandbox. Defaults to the current working
     directory.
+
+``scm-url``
+    The URL of a remote SCM repository. The optional ``rev`` argument
+    specifies a branch or tag to check out.
 
 Examples
 ========
@@ -117,17 +117,17 @@ Release my.package and upload it to PyPI::
 
   $ mkrelease -d pypi src/my.package
 
-Release my.package and upload it via scp to the jarn.com server::
-
-  $ mkrelease -d jarn.com:/var/dist/public src/my.package
-
 Release my.package using the repository URL instead of a local working copy::
 
   $ mkrelease -d pypi git@github.com:Jarn/my.package
 
+Release my.package and upload it via scp to the jarn.com server::
+
+  $ mkrelease -d jarn.com:/var/dist/public src/my.package
+
 Release a development egg of my.package while suppressing setuptools output::
 
-  $ mkrelease -qed jarn.com:/var/dist/private src/my.package
+  $ mkrelease -qed stefan@jarn.com:eggs src/my.package
 
 Configuration
 =============
@@ -149,8 +149,8 @@ mkrelease also reads its own configuration file ``~/.mkrelease``.
 Here's an example::
 
   [mkrelease]
-  distbase =
   distdefault = public
+  push = yes
 
   [aliases]
   public =
@@ -161,10 +161,7 @@ Here's an example::
       pypi
       public
 
-Note: ``pypi`` refers to the index server *pypi* as configured in
-``~/.pypirc`` above.
-
-Armed with this configuration we can shorten example 2 to::
+Armed with this configuration we can shorten example 3 to::
 
   $ mkrelease -d public src/my.package
 
@@ -172,54 +169,28 @@ And because ``public`` is the default location, we can omit ``-d`` entirely::
 
   $ mkrelease src/my.package
 
-Working with SCP
+Upload with SCP
 ================
 
 The simplest distribution location is a server directory shared through
-e.g. Apache. Releasing an egg just means scp-ing it to the appropriate place
+Apache. Releasing an egg just means scp-ing it to the appropriate place
 on the server::
-
-  $ mkrelease -d jarn.com:/var/dist/public src/my.package
-
-We have a distribution point for every project, so customer A does not
-see customer B's releases::
 
   $ mkrelease -d jarn.com:/var/dist/customerB src/my.package
 
-Typing the full destination every time is tedious, even setting up an alias
-for each and every customer is, so we configure distbase instead::
-
-  [mkrelease]
-  distbase = jarn.com:/var/dist
-  distdefault = public
-
-  [aliases]
-  world =
-      pypi
-      public
-
-The distbase is prepended when an scp destination does not contain a
-host part. We can now write::
-
-  $ mkrelease -d public src/my.package
-  $ mkrelease -d customerB src/my.package
-
-Working with SFTP
-=================
-
 To upload via sftp instead of scp, specify the destination in URL form::
 
-  $ mkrelease -d sftp://jarn.com/var/dist/public src/my.package
+  $ mkrelease -d sftp://jarn.com/var/dist/customerB src/my.package
 
 For consistency, scp URLs are supported as well::
 
-  $ mkrelease -d scp://jarn.com/var/dist/public src/my.package
+  $ mkrelease -d scp://jarn.com/var/dist/customerB src/my.package
 
 Note: Unlike scp, the sftp client does not prompt for login credentials.
-This means that the destination server must be set up for non-interactive
-login or the upload will fail.
+This means that non-interactive login must be configured on the
+destination server or the upload will fail.
 
-Working with Index Servers
+Upload to Index Servers
 ==========================
 
 Another way of distributing Python eggs is by uploading them to dedicated
@@ -234,13 +205,12 @@ There is test.pypi.org, and there are alternative index servers like
 
 .. _`devpi`: http://doc.devpi.net/latest/
 
-We extend our ``~/.pypirc`` to add additional servers::
+We extend our ``~/.pypirc`` to add an additional server::
 
   [distutils]
   index-servers =
       pypi
       test
-      dev
 
   [pypi]
   repository = https://upload.pypi.org/legacy/
@@ -254,18 +224,9 @@ We extend our ``~/.pypirc`` to add additional servers::
   password = secret
   register = no
 
-  [dev]
-  repository = http://localhost:3141/fred/dev/
-  username = fred
-  password = secret
-
 This allows us to release to test.pypi.org by typing::
 
-  $ mkrelease -d test src/my.package
-
-The ``-d`` option can be specified more than once::
-
-  $ mkrelease -d pypi -d dev src/my.package
+  $ mkrelease -CT -d test src/my.package
 
 Note: Setuptools rebuilds the egg for every index server it uploads it to.
 This means that MD5 sums and GnuPG signatures will differ between servers.
@@ -275,28 +236,20 @@ there by other means.
 Releasing a Tag
 ===============
 
-Release my.package from an existing Subversion tag::
+Release my.package from an existing tag::
 
-  $ mkrelease -T https://svn.jarn.com/public/my.package/tags/1.0
-
-With Mercurial and Git we can use the second argument to specify the tag::
-
-  $ mkrelease -T git@github.com:Jarn/my.package 1.0
+  $ mkrelease -T -d pypi git@github.com:Jarn/my.package 1.0
 
 Using GnuPG
 ===========
 
 Release my.package and sign the archive with GnuPG::
 
-  $ mkrelease -s -i fred@bedrock.com src/my.package
+  $ mkrelease -s -i fred@bedrock.com -d pypi src/my.package
 
-The ``-i`` flag is optional, and GnuPG will pick your default
-key if not given. In addition, defaults for ``-s`` and ``-i`` can be
+The ``-i`` flag is optional and GnuPG will pick your default
+key if not given. Defaults for ``-s`` and ``-i`` may be
 configured in ``~/.pypirc``::
-
-  [distutils]
-  index-servers =
-      pypi
 
   [pypi]
   repository = https://upload.pypi.org/legacy/
@@ -305,6 +258,16 @@ configured in ``~/.pypirc``::
   register = no
   sign = yes
   identity = fred@bedrock.com
+
+Using Twine
+===========
+
+Release my.package and upload to PyPI with `twine`_::
+
+    $ mkrelease -RS src/my.package
+    $ twine upload src/my.package/dist/*
+
+.. _`twine`: https://packaging.python.org/key_projects/#twine
 
 Requirements
 ============
@@ -323,19 +286,4 @@ what you plan to use):
 * sftp
 
 * gpg
-
-Limitations
-===========
-
-Subversion
-----------
-
-The release tag can only be created if the repository follows one of
-these layouts:
-
-* The standard Subversion layout: ``my.package/trunk``,
-  ``my.package/branches``, and ``my.package/tags``.
-
-* The singular-form layout variant: ``my.package/trunk``,
-  ``my.package/branch``, and ``my.package/tag``.
 
