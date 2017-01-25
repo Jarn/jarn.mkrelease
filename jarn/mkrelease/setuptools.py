@@ -15,6 +15,7 @@ from .exit import err_exit, warn
 from .tee import *
 
 OK_RESPONSE = 'Server response (200): OK'
+GONE_RESPONSE = 'Server response (410):'
 
 
 class Setuptools(object):
@@ -201,10 +202,22 @@ class Setuptools(object):
         return ''
 
     def _parse_register_results(self, lines):
-        return self._parse_server_response(lines, 'running register')
+        return self._parse_server_response_2017(
+            lines, 'running register', (OK_RESPONSE, GONE_RESPONSE))
 
     def _parse_upload_results(self, lines):
-        return self._parse_server_response(lines, 'running upload')
+        return self._parse_server_response_2017(
+            lines, 'running upload', (OK_RESPONSE,))
+
+    def _parse_server_response_2017(self, lines, match, then_match):
+        current, expect = '', (match,)
+        for line in lines:
+            if [x for x in expect if line.startswith(x)]:
+                if not current:
+                    current, expect = match, then_match
+                elif current == match:
+                    return True
+        return False
 
     def _parse_server_response(self, lines, match):
         current, expect = '', match
