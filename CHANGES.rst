@@ -4,13 +4,13 @@ Changelog
 3.9 - Unreleased
 ----------------
 
-- Support Python 2.6 - 3.6 without 2to3.
+- Catch up with late-2016 PyPI API change.
   [stefan]
 
 - Add -R option to skip the register step.
   [stefan]
 
-- Print 'no locations' message to stderr.
+- Support Python 2.6 - 3.6 without 2to3.
   [stefan]
 
 - Handle return code changes in Mercurial 3.1.1.
