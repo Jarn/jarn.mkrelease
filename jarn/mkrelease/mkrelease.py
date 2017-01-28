@@ -30,7 +30,7 @@ VERSION = "jarn.mkrelease %s" % __version__
 USAGE = "Try 'mkrelease --help' for more information"
 
 HELP = """\
-Usage: mkrelease [options] [scm-url [rev]|scm-sandbox]
+Usage: mkrelease [options] [scm-sandbox|scm-url [rev]]
 
 Python egg releaser
 
@@ -66,10 +66,10 @@ Options:
   -h, --help          Print this help message and exit.
   -v, --version       Print the version string and exit.
 
-  scm-url             The URL of a remote SCM repository. The rev argument
-                      specifies a branch or tag to check out.
   scm-sandbox         A local SCM sandbox. Defaults to the current working
                       directory.
+  scm-url             The URL of a remote SCM repository. The rev argument
+                      specifies a branch or tag to check out.
 """
 
 
@@ -101,6 +101,7 @@ class Defaults(object):
             def __init__(self, server):
                 self.sign = parser.getboolean(server, 'sign', None)
                 self.identity = parser.getstring(server, 'identity', None)
+                self.register = parser.getboolean(server, 'register', True)
 
         self.servers = {}
         for server in parser.getlist('distutils', 'index-servers', []):
@@ -322,6 +323,12 @@ class ReleaseMaker(object):
                 print(location)
         sys.exit(0)
 
+    def get_skipregister(self, location):
+        """Return true if the register command is disabled for the given server.
+        """
+        server = self.defaults.servers[location]
+        return self.skipregister or not server.register
+
     def get_uploadflags(self, location):
         """Return uploadflags for the given server.
         """
@@ -463,7 +470,7 @@ class ReleaseMaker(object):
 
             for location in self.locations:
                 if self.locations.is_server(location):
-                    if not self.skipregister:
+                    if not self.get_skipregister(location):
                         self.setuptools.run_register(
                             directory, infoflags, location, scmtype, self.quiet)
                     if not self.skipupload:
