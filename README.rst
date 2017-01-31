@@ -259,16 +259,6 @@ configured in ``~/.pypirc``::
   sign = yes
   identity = fred@bedrock.com
 
-Using Twine
-===========
-
-Release my.package and upload to PyPI with `twine`_::
-
-    $ mkrelease -RS src/my.package
-    $ twine upload src/my.package/dist/*
-
-.. _`twine`: https://packaging.python.org/key_projects/#twine
-
 Requirements
 ============
 
