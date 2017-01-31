@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.9 - Unreleased
+3.9 - 2017-01-31
 ----------------
 
 - Catch up with late-2016 PyPI API change.
