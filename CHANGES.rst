@@ -4,6 +4,8 @@ Changelog
 3.10 - Unreleased
 -----------------
 
+- Setuptools 33.1.0 removed the --no-svn-revision option.
+  [stefan]
 
 3.9 - 2017-01-31
 ----------------

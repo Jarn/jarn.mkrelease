@@ -237,7 +237,7 @@ class ReleaseMaker(object):
         self.branch = ''
         self.scmtype = ''
         self.distcmd = 'sdist'
-        self.infoflags = ['--no-svn-revision', '--no-date', '--tag-build=""']
+        self.infoflags = self.setuptools.infoflags
         self.distflags = ['--formats="zip"']
         self.directory = os.curdir
         self.scm = None

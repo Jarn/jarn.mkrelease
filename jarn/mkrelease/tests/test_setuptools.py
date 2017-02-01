@@ -129,6 +129,11 @@ testpackage.egg-info/top_level.txt""")
         st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertFalse(isfile(join(self.clonedir, 'setup.pyc')))
 
+    def testInfoFlags(self):
+        st = Setuptools(Process(quiet=True))
+        archive = st.run_dist(self.clonedir, st.infoflags, 'sdist', ['--formats=zip'], ff='svn')
+        self.assertEqual(contains(archive, 'subversion_only.py'), True)
+
 
 class MercurialTests(MercurialSetup):
 
@@ -190,6 +195,11 @@ testpackage.egg-info/top_level.txt""")
         st = Setuptools(Process(quiet=True, env=get_env()))
         st.run_dist(self.packagedir, [], 'sdist', ['--formats=zip'], ff='hg')
         self.assertFalse(isfile(join(self.packagedir, 'setup.pyc')))
+
+    def testInfoFlags(self):
+        st = Setuptools(Process(quiet=True, env=get_env()))
+        archive = st.run_dist(self.packagedir, st.infoflags, 'sdist', ['--formats=zip'], ff='hg')
+        self.assertEqual(contains(archive, 'mercurial_only.py'), True)
 
 
 class GitTests(GitSetup):
@@ -253,6 +263,11 @@ testpackage.egg-info/top_level.txt""")
         st = Setuptools(Process(quiet=True, env=get_env()))
         st.run_dist(self.packagedir, [], 'sdist', ['--formats=zip'], ff='git')
         self.assertFalse(isfile(join(self.packagedir, 'setup.pyc')))
+
+    def testInfoFlags(self):
+        st = Setuptools(Process(quiet=True, env=get_env()))
+        archive = st.run_dist(self.packagedir, st.infoflags, 'sdist', ['--formats=zip'], ff='git')
+        self.assertEqual(contains(archive, 'git_only.py'), True)
 
 
 def test_suite():

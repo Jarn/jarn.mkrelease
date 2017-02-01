@@ -25,6 +25,13 @@ class Setuptools(object):
         self.process = process or Process(env=self.get_env())
         self.python = Python()
 
+        self.infoflags = ['--tag-build=""', '--no-date']
+
+        # setuptools < 33.1.0
+        from setuptools.command.egg_info import egg_info
+        if 'no-svn-revision' in getattr(egg_info, 'negative_opt', []):
+            self.infoflags.append('--no-svn-revision')
+
     def get_env(self):
         # Make sure setuptools and its extensions are found if mkrelease
         # has been installed with zc.buildout
