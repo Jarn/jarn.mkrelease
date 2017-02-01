@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.10 - Unreleased
+3.10 - 2017-02-01
 -----------------
 
 - Support setuptools >= 33.1.0.
