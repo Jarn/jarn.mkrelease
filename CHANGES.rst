@@ -4,6 +4,8 @@ Changelog
 3.11 - Unreleased
 -----------------
 
+- Protect against bad or incomplete locale settings.
+  [stefan]
 
 3.10 - 2017-02-01
 -----------------
