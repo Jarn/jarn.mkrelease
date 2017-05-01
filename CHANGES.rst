@@ -4,6 +4,9 @@ Changelog
 3.11 - Unreleased
 -----------------
 
+- The secondary thread would sometimes not terminate in Python 2.
+  [stefan]
+
 - Protect against bad or incomplete locale settings.
   [stefan]
 

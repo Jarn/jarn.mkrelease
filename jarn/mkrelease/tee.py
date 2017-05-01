@@ -67,6 +67,9 @@ def tee2(process, filter):
         elif _tee2_exit_flag:
             process.stderr.close()
             break
+        elif sys.version_info[0] < 3 and process.returncode is not None:
+            process.stderr.close()
+            break
 
 
 class background_thread(object):
