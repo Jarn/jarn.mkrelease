@@ -59,6 +59,7 @@ Options:
   -p, --push          Push sandbox modifications upstream.
   -e, --develop       Allow version number extensions. Implies -T.
   -b, --binary        Release a binary egg.
+  -w, --wheel         Release a wheel file.
   -q, --quiet         Suppress output of setuptools commands.
 
   -c config-file, --config-file=config-file
@@ -261,11 +262,11 @@ class ReleaseMaker(object):
         """
         try:
             options, remaining_args = getopt.gnu_getopt(args,
-                'CRSTbc:d:ehi:lnpqsv',
+                'CRSTbc:d:ehi:lnpqsvw',
                 ('no-commit', 'no-tag', 'no-register', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
-                 'list-locations', 'config-file='))
+                 'list-locations', 'config-file=', 'wheel'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -304,6 +305,9 @@ class ReleaseMaker(object):
             elif name in ('-b', '--binary'):
                 self.distcmd = 'bdist'
                 self.distflags = ['--formats="egg"']
+            elif name in ('-w', '--wheel'):
+                self.distcmd = 'bdist_wheel'
+                self.distflags = ['--keep-temp']
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(abspath(expanduser(value)))
                 return self.parse_options(args, depth+1)
