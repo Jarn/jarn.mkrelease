@@ -484,6 +484,8 @@ class ReleaseMaker(object):
                         uploadflags = self.get_uploadflags(location)
                         if '--sign' in uploadflags and isfile(distfile+'.asc'):
                             os.remove(distfile+'.asc')
+                        if distcmd == 'bdist_wheel':
+                            distflags = [] # no keep temp
                         self.setuptools.run_upload(
                             directory, infoflags, distcmd, distflags, location, uploadflags,
                             scmtype, self.quiet)

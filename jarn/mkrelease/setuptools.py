@@ -6,6 +6,9 @@ import distutils.command
 import pkg_resources
 
 from os.path import abspath, join, isfile
+from os.path import basename, dirname
+from shutil import rmtree
+from email import message_from_file
 
 from .python import Python
 from .process import Process
@@ -225,17 +228,27 @@ class Setuptools(object):
         for line in lines:
             if line.startswith("creating ") and line.endswith('WHEEL'):
                 wheelfile = line[9:]
+        result = ''
         if wheelfile:
-            tag = ''
-            with open(wheelfile, 'rt') as file:
-                for line in file:
-                    line = line.rstrip()
-                    if line.startswith('Tag: '):
-                        tag = line[5:]
-            if tag:
-                pkgname = '-'.join(self.get_package_info(os.curdir) + (tag,)) + '.whl'
-                return join('dist', pkgname)
-        return ''
+            tags = []
+            pure = False
+            universal = False
+            with open(wheelfile, 'rt') as fp:
+                msg = message_from_file(fp)
+                tags = msg.get_all('Tag')
+                pure = msg.get('Root-Is-Purelib', '') == 'true'
+                universal = len(tags) > 1
+            if tags:
+                tag = tags[0]
+                if pure and universal:
+                    if tag.startswith(('py2-', 'py3-')):
+                        tag = 'py2.py3-' + tag[4:]
+                pkgname = basename(dirname(wheelfile))[:-10]
+                pkgname = '-'.join((pkgname, tag)) + '.whl'
+                result = join('dist', pkgname)
+            # Clean up or the next build might contain crap
+            rmtree(dirname(dirname(wheelfile)))
+        return result
 
     def _parse_register_results(self, lines):
         return self._parse_server_response_2017(
