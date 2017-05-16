@@ -220,13 +220,18 @@ class Setuptools(object):
         for line in lines:
             if line.startswith("creating '") and "' and adding '" in line:
                 return line.split("'")[1]
+        # Must be --formats=gztar then
+        for line in lines:
+            if line.startswith('Writing ') and line.endswith('setup.cfg'):
+                pkgname = basename(dirname(line[8:])) + '.tar.gz'
+                return join('dist', pkgname)
         return ''
 
     def _parse_wheel_results(self, lines):
         # This relies on --keep-temp
         wheelfile = ''
         for line in lines:
-            if line.startswith("creating ") and line.endswith('WHEEL'):
+            if line.startswith('creating ') and line.endswith('WHEEL'):
                 wheelfile = line[9:]
         result = ''
         if wheelfile:

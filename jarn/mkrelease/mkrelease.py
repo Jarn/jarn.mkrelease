@@ -56,10 +56,13 @@ Options:
   -i identity, --identity=identity
                       The GnuPG identity to sign with. Implies -s.
 
-  -p, --push          Push sandbox modifications upstream.
-  -e, --develop       Allow version number extensions. Implies -T.
+  -z, --zip           Release a zip archive (the default).
+  -g, --gztar         Release a tar.gz archive.
   -b, --binary        Release a binary egg.
   -w, --wheel         Release a wheel file.
+
+  -p, --push          Push sandbox modifications upstream.
+  -e, --develop       Allow version number extensions. Implies -T.
   -q, --quiet         Suppress output of setuptools commands.
 
   -c config-file, --config-file=config-file
@@ -262,11 +265,11 @@ class ReleaseMaker(object):
         """
         try:
             options, remaining_args = getopt.gnu_getopt(args,
-                'CRSTbc:d:ehi:lnpqsvw',
+                'CRSTbc:d:eghi:lnpqsvwz',
                 ('no-commit', 'no-tag', 'no-register', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
-                 'list-locations', 'config-file=', 'wheel'))
+                 'list-locations', 'config-file=', 'wheel', 'zip', 'gztar'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -302,6 +305,12 @@ class ReleaseMaker(object):
             elif name in ('-e', '--develop'):
                 self.skiptag = True
                 self.infoflags = []
+            elif name in ('-z', '--zip'):
+                self.distcmd = 'sdist'
+                self.distflags = ['--formats="zip"']
+            elif name in ('-g', '--gztar'):
+                self.distcmd = 'sdist'
+                self.distflags = ['--formats="gztar"']
             elif name in ('-b', '--binary'):
                 self.distcmd = 'bdist'
                 self.distflags = ['--formats="egg"']
