@@ -4,6 +4,9 @@ Changelog
 3.11 - Unreleased
 -----------------
 
+- Add support for wheel files (bdist_wheel).
+  [stefan]
+
 - The secondary thread would sometimes not terminate in Python 2.
   [stefan]
 

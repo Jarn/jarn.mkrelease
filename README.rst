@@ -85,7 +85,10 @@ Options
     respective ``setup.cfg`` options). Implies ``-T``.
 
 ``-b, --binary``
-    Release a binary (bdist) egg.
+    Release a binary egg.
+
+``-w, --wheel``
+    Release a wheel file.
 
 ``-q, --quiet``
     Suppress output of setuptools commands.
