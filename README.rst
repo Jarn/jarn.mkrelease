@@ -77,18 +77,24 @@ Options
 ``-i identity, --identity=identity``
     The GnuPG identity to sign with. Implies ``-s``.
 
-``-p, --push``
-    Push sandbox modifications upstream.
+``-z, --zip``
+    Release a zip archive (the default).
 
-``-e, --develop``
-    Allow version number extensions (i.e. don't ignore
-    respective ``setup.cfg`` options). Implies ``-T``.
+``-g, --gztar``
+    Release a tar.gz archive.
 
 ``-b, --binary``
     Release a binary egg.
 
 ``-w, --wheel``
     Release a wheel file.
+
+``-p, --push``
+    Push sandbox modifications upstream.
+
+``-e, --develop``
+    Allow version number extensions (i.e. don't ignore
+    respective ``setup.cfg`` options). Implies ``-T``.
 
 ``-q, --quiet``
     Suppress output of setuptools commands.
