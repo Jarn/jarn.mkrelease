@@ -117,7 +117,10 @@ class Setuptools(object):
             ff=ff)
 
         if rc == 0:
-            filename = self._parse_dist_results(lines)
+            if distflags == ['--formats="gztar"']:
+                filename = self._parse_gztar_results(lines)
+            else:
+                filename = self._parse_dist_results(lines)
             if filename and isfile(filename):
                 return abspath(filename)
         err_exit('%(distcmd)s failed' % locals())
@@ -214,7 +217,10 @@ class Setuptools(object):
         for line in lines:
             if line.startswith("creating '") and "' and adding '" in line:
                 return line.split("'")[1]
-        # Must be --formats=gztar then
+        return ''
+
+    def _parse_gztar_results(self, lines):
+        # This relies on --formats=gztar and a default --dist-dir
         for line in lines:
             if line.startswith('Writing ') and line.endswith('setup.cfg'):
                 pkgname = basename(dirname(line[8:])) + '.tar.gz'
