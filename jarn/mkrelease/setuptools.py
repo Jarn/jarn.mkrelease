@@ -117,7 +117,7 @@ class Setuptools(object):
             ff=ff)
 
         if rc == 0:
-            filename = self._parse_dist_results(lines, distcmd)
+            filename = self._parse_dist_results(lines)
             if filename and isfile(filename):
                 return abspath(filename)
         err_exit('%(distcmd)s failed' % locals())
@@ -209,14 +209,8 @@ class Setuptools(object):
                 return line.split("'")[1]
         return ''
 
-    def _parse_dist_results(self, lines, distcmd):
-        if distcmd == 'bdist_wheel':
-            return self._parse_wheel_results(lines)
-        else:
-            return self._parse_sdist_bdist_results(lines)
-
-    def _parse_sdist_bdist_results(self, lines):
-        # This relies on --formats=zip or --formats=egg
+    def _parse_dist_results(self, lines):
+        # This relies on --formats=zip or --formats=egg or bdist_wheel+patch
         for line in lines:
             if line.startswith("creating '") and "' and adding '" in line:
                 return line.split("'")[1]
@@ -226,34 +220,6 @@ class Setuptools(object):
                 pkgname = basename(dirname(line[8:])) + '.tar.gz'
                 return join('dist', pkgname)
         return ''
-
-    def _parse_wheel_results(self, lines):
-        # This relies on --keep-temp
-        wheelfile = ''
-        for line in lines:
-            if line.startswith('creating ') and line.endswith('WHEEL'):
-                wheelfile = line[9:]
-        result = ''
-        if wheelfile:
-            tags = []
-            pure = False
-            universal = False
-            with open(wheelfile, 'rt') as fp:
-                msg = message_from_file(fp)
-                tags = msg.get_all('Tag')
-                pure = msg.get('Root-Is-Purelib', '') == 'true'
-                universal = len(tags) > 1
-            if tags:
-                tag = tags[0]
-                if pure and universal:
-                    if tag.startswith(('py2-', 'py3-')):
-                        tag = 'py2.py3-' + tag[4:]
-                pkgname = basename(dirname(wheelfile))[:-10]
-                pkgname = '-'.join((pkgname, tag)) + '.whl'
-                result = join('dist', pkgname)
-            # Clean up or the next build might contain crap
-            rmtree(dirname(dirname(wheelfile)))
-        return result
 
     def _parse_register_results(self, lines):
         return self._parse_server_response_2017(
@@ -326,6 +292,9 @@ def walk_revctrl(dirname=''):
 
 import setuptools.command.egg_info
 setuptools.command.egg_info.walk_revctrl = walk_revctrl
+
+import wheel.archive
+wheel.archive.log = distutils.log
 
 sys.argv = ['setup.py'] + %(args)r
 import setup

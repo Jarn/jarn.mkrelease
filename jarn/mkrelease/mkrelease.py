@@ -316,7 +316,7 @@ class ReleaseMaker(object):
                 self.distflags = ['--formats="egg"']
             elif name in ('-w', '--wheel'):
                 self.distcmd = 'bdist_wheel'
-                self.distflags = ['--keep-temp']
+                self.distflags = []
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(abspath(expanduser(value)))
                 return self.parse_options(args, depth+1)
@@ -493,8 +493,6 @@ class ReleaseMaker(object):
                         uploadflags = self.get_uploadflags(location)
                         if '--sign' in uploadflags and isfile(distfile+'.asc'):
                             os.remove(distfile+'.asc')
-                        if distcmd == 'bdist_wheel':
-                            distflags = [] # no keep temp
                         self.setuptools.run_upload(
                             directory, infoflags, distcmd, distflags, location, uploadflags,
                             scmtype, self.quiet)
