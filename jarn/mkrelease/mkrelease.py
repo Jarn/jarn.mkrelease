@@ -56,9 +56,13 @@ Options:
   -i identity, --identity=identity
                       The GnuPG identity to sign with. Implies -s.
 
+  -z, --zip           Release a zip archive (the default).
+  -g, --gztar         Release a tar.gz archive.
+  -b, --binary        Release a binary egg.
+  -w, --wheel         Release a wheel file.
+
   -p, --push          Push sandbox modifications upstream.
   -e, --develop       Allow version number extensions. Implies -T.
-  -b, --binary        Release a binary egg.
   -q, --quiet         Suppress output of setuptools commands.
 
   -c config-file, --config-file=config-file
@@ -239,9 +243,8 @@ class ReleaseMaker(object):
         self.identity = ''
         self.branch = ''
         self.scmtype = ''
-        self.distcmd = 'sdist'
         self.infoflags = self.setuptools.infoflags
-        self.distflags = ['--formats="zip"']
+        self.distributions = []
         self.directory = os.curdir
         self.scm = None
 
@@ -261,11 +264,11 @@ class ReleaseMaker(object):
         """
         try:
             options, remaining_args = getopt.gnu_getopt(args,
-                'CRSTbc:d:ehi:lnpqsv',
+                'CRSTbc:d:eghi:lnpqsvwz',
                 ('no-commit', 'no-tag', 'no-register', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
-                 'list-locations', 'config-file='))
+                 'list-locations', 'config-file=', 'wheel', 'zip', 'gztar'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -301,9 +304,14 @@ class ReleaseMaker(object):
             elif name in ('-e', '--develop'):
                 self.skiptag = True
                 self.infoflags = []
+            elif name in ('-z', '--zip'):
+                self.distributions.append(('sdist', ['--formats="zip"']))
+            elif name in ('-g', '--gztar'):
+                self.distributions.append(('sdist', ['--formats="gztar"']))
             elif name in ('-b', '--binary'):
-                self.distcmd = 'bdist'
-                self.distflags = ['--formats="egg"']
+                self.distributions.append(('bdist', ['--formats="egg"']))
+            elif name in ('-w', '--wheel'):
+                self.distributions.append(('bdist_wheel', []))
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(abspath(expanduser(value)))
                 return self.parse_options(args, depth+1)
@@ -373,6 +381,9 @@ class ReleaseMaker(object):
         if args:
             self.directory = args[0]
 
+        if not self.distributions:
+            self.distributions.append(('sdist', ['--formats="zip"']))
+
         if self.list:
             self.list_locations()
 
@@ -426,8 +437,6 @@ class ReleaseMaker(object):
         """
         directory = self.directory
         infoflags = self.infoflags
-        distcmd = self.distcmd
-        distflags = self.distflags
         branch = self.branch
         scmtype = self.scm.name
         develop = not self.infoflags
@@ -466,30 +475,31 @@ class ReleaseMaker(object):
                 self.scm.check_tag_exists(directory, tagid)
                 self.scm.create_tag(directory, tagid, name, version, self.push)
 
-            manifest = self.setuptools.run_egg_info(
-                directory, infoflags, scmtype, self.quiet)
-            distfile = self.setuptools.run_dist(
-                directory, infoflags, distcmd, distflags, scmtype, self.quiet)
+            for distcmd, distflags in self.distributions:
+                manifest = self.setuptools.run_egg_info(
+                    directory, infoflags, scmtype, self.quiet)
+                distfile = self.setuptools.run_dist(
+                    directory, infoflags, distcmd, distflags, scmtype, self.quiet)
 
-            for location in self.locations:
-                if self.locations.is_server(location):
-                    if not self.get_skipregister(location):
-                        self.setuptools.run_register(
-                            directory, infoflags, location, scmtype, self.quiet)
-                    if not self.skipupload:
-                        uploadflags = self.get_uploadflags(location)
-                        if '--sign' in uploadflags and isfile(distfile+'.asc'):
-                            os.remove(distfile+'.asc')
-                        self.setuptools.run_upload(
-                            directory, infoflags, distcmd, distflags, location, uploadflags,
-                            scmtype, self.quiet)
-                else:
-                    if not self.skipupload:
-                        if self.locations.is_dist_url(location):
-                            scheme, location = self.urlparser.to_ssh_url(location)
-                            self.scp.run_upload(scheme, distfile, location)
-                        else:
-                            self.scp.run_upload('scp', distfile, location)
+                for location in self.locations:
+                    if self.locations.is_server(location):
+                        if not self.get_skipregister(location):
+                            self.setuptools.run_register(
+                                directory, infoflags, location, scmtype, self.quiet)
+                        if not self.skipupload:
+                            uploadflags = self.get_uploadflags(location)
+                            if '--sign' in uploadflags and isfile(distfile+'.asc'):
+                                os.remove(distfile+'.asc')
+                            self.setuptools.run_upload(
+                                directory, infoflags, distcmd, distflags, location, uploadflags,
+                                scmtype, self.quiet)
+                    else:
+                        if not self.skipupload:
+                            if self.locations.is_dist_url(location):
+                                scheme, location = self.urlparser.to_ssh_url(location)
+                                self.scp.run_upload(scheme, distfile, location)
+                            else:
+                                self.scp.run_upload('scp', distfile, location)
         finally:
             shutil.rmtree(tempdir)
 

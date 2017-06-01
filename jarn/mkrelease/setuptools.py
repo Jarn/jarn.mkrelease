@@ -6,6 +6,9 @@ import distutils.command
 import pkg_resources
 
 from os.path import abspath, join, isfile
+from os.path import basename, dirname
+from shutil import rmtree
+from email import message_from_file
 
 from .python import Python
 from .process import Process
@@ -37,7 +40,7 @@ class Setuptools(object):
         # has been installed with zc.buildout
         path = []
         for name in ('setuptools', 'setuptools-hg', 'setuptools-git',
-                     'setuptools-subversion'):
+                     'setuptools-subversion', 'wheel'):
             try:
                 dist = pkg_resources.get_distribution(name)
             except pkg_resources.DistributionNotFound:
@@ -98,6 +101,10 @@ class Setuptools(object):
         if quiet:
             echo = And(echo, StartsWith('running'))
 
+        echo2 = On()
+        if quiet and distcmd == 'bdist_wheel':
+            echo2 = Not(And(StartsWith('Skipping'), EndsWith('(namespace package)')))
+
         checkcmd = []
         if 'check' in distutils.command.__all__:
             checkcmd = ['check']
@@ -106,10 +113,14 @@ class Setuptools(object):
             ['egg_info'] + infoflags + checkcmd +
             [distcmd] + distflags,
             echo=echo,
+            echo2=echo2,
             ff=ff)
 
         if rc == 0:
-            filename = self._parse_dist_results(lines)
+            if distflags == ['--formats="gztar"']:
+                filename = self._parse_gztar_results(lines)
+            else:
+                filename = self._parse_dist_results(lines)
             if filename and isfile(filename):
                 return abspath(filename)
         err_exit('%(distcmd)s failed' % locals())
@@ -202,10 +213,18 @@ class Setuptools(object):
         return ''
 
     def _parse_dist_results(self, lines):
-        # This relies on --formats=zip or --formats=egg
+        # This relies on --formats=zip or --formats=egg or bdist_wheel+patch
         for line in lines:
             if line.startswith("creating '") and "' and adding '" in line:
                 return line.split("'")[1]
+        return ''
+
+    def _parse_gztar_results(self, lines):
+        # This relies on --formats=gztar and a default --dist-dir
+        for line in lines:
+            if line.startswith('Writing ') and line.endswith('setup.cfg'):
+                pkgname = basename(dirname(line[8:])) + '.tar.gz'
+                return join('dist', pkgname)
         return ''
 
     def _parse_register_results(self, lines):
@@ -279,6 +298,9 @@ def walk_revctrl(dirname=''):
 
 import setuptools.command.egg_info
 setuptools.command.egg_info.walk_revctrl = walk_revctrl
+
+import wheel.archive
+wheel.archive.log = distutils.log
 
 sys.argv = ['setup.py'] + %(args)r
 import setup

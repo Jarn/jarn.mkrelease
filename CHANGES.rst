@@ -4,6 +4,12 @@ Changelog
 3.11 - Unreleased
 -----------------
 
+- Add support for wheel files (bdist_wheel).
+  [stefan]
+
+- Add support for source distributions in gztar format.
+  [stefan]
+
 - The secondary thread would sometimes not terminate in Python 2.
   [stefan]
 
