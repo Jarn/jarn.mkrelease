@@ -399,7 +399,7 @@ class ReleaseMaker(object):
             elif self.urlparser.is_ssh_url(self.directory):
                 self.branch = args[1]
             else:
-                err_exit('mkrelease: too many arguments\n%s' % USAGE)
+                err_exit('mkrelease: invalid arguments\n%s' % USAGE)
 
         if len(args) > 2:
             err_exit('mkrelease: too many arguments\n%s' % USAGE)
