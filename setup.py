@@ -4,7 +4,7 @@ version = '3.11'
 
 setup(name='jarn.mkrelease',
       version=version,
-      description='Python egg releaser',
+      description='Python package releaser',
       long_description=open('README.rst').read() + '\n' +
                        open('CHANGES.rst').read(),
       classifiers=[
@@ -26,7 +26,7 @@ setup(name='jarn.mkrelease',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
       ],
-      keywords='create release upload python eggs',
+      keywords='create release upload python egg eggs wheel wheels pypi',
       author='Stefan H. Holek',
       author_email='stefan@epy.co.at',
       url='https://github.com/Jarn/jarn.mkrelease',

@@ -2,30 +2,29 @@
 jarn.mkrelease
 ==============
 ---------------------------------------------------
-Python egg releaser
+Python package releaser
 ---------------------------------------------------
 
-**mkrelease** is a no-frills Python egg releaser. It is designed to take
-the cumber out of building and distributing Python eggs.
+**mkrelease** is a no-frills Python package releaser. It is designed to take
+the cumber out of building and distributing Python packages.
+
+mkrelease supports source distributions, binary eggs, and `wheels`_.
+
+.. _`wheels`: https://wheel.readthedocs.io/
 
 Motivation
 ==========
 
-Python eggs are great, and we strive to release all software in egg form.
-However, as projects grow larger and are comprised of more and more eggs,
-release requirements can become a burden.
-
-This is because it takes some work to put a new egg on a
-distribution server. After preparing a package for release (update
-version strings, etc.), we typically have to:
+After preparing a package for release (update version strings, dates,
+etc.), we typically have to:
 
 1. Commit modified files.
 
 2. Tag the release.
 
-3. Package up an egg.
+3. Build a source distribution, egg, or wheel.
 
-4. Distribute the egg via scp or upload it to an index server.
+4. Distribute the result via scp or upload it to an index server.
 
 Now imagine doing this a lot, and the need for automation becomes
 obvious.
@@ -37,7 +36,6 @@ mkrelease works with Python 2.6 - 3.6 and all released versions of setuptools
 and distribute.
 
 Use ``pip install jarn.mkrelease`` to install the ``mkrelease`` script.
-Then put it on your system PATH by e.g. symlinking it to ``/usr/local/bin``.
 
 Usage
 =====
@@ -115,7 +113,7 @@ Options
     A local SCM sandbox. Defaults to the current working
     directory.
 
-``scm-url``
+``scm-url [rev]``
     The URL of a remote SCM repository. The optional ``rev`` argument
     specifies a branch or tag to check out.
 
@@ -182,7 +180,7 @@ Upload with SCP
 ================
 
 The simplest distribution location is a server directory shared through
-Apache. Releasing an egg just means scp-ing it to the appropriate place
+Apache. Releasing a package means scp-ing it to the appropriate place
 on the server::
 
   $ mkrelease -d jarn.com:/var/dist/customerB src/my.package
@@ -202,7 +200,7 @@ destination server or the upload will fail.
 Upload to Index Servers
 ==========================
 
-Another way of distributing Python eggs is by uploading them to dedicated
+Another way of distributing Python packages is by uploading them to dedicated
 index servers, notably PyPI. Given the ``~/.pypirc`` file from above
 we can release to PyPI by typing::
 
@@ -212,7 +210,7 @@ Index servers are not limited to PyPI though.
 There is test.pypi.org, and there are alternative index servers like
 `devpi`_.
 
-.. _`devpi`: http://doc.devpi.net/latest/
+.. _`devpi`: http://doc.devpi.net/
 
 We extend our ``~/.pypirc`` to add an additional server::
 
@@ -237,7 +235,7 @@ This allows us to release to test.pypi.org by typing::
 
   $ mkrelease -CT -d test src/my.package
 
-Note: Setuptools rebuilds the egg for every index server it uploads it to.
+Note: Setuptools rebuilds the package for every index server it uploads it to.
 This means that MD5 sums and GnuPG signatures will differ between servers.
 If this is not what you want, upload to only one server and distribute from
 there by other means.

@@ -35,7 +35,7 @@ USAGE = "Try 'mkrelease --help' for more information"
 HELP = """\
 Usage: mkrelease [options] [scm-sandbox|scm-url [rev]]
 
-Python egg releaser
+Python package releaser
 
 Options:
   -C, --no-commit     Do not commit modified files from the sandbox.
@@ -75,7 +75,7 @@ Options:
 
   scm-sandbox         A local SCM sandbox. Defaults to the current working
                       directory.
-  scm-url             The URL of a remote SCM repository. The rev argument
+  scm-url [rev]       The URL of a remote SCM repository. The rev argument
                       specifies a branch or tag to check out.
 """
 
@@ -433,7 +433,7 @@ class ReleaseMaker(object):
                     self.scm.commit_sandbox(directory, name, version, self.push)
 
     def make_release(self):
-        """Build and distribute the egg.
+        """Build and distribute the package.
         """
         directory = self.directory
         infoflags = self.infoflags

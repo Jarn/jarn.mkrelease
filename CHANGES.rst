@@ -4,6 +4,9 @@ Changelog
 3.11 - Unreleased
 -----------------
 
+- Allow multiple archive formats per release.
+  [stefan]
+
 - Add support for wheel files (bdist_wheel).
   [stefan]
 
