@@ -67,48 +67,48 @@ class SubversionTests(SubversionSetup):
         self.assertTrue(join('testpackage', 'subversion_only.txt') in files)
 
     def testSubversionSdistPy(self):
-        st = Setuptools(Process(quiet=True))
+        st = Setuptools(Process(quiet=True, env=get_env()))
         archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(contains(archive, 'subversion_only.py'), True)
 
     def testSubversionSdistTxt(self):
-        st = Setuptools(Process(quiet=True))
+        st = Setuptools(Process(quiet=True, env=get_env()))
         archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(contains(archive, 'subversion_only.txt'), True)
 
     def testSubversionSdistC(self):
-        st = Setuptools(Process(quiet=True))
+        st = Setuptools(Process(quiet=True, env=get_env()))
         archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(contains(archive, 'subversion_only.c'), True)
 
     def testDefaultSdistPy(self):
-        st = Setuptools(Process(quiet=True))
+        st = Setuptools(Process(quiet=True, env=get_env()))
         self.destroy(self.clonedir)
         # Use the default file-finder to create the manifest
         archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'])
         self.assertEqual(contains(archive, 'subversion_only.py'), True)
 
     def testDefaultSdistTxt(self):
-        st = Setuptools(Process(quiet=True))
+        st = Setuptools(Process(quiet=True, env=get_env()))
         self.destroy(self.clonedir)
         # Use the default file-finder to create the manifest; .txt file is missing.
         archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'])
         self.assertEqual(contains(archive, 'subversion_only.txt'), False)
 
     def testDefaultSdistC(self):
-        st = Setuptools(Process(quiet=True))
+        st = Setuptools(Process(quiet=True, env=get_env()))
         self.destroy(self.clonedir)
         # Use the default file-finder to create the manifest; .c file is missing.
         archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'])
         self.assertEqual(contains(archive, 'subversion_only.c'), False)
 
     def testSubversionMetaFile(self):
-        st = Setuptools(Process(quiet=True))
+        st = Setuptools(Process(quiet=True, env=get_env()))
         archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(contains(archive, '.svnignore'), False)
 
     def testSubversionManifest(self):
-        st = Setuptools(Process(quiet=True))
+        st = Setuptools(Process(quiet=True, env=get_env()))
         archive = st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(get_manifest(archive), """\
 README.txt
@@ -125,12 +125,12 @@ testpackage.egg-info/requires.txt
 testpackage.egg-info/top_level.txt""")
 
     def testRemoveSetupPyc(self):
-        st = Setuptools(Process(quiet=True))
+        st = Setuptools(Process(quiet=True, env=get_env()))
         st.run_dist(self.clonedir, [], 'sdist', ['--formats=zip'], ff='svn')
         self.assertFalse(isfile(join(self.clonedir, 'setup.pyc')))
 
     def testInfoFlags(self):
-        st = Setuptools(Process(quiet=True))
+        st = Setuptools(Process(quiet=True, env=get_env()))
         archive = st.run_dist(self.clonedir, st.infoflags, 'sdist', ['--formats=zip'], ff='svn')
         self.assertEqual(contains(archive, 'subversion_only.py'), True)
 
