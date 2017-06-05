@@ -43,6 +43,7 @@ setup(name='jarn.mkrelease',
           'setuptools-git >= 1.1',
           'lazy >= 1.2',
           'wheel',
+          'keyring',
       ],
       entry_points={
           'console_scripts': 'mkrelease=jarn.mkrelease.mkrelease:main',

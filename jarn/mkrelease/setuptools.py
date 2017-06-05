@@ -40,7 +40,7 @@ class Setuptools(object):
         # has been installed with zc.buildout
         path = []
         for name in ('setuptools', 'setuptools-hg', 'setuptools-git',
-                     'setuptools-subversion', 'wheel'):
+                     'setuptools-subversion', 'wheel', 'keyring'):
             try:
                 dist = pkg_resources.get_distribution(name)
             except pkg_resources.DistributionNotFound:
