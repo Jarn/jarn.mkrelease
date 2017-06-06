@@ -266,6 +266,18 @@ configured in ``~/.pypirc``::
   sign = yes
   identity = fred@bedrock.com
 
+Keyring Support
+===============
+
+mkrelease installs the `keyring`_ module, which provides access to e.g. the Mac
+OS X Keychain. To store your PyPI password in the keyring type::
+
+  $ keyring set https://upload.pypi.org/legacy/ <pypi-username>
+
+Then delete the password from ``~/.pypirc``.
+
+.. _`keyring`: https://pypi.python.org/pypi/keyring
+
 Requirements
 ============
 
