@@ -122,6 +122,10 @@ class Defaults(object):
         for server in parser.getlist('distutils', 'index-servers', []):
             self.servers[server] = ServerInfo(server)
 
+        for format in self.formats:
+            if format not in ('zip', 'gztar', 'egg', 'wheel'):
+                warn('Unknown format: %(format)s' % locals())
+
     def get_known_locations(self):
         """Return a set of known locations.
         """
