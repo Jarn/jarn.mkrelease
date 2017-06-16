@@ -460,8 +460,8 @@ class ReleaseMaker(object):
         """Get the URL or sandbox to release.
         """
         directory = self.directory
-        scmtype = self.scmtype
         develop = self.develop
+        scmtype = self.scmtype
 
         self.scm = self.scms.get_scm(scmtype, directory)
 
@@ -490,8 +490,8 @@ class ReleaseMaker(object):
         directory = self.directory
         infoflags = self.infoflags
         branch = self.branch
-        scmtype = self.scm.name
         develop = self.develop
+        scmtype = self.scm.name
 
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
         try:
