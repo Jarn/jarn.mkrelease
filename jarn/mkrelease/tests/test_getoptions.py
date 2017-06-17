@@ -10,13 +10,11 @@ class serverinfo:
     sign = None
     identity = None
     register = None
-    upload = None
 
-    def __init__(self, sign=None, identity=None, register=None, upload=None):
+    def __init__(self, sign=None, identity=None, register=None):
         self.sign = sign
         self.identity = identity
         self.register = register
-        self.upload = upload
 
 
 class GetOptionsTests(JailSetup):
@@ -75,20 +73,25 @@ upload = no
 
         rm.defaults.servers.update({'pypi': serverinfo})
         self.assertEqual(rm.get_skipregister('pypi'), True)
-        self.assertEqual(rm.get_skipupload('pypi'), True)
+        self.assertEqual(rm.get_skipupload(), True)
 
     def test_dry_run_server_precedence(self):
         self.mkfile('my.cfg', """\
 [mkrelease]
+commit = no
+tag = no
 register = no
 upload = no
 """)
         rm = ReleaseMaker(['-c', 'my.cfg'])
         rm.get_options()
 
-        rm.defaults.servers.update({'pypi': serverinfo(register=True, upload=True)})
+        self.assertEqual(rm.skipcommit, True)
+        self.assertEqual(rm.skiptag, True)
+
+        rm.defaults.servers.update({'pypi': serverinfo(register=True)})
         self.assertEqual(rm.get_skipregister('pypi'), False)
-        self.assertEqual(rm.get_skipupload('pypi'), False)
+        self.assertEqual(rm.get_skipupload(), True)
 
     def test_formats(self):
         self.mkfile('my.cfg', """\
