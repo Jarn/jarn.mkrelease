@@ -359,6 +359,8 @@ class ReleaseMaker(object):
         if self.skipregister: # user specified
             return True
         elif server.register is not None: # server
+            if not self.defaults.register and self.get_skipupload():
+                return True               # prevent override
             return not server.register
         elif not self.defaults.register:  # defaults
             return True
