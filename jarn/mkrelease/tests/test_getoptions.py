@@ -97,7 +97,7 @@ upload = yes
 register = no
 upload = no
 """)
-        rm = ReleaseMaker(['-c', 'my.cfg'])
+        rm = ReleaseMaker(['-c', 'my.cfg'])     # -d not required
         rm.get_options()
 
         rm.defaults.servers.update({'pypi': serverinfo(register=True)})
@@ -106,13 +106,28 @@ upload = no
 
     def test_register_server_precedence_yes_upload_flag_no(self):
         # register=yes in server section does NOT override default if
-        # upload is disabled
+        # -S flag is given
         self.mkfile('my.cfg', """\
 [mkrelease]
 register = no
 upload = yes
 """)
-        rm = ReleaseMaker(['-c', 'my.cfg', '-d', 'jarn.com:eggs', '-S'])
+        rm = ReleaseMaker(['-c', 'my.cfg', '-S'])   # -d not required
+        rm.get_options()
+
+        rm.defaults.servers.update({'pypi': serverinfo(register=True)})
+        self.assertEqual(rm.get_skipregister('pypi'), True)
+        self.assertEqual(rm.get_skipupload(), True)
+
+    def test_register_server_precedence_yes_upload_no_register_flag_no(self):
+        # register=yes in server section does NOT override default if
+        # -R flag is given
+        self.mkfile('my.cfg', """\
+[mkrelease]
+register = yes
+upload = no
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-R'])   # -d not required
         rm.get_options()
 
         rm.defaults.servers.update({'pypi': serverinfo(register=True)})
@@ -134,8 +149,8 @@ upload = yes
         self.assertEqual(rm.get_skipupload(), False)
 
     def test_register_server_precedence_no_upload_no(self):
-        # register=no in server section overrides default even if
-        # upload is disabled
+        # register=no in server section overrides default independent
+        # of upload setting
         self.mkfile('my.cfg', """\
 [mkrelease]
 register = yes
@@ -149,8 +164,8 @@ upload = no
         self.assertEqual(rm.get_skipupload(), True)
 
     def test_register_server_precedence_no_upload_flag_no(self):
-        # register=no in server section overrides default even if
-        # upload is disabled
+        # register=no in server section overrides default independent
+        # of upload setting
         self.mkfile('my.cfg', """\
 [mkrelease]
 register = yes
