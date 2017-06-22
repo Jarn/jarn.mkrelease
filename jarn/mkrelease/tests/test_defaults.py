@@ -3,6 +3,7 @@ import unittest
 from jarn.mkrelease.mkrelease import Defaults
 
 from jarn.mkrelease.testing import JailSetup
+from jarn.mkrelease.testing import quiet
 
 
 class DefaultsTests(JailSetup):
@@ -10,6 +11,40 @@ class DefaultsTests(JailSetup):
     def test_defaults_defaults(self):
         self.mkfile('my.cfg', """
 [mkrelease]
+""")
+        defaults = Defaults('my.cfg')
+        self.assertEqual(defaults.distbase, '')
+        self.assertEqual(defaults.distdefault, [])
+        self.assertEqual(defaults.commit, True)
+        self.assertEqual(defaults.tag, True)
+        self.assertEqual(defaults.register, True)
+        self.assertEqual(defaults.upload, True)
+        self.assertEqual(defaults.sign, False)
+        self.assertEqual(defaults.push, False)
+        self.assertEqual(defaults.develop, False)
+        self.assertEqual(defaults.quiet, False)
+        self.assertEqual(defaults.identity, '')
+        self.assertEqual(defaults.formats, [])
+        self.assertEqual(defaults.aliases, {})
+        #self.assertEqual(defaults.servers, {})
+
+    @quiet
+    def test_empty_defaults(self):
+        self.mkfile('my.cfg', """
+[mkrelease]
+distbase =
+distdefault =
+commit =
+tag =
+register =
+upload =
+sign =
+push =
+develop =
+quiet =
+identity =
+formats =
+[aliases]
 """)
         defaults = Defaults('my.cfg')
         self.assertEqual(defaults.distbase, '')
