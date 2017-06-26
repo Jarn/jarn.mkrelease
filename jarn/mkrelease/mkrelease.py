@@ -116,7 +116,6 @@ class Defaults(object):
                 self.sign = parser.getboolean(server_section, 'sign', None)
                 self.identity = parser.getstring(server_section, 'identity', None)
                 self.register = parser.getboolean(server_section, 'register', None)
-                self.upload = parser.getboolean(server_section, 'upload', None)
 
         self.servers = {}
         for server in parser.getlist('distutils', 'index-servers', []):
@@ -253,7 +252,7 @@ class ReleaseMaker(object):
         self.skipcommit = not self.defaults.commit
         self.skiptag = not self.defaults.tag
         self.skipregister = False # per server
-        self.skipupload = False   # per server
+        self.skipupload = False
         self.push = self.defaults.push
         self.develop = self.defaults.develop
         self.quiet = self.defaults.quiet
@@ -353,29 +352,27 @@ class ReleaseMaker(object):
                 print(location)
         sys.exit(0)
 
-    def get_skipregister(self, location):
-        """Return true if the register command is disabled for the given server.
+    def get_skipregister(self, location=None):
+        """Return true if the register command is disabled (for the given server.)
         """
-        server = self.defaults.servers[location]
-        if self.skipregister: # user specified
-            return True
-        elif server.register is not None: # server
-            return not server.register
-        elif not self.defaults.register:  # defaults
-            return True
-        return False
+        if location is None:
+            return self.skipregister or not self.defaults.register
+        else:
+            server = self.defaults.servers[location]
+            if self.skipregister:
+                return True
+            elif server.register is not None:
+                if not self.defaults.register and self.get_skipupload():
+                    return True # prevent override
+                return not server.register
+            elif not self.defaults.register:
+                return True
+            return False
 
-    def get_skipupload(self, location):
-        """Return true if the upload command is disabled for the given server.
+    def get_skipupload(self):
+        """Return true if the upload command is disabled.
         """
-        server = self.defaults.servers[location]
-        if self.skipupload: # user specified
-            return True
-        elif server.upload is not None: # server
-            return not server.upload
-        elif not self.defaults.upload:  # defaults
-            return True
-        return False
+        return self.skipupload or not self.defaults.upload
 
     def get_uploadflags(self, location):
         """Return uploadflags for the given server.
@@ -445,7 +442,7 @@ class ReleaseMaker(object):
             self.locations.extend(self.locations.get_default_location())
 
         if not (self.skipregister and self.skipupload):
-            if self.defaults.register or self.defaults.upload: # XXX
+            if not (self.get_skipregister() and self.get_skipupload()):
                 self.locations.check_empty_locations()
             self.locations.check_valid_locations()
 
@@ -542,7 +539,7 @@ class ReleaseMaker(object):
                         if not self.get_skipregister(location):
                             self.setuptools.run_register(
                                 directory, infoflags, location, scmtype, self.quiet)
-                        if not self.get_skipupload(location):
+                        if not self.get_skipupload():
                             uploadflags = self.get_uploadflags(location)
                             if '--sign' in uploadflags and isfile(distfile+'.asc'):
                                 os.remove(distfile+'.asc')
@@ -550,7 +547,7 @@ class ReleaseMaker(object):
                                 directory, infoflags, distcmd, distflags, location, uploadflags,
                                 scmtype, self.quiet)
                     else:
-                        if not (self.skipupload or not self.defaults.upload): # XXX
+                        if not self.get_skipupload():
                             if self.locations.is_dist_url(location):
                                 scheme, location = self.urlparser.to_ssh_url(location)
                                 self.scp.run_upload(scheme, distfile, location)

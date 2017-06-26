@@ -10,13 +10,11 @@ class serverinfo:
     sign = None
     identity = None
     register = None
-    upload = None
 
-    def __init__(self, sign=None, identity=None, register=None, upload=None):
+    def __init__(self, sign=None, identity=None, register=None):
         self.sign = sign
         self.identity = identity
         self.register = register
-        self.upload = upload
 
 
 class GetOptionsTests(JailSetup):
@@ -75,20 +73,110 @@ upload = no
 
         rm.defaults.servers.update({'pypi': serverinfo})
         self.assertEqual(rm.get_skipregister('pypi'), True)
-        self.assertEqual(rm.get_skipupload('pypi'), True)
+        self.assertEqual(rm.get_skipupload(), True)
 
-    def test_dry_run_server_precedence(self):
+    def test_register_server_precedence_yes(self):
+        # register=yes in server section overrides default
+        self.mkfile('my.cfg', """\
+[mkrelease]
+register = no
+upload = yes
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-d', 'jarn.com:eggs'])
+        rm.get_options()
+
+        rm.defaults.servers.update({'pypi': serverinfo(register=True)})
+        self.assertEqual(rm.get_skipregister('pypi'), False)
+        self.assertEqual(rm.get_skipupload(), False)
+
+    def test_register_server_precedence_yes_upload_no(self):
+        # register=yes in server section does NOT override default if
+        # upload is disabled
         self.mkfile('my.cfg', """\
 [mkrelease]
 register = no
 upload = no
 """)
-        rm = ReleaseMaker(['-c', 'my.cfg'])
+        rm = ReleaseMaker(['-c', 'my.cfg'])     # -d not required
         rm.get_options()
 
-        rm.defaults.servers.update({'pypi': serverinfo(register=True, upload=True)})
-        self.assertEqual(rm.get_skipregister('pypi'), False)
-        self.assertEqual(rm.get_skipupload('pypi'), False)
+        rm.defaults.servers.update({'pypi': serverinfo(register=True)})
+        self.assertEqual(rm.get_skipregister('pypi'), True)
+        self.assertEqual(rm.get_skipupload(), True)
+
+    def test_register_server_precedence_yes_upload_flag_no(self):
+        # register=yes in server section does NOT override default if
+        # -S flag is given
+        self.mkfile('my.cfg', """\
+[mkrelease]
+register = no
+upload = yes
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-S'])   # -d not required
+        rm.get_options()
+
+        rm.defaults.servers.update({'pypi': serverinfo(register=True)})
+        self.assertEqual(rm.get_skipregister('pypi'), True)
+        self.assertEqual(rm.get_skipupload(), True)
+
+    def test_register_server_precedence_yes_upload_no_register_flag_no(self):
+        # register=yes in server section does NOT override default if
+        # -R flag is given
+        self.mkfile('my.cfg', """\
+[mkrelease]
+register = yes
+upload = no
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-R'])   # -d not required
+        rm.get_options()
+
+        rm.defaults.servers.update({'pypi': serverinfo(register=True)})
+        self.assertEqual(rm.get_skipregister('pypi'), True)
+        self.assertEqual(rm.get_skipupload(), True)
+
+    def test_register_server_precedence_no(self):
+        # register=no in server section overrides default
+        self.mkfile('my.cfg', """\
+[mkrelease]
+register = yes
+upload = yes
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-d', 'jarn.com:eggs'])
+        rm.get_options()
+
+        rm.defaults.servers.update({'pypi': serverinfo(register=False)})
+        self.assertEqual(rm.get_skipregister('pypi'), True)
+        self.assertEqual(rm.get_skipupload(), False)
+
+    def test_register_server_precedence_no_upload_no(self):
+        # register=no in server section overrides default independent
+        # of upload setting
+        self.mkfile('my.cfg', """\
+[mkrelease]
+register = yes
+upload = no
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-d', 'jarn.com:eggs'])
+        rm.get_options()
+
+        rm.defaults.servers.update({'pypi': serverinfo(register=False)})
+        self.assertEqual(rm.get_skipregister('pypi'), True)
+        self.assertEqual(rm.get_skipupload(), True)
+
+    def test_register_server_precedence_no_upload_flag_no(self):
+        # register=no in server section overrides default independent
+        # of upload setting
+        self.mkfile('my.cfg', """\
+[mkrelease]
+register = yes
+upload = yes
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-d', 'jarn.com:eggs', '-S'])
+        rm.get_options()
+
+        rm.defaults.servers.update({'pypi': serverinfo(register=False)})
+        self.assertEqual(rm.get_skipregister('pypi'), True)
+        self.assertEqual(rm.get_skipupload(), True)
 
     def test_formats(self):
         self.mkfile('my.cfg', """\
@@ -258,7 +346,7 @@ identity = fred@bedrock.com
         rm.defaults.servers.update({'pypi': serverinfo})
         self.assertEqual(rm.get_uploadflags('pypi'), [])
 
-    def test_sign_server_precedence(self):
+    def test_sign_server_precedence_yes(self):
         self.mkfile('my.cfg', """\
 [mkrelease]
 sign = no
@@ -268,6 +356,17 @@ sign = no
 
         rm.defaults.servers.update({'pypi': serverinfo(sign=True)})
         self.assertEqual(rm.get_uploadflags('pypi'), ['--sign'])
+
+    def test_sign_server_precedence_no(self):
+        self.mkfile('my.cfg', """\
+[mkrelease]
+sign = yes
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-n'])
+        rm.get_options()
+
+        rm.defaults.servers.update({'pypi': serverinfo(sign=False)})
+        self.assertEqual(rm.get_uploadflags('pypi'), [])
 
     def test_id_server_precedence(self):
         self.mkfile('my.cfg', """\
