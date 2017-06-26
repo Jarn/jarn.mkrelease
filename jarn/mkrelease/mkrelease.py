@@ -95,9 +95,16 @@ class Defaults(object):
         self.distbase = parser.getstring(main_section, 'distbase', '')
         self.distdefault = parser.getlist(main_section, 'distdefault', [])
 
+        self.commit = parser.getboolean(main_section, 'commit', True)
+        self.tag = parser.getboolean(main_section, 'tag', True)
+        self.register = parser.getboolean(main_section, 'register', True)
+        self.upload = parser.getboolean(main_section, 'upload', True)
+        self.formats = parser.getlist(main_section, 'formats', [])
         self.sign = parser.getboolean(main_section, 'sign', False)
         self.identity = parser.getstring(main_section, 'identity', '')
         self.push = parser.getboolean(main_section, 'push', False)
+        self.develop = parser.getboolean(main_section, 'develop', False)
+        self.quiet = parser.getboolean(main_section, 'quiet', False)
 
         self.aliases = {}
         if parser.has_section('aliases'):
@@ -105,14 +112,18 @@ class Defaults(object):
                 self.aliases[key] = parser.to_list(value)
 
         class ServerInfo(object):
-            def __init__(self, server):
-                self.sign = parser.getboolean(server, 'sign', None)
-                self.identity = parser.getstring(server, 'identity', None)
-                self.register = parser.getboolean(server, 'register', True)
+            def __init__(self, server_section):
+                self.sign = parser.getboolean(server_section, 'sign', None)
+                self.identity = parser.getstring(server_section, 'identity', None)
+                self.register = parser.getboolean(server_section, 'register', None)
 
         self.servers = {}
         for server in parser.getlist('distutils', 'index-servers', []):
             self.servers[server] = ServerInfo(server)
+
+        for format in self.formats:
+            if format not in ('zip', 'gztar', 'egg', 'wheel'):
+                warn('Unknown format: %(format)s' % locals())
 
     def get_known_locations(self):
         """Return a set of known locations.
@@ -200,13 +211,19 @@ class Locations(object):
             res.extend(self.get_location(location))
         return res
 
-    def check_valid_locations(self, locations=None):
-        """Fail if 'locations' is empty or contains bad destinations.
+    def check_empty_locations(self, locations=None):
+        """Fail if 'locations' is empty.
         """
         if locations is None:
             locations = self.locations
         if not locations:
             err_exit('mkrelease: option -d is required\n%s' % USAGE)
+
+    def check_valid_locations(self, locations=None):
+        """Fail if 'locations' contains bad destinations.
+        """
+        if locations is None:
+            locations = self.locations
         for location in locations:
             if (not self.is_server(location) and
                 not self.is_dist_url(location) and
@@ -232,18 +249,20 @@ class ReleaseMaker(object):
         self.scp = SCP()
         self.scms = SCMFactory()
         self.urlparser = URLParser()
-        self.skipcommit = False
-        self.skiptag = False
-        self.skipregister = False
+        self.skipcommit = not self.defaults.commit
+        self.skiptag = not self.defaults.tag
+        self.skipregister = False # per server
         self.skipupload = False
         self.push = self.defaults.push
-        self.quiet = False
-        self.sign = False
+        self.develop = self.defaults.develop
+        self.quiet = self.defaults.quiet
+        self.sign = False   # per server
         self.list = False
-        self.identity = ''
+        self.identity = ''  # per server
         self.branch = ''
         self.scmtype = ''
-        self.infoflags = self.setuptools.infoflags
+        self.infoflags = []
+        self.formats = []
         self.distributions = []
         self.directory = os.curdir
         self.scm = None
@@ -302,16 +321,15 @@ class ReleaseMaker(object):
             elif name in ('--svn', '--hg', '--git'):
                 self.scmtype = name[2:]
             elif name in ('-e', '--develop'):
-                self.skiptag = True
-                self.infoflags = []
+                self.develop = True
             elif name in ('-z', '--zip'):
-                self.distributions.append(('sdist', ['--formats="zip"']))
+                self.formats.append('zip')
             elif name in ('-g', '--gztar'):
-                self.distributions.append(('sdist', ['--formats="gztar"']))
+                self.formats.append('gztar')
             elif name in ('-b', '--binary'):
-                self.distributions.append(('bdist', ['--formats="egg"']))
+                self.formats.append('egg')
             elif name in ('-w', '--wheel'):
-                self.distributions.append(('bdist_wheel', []))
+                self.formats.append('wheel')
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(abspath(expanduser(value)))
                 return self.parse_options(args, depth+1)
@@ -334,11 +352,27 @@ class ReleaseMaker(object):
                 print(location)
         sys.exit(0)
 
-    def get_skipregister(self, location):
-        """Return true if the register command is disabled for the given server.
+    def get_skipregister(self, location=None):
+        """Return true if the register command is disabled (for the given server.)
         """
-        server = self.defaults.servers[location]
-        return self.skipregister or not server.register
+        if location is None:
+            return self.skipregister or not self.defaults.register
+        else:
+            server = self.defaults.servers[location]
+            if self.skipregister:
+                return True
+            elif server.register is not None:
+                if not self.defaults.register and self.get_skipupload():
+                    return True # prevent override
+                return not server.register
+            elif not self.defaults.register:
+                return True
+            return False
+
+    def get_skipupload(self):
+        """Return true if the upload command is disabled.
+        """
+        return self.skipupload or not self.defaults.upload
 
     def get_uploadflags(self, location):
         """Return uploadflags for the given server.
@@ -347,8 +381,7 @@ class ReleaseMaker(object):
         server = self.defaults.servers[location]
 
         if self.sign:
-            if server.sign is None or server.sign:
-                uploadflags.append('--sign')
+            uploadflags.append('--sign')
         elif server.sign is not None:
             if server.sign:
                 uploadflags.append('--sign')
@@ -381,6 +414,24 @@ class ReleaseMaker(object):
         if args:
             self.directory = args[0]
 
+        if self.develop:
+            self.skiptag = True
+        else:
+            self.infoflags = self.setuptools.infoflags
+
+        if not self.formats:
+            self.formats = self.defaults.formats
+
+        for format in self.formats:
+            if format == 'zip':
+                self.distributions.append(('sdist', ['--formats="zip"']))
+            elif format == 'gztar':
+                self.distributions.append(('sdist', ['--formats="gztar"']))
+            elif format == 'egg':
+                self.distributions.append(('bdist', ['--formats="egg"']))
+            elif format == 'wheel':
+                self.distributions.append(('bdist_wheel', []))
+
         if not self.distributions:
             self.distributions.append(('sdist', ['--formats="zip"']))
 
@@ -391,6 +442,8 @@ class ReleaseMaker(object):
             self.locations.extend(self.locations.get_default_location())
 
         if not (self.skipregister and self.skipupload):
+            if not (self.get_skipregister() and self.get_skipupload()):
+                self.locations.check_empty_locations()
             self.locations.check_valid_locations()
 
         if len(args) > 1:
@@ -408,8 +461,8 @@ class ReleaseMaker(object):
         """Get the URL or sandbox to release.
         """
         directory = self.directory
+        develop = self.develop
         scmtype = self.scmtype
-        develop = not self.infoflags
 
         self.scm = self.scms.get_scm(scmtype, directory)
 
@@ -438,8 +491,8 @@ class ReleaseMaker(object):
         directory = self.directory
         infoflags = self.infoflags
         branch = self.branch
+        develop = self.develop
         scmtype = self.scm.name
-        develop = not self.infoflags
 
         tempdir = abspath(tempfile.mkdtemp(prefix='mkrelease-'))
         try:
@@ -486,7 +539,7 @@ class ReleaseMaker(object):
                         if not self.get_skipregister(location):
                             self.setuptools.run_register(
                                 directory, infoflags, location, scmtype, self.quiet)
-                        if not self.skipupload:
+                        if not self.get_skipupload():
                             uploadflags = self.get_uploadflags(location)
                             if '--sign' in uploadflags and isfile(distfile+'.asc'):
                                 os.remove(distfile+'.asc')
@@ -494,7 +547,7 @@ class ReleaseMaker(object):
                                 directory, infoflags, distcmd, distflags, location, uploadflags,
                                 scmtype, self.quiet)
                     else:
-                        if not self.skipupload:
+                        if not self.get_skipupload():
                             if self.locations.is_dist_url(location):
                                 scheme, location = self.urlparser.to_ssh_url(location)
                                 self.scp.run_upload(scheme, distfile, location)
