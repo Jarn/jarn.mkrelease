@@ -296,3 +296,10 @@ what you plan to use):
 
 * gpg
 
+Related
+=======
+
+Also see our Python documentation viewer `jarn.viewdoc`_.
+
+.. _`jarn.viewdoc`: https://github.com/Jarn/jarn.viewdoc
+
