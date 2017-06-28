@@ -276,7 +276,7 @@ OS X Keychain. To store your PyPI password in the keyring type::
 
 Then delete the password from ``~/.pypirc``.
 
-.. _`keyring`: https://pypi.python.org/pypi/keyring
+.. _`keyring`: https://github.com/jaraco/keyring
 
 Requirements
 ============
