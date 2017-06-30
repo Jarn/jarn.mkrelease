@@ -14,6 +14,7 @@ s_val = fred
 """)
         parser = ConfigParser()
         parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('s_val', 'fred')])
         self.assertEqual(parser.get('section', 's_val'), 'fred')
         self.assertEqual(parser.getlist('section', 's_val'), ['fred'])
         self.assertEqual(parser.getstring('section', 's_val'), 'fred')
@@ -29,6 +30,20 @@ s_val = fred
 """)
         parser = ConfigParser()
         parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), None)
+        self.assertEqual(parser.get('section', 's_val'), None)
+        self.assertEqual(parser.getlist('section', 's_val'), None)
+        self.assertEqual(parser.getstring('section', 's_val'), None)
+        self.assertEqual(parser.getboolean('section', 's_val'), None)
+        self.assertEqual(parser.getint('section', 's_val'), None)
+        self.assertEqual(parser.getfloat('section', 's_val'), None)
+
+    def test_missing_section(self):
+        self.mkfile('my.cfg', """
+""")
+        parser = ConfigParser()
+        parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), None)
         self.assertEqual(parser.get('section', 's_val'), None)
         self.assertEqual(parser.getlist('section', 's_val'), None)
         self.assertEqual(parser.getstring('section', 's_val'), None)
@@ -42,6 +57,7 @@ s_val = fred
 """)
         parser = ConfigParser()
         parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [])
         self.assertEqual(parser.get('section', 's_val'), None)
         self.assertEqual(parser.getlist('section', 's_val'), None)
         self.assertEqual(parser.getstring('section', 's_val'), None)
@@ -56,6 +72,7 @@ e_val =
 """)
         parser = ConfigParser()
         parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('e_val', '')])
         self.assertEqual(parser.get('section', 'e_val'), '')
         self.assertEqual(parser.getlist('section', 'e_val'), [])
         self.assertEqual(parser.getstring('section', 'e_val'), '')
@@ -70,6 +87,7 @@ m_val = fred flintstone
 """)
         parser = ConfigParser()
         parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('m_val', 'fred flintstone')])
         self.assertEqual(parser.get('section', 'm_val'), 'fred flintstone')
         self.assertEqual(parser.getlist('section', 'm_val'), ['fred', 'flintstone'])
         self.assertEqual(parser.getstring('section', 'm_val'), None)
@@ -86,6 +104,7 @@ m_val =
 """)
         parser = ConfigParser()
         parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('m_val', '\nfred\nflintstone')])
         self.assertEqual(parser.get('section', 'm_val'), '\nfred\nflintstone')
         self.assertEqual(parser.getlist('section', 'm_val'), ['fred', 'flintstone'])
         self.assertEqual(parser.getstring('section', 'm_val'), None)
@@ -100,6 +119,7 @@ b_val = yes
 """)
         parser = ConfigParser()
         parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('b_val', 'yes')])
         self.assertEqual(parser.get('section', 'b_val'), 'yes')
         self.assertEqual(parser.getlist('section', 'b_val'), ['yes'])
         self.assertEqual(parser.getstring('section', 'b_val'), 'yes')
@@ -114,6 +134,7 @@ i_val = 10
 """)
         parser = ConfigParser()
         parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('i_val', '10')])
         self.assertEqual(parser.get('section', 'i_val'), '10')
         self.assertEqual(parser.getlist('section', 'i_val'), ['10'])
         self.assertEqual(parser.getstring('section', 'i_val'), '10')
@@ -128,12 +149,58 @@ f_val = 0.1
 """)
         parser = ConfigParser()
         parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('f_val', '0.1')])
         self.assertEqual(parser.get('section', 'f_val'), '0.1')
         self.assertEqual(parser.getlist('section', 'f_val'), ['0.1'])
         self.assertEqual(parser.getstring('section', 'f_val'), '0.1')
         self.assertEqual(parser.getboolean('section', 'f_val'), None)
         self.assertEqual(parser.getint('section', 'f_val'), None)
         self.assertEqual(parser.getfloat('section', 'f_val'), 0.1)
+
+    def test_semicolon_comment(self):
+        self.mkfile('my.cfg', """
+[section]
+;s_val = fred
+t_val = barney
+""")
+        parser = ConfigParser()
+        parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('t_val', 'barney')])
+        self.assertEqual(parser.get('section', 's_val'), None)
+        self.assertEqual(parser.get('section', ';s_val'), None)
+        self.assertEqual(parser.getlist('section', 's_val'), None)
+        self.assertEqual(parser.getstring('section', 's_val'), None)
+        self.assertEqual(parser.getstring('section', 't_val'), 'barney')
+
+    def test_hash_comment(self):
+        self.mkfile('my.cfg', """
+[section]
+#s_val = fred
+t_val = barney
+""")
+        parser = ConfigParser()
+        parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('t_val', 'barney')])
+        self.assertEqual(parser.get('section', 's_val'), None)
+        self.assertEqual(parser.get('section', '#s_val'), None)
+        self.assertEqual(parser.getlist('section', 's_val'), None)
+        self.assertEqual(parser.getstring('section', 's_val'), None)
+        self.assertEqual(parser.getstring('section', 't_val'), 'barney')
+
+    def test_colon_assignment(self):
+        self.mkfile('my.cfg', """
+[section]
+s_val: fred
+""")
+        parser = ConfigParser()
+        parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('s_val', 'fred')])
+        self.assertEqual(parser.get('section', 's_val'), 'fred')
+        self.assertEqual(parser.getlist('section', 's_val'), ['fred'])
+        self.assertEqual(parser.getstring('section', 's_val'), 'fred')
+        self.assertEqual(parser.getboolean('section', 's_val'), None)
+        self.assertEqual(parser.getint('section', 's_val'), None)
+        self.assertEqual(parser.getfloat('section', 's_val'), None)
 
 
 class WarnFuncTests(JailSetup):
