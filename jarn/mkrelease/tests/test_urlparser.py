@@ -353,7 +353,7 @@ class AbspathTests(unittest.TestCase):
 
     def testExpandUser(self):
         urlparser = URLParser()
-        logname = os.getlogin()
+        logname = os.environ.get('LOGNAME')
         home = os.environ.get('HOME')
         self.assertEqual(urlparser.abspath('file:~%s/public' % logname),
                          'file://%s/public' % home)
@@ -366,7 +366,7 @@ class AbspathTests(unittest.TestCase):
 
     def testLocalhostExpandUser(self):
         urlparser = URLParser()
-        logname = os.getlogin()
+        logname = os.environ.get('LOGNAME')
         home = os.environ.get('HOME')
         self.assertEqual(urlparser.abspath('file://localhost/~%s/public' % logname),
                          'file://localhost%s/public' % home)
