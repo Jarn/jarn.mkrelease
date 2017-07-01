@@ -269,12 +269,15 @@ configured in ``~/.pypirc``::
 Keyring Support
 ===============
 
-mkrelease installs the `keyring`_ module, which provides access to e.g. the Mac
-OS X Keychain. To store your PyPI password in the keyring type::
+On Mac OS X, mkrelease installs the `keyring`_ module which provides access
+to the Mac OS X Keychain. To store your PyPI password in the Keychain type::
 
   $ keyring set https://upload.pypi.org/legacy/ <pypi-username>
 
 Then delete the password from ``~/.pypirc``.
+
+`keyring`_ works on other platforms but because of dependencies you have to
+install it yourself.
 
 .. _`keyring`: https://github.com/jaraco/keyring
 
