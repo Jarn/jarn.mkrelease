@@ -4,9 +4,6 @@ Changelog
 3.11 - Unreleased
 -----------------
 
-- Read upload passwords from the keychain (keyring).
-  [stefan]
-
 - Allow multiple archive formats per release.
   [stefan]
 

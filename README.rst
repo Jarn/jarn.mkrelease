@@ -266,21 +266,6 @@ configured in ``~/.pypirc``::
   sign = yes
   identity = fred@bedrock.com
 
-Keyring Support
-===============
-
-On Mac OS X, mkrelease installs the `keyring`_ module which provides access
-to the Mac OS X Keychain. To store your PyPI password in the Keychain type::
-
-  $ keyring set https://upload.pypi.org/legacy/ <pypi-username>
-
-Then delete the password from ``~/.pypirc``.
-
-`keyring`_ works on other platforms but because of dependencies you have to
-install it yourself.
-
-.. _`keyring`: https://github.com/jaraco/keyring
-
 Requirements
 ============
 
@@ -298,6 +283,21 @@ what you plan to use):
 * sftp
 
 * gpg
+
+Keyring Support
+===============
+
+On Mac OS X, mkrelease installs the `keyring`_ module which provides access
+to the Mac OS X Keychain. To store your PyPI password in the Keychain type::
+
+  $ keyring set https://upload.pypi.org/legacy/ <pypi-username>
+
+Then delete the password from ``~/.pypirc``.
+
+Note: `keyring`_ works on other platforms but because of cryptographic
+dependencies you have to install it yourself.
+
+.. _`keyring`: https://github.com/jaraco/keyring
 
 Related
 =======
