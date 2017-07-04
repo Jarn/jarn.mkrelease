@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import os
 
 from .tee import popen
+from .exit import trace
 
 
 class Process(object):
@@ -14,6 +15,7 @@ class Process(object):
 
     def popen(self, cmd, echo=True, echo2=True):
         # env *replaces* os.environ
+        trace(cmd)
         if self.quiet:
             echo = echo2 = False
         return popen(cmd, echo, echo2, env=self.env)
@@ -30,6 +32,7 @@ class Process(object):
 
     def os_system(self, cmd):
         # env *updates* os.environ
+        trace(cmd)
         if self.quiet:
             cmd = cmd + ' >%s 2>&1' % os.devnull
         if self.env:
