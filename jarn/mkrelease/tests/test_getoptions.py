@@ -245,32 +245,52 @@ formats = rpm
         # Fall back to zip
         self.assertEqual(rm.distributions, [('sdist', ['--formats="zip"'])])
 
+    def test_develop(self):
+        self.mkfile('my.cfg', """\
+[mkrelease]
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-e', '-d', 'jarn.com:eggs'])
+        rm.get_options()
+
+        self.assertEqual(rm.develop, True)
+        self.assertEqual(rm.infoflags, [])
+        # Implied --no-tag
+        self.assertEqual(rm.skiptag, True)
+
+    def test_develop_from_config(self):
+        self.mkfile('my.cfg', """\
+[mkrelease]
+develop = yes
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-d', 'jarn.com:eggs'])
+        rm.get_options()
+
+        self.assertEqual(rm.develop, True)
+        self.assertEqual(rm.infoflags, [])
+        # No implied --no-tag here
+        self.assertEqual(rm.skiptag, False)
+
     def test_misc(self):
         self.mkfile('my.cfg', """\
 [mkrelease]
 """)
-        rm = ReleaseMaker(['-c', 'my.cfg', '-n', '-peq'])
+        rm = ReleaseMaker(['-c', 'my.cfg', '-n', '-pq'])
         rm.get_options()
 
         self.assertEqual(rm.push, True)
-        self.assertEqual(rm.develop, True)
         self.assertEqual(rm.quiet, True)
-        self.assertEqual(rm.infoflags, [])
 
     def test_misc_from_config(self):
         self.mkfile('my.cfg', """\
 [mkrelease]
 push = yes
-develop = yes
 quiet = yes
 """)
         rm = ReleaseMaker(['-c', 'my.cfg', '-n'])
         rm.get_options()
 
         self.assertEqual(rm.push, True)
-        self.assertEqual(rm.develop, True)
         self.assertEqual(rm.quiet, True)
-        self.assertEqual(rm.infoflags, [])
 
     def test_sign(self):
         self.mkfile('my.cfg', """\
@@ -308,6 +328,7 @@ quiet = yes
         self.assertEqual(rm.sign, False)
         self.assertEqual(rm.identity, 'fred@bedrock.com')
 
+        # Implied --sign
         rm.defaults.servers.update({'pypi': serverinfo})
         self.assertEqual(rm.get_uploadflags('pypi'), ['--sign', '--identity="fred@bedrock.com"'])
 
@@ -342,7 +363,7 @@ identity = fred@bedrock.com
         rm = ReleaseMaker(['-c', 'my.cfg', '-n'])
         rm.get_options()
 
-        # No auto --sign here
+        # No implied --sign here
         rm.defaults.servers.update({'pypi': serverinfo})
         self.assertEqual(rm.get_uploadflags('pypi'), [])
 

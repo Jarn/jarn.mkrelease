@@ -254,7 +254,7 @@ class ReleaseMaker(object):
         self.skipregister = False # per server
         self.skipupload = False
         self.push = self.defaults.push
-        self.develop = self.defaults.develop
+        self.develop = False
         self.quiet = self.defaults.quiet
         self.sign = False   # per server
         self.list = False
@@ -416,7 +416,9 @@ class ReleaseMaker(object):
 
         if self.develop:
             self.skiptag = True
-        else:
+        if not self.develop:
+            self.develop = self.defaults.develop
+        if not self.develop:
             self.infoflags = self.setuptools.infoflags
 
         if not self.formats:
