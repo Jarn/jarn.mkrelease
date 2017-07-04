@@ -549,7 +549,7 @@ class ReleaseMaker(object):
                                 directory, infoflags, distcmd, distflags, location, uploadflags,
                                 scmtype, self.quiet)
                     else:
-                        if not self.get_skipupload():
+                        if not self.skipupload:
                             if self.locations.is_dist_url(location):
                                 scheme, location = self.urlparser.to_ssh_url(location)
                                 self.scp.run_upload(scheme, distfile, location)
