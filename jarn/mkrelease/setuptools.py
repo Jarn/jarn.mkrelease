@@ -7,8 +7,6 @@ import pkg_resources
 
 from os.path import abspath, join, isfile
 from os.path import basename, dirname
-from shutil import rmtree
-from email import message_from_file
 
 from .python import Python
 from .process import Process
