@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import sys
+import os
 
 
 def msg_exit(msg, rc=0):
@@ -21,4 +22,11 @@ def warn(msg):
     """Print a warning message to stderr.
     """
     print('WARNING:', msg, file=sys.stderr)
+
+
+def trace(msg):
+    """Print a trace message to stderr if environment variable is set.
+    """
+    if os.environ.get('JARN_TRACE', '').lower() in ('1', 'true', 'yes', 'on'):
+        print('TRACE:', msg, file=sys.stderr)
 
