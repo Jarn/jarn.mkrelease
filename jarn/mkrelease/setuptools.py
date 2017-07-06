@@ -18,6 +18,8 @@ from .tee import *
 OK_RESPONSE = 'Server response (200): OK'
 GONE_RESPONSE = 'Server response (410):'
 
+RUN_SETUP = 'from jarn.mkrelease import setup; setup.run(%(args)r, ff=%(ff)r)'
+
 
 class Setuptools(object):
     """Interface to setuptools."""
@@ -193,16 +195,12 @@ class Setuptools(object):
         python = self.python
 
         if ff:
-            patch = WALK_REVCTRL % locals()
-            setup_py = '-c"%(patch)s"' % locals()
+            setup_py = '-c"%s"' % (RUN_SETUP % locals())
         else:
             setup_py = 'setup.py %s' % ' '.join(args)
 
         rc, lines = self.process.popen(
             '"%(python)s" %(setup_py)s' % locals(), echo=echo, echo2=echo2)
-
-        if isfile('setup.pyc'):
-            os.remove('setup.pyc')
 
         return rc, lines
 
@@ -254,55 +252,4 @@ class Setuptools(object):
                 elif current == match:
                     return True
         return False
-
-
-WALK_REVCTRL = """\
-from __future__ import print_function
-import os, sys
-import distutils
-import pkg_resources
-
-from os.path import basename
-
-class pythonpath_off(object):
-    def __enter__(self):
-        self.saved = os.environ.get('PYTHONPATH', '')
-        if self.saved:
-            del os.environ['PYTHONPATH']
-    def __exit__(self, *ignored):
-        if self.saved:
-            os.environ['PYTHONPATH'] = self.saved
-
-def walk_revctrl(dirname=''):
-    file_finder = None
-    items = []
-    for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
-        if %(ff)r == ep.name:
-            distutils.log.info('using %%s file-finder', ep.name)
-            file_finder = ep.load()
-            finder_items = []
-            with pythonpath_off():
-                for item in file_finder(dirname):
-                    if not basename(item).startswith(('.svn', '.hg', '.git')):
-                        finder_items.append(item)
-            distutils.log.info('%%d files found', len(finder_items))
-            items.extend(finder_items)
-    if file_finder is None:
-        print('No %(ff)s file-finder; setuptools-%%s extension missing?' %%
-            ('subversion' if %(ff)r.startswith('svn') else %(ff)r),
-            file=sys.stderr)
-        sys.exit(1)
-    if not items:
-        sys.exit(1)
-    return items
-
-import setuptools.command.egg_info
-setuptools.command.egg_info.walk_revctrl = walk_revctrl
-
-import wheel.archive
-wheel.archive.log = distutils.log
-
-sys.argv = ['setup.py'] + %(args)r
-import setup
-"""
 
