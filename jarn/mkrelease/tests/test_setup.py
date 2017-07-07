@@ -93,7 +93,7 @@ class CleanupPyCacheTests(JailSetup):
 class WalkRevctrlTests(GitSetup):
 
     def test_walk(self):
-        self.assertEqual(walk_revctrl('testpackage', ff='git'), [
+        self.assertEqual(sorted(walk_revctrl('testpackage', ff='git')), [
             'README.txt',
             'setup.py',
             'testpackage/__init__.py',
@@ -103,7 +103,7 @@ class WalkRevctrlTests(GitSetup):
 
     def test_walk_curdir(self):
         self.dirstack.push('testpackage')
-        self.assertEqual(walk_revctrl('', ff='git'), [
+        self.assertEqual(sorted(walk_revctrl('', ff='git')), [
             'README.txt',
             'setup.py',
             'testpackage/__init__.py',
@@ -113,7 +113,7 @@ class WalkRevctrlTests(GitSetup):
 
     def test_walk_curdir_explicit(self):
         self.dirstack.push('testpackage')
-        self.assertEqual(walk_revctrl(os.curdir, ff='git'), [
+        self.assertEqual(sorted(walk_revctrl(os.curdir, ff='git')), [
             'README.txt',
             'setup.py',
             'testpackage/__init__.py',
