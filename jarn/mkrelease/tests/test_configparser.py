@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from jarn.mkrelease.configparser import ConfigParser
@@ -292,6 +293,39 @@ f_val = x
         self.assertEqual(len(parser.warnings), 0)
         self.assertEqual(parser.getfloat('section', 'f_val'), None)
         self.assertEqual(len(parser.warnings), 1)
+
+    def test_warn_duplicate_section(self):
+        self.mkfile('my.cfg', """
+[section]
+s_val = fred
+[section]
+s_val = barney
+""")
+        parser = ConfigParser()
+        self.assertEqual(len(parser.warnings), 0)
+        parser.read('my.cfg')
+        # New parser raises error on duplicate section
+        if sys.version_info >= (3, 2):
+            self.assertEqual(len(parser.warnings), 1)
+        else:
+            self.assertEqual(len(parser.warnings), 0)
+            self.assertEqual(parser.getstring('section', 's_val'), 'barney')
+
+    def test_warn_duplicate_option(self):
+        self.mkfile('my.cfg', """
+[section]
+s_val = fred
+s_val = barney
+""")
+        parser = ConfigParser()
+        self.assertEqual(len(parser.warnings), 0)
+        parser.read('my.cfg')
+        # New parser raises error on duplicate option
+        if sys.version_info >= (3, 2):
+            self.assertEqual(len(parser.warnings), 1)
+        else:
+            self.assertEqual(len(parser.warnings), 0)
+            self.assertEqual(parser.getstring('section', 's_val'), 'barney')
 
 
 def test_suite():
