@@ -106,6 +106,10 @@ class Defaults(object):
         self.develop = parser.getboolean(main_section, 'develop', False)
         self.quiet = parser.getboolean(main_section, 'quiet', False)
 
+        for format in self.formats:
+            if format not in ('zip', 'gztar', 'egg', 'wheel'):
+                parser.warn('Unknown format: %(format)r' % locals())
+
         self.aliases = {}
         if parser.has_section('aliases'):
             for key, value in parser.items('aliases'):
@@ -120,10 +124,6 @@ class Defaults(object):
         self.servers = {}
         for server in parser.getlist('distutils', 'index-servers', []):
             self.servers[server] = ServerInfo(server)
-
-        for format in self.formats:
-            if format not in ('zip', 'gztar', 'egg', 'wheel'):
-                warn('Unknown format: %(format)s' % locals())
 
     def get_known_locations(self):
         """Return a set of known locations.
