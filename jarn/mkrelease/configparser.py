@@ -2,12 +2,15 @@ import sys
 
 if sys.version_info[:2] >= (3, 2):
     from configparser import Error
+    from configparser import MissingSectionHeaderError
     from configparser import ConfigParser as _BaseParser
 elif sys.version_info[0] >= 3:
     from configparser import Error
+    from configparser import MissingSectionHeaderError
     from configparser import SafeConfigParser as _BaseParser
 else:
     from ConfigParser import Error
+    from ConfigParser import MissingSectionHeaderError
     from ConfigParser import SafeConfigParser as _BaseParser
 
 
@@ -25,9 +28,17 @@ class errors2warnings(object):
         pass
 
     def __exit__(self, type, value, tb):
+        if isinstance(value, MissingSectionHeaderError):
+            self._reformat_exception(value)
         if isinstance(value, Error):
             self.parser.warn(str(value))
             return True
+
+    def _reformat_exception(self, value):
+        value.message = 'File contains no section headers: %r\n\t[line %2d]: %r' % (
+            value.source if sys.version_info >= (3, 2) else value.filename,
+            value.lineno,
+            value.line)
 
 
 class ConfigParser(object):
