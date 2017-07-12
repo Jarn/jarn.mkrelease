@@ -30,17 +30,17 @@ class errors2warnings(object):
             return True
 
 
-class ConfigParser(_BaseParser, object):
+class ConfigParser(object):
 
     def __init__(self, warn_func=None, raw=True):
-        super(ConfigParser, self).__init__()
         self.warnings = []
         self.warn_func = warn_func
         self.raw = raw
         self._valid = False
+        self._base = _BaseParser()
         # Python < 3.2
-        if hasattr(self, '_boolean_states'):
-            self.BOOLEAN_STATES = self._boolean_states
+        if hasattr(self._base, '_boolean_states'):
+            self._base.BOOLEAN_STATES = self._base._boolean_states
 
     def warn(self, msg):
         self.warnings.append(msg)
@@ -50,47 +50,47 @@ class ConfigParser(_BaseParser, object):
     def read(self, filenames):
         self.warnings = []
         with errors2warnings(self):
-            super(ConfigParser, self).read(filenames)
+            self._base.read(filenames)
         self._valid = not self.warnings
         return self._valid
 
     def has_section(self, section):
-        return super(ConfigParser, self).has_section(section) and self._valid
+        return self._base.has_section(section) and self._valid
 
     def has_option(self, section, option):
-        return super(ConfigParser, self).has_option(section, option) and self._valid
+        return self._base.has_option(section, option) and self._valid
 
     def sections(self, default=None):
-        return super(ConfigParser, self).sections() if self._valid else default
+        return self._base.sections() if self._valid else default
 
     def options(self, section, default=None):
-        return super(ConfigParser, self).options(section) if self._valid else default
+        return self._base.options(section) if self._valid else default
 
     def items(self, section, default=None):
         if self.has_section(section):
             with errors2warnings(self):
-                value = super(ConfigParser, self).items(section, raw=self.raw)
+                value = self._base.items(section, raw=self.raw)
                 return value
         return default
 
     def get(self, section, option, default=None):
         if self.has_option(section, option):
             with errors2warnings(self):
-                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                value = self._base.get(section, option, raw=self.raw)
                 return value
         return default
 
     def getlist(self, section, option, default=None):
         if self.has_option(section, option):
             with errors2warnings(self):
-                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                value = self._base.get(section, option, raw=self.raw)
                 return self.to_list(value)
         return default
 
     def getstring(self, section, option, default=None):
         if self.has_option(section, option):
             with errors2warnings(self):
-                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                value = self._base.get(section, option, raw=self.raw)
                 try:
                     return self.to_string(value)
                 except MultipleValueError as e:
@@ -100,7 +100,7 @@ class ConfigParser(_BaseParser, object):
     def getboolean(self, section, option, default=None):
         if self.has_option(section, option):
             with errors2warnings(self):
-                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                value = self._base.get(section, option, raw=self.raw)
                 try:
                     return self.to_boolean(value)
                 except MultipleValueError as e:
@@ -112,7 +112,7 @@ class ConfigParser(_BaseParser, object):
     def getint(self, section, option, default=None):
         if self.has_option(section, option):
             with errors2warnings(self):
-                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                value = self._base.get(section, option, raw=self.raw)
                 try:
                     return self.to_int(value)
                 except MultipleValueError as e:
@@ -124,7 +124,7 @@ class ConfigParser(_BaseParser, object):
     def getfloat(self, section, option, default=None):
         if self.has_option(section, option):
             with errors2warnings(self):
-                value = super(ConfigParser, self).get(section, option, raw=self.raw)
+                value = self._base.get(section, option, raw=self.raw)
                 try:
                     return self.to_float(value)
                 except MultipleValueError as e:
@@ -142,9 +142,9 @@ class ConfigParser(_BaseParser, object):
 
     def to_boolean(self, value):
         v = self._single_value(value).lower()
-        if v not in self.BOOLEAN_STATES:
+        if v not in self._base.BOOLEAN_STATES:
             raise ValueError('Not a boolean: %s' % v)
-        return self.BOOLEAN_STATES[v]
+        return self._base.BOOLEAN_STATES[v]
 
     def to_int(self, value):
         v = self._single_value(value)
