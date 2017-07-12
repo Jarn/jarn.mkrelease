@@ -37,6 +37,7 @@ class ConfigParser(_BaseParser, object):
         self.warnings = []
         self.warn_func = warn_func
         self.raw = raw
+        self._valid = False
         # Python < 3.2
         if hasattr(self, '_boolean_states'):
             self.BOOLEAN_STATES = self._boolean_states
@@ -50,6 +51,20 @@ class ConfigParser(_BaseParser, object):
         self.warnings = []
         with errors2warnings(self):
             super(ConfigParser, self).read(filenames)
+        self._valid = not self.warnings
+        return self._valid
+
+    def has_section(self, section):
+        return super(ConfigParser, self).has_section(section) and self._valid
+
+    def has_option(self, section, option):
+        return super(ConfigParser, self).has_option(section, option) and self._valid
+
+    def sections(self, default=None):
+        return super(ConfigParser, self).sections() if self._valid else default
+
+    def options(self, section, default=None):
+        return super(ConfigParser, self).options(section) if self._valid else default
 
     def items(self, section, default=None):
         if self.has_section(section):
