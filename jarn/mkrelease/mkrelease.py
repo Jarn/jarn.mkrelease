@@ -111,9 +111,8 @@ class Defaults(object):
                 parser.warn('Unknown format: %(format)r' % locals())
 
         self.aliases = {}
-        if parser.has_section('aliases'):
-            for key, value in parser.items('aliases'):
-                self.aliases[key] = parser.to_list(value)
+        for key, value in parser.items('aliases', []):
+            self.aliases[key] = parser.to_list(value)
 
         class ServerInfo(object):
             def __init__(self, server_section):
