@@ -331,7 +331,7 @@ class ReleaseMaker(object):
             elif name in ('-w', '--wheel'):
                 self.formats.append('wheel')
             elif name in ('-c', '--config-file') and depth == 0:
-                self.reset_defaults(abspath(expanduser(value)))
+                self.reset_defaults(expanduser(value))
                 return self.parse_options(args, depth+1)
 
         return remaining_args
