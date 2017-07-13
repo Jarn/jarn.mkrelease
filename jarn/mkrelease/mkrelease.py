@@ -292,7 +292,8 @@ class ReleaseMaker(object):
                 ('no-commit', 'no-tag', 'no-register', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
-                 'list-locations', 'config-file=', 'wheel', 'zip', 'gztar'))
+                 'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
+                 'trace'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -319,6 +320,8 @@ class ReleaseMaker(object):
                 self.locations.extend(self.locations.get_location(value))
             elif name in ('-l', '--list-locations'):
                 self.list = True
+            elif name in ('--trace',):
+                os.environ['JARN_TRACE'] = '1'
             elif name in ('-h', '--help'):
                 msg_exit(HELP)
             elif name in ('-v', '--version'):
