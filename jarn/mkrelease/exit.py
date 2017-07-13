@@ -27,6 +27,6 @@ def warn(msg):
 def trace(msg):
     """Print a trace message to stderr if environment variable is set.
     """
-    if os.environ.get('JARN_TRACE', '').lower() in ('1', 'true', 'yes', 'on'):
+    if os.environ.get('JARN_TRACE') == '1':
         print('TRACE:', msg, file=sys.stderr)
 
