@@ -88,6 +88,8 @@ class Defaults(object):
         parser = ConfigParser(warn)
         parser.read((expanduser('~/.pypirc'), config_file))
 
+        self.warnings = parser.warnings
+
         main_section = 'mkrelease'
         if not parser.has_section(main_section) and parser.has_section('defaults'):
             main_section = 'defaults' # BBB
@@ -123,6 +125,10 @@ class Defaults(object):
         self.servers = {}
         for server in parser.getlist('distutils', 'index-servers', []):
             self.servers[server] = ServerInfo(server)
+
+        if os.environ.get('JARN_RUN') == '1':
+            if parser.warnings:
+                err_exit('mkrelease: exiting')
 
     def get_known_locations(self):
         """Return a set of known locations.
@@ -558,6 +564,7 @@ class ReleaseMaker(object):
             shutil.rmtree(tempdir)
 
     def run(self):
+        os.environ['JARN_RUN'] = '1'
         self.get_python()
         self.get_options()
         self.get_package()
