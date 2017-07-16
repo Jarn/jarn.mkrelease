@@ -113,6 +113,21 @@ m_val =
         self.assertEqual(parser.getint('section', 'm_val'), None)
         self.assertEqual(parser.getfloat('section', 'm_val'), None)
 
+    def test_with_commas(self):
+        self.mkfile('my.cfg', """
+[section]
+m_val = fred, barney
+""")
+        parser = ConfigParser()
+        parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('m_val', 'fred, barney')])
+        self.assertEqual(parser.get('section', 'm_val'), 'fred, barney')
+        self.assertEqual(parser.getlist('section', 'm_val'), ['fred', 'barney'])
+        self.assertEqual(parser.getstring('section', 'm_val'), None)
+        self.assertEqual(parser.getboolean('section', 'm_val'), None)
+        self.assertEqual(parser.getint('section', 'm_val'), None)
+        self.assertEqual(parser.getfloat('section', 'm_val'), None)
+
     def test_boolean(self):
         self.mkfile('my.cfg', """
 [section]

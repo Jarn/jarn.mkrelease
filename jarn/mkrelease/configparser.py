@@ -1,4 +1,5 @@
 import sys
+import re
 
 if sys.version_info[:2] >= (3, 2):
     from configparser import Error
@@ -145,7 +146,8 @@ class ConfigParser(object):
         return default
 
     def to_list(self, value):
-        return value.split()
+        v = re.split(r',\s*|\s+', value)
+        return [x for x in v if x]
 
     def to_string(self, value):
         v = self._single_value(value)
