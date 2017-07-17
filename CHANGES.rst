@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.11 - Unreleased
------------------
+4.0 - Unreleased
+----------------
 
 - Add support for source distributions in gztar format.
   [stefan]
