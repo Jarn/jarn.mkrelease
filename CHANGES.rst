@@ -4,19 +4,19 @@ Changelog
 3.11 - Unreleased
 -----------------
 
-- Allow multiple archive formats per release.
-  [stefan]
-
-- Add support for wheel files (bdist_wheel).
-  [stefan]
-
 - Add support for source distributions in gztar format.
   [stefan]
 
-- The secondary thread would sometimes not terminate in Python 2.
+- Add support for wheel files.
+  [stefan]
+
+- Allow multiple archive formats per release.
   [stefan]
 
 - Protect against bad or incomplete locale settings.
+  [stefan]
+
+- The secondary thread would sometimes not terminate in Python 2.
   [stefan]
 
 3.10 - 2017-02-01
