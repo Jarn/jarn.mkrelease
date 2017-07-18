@@ -1,6 +1,23 @@
-from setuptools import setup, find_packages
+import sys
+
+from setuptools import setup
+from setuptools import find_packages
 
 version = '4.0'
+
+install_requires = [
+    'setuptools',
+    'setuptools-subversion >= 3.1',
+    'setuptools-hg >= 0.4',
+    'setuptools-git >= 1.2',
+    'lazy >= 1.3',
+    'wheel >= 0.29.0',
+]
+
+if sys.platform == "darwin":
+    install_requires += [
+        'keyring >= 10.4.0',
+    ]
 
 setup(name='jarn.mkrelease',
       version=version,
@@ -36,15 +53,7 @@ setup(name='jarn.mkrelease',
       include_package_data=True,
       zip_safe=False,
       test_suite='jarn.mkrelease.tests',
-      install_requires=[
-          'setuptools',
-          'setuptools-subversion >= 3.1',
-          'setuptools-hg >= 0.4',
-          'setuptools-git >= 1.2',
-          'lazy >= 1.3',
-          'wheel >= 0.29.0',
-          'keyring >= 10.4.0; sys_platform == "darwin"',
-      ],
+      install_requires=install_requires,
       entry_points={
           'console_scripts': 'mkrelease=jarn.mkrelease.mkrelease:main',
       },
