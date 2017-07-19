@@ -164,7 +164,8 @@ class Setuptools(object):
 
         # distutils >= 3.4
         echo2 = Not(StartsWith('error: Upload failed'))
-        if quiet and distcmd == 'bdist_wheel':
+
+        if distcmd == 'bdist_wheel':
             echo2 = And(echo2, Not(And(StartsWith('Skipping'), EndsWith('(namespace package)'))))
 
         serverflags = ['--repository="%(location)s"' % locals()]
