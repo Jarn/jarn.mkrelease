@@ -61,6 +61,10 @@ Options:
   -b, --binary        Release a binary egg.
   -w, --wheel         Release a wheel file.
 
+  -m, --prefer-manifest
+                      Do not gather files via setuptools extensions if the
+                      package contains a MANIFEST.in template.
+
   -p, --push          Push sandbox modifications upstream.
   -e, --develop       Allow version number extensions. Implies -T.
   -q, --quiet         Suppress output of setuptools commands.
@@ -263,6 +267,7 @@ class ReleaseMaker(object):
         self.quiet = self.defaults.quiet
         self.sign = False   # per server
         self.list = False
+        self.manifest = False
         self.identity = ''  # per server
         self.branch = ''
         self.scmtype = ''
@@ -288,11 +293,12 @@ class ReleaseMaker(object):
         """
         try:
             options, remaining_args = getopt.gnu_getopt(args,
-                'CRSTbc:d:eghi:lnpqsvwz',
+                'CRSTbc:d:eghi:lmnpqsvwz',
                 ('no-commit', 'no-tag', 'no-register', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
-                 'list-locations', 'config-file=', 'wheel', 'zip', 'gztar'))
+                 'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
+                 'prefer-manifest'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -319,6 +325,8 @@ class ReleaseMaker(object):
                 self.locations.extend(self.locations.get_location(value))
             elif name in ('-l', '--list-locations'):
                 self.list = True
+            elif name in ('-m', '--prefer-manifest'):
+                self.manifest = True
             elif name in ('-h', '--help'):
                 msg_exit(HELP)
             elif name in ('-v', '--version'):
@@ -534,6 +542,9 @@ class ReleaseMaker(object):
                 tagid = self.scm.make_tagid(directory, version)
                 self.scm.check_tag_exists(directory, tagid)
                 self.scm.create_tag(directory, tagid, name, version, self.push)
+
+            if self.manifest and isfile(directory, 'MANIFEST.in'):
+                scmtype = 'none'
 
             for distcmd, distflags in self.distributions:
                 manifest = self.setuptools.run_egg_info(
