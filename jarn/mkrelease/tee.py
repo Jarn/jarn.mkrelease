@@ -11,7 +11,7 @@ try:
 except NameError:
     from .utils import callable
 
-__all__ = ['popen', 'On', 'Off', 'NotEmpty', 'Equals',
+__all__ = ['run', 'On', 'Off', 'NotEmpty', 'Equals',
            'StartsWith', 'EndsWith', 'Before', 'NotAfter',
            'After', 'NotBefore', 'Not', 'And', 'Or']
 
@@ -78,15 +78,17 @@ class background_thread(object):
         self._t.join()
 
 
-def popen(cmd, echo=True, echo2=True, env=None):
-    """Run 'cmd' and return a two-tuple of exit code and lines read.
+def run(args, echo=True, echo2=True, shell=False, cwd=None, env=None):
+    """Run 'args' and return a two-tuple of exit code and lines read.
 
     If 'echo' is True, the stdout stream is echoed to sys.stdout.
     If 'echo2' is True, the stderr stream is echoed to sys.stderr.
 
-    The 'echo' and 'echo2' arguments may also be callables, in which
+    The 'echo' and 'echo2' arguments may be callables, in which
     case they are used as tee filters.
 
+    If 'shell' is True, args are executed via the shell.
+    The 'cwd' argument causes the child process to be executed in cwd.
     The 'env' argument allows to pass a dict replacing os.environ.
     """
     if not callable(echo):
@@ -96,10 +98,11 @@ def popen(cmd, echo=True, echo2=True, env=None):
         echo2 = On() if echo2 else Off()
 
     process = Popen(
-        cmd,
-        shell=True,
+        args,
         stdout=PIPE,
         stderr=PIPE,
+        shell=shell,
+        cwd=cwd,
         env=env
     )
 

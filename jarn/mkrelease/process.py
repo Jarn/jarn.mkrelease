@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import os
 
-from .tee import popen
+from .tee import run
 from .exit import trace
 
 
@@ -18,7 +18,7 @@ class Process(object):
         trace(cmd)
         if self.quiet:
             echo = echo2 = False
-        return popen(cmd, echo, echo2, env=self.env)
+        return run(cmd, echo, echo2, shell=True, env=self.env)
 
     def pipe(self, cmd):
         rc, lines = self.popen(cmd, echo=False)
