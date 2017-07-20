@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0 - Unreleased
+4.0 - 2017-07-20
 ----------------
 
 - Add support for source distributions in gztar format.
