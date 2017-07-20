@@ -1,6 +1,12 @@
 Changelog
 =========
 
+4.0.1 - Unreleased
+------------------
+
+- Fix conditional include of keyring.
+  [stefan]
+
 4.0 - 2017-07-20
 ----------------
 
