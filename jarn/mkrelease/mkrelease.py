@@ -108,6 +108,7 @@ class Defaults(object):
         self.formats = parser.getlist(main_section, 'formats', [])
         self.sign = parser.getboolean(main_section, 'sign', False)
         self.identity = parser.getstring(main_section, 'identity', '')
+        self.manifest = parser.getboolean(main_section, 'prefer-manifest', False)
         self.push = parser.getboolean(main_section, 'push', False)
         self.develop = parser.getboolean(main_section, 'develop', False)
         self.quiet = parser.getboolean(main_section, 'quiet', False)
@@ -267,7 +268,7 @@ class ReleaseMaker(object):
         self.quiet = self.defaults.quiet
         self.sign = False   # per server
         self.list = False
-        self.manifest = False
+        self.manifest = self.defaults.manifest
         self.identity = ''  # per server
         self.branch = ''
         self.scmtype = ''
