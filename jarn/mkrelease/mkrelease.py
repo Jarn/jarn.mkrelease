@@ -546,7 +546,7 @@ class ReleaseMaker(object):
                 self.scm.check_tag_exists(directory, tagid)
                 self.scm.create_tag(directory, tagid, name, version, self.push)
 
-            if self.manifest and isfile(directory, 'MANIFEST.in'):
+            if self.manifest and isfile(join(directory, 'MANIFEST.in')):
                 scmtype = 'none'
 
             for distcmd, distflags in self.distributions:
