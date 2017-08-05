@@ -1,0 +1,2 @@
+include *.cfg *.ini *.rst LICENSE
+recursive-include jarn *.txt *.zip
