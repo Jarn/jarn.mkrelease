@@ -53,7 +53,9 @@ def walk_revctrl(dirname='', ff=''):
             ff, 'subversion' if ff == 'svn' else ff)
         sys.exit(1)
 
-    return items
+    # Returning a non-empty list prevents egg_info from reading the
+    # existing SOURCES.txt
+    return items or ['']
 
 
 def no_walk_revctrl(dirname=''):
