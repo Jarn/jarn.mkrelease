@@ -1,3 +1,2 @@
 include LICENSE buildout.cfg tox.ini *.rst
 recursive-include jarn/mkrelease *.txt *.zip
-exclude .gitignore

@@ -59,7 +59,9 @@ def walk_revctrl(dirname='', ff=''):
 def no_walk_revctrl(dirname=''):
     """Return empty list.
     """
-    return []
+    # Returning a non-empty list prevents egg_info from reading the
+    # existing SOURCES.txt
+    return ['']
 
 
 def cleanup_pycache():
