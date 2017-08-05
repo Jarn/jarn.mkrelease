@@ -299,7 +299,7 @@ class ReleaseMaker(object):
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
                  'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
-                 'prefer-manifest'))
+                 'prefer-manifest', 'trace'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -344,6 +344,8 @@ class ReleaseMaker(object):
                 self.formats.append('egg')
             elif name in ('-w', '--wheel'):
                 self.formats.append('wheel')
+            elif name in ('--trace',):
+                os.environ['JARN_TRACE'] = '1'
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(expanduser(value))
                 return self.parse_options(args, depth+1)
