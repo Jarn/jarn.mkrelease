@@ -310,15 +310,6 @@ class MockProcess(Process):
                 raise MockProcessError('Unhandled command: %s' % cmd)
         return self.rc, self.lines
 
-    def os_system(self, cmd):
-        if self.func is not None:
-            rc_lines = self.func(cmd)
-            if rc_lines is not None:
-                return rc_lines[0]
-            else:
-                raise MockProcessError('Unhandled command: %s' % cmd)
-        return self.rc
-
 
 def quiet(func):
     """Decorator swallowing stdout and stderr output.

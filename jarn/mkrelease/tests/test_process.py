@@ -103,32 +103,6 @@ class SystemTests(JailSetup):
         self.assertEqual(rc, 127)
 
 
-class OsSystemTests(JailSetup):
-
-    def test_simple(self):
-        process = Process()
-        rc = process.os_system('echo "Hello world" > output')
-        self.assertEqual(rc, 0)
-        self.assertEqual(process.pipe('cat output'), 'Hello world')
-
-    def test_quiet(self):
-        process = Process(quiet=True)
-        rc = process.os_system('echo "Hello world"')
-        self.assertEqual(rc, 0)
-
-    def test_env(self):
-        env = {'HELLO': 'Hello world'}
-        process = Process(env=env)
-        rc = process.os_system('echo ${HELLO} > output')
-        self.assertEqual(rc, 0)
-        self.assertEqual(process.pipe('cat output'), 'Hello world')
-
-    def test_bad_cmd(self):
-        process = Process()
-        rc = process.os_system('$ "Hello world" 2> output')
-        self.assertNotEqual(rc, 0)
-
-
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
 
