@@ -87,6 +87,10 @@ Options
 ``-w, --wheel``
     Release a wheel file.
 
+``-m, --prefer-manifest``
+    Do not gather files via setuptools extensions if the
+    package contains a MANIFEST.in template.
+
 ``-p, --push``
     Push sandbox modifications upstream.
 
@@ -158,8 +162,8 @@ Here's an example::
   [mkrelease]
   distdefault = public
   formats = zip
+  prefer-manifest = yes
   push = yes
-  quiet = no
 
   [aliases]
   public =

@@ -56,6 +56,12 @@ def walk_revctrl(dirname='', ff=''):
     return items
 
 
+def no_walk_revctrl(dirname=''):
+    """Return empty list.
+    """
+    return []
+
+
 def cleanup_pycache():
     """Remove .pyc files we leave around because of import.
     """
@@ -75,7 +81,10 @@ def run(args, ff=''):
     """Run setup.py with monkey patches applied.
     """
     import setuptools.command.egg_info
-    setuptools.command.egg_info.walk_revctrl = partial(walk_revctrl, ff=ff)
+    if ff == 'none':
+        setuptools.command.egg_info.walk_revctrl = no_walk_revctrl
+    else:
+        setuptools.command.egg_info.walk_revctrl = partial(walk_revctrl, ff=ff)
 
     import wheel.archive
     wheel.archive.log = distutils.log
