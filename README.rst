@@ -162,8 +162,8 @@ Here's an example::
   [mkrelease]
   distdefault = public
   formats = zip
-  prefer-manifest = yes
   push = yes
+  quiet = no
 
   [aliases]
   public =
