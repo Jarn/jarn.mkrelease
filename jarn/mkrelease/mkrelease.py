@@ -62,8 +62,7 @@ Options:
   -w, --wheel         Release a wheel file.
 
   -m, --prefer-manifest
-                      Do not gather files via setuptools extensions if the
-                      package contains a MANIFEST.in template.
+                      Do not gather files via setuptools extensions.
 
   -p, --push          Push sandbox modifications upstream.
   -e, --develop       Allow version number extensions. Implies -T.
@@ -546,7 +545,7 @@ class ReleaseMaker(object):
                 self.scm.check_tag_exists(directory, tagid)
                 self.scm.create_tag(directory, tagid, name, version, self.push)
 
-            if self.manifest and isfile(join(directory, 'MANIFEST.in')):
+            if self.manifest:
                 scmtype = 'none'
 
             for distcmd, distflags in self.distributions:

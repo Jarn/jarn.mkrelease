@@ -88,8 +88,8 @@ Options
     Release a wheel file.
 
 ``-m, --prefer-manifest``
-    Do not gather files via setuptools extensions if the
-    package contains a MANIFEST.in template.
+    Do not gather files via setuptools extensions (i.e. rely
+    on defaults and MANIFEST.in only).
 
 ``-p, --push``
     Push sandbox modifications upstream.
