@@ -4,7 +4,7 @@ Changelog
 4.1 - Unreleased
 ----------------
 
-- Allow to skip setuptools extensions if a MANIFEST.in template exists.
+- Allow to skip setuptools extensions.
   [stefan]
 
 4.0.1 - 2017-07-20
