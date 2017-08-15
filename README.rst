@@ -87,12 +87,12 @@ Options
 ``-w, --wheel``
     Release a wheel file.
 
-``-m, --prefer-manifest``
-    Do not gather files via setuptools extensions (i.e. rely
-    on defaults and MANIFEST.in only).
-
 ``-p, --push``
     Push sandbox modifications upstream.
+
+``-m, --manifest-only``
+    Do not gather files via setuptools extensions (i.e. rely
+    on defaults and MANIFEST.in only).
 
 ``-e, --develop``
     Allow version number extensions (i.e. don't ignore

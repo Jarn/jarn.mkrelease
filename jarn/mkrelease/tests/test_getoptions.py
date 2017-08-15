@@ -413,7 +413,7 @@ identity = fred@bedrock.com
     def test_prefer_manifest_from_config(self):
         self.mkfile('my.cfg', """\
 [mkrelease]
-prefer-manifest = yes
+manifest-only = yes
 """)
         rm = ReleaseMaker(['-c', 'my.cfg', '-d', 'jarn.com:eggs'])
         rm.get_options()

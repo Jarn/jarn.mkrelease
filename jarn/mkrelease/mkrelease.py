@@ -61,10 +61,8 @@ Options:
   -b, --binary        Release a binary egg.
   -w, --wheel         Release a wheel file.
 
-  -m, --prefer-manifest
-                      Do not gather files via setuptools extensions.
-
   -p, --push          Push sandbox modifications upstream.
+  -m, --manifest-only Do not gather files via setuptools extensions.
   -e, --develop       Allow version number extensions. Implies -T.
   -q, --quiet         Suppress output of setuptools commands.
 
@@ -107,8 +105,8 @@ class Defaults(object):
         self.formats = parser.getlist(main_section, 'formats', [])
         self.sign = parser.getboolean(main_section, 'sign', False)
         self.identity = parser.getstring(main_section, 'identity', '')
-        self.manifest = parser.getboolean(main_section, 'prefer-manifest', False)
         self.push = parser.getboolean(main_section, 'push', False)
+        self.manifest = parser.getboolean(main_section, 'manifest-only', False)
         self.develop = parser.getboolean(main_section, 'develop', False)
         self.quiet = parser.getboolean(main_section, 'quiet', False)
 
@@ -298,7 +296,7 @@ class ReleaseMaker(object):
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
                  'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
-                 'prefer-manifest', 'trace'))
+                 'manifest-only', 'trace'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -325,7 +323,7 @@ class ReleaseMaker(object):
                 self.locations.extend(self.locations.get_location(value))
             elif name in ('-l', '--list-locations'):
                 self.list = True
-            elif name in ('-m', '--prefer-manifest'):
+            elif name in ('-m', '--manifest-only'):
                 self.manifest = True
             elif name in ('-h', '--help'):
                 msg_exit(HELP)
