@@ -92,11 +92,11 @@ Options
 
 ``-m, --manifest-only``
     Do not gather files via setuptools extensions (i.e. rely
-    on defaults and MANIFEST.in only).
+    on defaults and ``MANIFEST.in`` only.)
 
 ``-e, --develop``
     Allow version number extensions (i.e. don't ignore
-    respective ``setup.cfg`` options). Implies ``-T``.
+    respective ``setup.cfg`` options.) Implies ``-T``.
 
 ``-q, --quiet``
     Suppress output of setuptools commands.

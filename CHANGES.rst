@@ -4,7 +4,7 @@ Changelog
 4.1 - Unreleased
 ----------------
 
-- Allow to skip setuptools extensions.
+- Add -m option to skip setuptools extensions.
   [stefan]
 
 4.0.1 - 2017-07-20
