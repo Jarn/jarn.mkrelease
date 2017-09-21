@@ -38,46 +38,45 @@ Usage: mkrelease [options] [scm-sandbox|scm-url [rev]]
 Python package releaser
 
 Options:
-  -C, --no-commit     Do not commit modified files from the sandbox.
-  -T, --no-tag        Do not tag the release in SCM.
-  -R, --no-register   Do not register the release with dist-location.
-  -S, --no-upload     Do not upload the release to dist-location.
-  -n, --dry-run       Dry-run; equivalent to -CTRS.
+  -C, --no-commit       Do not commit modified files from the sandbox.
+  -T, --no-tag          Do not tag the release in SCM.
+  -R, --no-register     Do not register the release with dist-location.
+  -S, --no-upload       Do not upload the release to dist-location.
+  -n, --dry-run         Dry-run; equivalent to -CTRS.
 
-  --svn, --hg, --git  Select the SCM type. Only required if the SCM type
-                      cannot be guessed from the argument.
+  --svn, --hg, --git    Select the SCM type. Only required if the SCM type
+                        cannot be guessed from the argument.
 
   -d dist-location, --dist-location=dist-location
-                      An scp or sftp destination specification, an index
-                      server configured in ~/.pypirc, or an alias name for
-                      either. This option may be specified more than once.
+                        An scp or sftp destination specification, an index
+                        server configured in ~/.pypirc, or an alias name for
+                        either. This option may be specified more than once.
 
-  -s, --sign          Sign the release with GnuPG.
+  -s, --sign            Sign the release with GnuPG.
   -i identity, --identity=identity
-                      The GnuPG identity to sign with. Implies -s.
+                        The GnuPG identity to sign with. Implies -s.
 
-  -z, --zip           Release a zip archive (the default).
-  -g, --gztar         Release a tar.gz archive.
-  -b, --binary        Release a binary egg.
-  -w, --wheel         Release a wheel file.
+  -z, --zip             Release a zip archive (the default).
+  -g, --gztar           Release a tar.gz archive.
+  -b, --binary          Release a binary egg.
+  -w, --wheel           Release a wheel file.
 
-  -p, --push          Push sandbox modifications upstream.
-  -m, --manifest-only Do not gather files via setuptools extensions.
-  -e, --develop       Allow version number extensions. Implies -T.
-  -q, --quiet         Suppress output of setuptools commands.
+  -p, --push            Push sandbox modifications upstream.
+  -m, --manifest-only   Do not gather files via setuptools extensions.
+  -e, --develop         Allow version number extensions. Implies -T.
+  -q, --quiet           Suppress output of setuptools commands.
 
   -c config-file, --config-file=config-file
-                      Use config-file instead of the default ~/.mkrelease.
+                        Use config-file instead of the default ~/.mkrelease.
 
-  -l, --list-locations
-                      List known dist-locations and exit.
-  -h, --help          Print this help message and exit.
-  -v, --version       Print the version string and exit.
+  -l, --list-locations  List known dist-locations and exit.
+  -h, --help            Print this help message and exit.
+  -v, --version         Print the version string and exit.
 
-  scm-sandbox         A local SCM sandbox. Defaults to the current working
-                      directory.
-  scm-url [rev]       The URL of a remote SCM repository. The rev argument
-                      specifies a branch or tag to check out.
+  scm-sandbox           A local SCM sandbox. Defaults to the current working
+                        directory.
+  scm-url [rev]         The URL of a remote SCM repository. The rev argument
+                        specifies a branch or tag to check out.
 """
 
 
