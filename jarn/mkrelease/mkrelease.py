@@ -63,7 +63,7 @@ Options:
 
   -p, --push            Push sandbox modifications upstream.
   -m, --manifest-only   Do not gather files via setuptools extensions.
-  -e, --develop         Allow version number extensions. Implies -T.
+  -e, --develop         Allow additional version tags. Implies -T.
   -q, --quiet           Suppress output of setuptools commands.
 
   -c config-file, --config-file=config-file
@@ -75,8 +75,8 @@ Options:
 
   scm-sandbox           A local SCM sandbox. Defaults to the current working
                         directory.
-  scm-url [rev]         The URL of a remote SCM repository. The rev argument
-                        specifies a branch or tag to check out.
+  scm-url [rev]         The URL of a remote SCM repository. The optional rev
+                        argument specifies a branch or tag to check out.
 """
 
 

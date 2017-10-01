@@ -95,7 +95,7 @@ Options
     on defaults and ``MANIFEST.in`` only.)
 
 ``-e, --develop``
-    Allow version number extensions (i.e. don't ignore
+    Allow additional version tags (i.e. don't ignore
     respective ``setup.cfg`` options.) Implies ``-T``.
 
 ``-q, --quiet``
