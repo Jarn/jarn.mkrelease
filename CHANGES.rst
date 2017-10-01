@@ -10,6 +10,9 @@ Changelog
 - Never read existing ``SOURCES.txt`` files.
   [stefan]
 
+- Allow --egg as alias for --binary.
+  [stefan]
+
 4.0.1 - 2017-07-20
 ------------------
 

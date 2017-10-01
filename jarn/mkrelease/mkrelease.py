@@ -295,7 +295,7 @@ class ReleaseMaker(object):
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
                  'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
-                 'manifest-only', 'trace'))
+                 'manifest-only', 'trace', 'egg'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -336,7 +336,7 @@ class ReleaseMaker(object):
                 self.formats.append('zip')
             elif name in ('-g', '--gztar'):
                 self.formats.append('gztar')
-            elif name in ('-b', '--binary'):
+            elif name in ('-b', '--binary', '--egg'):
                 self.formats.append('egg')
             elif name in ('-w', '--wheel'):
                 self.formats.append('wheel')
