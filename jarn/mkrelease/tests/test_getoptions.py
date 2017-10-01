@@ -401,6 +401,25 @@ identity = fred@bedrock.com
         rm.defaults.servers.update({'pypi': serverinfo(identity='barney@rubble.com')})
         self.assertEqual(rm.get_uploadflags('pypi'), ['--sign', '--identity="barney@rubble.com"'])
 
+    def test_prefer_manifest(self):
+        self.mkfile('my.cfg', """\
+[mkrelease]
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-m', '-d', 'jarn.com:eggs'])
+        rm.get_options()
+
+        self.assertEqual(rm.manifest, True)
+
+    def test_prefer_manifest_from_config(self):
+        self.mkfile('my.cfg', """\
+[mkrelease]
+manifest-only = yes
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-d', 'jarn.com:eggs'])
+        rm.get_options()
+
+        self.assertEqual(rm.manifest, True)
+
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

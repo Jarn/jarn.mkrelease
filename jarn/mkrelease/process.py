@@ -30,12 +30,3 @@ class Process(object):
         rc, lines = self.popen(cmd)
         return rc
 
-    def os_system(self, cmd):
-        # env *updates* os.environ
-        trace(cmd)
-        if self.quiet:
-            cmd = cmd + ' >%s 2>&1' % os.devnull
-        if self.env:
-            cmd = ''.join('export %s="%s"\n' % (k, v) for k, v in self.env.items()) + cmd
-        return os.system(cmd)
-

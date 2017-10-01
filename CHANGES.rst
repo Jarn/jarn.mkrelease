@@ -4,6 +4,11 @@ Changelog
 4.1 - Unreleased
 ----------------
 
+- Add -m option to skip setuptools extensions.
+  [stefan]
+
+- Never read existing ``SOURCES.txt`` files.
+  [stefan]
 
 4.0.1 - 2017-07-20
 ------------------

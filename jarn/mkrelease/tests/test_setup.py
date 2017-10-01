@@ -123,11 +123,11 @@ class WalkRevctrlTests(GitSetup):
 
     def test_walk_wrong_dir(self):
         #self.assertRaises(SystemExit, walk_revctrl, 'doesnotexist', ff='git')
-        self.assertEqual(walk_revctrl('doesnotexist', ff='git'), [])
+        self.assertEqual(walk_revctrl('doesnotexist', ff='git'), [''])
 
     def test_walk_wrong_scm(self):
         #self.assertRaises(SystemExit, walk_revctrl, 'testpackage', ff='svn')
-        self.assertEqual(walk_revctrl('testpackage', ff='svn'), [])
+        self.assertEqual(walk_revctrl('testpackage', ff='svn'), [''])
 
     @quiet
     def test_walk_empty_scm(self):

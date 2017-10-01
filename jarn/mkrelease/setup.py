@@ -53,7 +53,17 @@ def walk_revctrl(dirname='', ff=''):
             ff, 'subversion' if ff == 'svn' else ff)
         sys.exit(1)
 
-    return items
+    # Returning a non-empty list prevents egg_info from reading the
+    # existing SOURCES.txt
+    return items or ['']
+
+
+def no_walk_revctrl(dirname=''):
+    """Return empty list.
+    """
+    # Returning a non-empty list prevents egg_info from reading the
+    # existing SOURCES.txt
+    return ['']
 
 
 def cleanup_pycache():
@@ -75,7 +85,10 @@ def run(args, ff=''):
     """Run setup.py with monkey patches applied.
     """
     import setuptools.command.egg_info
-    setuptools.command.egg_info.walk_revctrl = partial(walk_revctrl, ff=ff)
+    if ff == 'none':
+        setuptools.command.egg_info.walk_revctrl = no_walk_revctrl
+    else:
+        setuptools.command.egg_info.walk_revctrl = partial(walk_revctrl, ff=ff)
 
     import wheel.archive
     wheel.archive.log = distutils.log

@@ -138,14 +138,6 @@ class MockProcessTests(unittest.TestCase):
         process = MockProcess(rc=0, lines=[])
         self.assertEqual(process.pipe(''), '')
 
-    def testOsSystemSuccess(self):
-        process = MockProcess(rc=0, lines=[])
-        self.assertEqual(process.os_system(''), 0)
-
-    def testOsSystemFailure(self):
-        process = MockProcess(rc=1, lines=[])
-        self.assertEqual(process.os_system(''), 1)
-
 
 class QuietTests(unittest.TestCase):
 

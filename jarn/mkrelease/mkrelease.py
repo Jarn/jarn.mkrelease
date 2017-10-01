@@ -38,45 +38,45 @@ Usage: mkrelease [options] [scm-sandbox|scm-url [rev]]
 Python package releaser
 
 Options:
-  -C, --no-commit     Do not commit modified files from the sandbox.
-  -T, --no-tag        Do not tag the release in SCM.
-  -R, --no-register   Do not register the release with dist-location.
-  -S, --no-upload     Do not upload the release to dist-location.
-  -n, --dry-run       Dry-run; equivalent to -CTRS.
+  -C, --no-commit       Do not commit modified files from the sandbox.
+  -T, --no-tag          Do not tag the release in SCM.
+  -R, --no-register     Do not register the release with dist-location.
+  -S, --no-upload       Do not upload the release to dist-location.
+  -n, --dry-run         Dry-run; equivalent to -CTRS.
 
-  --svn, --hg, --git  Select the SCM type. Only required if the SCM type
-                      cannot be guessed from the argument.
+  --svn, --hg, --git    Select the SCM type. Only required if the SCM type
+                        cannot be guessed from the argument.
 
   -d dist-location, --dist-location=dist-location
-                      An scp or sftp destination specification, an index
-                      server configured in ~/.pypirc, or an alias name for
-                      either. This option may be specified more than once.
+                        An scp or sftp destination specification, an index
+                        server configured in ~/.pypirc, or an alias name for
+                        either. This option may be specified more than once.
 
-  -s, --sign          Sign the release with GnuPG.
+  -s, --sign            Sign the release with GnuPG.
   -i identity, --identity=identity
-                      The GnuPG identity to sign with. Implies -s.
+                        The GnuPG identity to sign with. Implies -s.
 
-  -z, --zip           Release a zip archive (the default).
-  -g, --gztar         Release a tar.gz archive.
-  -b, --binary        Release a binary egg.
-  -w, --wheel         Release a wheel file.
+  -z, --zip             Release a zip archive (the default).
+  -g, --gztar           Release a tar.gz archive.
+  -b, --binary          Release a binary egg.
+  -w, --wheel           Release a wheel file.
 
-  -p, --push          Push sandbox modifications upstream.
-  -e, --develop       Allow version number extensions. Implies -T.
-  -q, --quiet         Suppress output of setuptools commands.
+  -p, --push            Push sandbox modifications upstream.
+  -m, --manifest-only   Do not gather files via setuptools extensions.
+  -e, --develop         Allow additional version tags. Implies -T.
+  -q, --quiet           Suppress output of setuptools commands.
 
   -c config-file, --config-file=config-file
-                      Use config-file instead of the default ~/.mkrelease.
+                        Use config-file instead of the default ~/.mkrelease.
 
-  -l, --list-locations
-                      List known dist-locations and exit.
-  -h, --help          Print this help message and exit.
-  -v, --version       Print the version string and exit.
+  -l, --list-locations  List known dist-locations and exit.
+  -h, --help            Print this help message and exit.
+  -v, --version         Print the version string and exit.
 
-  scm-sandbox         A local SCM sandbox. Defaults to the current working
-                      directory.
-  scm-url [rev]       The URL of a remote SCM repository. The rev argument
-                      specifies a branch or tag to check out.
+  scm-sandbox           A local SCM sandbox. Defaults to the current working
+                        directory.
+  scm-url [rev]         The URL of a remote SCM repository. The optional rev
+                        argument specifies a branch or tag to check out.
 """
 
 
@@ -105,6 +105,7 @@ class Defaults(object):
         self.sign = parser.getboolean(main_section, 'sign', False)
         self.identity = parser.getstring(main_section, 'identity', '')
         self.push = parser.getboolean(main_section, 'push', False)
+        self.manifest = parser.getboolean(main_section, 'manifest-only', False)
         self.develop = parser.getboolean(main_section, 'develop', False)
         self.quiet = parser.getboolean(main_section, 'quiet', False)
 
@@ -263,6 +264,7 @@ class ReleaseMaker(object):
         self.quiet = self.defaults.quiet
         self.sign = False   # per server
         self.list = False
+        self.manifest = self.defaults.manifest
         self.identity = ''  # per server
         self.branch = ''
         self.scmtype = ''
@@ -288,11 +290,12 @@ class ReleaseMaker(object):
         """
         try:
             options, remaining_args = getopt.gnu_getopt(args,
-                'CRSTbc:d:eghi:lnpqsvwz',
+                'CRSTbc:d:eghi:lmnpqsvwz',
                 ('no-commit', 'no-tag', 'no-register', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
-                 'list-locations', 'config-file=', 'wheel', 'zip', 'gztar'))
+                 'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
+                 'manifest-only', 'trace'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -319,6 +322,8 @@ class ReleaseMaker(object):
                 self.locations.extend(self.locations.get_location(value))
             elif name in ('-l', '--list-locations'):
                 self.list = True
+            elif name in ('-m', '--manifest-only'):
+                self.manifest = True
             elif name in ('-h', '--help'):
                 msg_exit(HELP)
             elif name in ('-v', '--version'):
@@ -335,6 +340,8 @@ class ReleaseMaker(object):
                 self.formats.append('egg')
             elif name in ('-w', '--wheel'):
                 self.formats.append('wheel')
+            elif name in ('--trace',):
+                os.environ['JARN_TRACE'] = '1'
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(expanduser(value))
                 return self.parse_options(args, depth+1)
@@ -534,6 +541,9 @@ class ReleaseMaker(object):
                 tagid = self.scm.make_tagid(directory, version)
                 self.scm.check_tag_exists(directory, tagid)
                 self.scm.create_tag(directory, tagid, name, version, self.push)
+
+            if self.manifest:
+                scmtype = 'none'
 
             for distcmd, distflags in self.distributions:
                 manifest = self.setuptools.run_egg_info(
