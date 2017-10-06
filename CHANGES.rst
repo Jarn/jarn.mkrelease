@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.1 - Unreleased
+4.1 - 2017-10-06
 ----------------
 
 - Add -m option to skip setuptools extensions.
