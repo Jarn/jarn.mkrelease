@@ -50,6 +50,7 @@ class ConfigParser(object):
         self.raw = raw
         self._valid = False
         self._base = _BaseParser()
+        self._base.optionxform = lambda x: x.lower().replace('-', '_')
         # Python < 3.2
         if hasattr(self._base, '_boolean_states'):
             self._base.BOOLEAN_STATES = self._base._boolean_states

@@ -218,6 +218,51 @@ s_val: fred
         self.assertEqual(parser.getint('section', 's_val'), None)
         self.assertEqual(parser.getfloat('section', 's_val'), None)
 
+    def test_optionxform_lowercase(self):
+        self.mkfile('my.cfg', """
+[section]
+S_VAL = fred
+""")
+        parser = ConfigParser()
+        parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('s_val', 'fred')])
+        self.assertEqual(parser.get('section', 's_val'), 'fred')
+        self.assertEqual(parser.getlist('section', 's_val'), ['fred'])
+        self.assertEqual(parser.getstring('section', 's_val'), 'fred')
+        self.assertEqual(parser.getboolean('section', 's_val'), None)
+        self.assertEqual(parser.getint('section', 's_val'), None)
+        self.assertEqual(parser.getfloat('section', 's_val'), None)
+
+    def test_optionxform_dash2underscore(self):
+        self.mkfile('my.cfg', """
+[section]
+s-val = fred
+""")
+        parser = ConfigParser()
+        parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('s_val', 'fred')])
+        self.assertEqual(parser.get('section', 's_val'), 'fred')
+        self.assertEqual(parser.getlist('section', 's_val'), ['fred'])
+        self.assertEqual(parser.getstring('section', 's_val'), 'fred')
+        self.assertEqual(parser.getboolean('section', 's_val'), None)
+        self.assertEqual(parser.getint('section', 's_val'), None)
+        self.assertEqual(parser.getfloat('section', 's_val'), None)
+
+    def test_optionxform_on_get(self):
+        self.mkfile('my.cfg', """
+[section]
+s_val = fred
+""")
+        parser = ConfigParser()
+        parser.read('my.cfg')
+        self.assertEqual(parser.items('section'), [('s_val', 'fred')])
+        self.assertEqual(parser.get('section', 's-val'), 'fred')
+        self.assertEqual(parser.getlist('section', 's-val'), ['fred'])
+        self.assertEqual(parser.getstring('section', 's-val'), 'fred')
+        self.assertEqual(parser.getboolean('section', 's-val'), None)
+        self.assertEqual(parser.getint('section', 's-val'), None)
+        self.assertEqual(parser.getfloat('section', 's-val'), None)
+
 
 class WarnFuncTests(JailSetup):
 
