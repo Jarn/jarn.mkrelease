@@ -96,6 +96,7 @@ class Defaults(object):
 
         self.distbase = parser.getstring(main_section, 'distbase', '')
         self.distdefault = parser.getlist(main_section, 'distdefault', [])
+        self.distdefault = parser.getlist(main_section, 'dist-location', self.distdefault)
 
         self.commit = parser.getboolean(main_section, 'commit', True)
         self.tag = parser.getboolean(main_section, 'tag', True)

@@ -420,6 +420,25 @@ manifest-only = yes
 
         self.assertEqual(rm.manifest, True)
 
+    def test_dist_location(self):
+        self.mkfile('my.cfg', """\
+[mkrelease]
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-d', 'jarn.com:eggs'])
+        rm.get_options()
+
+        self.assertEqual(rm.locations.locations, ['jarn.com:eggs'])
+
+    def test_dist_location_from_config(self):
+        self.mkfile('my.cfg', """\
+[mkrelease]
+dist-location = jarn.com:eggs
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg'])
+        rm.get_options()
+
+        self.assertEqual(rm.locations.locations, ['jarn.com:eggs'])
+
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

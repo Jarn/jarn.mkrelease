@@ -101,6 +101,23 @@ public = bedrock.com:eggs
         self.assertEqual(defaults.aliases, {'public': ['bedrock.com:eggs']})
         #self.assertEqual(defaults.servers, {})
 
+    def test_dist_location_replaces_distdefault(self):
+        self.mkfile('my.cfg', """
+[mkrelease]
+dist-location = jarn.com:eggs
+""")
+        defaults = Defaults('my.cfg')
+        self.assertEqual(defaults.distdefault, ['jarn.com:eggs'])
+
+    def test_dist_location_overrides_distdefault(self):
+        self.mkfile('my.cfg', """
+[mkrelease]
+distdefault = public
+dist-location = jarn.com:eggs
+""")
+        defaults = Defaults('my.cfg')
+        self.assertEqual(defaults.distdefault, ['jarn.com:eggs'])
+
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
