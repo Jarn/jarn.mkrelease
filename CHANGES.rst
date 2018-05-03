@@ -4,6 +4,8 @@ Changelog
 4.2 - Unreleased
 ----------------
 
+- Convert dashes to underscores in config parser optionxform.
+  [stefan]
 
 4.1 - 2017-10-06
 ----------------
