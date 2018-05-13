@@ -7,6 +7,9 @@ Changelog
 - Convert dashes to underscores in config parser optionxform.
   [stefan]
 
+- Accept ``dist-location`` as alias for ``distdefault`` in config file.
+  [stefan]
+
 4.1 - 2017-10-06
 ----------------
 
