@@ -48,22 +48,23 @@ Options:
                         cannot be guessed from the argument.
 
   -d dist-location, --dist-location=dist-location
-                        An scp or sftp destination specification, an index
-                        server configured in ~/.pypirc, or an alias name for
+                        An scp destination specification, an index server
+                        configured in ~/.pypirc, or an alias name for
                         either. This option may be specified more than once.
 
   -s, --sign            Sign the release with GnuPG.
   -i identity, --identity=identity
                         The GnuPG identity to sign with. Implies -s.
 
-  -z, --zip             Release a zip archive (the default).
+  -z, --zip             Release a zip archive (default).
   -g, --gztar           Release a tar.gz archive.
   -b, --binary          Release a binary egg.
   -w, --wheel           Release a wheel file.
 
-  -p, --push            Push sandbox modifications upstream.
-  -m, --manifest-only   Do not gather files via setuptools extensions.
-  -e, --develop         Allow additional version tags. Implies -T.
+  -p, --push            Push sandbox modifications upstream (default).
+  -m, --manifest-only   Ignore setuptools extensions and collect files via
+                        MANIFEST.in only.
+  -e, --develop         Allow setuptools build tags. Implies -T.
   -q, --quiet           Suppress output of setuptools commands.
 
   -c config-file, --config-file=config-file
@@ -105,7 +106,7 @@ class Defaults(object):
         self.formats = parser.getlist(main_section, 'formats', [])
         self.sign = parser.getboolean(main_section, 'sign', False)
         self.identity = parser.getstring(main_section, 'identity', '')
-        self.push = parser.getboolean(main_section, 'push', False)
+        self.push = parser.getboolean(main_section, 'push', True)
         self.manifest = parser.getboolean(main_section, 'manifest-only', False)
         self.develop = parser.getboolean(main_section, 'develop', False)
         self.quiet = parser.getboolean(main_section, 'quiet', False)

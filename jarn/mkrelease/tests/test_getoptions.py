@@ -30,7 +30,7 @@ class GetOptionsTests(JailSetup):
         self.assertEqual(rm.skipregister, False)
         self.assertEqual(rm.skipupload, False)
         self.assertEqual(rm.sign, False)
-        self.assertEqual(rm.push, False)
+        self.assertEqual(rm.push, True)
         self.assertEqual(rm.develop, False)
         self.assertEqual(rm.quiet, False)
         self.assertEqual(rm.identity, '')
@@ -49,7 +49,7 @@ class GetOptionsTests(JailSetup):
         self.assertEqual(rm.skipregister, True)
         self.assertEqual(rm.skipupload, True)
         self.assertEqual(rm.sign, False)
-        self.assertEqual(rm.push, False)
+        self.assertEqual(rm.push, True)
         self.assertEqual(rm.develop, False)
         self.assertEqual(rm.quiet, False)
         self.assertEqual(rm.identity, '')
@@ -270,26 +270,43 @@ develop = yes
         # No implied --no-tag here
         self.assertEqual(rm.skiptag, False)
 
-    def test_misc(self):
+    def test_push(self):
         self.mkfile('my.cfg', """\
 [mkrelease]
+push = no
 """)
-        rm = ReleaseMaker(['-c', 'my.cfg', '-n', '-pq'])
+        rm = ReleaseMaker(['-c', 'my.cfg', '-n', '-p'])
         rm.get_options()
 
         self.assertEqual(rm.push, True)
-        self.assertEqual(rm.quiet, True)
 
-    def test_misc_from_config(self):
+    def test_push_from_config(self):
         self.mkfile('my.cfg', """\
 [mkrelease]
-push = yes
+push = no
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-n'])
+        rm.get_options()
+
+        self.assertEqual(rm.push, False)
+
+    def test_quiet(self):
+        self.mkfile('my.cfg', """\
+[mkrelease]
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-n', '-q'])
+        rm.get_options()
+
+        self.assertEqual(rm.quiet, True)
+
+    def test_quiet_from_config(self):
+        self.mkfile('my.cfg', """\
+[mkrelease]
 quiet = yes
 """)
         rm = ReleaseMaker(['-c', 'my.cfg', '-n'])
         rm.get_options()
 
-        self.assertEqual(rm.push, True)
         self.assertEqual(rm.quiet, True)
 
     def test_sign(self):

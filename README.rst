@@ -65,7 +65,7 @@ Options
     cannot be guessed from the argument.
 
 ``-d dist-location, --dist-location=dist-location``
-    An scp or sftp destination specification, an index
+    An scp destination specification, an index
     server configured in ``~/.pypirc``, or an alias name for
     either. This option may be specified more than once.
 
@@ -88,15 +88,16 @@ Options
     Release a wheel file.
 
 ``-p, --push``
-    Push sandbox modifications upstream.
+    Push sandbox modifications upstream. This is the default
+    now. Set ``push=no`` in ``~/.mkrelease`` to get the old
+    behavior back.
 
 ``-m, --manifest-only``
-    Do not gather files via setuptools extensions (i.e. rely
-    on defaults and ``MANIFEST.in`` only.)
+    Ignore setuptools extensions and collect files via
+    ``MANIFEST.in`` only.
 
 ``-e, --develop``
-    Allow additional version tags (i.e. don't ignore
-    respective ``setup.cfg`` options.) Implies ``-T``.
+    Allow setuptools build tags. Implies ``-T``.
 
 ``-q, --quiet``
     Suppress output of setuptools commands.
@@ -118,8 +119,8 @@ Options
     directory.
 
 ``scm-url [rev]``
-    The URL of a remote SCM repository. The optional ``rev`` argument
-    specifies a branch or tag to check out.
+    The URL of a remote SCM repository. The optional ``rev``
+    argument specifies a branch or tag to check out.
 
 Examples
 ========
