@@ -178,6 +178,17 @@ upload = yes
         self.assertEqual(rm.get_skipregister('pypi'), True)
         self.assertEqual(rm.get_skipupload(), True)
 
+    def test_build_without_upload(self):
+        # -RS makes -d requirement go away
+        self.mkfile('my.cfg', """\
+[mkrelease]
+""")
+        rm = ReleaseMaker(['-c', 'my.cfg', '-R', '-S']) # -d not required
+        rm.get_options()
+
+        self.assertEqual(rm.skipregister, True)
+        self.assertEqual(rm.skipupload, True)
+
     def test_formats(self):
         self.mkfile('my.cfg', """\
 [mkrelease]

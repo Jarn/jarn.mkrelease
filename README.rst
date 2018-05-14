@@ -244,8 +244,13 @@ This allows us to release to test.pypi.org by typing::
 
 Note: Setuptools rebuilds the package for every index server it uploads it to.
 This means that MD5 sums and GnuPG signatures will differ between servers.
-If this is not what you want, upload to only one server and distribute from
-there by other means.
+If this is not what you want, upload to only one server or use an upload tool
+like `twine`_::
+
+    $ mkrelease -RS -z -w src/my.package
+    $ twine upload src/my.package/dist/*
+
+.. _`twine`: https://twine.readthedocs.io
 
 Releasing a Tag
 ===============
