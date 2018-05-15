@@ -42,7 +42,7 @@ setup(name='jarn.mkrelease',
           'setuptools-hg >= 0.4',
           'setuptools-git >= 1.2',
           'lazy >= 1.3',
-          'wheel >= 0.29.0',
+          'wheel >= 0.31.1',
           'keyring >= 12.2.0; sys_platform == "darwin"',
       ],
       entry_points={
