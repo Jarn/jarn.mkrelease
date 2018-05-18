@@ -318,7 +318,7 @@ Changelog
 ----------------
 
 - Allow command line options to appear after the argument. As in:
-  ``mkrelease src/my.package -q -d pypi``.
+  ``mkrelease src/mypackage -q -d pypi``.
   [stefan]
 
 2.0b2 - 2009-07-09

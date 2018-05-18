@@ -123,21 +123,21 @@ Options
 Examples
 ========
 
-Release my.package and upload it to PyPI::
+Release mypackage and upload it to PyPI::
 
-  $ mkrelease -d pypi src/my.package
+  $ mkrelease -d pypi src/mypackage
 
-Release my.package using the repository URL instead of a local working copy::
+Release mypackage using the repository URL instead of a local working copy::
 
-  $ mkrelease -d pypi git@github.com:Jarn/my.package
+  $ mkrelease -d pypi git@github.com:Jarn/mypackage
 
-Release my.package and upload it via scp to the jarn.com server::
+Release mypackage and upload it via scp to the jarn.com server::
 
-  $ mkrelease -d jarn.com:/var/dist/public src/my.package
+  $ mkrelease -d jarn.com:/var/dist/public src/mypackage
 
-Release a development egg of my.package while suppressing setuptools output::
+Release a development egg of mypackage while suppressing setuptools output::
 
-  $ mkrelease -qed stefan@jarn.com:eggs src/my.package
+  $ mkrelease -qed stefan@jarn.com:eggs src/mypackage
 
 Configuration
 =============
@@ -175,11 +175,11 @@ Here's an example::
 
 Armed with this configuration we can shorten example 3 to::
 
-  $ mkrelease -d public src/my.package
+  $ mkrelease -d public src/mypackage
 
 And because ``public`` is the default location, we can omit ``-d`` entirely::
 
-  $ mkrelease src/my.package
+  $ mkrelease src/mypackage
 
 Upload with SCP
 ================
@@ -188,15 +188,15 @@ The simplest distribution location is a server directory shared through
 Apache. Releasing a package means scp-ing it to the appropriate place
 on the server::
 
-  $ mkrelease -d jarn.com:/var/dist/customerB src/my.package
+  $ mkrelease -d jarn.com:/var/dist/customerB src/mypackage
 
 To upload via sftp instead of scp, specify the destination in URL form::
 
-  $ mkrelease -d sftp://jarn.com/var/dist/customerB src/my.package
+  $ mkrelease -d sftp://jarn.com/var/dist/customerB src/mypackage
 
 For consistency, scp URLs are supported as well::
 
-  $ mkrelease -d scp://jarn.com/var/dist/customerB src/my.package
+  $ mkrelease -d scp://jarn.com/var/dist/customerB src/mypackage
 
 Note: Unlike scp, the sftp client does not prompt for login credentials.
 This means that non-interactive login must be configured on the
@@ -209,7 +209,7 @@ Another way of distributing Python packages is by uploading them to dedicated
 index servers, notably PyPI. Given the ``~/.pypirc`` file from above
 we can release to PyPI by typing::
 
-  $ mkrelease -d pypi src/my.package
+  $ mkrelease -d pypi src/mypackage
 
 Index servers are not limited to PyPI though.
 There is test.pypi.org, and there are alternative index servers like
@@ -238,31 +238,31 @@ We extend our ``~/.pypirc`` to add an additional server::
 
 This allows us to release to test.pypi.org by typing::
 
-  $ mkrelease -CT -d test src/my.package
+  $ mkrelease -CT -d test src/mypackage
 
 Note: Setuptools rebuilds the package for every index server it uploads it to.
 This means that MD5 sums and GnuPG signatures will differ between servers.
 If this is not what you want, upload to only one server or use an upload tool
 like `twine`_::
 
-    $ mkrelease -RS -z -w src/my.package
-    $ twine upload src/my.package/dist/*
+    $ mkrelease -RS -z -w src/mypackage
+    $ twine upload src/mypackage/dist/*
 
 .. _`twine`: https://twine.readthedocs.io
 
 Releasing a Tag
 ===============
 
-Release my.package from an existing tag::
+Release mypackage from an existing tag::
 
-  $ mkrelease -T -d pypi git@github.com:Jarn/my.package 1.0
+  $ mkrelease -T -d pypi git@github.com:Jarn/mypackage 1.0
 
 Using GnuPG
 ===========
 
-Release my.package and sign the archive with GnuPG::
+Release mypackage and sign the archive with GnuPG::
 
-  $ mkrelease -s -i fred@bedrock.com -d pypi src/my.package
+  $ mkrelease -s -i fred@bedrock.com -d pypi src/mypackage
 
 The ``-i`` flag is optional and GnuPG will pick your default
 key if not given. Defaults for ``-s`` and ``-i`` may be
