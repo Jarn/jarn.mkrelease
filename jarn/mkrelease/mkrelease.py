@@ -169,7 +169,7 @@ class Locations(object):
         """
         return location in self.servers
 
-    def is_dist_url(self, location):
+    def is_ssh_url(self, location):
         """Return True if 'location' is an scp or sftp URL.
         """
         return self.urlparser.get_scheme(location) in ('scp', 'sftp')
@@ -234,7 +234,7 @@ class Locations(object):
             locations = self.locations
         for location in locations:
             if (not self.is_server(location) and
-                not self.is_dist_url(location) and
+                not self.is_ssh_url(location) and
                 not self.has_host(location)):
                 err_exit('Unknown location: %(location)s' % locals())
 
@@ -567,7 +567,7 @@ class ReleaseMaker(object):
                                 scmtype, self.quiet)
                     else:
                         if not self.skipupload:
-                            if self.locations.is_dist_url(location):
+                            if self.locations.is_ssh_url(location):
                                 scheme, location = self.urlparser.to_ssh_url(location)
                                 self.scp.run_upload(scheme, distfile, location)
                             else:
