@@ -4,10 +4,6 @@ Changelog
 4.2 - Unreleased
 ----------------
 
-- Commits and tags are now pushed by default. Set ``push=no`` in
-  ``~/.mkrelease`` to restore the old behavior.
-  [stefan]
-
 - Convert dashes to underscores in config parser optionxform.
   [stefan]
 

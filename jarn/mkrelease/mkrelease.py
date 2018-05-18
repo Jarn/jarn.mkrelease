@@ -61,7 +61,7 @@ Options:
   -b, --binary          Release a binary egg.
   -w, --wheel           Release a wheel file.
 
-  -p, --push            Push sandbox modifications upstream (default).
+  -p, --push            Push sandbox modifications upstream.
   -m, --manifest-only   Ignore setuptools extensions and collect files via
                         MANIFEST.in only.
   -e, --develop         Allow setuptools build tags. Implies -T.
@@ -106,7 +106,7 @@ class Defaults(object):
         self.formats = parser.getlist(main_section, 'formats', [])
         self.sign = parser.getboolean(main_section, 'sign', False)
         self.identity = parser.getstring(main_section, 'identity', '')
-        self.push = parser.getboolean(main_section, 'push', True)
+        self.push = parser.getboolean(main_section, 'push', False)
         self.manifest = parser.getboolean(main_section, 'manifest-only', False)
         self.develop = parser.getboolean(main_section, 'develop', False)
         self.quiet = parser.getboolean(main_section, 'quiet', False)

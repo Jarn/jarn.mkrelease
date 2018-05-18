@@ -88,9 +88,7 @@ Options
     Release a wheel file.
 
 ``-p, --push``
-    Push sandbox modifications upstream. This is the default
-    now. Set ``push=no`` in ``~/.mkrelease`` to get the old
-    behavior back.
+    Push sandbox modifications upstream.
 
 ``-m, --manifest-only``
     Ignore setuptools extensions and collect files via
