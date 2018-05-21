@@ -292,12 +292,12 @@ class ReleaseMaker(object):
         """
         try:
             options, remaining_args = getopt.gnu_getopt(args,
-                'CRSTbc:d:eghi:lmnpqsvwz',
+                'CPRSTbc:d:eghi:lmnpqsvwz',
                 ('no-commit', 'no-tag', 'no-register', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
                  'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
-                 'manifest-only', 'trace', 'egg'))
+                 'manifest-only', 'trace', 'egg', 'no-push'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -314,6 +314,8 @@ class ReleaseMaker(object):
                 self.skipcommit = self.skiptag = self.skipregister = self.skipupload = True
             elif name in ('-p', '--push'):
                 self.push = True
+            elif name in ('-P', '--no-push'):   # undocumented
+                self.push = False
             elif name in ('-q', '--quiet'):
                 self.quiet = True
             elif name in ('-s', '--sign'):
