@@ -259,15 +259,15 @@ class ReleaseMaker(object):
         self.urlparser = URLParser()
         self.skipcommit = not self.defaults.commit
         self.skiptag = not self.defaults.tag
-        self.skipregister = False # per server
-        self.skipupload = False
+        self.skipregister = False   # per server
+        self.skipupload = False     # special
         self.push = self.defaults.push
-        self.develop = False
+        self.develop = False        # special
         self.quiet = self.defaults.quiet
-        self.sign = False   # per server
+        self.sign = False           # per server
         self.list = False
         self.manifest = self.defaults.manifest
-        self.identity = ''  # per server
+        self.identity = ''          # per server
         self.branch = ''
         self.scmtype = ''
         self.infoflags = []
@@ -344,7 +344,7 @@ class ReleaseMaker(object):
                 self.formats.append('egg')
             elif name in ('-w', '--wheel'):
                 self.formats.append('wheel')
-            elif name in ('--trace',):
+            elif name in ('--trace',):          # undocumented
                 os.environ['JARN_TRACE'] = '1'
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(expanduser(value))
