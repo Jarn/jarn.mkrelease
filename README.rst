@@ -125,19 +125,19 @@ Examples
 
 Release mypackage and upload it to PyPI::
 
-  $ mkrelease -d pypi src/mypackage
+  $ mkrelease -Rp -d pypi src/mypackage
 
 Release mypackage using the repository URL instead of a local working copy::
 
-  $ mkrelease -d pypi git@github.com:Jarn/mypackage
+  $ mkrelease -Rp -d pypi git@github.com:Jarn/mypackage
 
 Release mypackage and upload it via scp to the jarn.com server::
 
-  $ mkrelease -d jarn.com:/var/dist/public src/mypackage
+  $ mkrelease -p -d jarn.com:/var/dist/public src/mypackage
 
 Release a development egg of mypackage while suppressing setuptools output::
 
-  $ mkrelease -qed stefan@jarn.com:eggs src/mypackage
+  $ mkrelease -qed fred@jarn.com:eggs src/mypackage
 
 Configuration
 =============
@@ -153,18 +153,33 @@ file ``~/.pypirc``. This file must contain your PyPI account information::
   repository = https://upload.pypi.org/legacy/
   username = fred
   password = secret
-  register = no
 
 mkrelease also reads its own configuration file ``~/.mkrelease``.
 Here's an example::
 
   [mkrelease]
-  distdefault = public
-  formats = zip
+  # Release steps
+  commit = yes
+  tag = yes
   push = yes
+  register = no
+  upload = yes
+
+  # Default dist-location
+  distdefault =
+
+  # One ore more of: zip gztar egg wheel
+  formats = zip
+
+  # Other options
+  sign = no
+  identity =
+  manifest-only = no
+  develop = no
   quiet = no
 
   [aliases]
+  # Map name to one or more dist-locations
   public =
       jarn.com:/var/dist/public
   customerA =
@@ -176,10 +191,6 @@ Here's an example::
 Armed with this configuration we can shorten example 3 to::
 
   $ mkrelease -d public src/mypackage
-
-And because ``public`` is the default location, we can omit ``-d`` entirely::
-
-  $ mkrelease src/mypackage
 
 Upload with SCP
 ================
@@ -194,7 +205,7 @@ To upload via sftp instead of scp, specify the destination in URL form::
 
   $ mkrelease -d sftp://jarn.com/var/dist/customerB src/mypackage
 
-For consistency, scp URLs are supported as well::
+For consistency scp URLs are supported as well::
 
   $ mkrelease -d scp://jarn.com/var/dist/customerB src/mypackage
 
@@ -228,13 +239,11 @@ We extend our ``~/.pypirc`` to add an additional server::
   repository = https://upload.pypi.org/legacy/
   username = fred
   password = secret
-  register = no
 
   [test]
   repository = https://test.pypi.org/legacy/
   username = fred
   password = secret
-  register = no
 
 This allows us to release to test.pypi.org by typing::
 
@@ -265,16 +274,7 @@ Release mypackage and sign the archive with GnuPG::
   $ mkrelease -s -i fred@bedrock.com -d pypi src/mypackage
 
 The ``-i`` flag is optional and GnuPG will pick your default
-key if not given. Defaults for ``-s`` and ``-i`` may be
-configured in ``~/.pypirc``::
-
-  [pypi]
-  repository = https://upload.pypi.org/legacy/
-  username = fred
-  password = secret
-  register = no
-  sign = yes
-  identity = fred@bedrock.com
+key if not given.
 
 Requirements
 ============
