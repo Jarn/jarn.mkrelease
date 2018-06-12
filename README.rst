@@ -125,24 +125,24 @@ Examples
 
 Release mypackage and upload it to PyPI::
 
-  $ mkrelease -Rp -d pypi src/mypackage
+  $ mkrelease -d pypi src/mypackage
 
 Release mypackage using the repository URL instead of a local working copy::
 
-  $ mkrelease -Rp -d pypi git@github.com:Jarn/mypackage
+  $ mkrelease -d pypi git@github.com:Jarn/mypackage
 
 Release mypackage and upload it via scp to the jarn.com server::
 
-  $ mkrelease -p -d jarn.com:/var/dist/public src/mypackage
+  $ mkrelease -d jarn.com:/var/dist/public src/mypackage
 
 Release a development egg of mypackage while suppressing setuptools output::
 
-  $ mkrelease -qed fred@jarn.com:eggs src/mypackage
+  $ mkrelease -qed stefan@jarn.com:eggs src/mypackage
 
 Configuration
 =============
 
-mkrelease reads available index servers from the distutils configuration
+mkrelease reads available index servers from the distutils_ configuration
 file ``~/.pypirc``. This file must contain your PyPI account information::
 
   [distutils]
@@ -166,14 +166,16 @@ Here's an example::
   upload = yes
 
   # Default dist-location
-  distdefault =
+  dist-location =
 
-  # One ore more of: zip gztar egg wheel
+  # One or more of: zip gztar egg wheel
   formats = zip
 
-  # Other options
+  # Sign with GnuPG
   sign = no
   identity =
+
+  # Setuptools options
   manifest-only = no
   develop = no
   quiet = no
@@ -188,9 +190,11 @@ Here's an example::
       pypi
       public
 
-Armed with this configuration we can shorten example 3 to::
+The ``register``, ``sign``, and ``identity`` options may be overridden on a
+per-server basis by placing them in the respective server sections in
+``~/.pypirc``.
 
-  $ mkrelease -d public src/mypackage
+.. _distutils: https://docs.python.org/3/distutils/packageindex.html#pypirc
 
 Upload with SCP
 ================
@@ -223,10 +227,11 @@ we can release to PyPI by typing::
   $ mkrelease -d pypi src/mypackage
 
 Index servers are not limited to PyPI though.
-There is test.pypi.org, and there are alternative index servers like
+There is `test.pypi.org`_, and there are alternative index servers like
 `devpi`_.
 
-.. _`devpi`: http://doc.devpi.net/
+.. _`test.pypi.org`: https://test.pypi.org/
+.. _`devpi`: https://www.devpi.net
 
 We extend our ``~/.pypirc`` to add an additional server::
 
@@ -250,7 +255,7 @@ This allows us to release to test.pypi.org by typing::
   $ mkrelease -CT -d test src/mypackage
 
 Note: Setuptools rebuilds the package for every index server it uploads it to.
-This means that MD5 sums and GnuPG signatures will differ between servers.
+This means that SHA sums and GnuPG signatures will differ between servers.
 If this is not what you want, upload to only one server or use an upload tool
 like `twine`_::
 

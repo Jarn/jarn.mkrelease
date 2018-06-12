@@ -181,7 +181,7 @@ Changelog
 - Depend on lazy_ instead of carrying a local implementation.
   [stefan]
 
-.. _lazy: http://pypi.python.org/pypi/lazy
+.. _lazy: https://github.com/stefanholek/lazy
 
 3.0.10 - 2011-07-07
 -------------------
