@@ -21,7 +21,7 @@ class DefaultsTests(JailSetup):
         self.assertEqual(defaults.upload, True)
         self.assertEqual(defaults.sign, False)
         self.assertEqual(defaults.manifest, False)
-        self.assertEqual(defaults.push, True)
+        self.assertEqual(defaults.push, False)
         self.assertEqual(defaults.develop, False)
         self.assertEqual(defaults.quiet, False)
         self.assertEqual(defaults.identity, '')
@@ -57,7 +57,7 @@ formats =
         self.assertEqual(defaults.upload, True)
         self.assertEqual(defaults.sign, False)
         self.assertEqual(defaults.manifest, False)
-        self.assertEqual(defaults.push, True)
+        self.assertEqual(defaults.push, False)
         self.assertEqual(defaults.develop, False)
         self.assertEqual(defaults.quiet, False)
         self.assertEqual(defaults.identity, '')
@@ -75,7 +75,7 @@ tag = 0
 register = no
 upload = off
 sign = true
-push = 0
+push = 1
 manifest-only = yes
 develop = yes
 quiet = on
@@ -93,7 +93,7 @@ public = bedrock.com:eggs
         self.assertEqual(defaults.upload, False)
         self.assertEqual(defaults.sign, True)
         self.assertEqual(defaults.manifest, True)
-        self.assertEqual(defaults.push, False)
+        self.assertEqual(defaults.push, True)
         self.assertEqual(defaults.develop, True)
         self.assertEqual(defaults.quiet, True)
         self.assertEqual(defaults.identity, 'fred@bedrock.com')

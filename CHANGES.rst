@@ -4,10 +4,6 @@ Changelog
 4.2 - Unreleased
 ----------------
 
-- Commits and tags are now pushed by default. Set ``push=no`` in
-  ``~/.mkrelease`` to restore the old behavior.
-  [stefan]
-
 - Convert dashes to underscores in config parser optionxform.
   [stefan]
 
@@ -185,7 +181,7 @@ Changelog
 - Depend on lazy_ instead of carrying a local implementation.
   [stefan]
 
-.. _lazy: http://pypi.python.org/pypi/lazy
+.. _lazy: https://github.com/stefanholek/lazy
 
 3.0.10 - 2011-07-07
 -------------------
@@ -322,7 +318,7 @@ Changelog
 ----------------
 
 - Allow command line options to appear after the argument. As in:
-  ``mkrelease src/my.package -q -d pypi``.
+  ``mkrelease src/mypackage -q -d pypi``.
   [stefan]
 
 2.0b2 - 2009-07-09
