@@ -4,10 +4,19 @@ Changelog
 4.2 - Unreleased
 ----------------
 
-- Convert dashes to underscores in config parser optionxform.
+- Drop Python 2.6 support, add Python 3.7.
+  [stefan]
+
+- Update wheel and keyring dependencies.
+  [stefan]
+
+- Add a complete config file example to the README.
   [stefan]
 
 - Accept ``dist-location`` as alias for ``distdefault`` in config files.
+  [stefan]
+
+- Convert dashes to underscores in config parser optionxform.
   [stefan]
 
 4.1 - 2017-10-06
