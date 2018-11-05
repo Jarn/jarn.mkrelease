@@ -90,9 +90,6 @@ def run(args, ff=''):
     else:
         setuptools.command.egg_info.walk_revctrl = partial(walk_revctrl, ff=ff)
 
-    import wheel.archive
-    wheel.archive.log = distutils.log
-
     sys.argv = ['setup.py'] + args
     import setup
 
