@@ -217,7 +217,7 @@ class Setuptools(object):
         return ''
 
     def _parse_dist_results(self, lines):
-        # This relies on --formats=zip or --formats=egg or bdist_wheel+patch
+        # This relies on --formats=zip or --formats=egg or bdist_wheel
         for line in lines:
             if line.startswith("creating '") and "' and adding '" in line:
                 return line.split("'")[1]
