@@ -7,6 +7,9 @@ Changelog
 - Fix issue #10: Can no longer run from a zc.buildout.
   [stefan]
 
+- Support ``python -m jarn.mkrelease``.
+  [stefan]
+
 4.2 - 2019-01-25
 ----------------
 
