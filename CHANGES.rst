@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.3 - Unreleased
+4.3 - 2019-01-28
 ----------------
 
 - Fix issue #10: Can no longer run from a zc.buildout.
