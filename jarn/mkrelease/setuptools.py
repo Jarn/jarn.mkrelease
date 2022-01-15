@@ -6,8 +6,9 @@ import setuptools # XXX
 import distutils.command
 import pkg_resources
 
-from os.path import abspath, join, isfile
+from os.path import abspath, join, isfile, isdir
 from os.path import basename, dirname
+from shutil import rmtree
 
 from .python import Python
 from .process import Process
@@ -114,12 +115,22 @@ class Setuptools(object):
         if 'check' in distutils.command.__all__:
             checkcmd = ['check']
 
+        if isdir('build') and distcmd != 'sdist':
+            if not self.process.quiet and not quiet:
+                print('removing build')
+            rmtree('build', True)
+
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + checkcmd +
             [distcmd] + distflags,
             echo=echo,
             echo2=echo2,
             ff=ff)
+
+        if isdir('build') and self._parse_creating(lines, 'build/'):
+            if not self.process.quiet and not quiet:
+                print('removing build')
+            rmtree('build', True)
 
         if rc == 0:
             if distflags == ['--formats="gztar"']:
@@ -262,4 +273,11 @@ class Setuptools(object):
                 elif current == match:
                     return True
         return False
+
+    def _parse_creating(self, lines, prefix=''):
+        expect = 'creating %(prefix)s' % locals()
+        for line in lines:
+            if line.startswith(expect):
+                return line[9:]
+        return ''
 
