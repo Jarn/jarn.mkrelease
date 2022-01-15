@@ -303,11 +303,11 @@ class MockProcess(Process):
 def quiet(func):
     """Decorator swallowing stdout and stderr output.
     """
-    def wrapper(*args, **kw):
+    def wrapper(self, *args, **kw):
         saved = sys.stdout, sys.stderr
         sys.stdout = sys.stderr = StringIO()
         try:
-            return func(*args, **kw)
+            return func(self, *args, **kw)
         finally:
             sys.stdout, sys.stderr = saved
 
