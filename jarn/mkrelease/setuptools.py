@@ -15,6 +15,7 @@ from .configparser import ConfigParser
 from .chdir import chdir
 from .exit import err_exit, warn
 from .tee import *
+from .colors import bold
 
 OK_RESPONSE = 'Server response (200): OK'
 GONE_RESPONSE = 'Server response (410):'
@@ -81,7 +82,7 @@ class Setuptools(object):
     @chdir
     def run_egg_info(self, dir, infoflags, ff='', quiet=False):
         if not self.process.quiet:
-            print('running egg_info')
+            print(bold('running egg_info'))
 
         echo = After('running egg_info')
         if quiet:
@@ -101,7 +102,7 @@ class Setuptools(object):
     @chdir
     def run_dist(self, dir, infoflags, distcmd, distflags, ff='', quiet=False):
         if not self.process.quiet:
-            print('running', distcmd)
+            print(bold('running %(distcmd)s' % locals()))
 
         echo = After('running %(distcmd)s' % locals())
         if quiet:
@@ -134,7 +135,7 @@ class Setuptools(object):
     @chdir
     def run_register(self, dir, infoflags, location, ff='', quiet=False):
         if not self.process.quiet:
-            print('running register')
+            print(bold('running register'))
 
         echo = After('running register')
         if quiet:
@@ -162,7 +163,7 @@ class Setuptools(object):
     @chdir
     def run_upload(self, dir, infoflags, distcmd, distflags, location, uploadflags, ff='', quiet=False):
         if not self.process.quiet:
-            print('running upload')
+            print(bold('running upload'))
 
         echo = After('running upload')
         if quiet:

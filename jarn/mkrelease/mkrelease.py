@@ -26,6 +26,7 @@ from .scm import SCMFactory
 from .urlparser import URLParser
 from .configparser import ConfigParser
 from .exit import err_exit, msg_exit, warn
+from .colors import green, blue
 
 MAXALIASDEPTH = 23
 
@@ -497,7 +498,7 @@ class ReleaseMaker(object):
             self.setuptools.check_valid_package(directory)
 
             name, version = self.setuptools.get_package_info(directory, develop)
-            print('Releasing', name, version)
+            print(blue('Releasing %(name)s %(version)s' % locals()))
 
             if not self.skipcommit:
                 if self.scm.is_dirty_sandbox(directory):
@@ -538,7 +539,7 @@ class ReleaseMaker(object):
 
             name, version = self.setuptools.get_package_info(directory, develop)
             if self.isremote:
-                print('Releasing', name, version)
+                print(blue('Releasing %(name)s %(version)s' % locals()))
 
             if not self.skiptag:
                 print('Tagging', name, version)
@@ -583,7 +584,7 @@ class ReleaseMaker(object):
         self.get_options()
         self.get_package()
         self.make_release()
-        print('done')
+        print(green('done'))
 
 
 def main(args=None):

@@ -11,6 +11,7 @@ from os.path import basename
 from .process import Process
 from .exit import err_exit
 from .utils import encode
+from .colors import bold
 
 
 class SCP(object):
@@ -31,7 +32,7 @@ class SCP(object):
 
     def run_scp(self, distfile, location):
         if not self.process.quiet:
-            print('running scp_upload')
+            print(bold('running scp_upload'))
             self.delay()
             name = basename(distfile)
             print('Uploading dist/%(name)s to %(location)s' % locals())
@@ -50,7 +51,7 @@ class SCP(object):
 
     def run_sftp(self, distfile, location):
         if not self.process.quiet:
-            print('running sftp_upload')
+            print(bold('running sftp_upload'))
             self.delay()
             name = basename(distfile)
             print('Uploading dist/%(name)s to %(location)s' % locals())
