@@ -27,10 +27,10 @@ setup(name='jarn.mkrelease',
       author_email='stefan@epy.co.at',
       url='https://github.com/Jarn/jarn.mkrelease',
       license='BSD-2-Clause',
-      packages=find_packages(),
+      packages=find_packages(
+          exclude=['jarn.mkrelease.tests'],
+      ),
       namespace_packages=['jarn'],
-      include_package_data=True,
-      zip_safe=False,
       test_suite='jarn.mkrelease.tests',
       install_requires=[
           'setuptools',
