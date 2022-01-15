@@ -20,8 +20,6 @@ from .colors import bold
 OK_RESPONSE = 'Server response (200): OK'
 GONE_RESPONSE = 'Server response (410):'
 
-RUN_SETUP = 'from jarn.mkrelease import setup; setup.run(%(args)r, ff=%(ff)r)'
-
 
 class Setuptools(object):
     """Interface to setuptools."""
@@ -201,14 +199,18 @@ class Setuptools(object):
         setup.py.
         """
         python = self.python
+        run_setup = 'from jarn.mkrelease import setup; setup.run(%(args)r, ff=%(ff)r)'
+        filterwarnings = '-W "ignore:setup.py install is deprecated"'
 
         if ff:
-            setup_py = '-c"%s"' % (RUN_SETUP % locals())
+            setup_py = '-c"%s"' % (run_setup % locals())
         else:
             setup_py = 'setup.py %s' % ' '.join(args)
 
         rc, lines = self.process.popen(
-            '"%(python)s" %(setup_py)s' % locals(), echo=echo, echo2=echo2)
+            '"%(python)s" %(filterwarnings)s %(setup_py)s' % locals(),
+            echo=echo,
+            echo2=echo2)
 
         return rc, lines
 
