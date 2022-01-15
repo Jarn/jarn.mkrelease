@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import sys
 import os
 import glob
+import setuptools # XXX
 import distutils
 import pkg_resources
 
