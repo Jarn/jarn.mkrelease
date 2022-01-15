@@ -43,7 +43,7 @@ class JailSetup(unittest.TestCase):
                 shutil.rmtree(self.tempdir)
 
     def mkdtemp(self):
-        return tempfile.mkdtemp()
+        return tempfile.mkdtemp(prefix='jail-')
 
     def mkfile(self, name, body=''):
         with open(name, 'wt') as file:
