@@ -39,7 +39,6 @@ setup(name='jarn.mkrelease',
           'setuptools-git >= 1.2',
           'lazy >= 1.4',
           'wheel >= 0.32.3',
-          'keyring >= 17.1.1; sys_platform == "darwin"',
       ],
       entry_points={
           'console_scripts': 'mkrelease=jarn.mkrelease.mkrelease:main',
