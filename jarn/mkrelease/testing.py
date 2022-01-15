@@ -26,13 +26,10 @@ class JailSetup(unittest.TestCase):
     tempdir = None
 
     def setUp(self):
+        self.addCleanup(self.tearDown)
         self.dirstack = ChdirStack()
-        try:
-            self.tempdir = realpath(self.mkdtemp())
-            self.dirstack.push(self.tempdir)
-        except:
-            self.cleanUp()
-            raise
+        self.tempdir = realpath(self.mkdtemp())
+        self.dirstack.push(self.tempdir)
 
     def tearDown(self):
         self.cleanUp()
@@ -61,15 +58,11 @@ class SandboxSetup(JailSetup):
 
     def setUp(self):
         JailSetup.setUp(self)
-        try:
-            package = join(dirname(__file__), 'tests', self.source)
-            archive = zipfile.ZipFile(package, 'r')
-            archive.extractall()
-            os.rename(self.source[:-4], 'testpackage')
-            self.packagedir = join(self.tempdir, 'testpackage')
-        except:
-            self.cleanUp()
-            raise
+        package = join(dirname(__file__), 'tests', self.source)
+        archive = zipfile.ZipFile(package, 'r')
+        archive.extractall()
+        os.rename(self.source[:-4], 'testpackage')
+        self.packagedir = join(self.tempdir, 'testpackage')
 
 
 class SCMSetup(SandboxSetup):
@@ -120,11 +113,7 @@ class SubversionSetup(SCMSetup):
 
     def setUp(self):
         SCMSetup.setUp(self)
-        try:
-            self._fake_clone()
-        except:
-            self.cleanUp()
-            raise
+        self._fake_clone()
 
     @lazy
     def source(self):

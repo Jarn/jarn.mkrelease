@@ -3,8 +3,10 @@ from __future__ import print_function
 import unittest
 import sys
 import os
+import tempfile
+import shutil
 
-from os.path import join
+from os.path import join, realpath
 
 from jarn.mkrelease.testing import JailSetup
 from jarn.mkrelease.testing import MercurialSetup
@@ -38,9 +40,13 @@ class JailSetupTests(unittest.TestCase):
         # Save cwd
         self.cwd = os.getcwd()
 
+    def tearDown(self):
+        os.chdir(self.cwd)
+
     def testSetUp(self):
         test = JailSetupTestCase('dummyTest')
         test.setUp()
+        self.addCleanup(test.tearDown)
         # A temporary directory has been created
         self.assertTrue(os.path.isdir(test.tempdir))
         # And it is the current working directory
@@ -82,6 +88,9 @@ class JailSetupTests(unittest.TestCase):
         # but once we get here we know we did at least not blow up; which
         # is the point of this test.
         self.assertNotEqual(self.cwd, os.getcwd())
+        # Clean up carefully
+        if realpath(os.getcwd()).startswith(realpath(tempfile.tempdir)):
+            self.addCleanup(shutil.rmtree, os.getcwd())
 
 
 class PackageSetupTestCase(MercurialSetup):
@@ -95,6 +104,7 @@ class PackageSetupTests(unittest.TestCase):
     def testSetUp(self):
         test = PackageSetupTestCase('dummyTest')
         test.setUp()
+        self.addCleanup(test.tearDown)
         self.assertEqual(os.listdir(test.tempdir), ['testpackage'])
 
     def testTearDown(self):
