@@ -11,7 +11,7 @@ try:
 except NameError:
     from .utils import callable
 
-__all__ = ['run', 'On', 'Off', 'NotEmpty', 'Equals',
+__all__ = ['run', 'On', 'Off', 'NotEmpty', 'Equals', 'Contains',
            'StartsWith', 'EndsWith', 'Before', 'NotAfter',
            'After', 'NotBefore', 'Not', 'And', 'Or']
 
@@ -150,6 +150,19 @@ class Equals(object):
 
     def __call__(self, line):
         return line in self.patterns
+
+
+class Contains(object):
+    """A tee filter printing lines containing one of 'patterns'."""
+
+    def __init__(self, *patterns):
+        self.patterns = patterns
+
+    def __call__(self, line):
+        for pattern in self.patterns:
+            if pattern in line:
+                return True
+        return False
 
 
 class StartsWith(object):
