@@ -3,10 +3,10 @@ import unittest
 from jarn.mkrelease.process import Process
 from jarn.mkrelease.scm import SCMFactory
 
-from jarn.mkrelease.testing import quiet
-from jarn.mkrelease.testing import SubversionSetup
-from jarn.mkrelease.testing import MercurialSetup
-from jarn.mkrelease.testing import GitSetup
+from .testing import quiet
+from .testing import SubversionSetup
+from .testing import MercurialSetup
+from .testing import GitSetup
 
 
 class ScmFromUrlTests(unittest.TestCase):

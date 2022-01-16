@@ -2,7 +2,7 @@
 import unittest
 
 from jarn.mkrelease.mkrelease import main
-from jarn.mkrelease.testing import SubversionSetup
+from .testing import SubversionSetup
 
 
 class Tests(SubversionSetup):

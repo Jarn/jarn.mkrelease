@@ -2,8 +2,8 @@ import unittest
 
 from jarn.mkrelease.mkrelease import Defaults
 
-from jarn.mkrelease.testing import JailSetup
-from jarn.mkrelease.testing import quiet
+from .testing import JailSetup
+from .testing import quiet
 
 
 class DefaultsTests(JailSetup):

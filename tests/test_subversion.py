@@ -7,9 +7,9 @@ from jarn.mkrelease.scm import Subversion
 
 from jarn.mkrelease.process import Process
 
-from jarn.mkrelease.testing import SubversionSetup
-from jarn.mkrelease.testing import MockProcess
-from jarn.mkrelease.testing import quiet
+from .testing import SubversionSetup
+from .testing import MockProcess
+from .testing import quiet
 
 
 class ValidUrlTests(unittest.TestCase):

@@ -6,9 +6,9 @@ from os.path import exists
 from jarn.mkrelease.setup import cleanup_pycache
 from jarn.mkrelease.setup import walk_revctrl
 
-from jarn.mkrelease.testing import JailSetup
-from jarn.mkrelease.testing import GitSetup
-from jarn.mkrelease.testing import quiet
+from .testing import JailSetup
+from .testing import GitSetup
+from .testing import quiet
 
 
 class CleanupPyCacheTests(JailSetup):

@@ -53,7 +53,7 @@ class JailSetup(unittest.TestCase):
 class SandboxSetup(JailSetup):
     """Put an SCM sandbox into the jail."""
 
-    datadir = join(dirname(__file__), '..', '..', 'tests')
+    datadir = dirname(__file__)
 
     source = None
     packagedir = None
