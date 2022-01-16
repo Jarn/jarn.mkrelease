@@ -3,8 +3,8 @@ import os
 
 from jarn.mkrelease.process import Process
 
-from .testing import JailSetup
-from .testing import quiet
+from jarn.mkrelease.testing import JailSetup
+from jarn.mkrelease.testing import quiet
 
 
 class PopenTests(unittest.TestCase):

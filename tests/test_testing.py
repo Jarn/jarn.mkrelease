@@ -8,10 +8,10 @@ import shutil
 
 from os.path import join, realpath
 
-from .testing import JailSetup
-from .testing import MercurialSetup
-from .testing import MockProcess
-from .testing import quiet
+from jarn.mkrelease.testing import JailSetup
+from jarn.mkrelease.testing import MercurialSetup
+from jarn.mkrelease.testing import MockProcess
+from jarn.mkrelease.testing import quiet
 
 
 class JailSetupTestCase(JailSetup):

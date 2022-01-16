@@ -11,7 +11,7 @@ if sys.version_info[0] >= 3:
 else:
     from StringIO import StringIO
 
-from os.path import realpath, join, dirname, isdir
+from os.path import realpath, join, isdir
 from lazy import lazy
 
 from jarn.mkrelease.process import Process
@@ -53,7 +53,7 @@ class JailSetup(unittest.TestCase):
 class SandboxSetup(JailSetup):
     """Put an SCM sandbox into the jail."""
 
-    datadir = dirname(__file__)
+    datadir = realpath('tests')
 
     source = None
     packagedir = None

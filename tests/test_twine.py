@@ -6,9 +6,9 @@ from os.path import join, expanduser
 
 from jarn.mkrelease.twine import Twine
 
-from .testing import JailSetup
-from .testing import setenv, delenv
-from .testing import quiet
+from jarn.mkrelease.testing import JailSetup
+from jarn.mkrelease.testing import setenv, delenv
+from jarn.mkrelease.testing import quiet
 
 
 # Is twine importable?

@@ -11,9 +11,9 @@ from jarn.mkrelease.setuptools import Setuptools
 from jarn.mkrelease.process import Process
 from jarn.mkrelease.utils import decode
 
-from .testing import SubversionSetup
-from .testing import MercurialSetup
-from .testing import GitSetup
+from jarn.mkrelease.testing import SubversionSetup
+from jarn.mkrelease.testing import MercurialSetup
+from jarn.mkrelease.testing import GitSetup
 
 
 def contains(archive, name):

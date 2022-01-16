@@ -7,9 +7,9 @@ from jarn.mkrelease.scm import Git
 
 from jarn.mkrelease.process import Process
 
-from .testing import GitSetup
-from .testing import MockProcess
-from .testing import quiet
+from jarn.mkrelease.testing import GitSetup
+from jarn.mkrelease.testing import MockProcess
+from jarn.mkrelease.testing import quiet
 
 
 class ValidUrlTests(unittest.TestCase):

@@ -7,9 +7,9 @@ from jarn.mkrelease.scm import Mercurial
 
 from jarn.mkrelease.process import Process
 
-from .testing import MercurialSetup
-from .testing import MockProcess
-from .testing import quiet
+from jarn.mkrelease.testing import MercurialSetup
+from jarn.mkrelease.testing import MockProcess
+from jarn.mkrelease.testing import quiet
 
 
 class ValidUrlTests(unittest.TestCase):

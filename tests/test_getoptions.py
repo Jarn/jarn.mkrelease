@@ -2,8 +2,8 @@ import unittest
 
 from jarn.mkrelease.mkrelease import ReleaseMaker
 
-from .testing import JailSetup
-from .testing import quiet
+from jarn.mkrelease.testing import JailSetup
+from jarn.mkrelease.testing import quiet
 
 
 class serverinfo:

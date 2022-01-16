@@ -3,7 +3,7 @@ import sys
 
 from jarn.mkrelease.python import Python
 
-from .testing import quiet
+from jarn.mkrelease.testing import quiet
 
 
 class PythonTests(unittest.TestCase):

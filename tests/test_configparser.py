@@ -3,7 +3,7 @@ import unittest
 
 from jarn.mkrelease.configparser import ConfigParser
 
-from .testing import JailSetup
+from jarn.mkrelease.testing import JailSetup
 
 
 class ConfigParserTests(JailSetup):

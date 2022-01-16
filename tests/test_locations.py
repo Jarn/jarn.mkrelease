@@ -2,7 +2,7 @@ import unittest
 
 from jarn.mkrelease.mkrelease import Locations
 
-from .testing import quiet
+from jarn.mkrelease.testing import quiet
 
 
 class defaults:
