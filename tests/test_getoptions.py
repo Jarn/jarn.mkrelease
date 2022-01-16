@@ -450,7 +450,3 @@ dist-location = jarn.com:eggs
 
         self.assertEqual(rm.locations.locations, ['jarn.com:eggs'])
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

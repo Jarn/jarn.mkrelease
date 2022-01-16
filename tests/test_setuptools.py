@@ -362,7 +362,3 @@ testpackage.egg-info/top_level.txt""")
         st.run_dist(self.packagedir, [], 'sdist', ['--formats=zip'], ff='none')
         self.assertFalse(isfile(join(self.packagedir, 'setup.pyc')))
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

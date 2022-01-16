@@ -139,7 +139,3 @@ class WalkRevctrlTests(GitSetup):
         self.assertRaises(SystemExit, walk_revctrl, 'testpackage', ff='cvs')
         #self.assertEqual(walk_revctrl('testpackage', ff='cvs'), [])
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

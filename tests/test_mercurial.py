@@ -483,7 +483,3 @@ class GetVersionTests(unittest.TestCase):
         scm = Mercurial()
         self.assertNotEqual(scm.version_info, ())
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

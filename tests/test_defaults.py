@@ -118,7 +118,3 @@ dist-location = jarn.com:eggs
         defaults = Defaults('my.cfg')
         self.assertEqual(defaults.distdefault, ['jarn.com:eggs'])
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

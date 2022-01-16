@@ -102,7 +102,3 @@ class SystemTests(JailSetup):
         rc = process.system('$ "Hello world" 2> output')
         self.assertEqual(rc, 127)
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

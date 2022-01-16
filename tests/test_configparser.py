@@ -387,7 +387,3 @@ s_val = barney
             self.assertEqual(len(parser.warnings), 0)
             self.assertEqual(parser.getstring('section', 's_val'), 'barney')
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

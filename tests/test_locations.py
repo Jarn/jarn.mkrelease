@@ -158,7 +158,3 @@ class CheckLocationsTests(unittest.TestCase):
         self.assertRaises(SystemExit, locations.check_valid_locations, ['http://jarn.com'])
         self.assertRaises(SystemExit, locations.check_valid_locations, ['ssh://jarn.com'])
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

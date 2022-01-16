@@ -74,7 +74,3 @@ class ChdirStackTests(unittest.TestCase):
         self.dirstack.pop()
         self.assertEqual(len(self.dirstack), 0)
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

@@ -376,7 +376,3 @@ class AbspathTests(unittest.TestCase):
         self.assertEqual(urlparser.abspath('svn://jarn.com/public'),
                          'svn://jarn.com/public')
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

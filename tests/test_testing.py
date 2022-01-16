@@ -156,7 +156,3 @@ class QuietTests(unittest.TestCase):
         print('This should not show')
         print('This should not show either', file=sys.stderr)
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

@@ -21,7 +21,3 @@ class MakeReleaseTests(unittest.TestCase):
         from jarn.mkrelease.mkrelease import ReleaseMaker
         ReleaseMaker([])
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-

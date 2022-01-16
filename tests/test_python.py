@@ -39,7 +39,3 @@ class PythonTests(unittest.TestCase):
         python = Python(version_info=(2, 5, 0))
         self.assertRaises(SystemExit, python.check_valid_python)
 
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
-
