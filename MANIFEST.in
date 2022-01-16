@@ -1,2 +1,2 @@
 include LICENSE buildout.cfg tox.ini *.rst
-recursive-include jarn/mkrelease/tests *.py *.zip
+recursive-include tests *.py *.zip

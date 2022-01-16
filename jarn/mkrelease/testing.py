@@ -53,12 +53,14 @@ class JailSetup(unittest.TestCase):
 class SandboxSetup(JailSetup):
     """Put an SCM sandbox into the jail."""
 
+    datadir = join(dirname(__file__), '..', '..', 'tests')
+
     source = None
     packagedir = None
 
     def setUp(self):
         JailSetup.setUp(self)
-        package = join(dirname(__file__), 'tests', self.source)
+        package = join(self.datadir, self.source)
         archive = zipfile.ZipFile(package, 'r')
         archive.extractall()
         os.rename(self.source[:-4], 'testpackage')
@@ -142,7 +144,7 @@ class SubversionSetup(SCMSetup):
         # Fake a checkout, the real thing is too expensive
         process = Process(quiet=True)
         source = self._fake_source
-        package = join(dirname(__file__), 'tests', source)
+        package = join(self.datadir, source)
         archive = zipfile.ZipFile(package, 'r')
         archive.extractall()
         os.rename(source[:-4], 'testclone')
