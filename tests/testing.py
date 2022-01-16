@@ -238,6 +238,14 @@ class GitSetup(SCMSetup):
     name = 'git'
     source = 'testpackage.git.zip'
 
+    def setUp(self):
+        SCMSetup.setUp(self)
+        process = Process(quiet=True)
+        self.dirstack.push('testpackage')
+        process.system('git config user.name "Your Name"')
+        process.system('git config user.email "you@example.com"')
+        self.dirstack.pop()
+
     def clone(self):
         process = Process(quiet=True)
         process.system('git clone testpackage testclone')
@@ -249,6 +257,8 @@ class GitSetup(SCMSetup):
         # Make sure the clone is on master
         self.dirstack.push('testclone')
         process.system('git checkout master')
+        process.system('git config user.name "Your Name"')
+        process.system('git config user.email "you@example.com"')
         self.dirstack.pop()
 
     @chdir
