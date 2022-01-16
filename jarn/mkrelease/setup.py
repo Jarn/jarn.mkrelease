@@ -33,9 +33,9 @@ def walk_revctrl(dirname='', ff=''):
     file_finder = None
     items = []
 
-    if not ff:
-        distutils.log.error('No file-finder passed to walk_revctrl')
-        sys.exit(1)
+    #if not ff:
+    #    distutils.log.error('No file-finder passed to walk_revctrl')
+    #    sys.exit(1)
 
     for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
         if ff == ep.name:
@@ -49,10 +49,10 @@ def walk_revctrl(dirname='', ff=''):
             distutils.log.info('%d files found', len(finder_items))
             items.extend(finder_items)
 
-    if file_finder is None:
-        distutils.log.error('Failed to load %s file-finder; setuptools-%s extension missing?',
-            ff, 'subversion' if ff == 'svn' else ff)
-        sys.exit(1)
+    #if file_finder is None:
+    #    distutils.log.error('Failed to load %s file-finder; setuptools-%s extension missing?',
+    #        ff, 'subversion' if ff == 'svn' else ff)
+    #    sys.exit(1)
 
     # Returning a non-empty list prevents egg_info from reading the
     # existing SOURCES.txt
@@ -91,7 +91,7 @@ def run(args, ff=''):
     distutils.log.set_verbosity(1)
 
     import setuptools.command.egg_info
-    if ff == 'none':
+    if not ff or ff == 'none':
         setuptools.command.egg_info.walk_revctrl = no_walk_revctrl
     else:
         setuptools.command.egg_info.walk_revctrl = partial(walk_revctrl, ff=ff)

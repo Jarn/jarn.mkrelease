@@ -129,13 +129,15 @@ class WalkRevctrlTests(GitSetup):
         #self.assertRaises(SystemExit, walk_revctrl, 'testpackage', ff='svn')
         self.assertEqual(walk_revctrl('testpackage', ff='svn'), [''])
 
-    @quiet
     def test_walk_empty_scm(self):
-        self.assertRaises(SystemExit, walk_revctrl, 'testpackage', ff='')
-        #self.assertEqual(walk_revctrl('testpackage', ff=''), [])
+        #self.assertRaises(SystemExit, walk_revctrl, 'testpackage', ff='')
+        self.assertEqual(walk_revctrl('testpackage', ff=''), [''])
 
-    @quiet
     def test_walk_unknown_scm(self):
-        self.assertRaises(SystemExit, walk_revctrl, 'testpackage', ff='cvs')
-        #self.assertEqual(walk_revctrl('testpackage', ff='cvs'), [])
+        #self.assertRaises(SystemExit, walk_revctrl, 'testpackage', ff='cvs')
+        self.assertEqual(walk_revctrl('testpackage', ff='cvs'), [''])
+
+    def test_walk_none_scm(self):
+        #self.assertRaises(SystemExit, walk_revctrl, 'testpackage', ff=None)
+        self.assertEqual(walk_revctrl('testpackage', ff=None), [''])
 
