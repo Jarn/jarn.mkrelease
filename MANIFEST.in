@@ -1,3 +1,3 @@
-include LICENSE buildout.cfg tox.ini
+include LICENSE buildout.cfg nose2.cfg tox.ini
 include README.rst CHANGES.rst
 recursive-include tests *.py *.zip
