@@ -85,6 +85,11 @@ def cleanup_pycache():
 def run(args, ff=''):
     """Run setup.py with monkey patches applied.
     """
+    # Set log level INFO in setuptools >= 60.0.0 with local distutils
+    import setuptools
+    import distutils
+    distutils.log.set_verbosity(1)
+
     import setuptools.command.egg_info
     if ff == 'none':
         setuptools.command.egg_info.walk_revctrl = no_walk_revctrl
