@@ -7,33 +7,45 @@ Python package releaser
 
 **mkrelease** is a no-frills Python package releaser. It is designed to take
 the cumber out of building and distributing Python packages.
+The releaser supports source distributions, eggs, and `wheels`_.
 
-mkrelease supports source distributions, binary eggs, and `wheels`_.
-
-.. _`wheels`: https://wheel.readthedocs.io/
+.. _`wheels`: https://wheel.readthedocs.io/en/stable/
 
 Motivation
 ==========
 
-After preparing a package for release (update version strings, dates,
-etc.), we typically have to:
+After preparing a package for release (update version strings, dates) we
+typically have to:
 
 1. Commit modified files.
 
 2. Tag the release.
 
-3. Build a source distribution, egg, or wheel.
+3. Build a source distribution and wheel.
 
-4. Distribute the result via scp or upload it to an index server.
+4. Distribute the results via scp or upload them to an index server.
 
-Now imagine doing this a lot, and the need for automation becomes
-obvious.
+If we are doing this a lot, the need for automation becomes obvious.
+
+Contents
+========
+
+* Installation_
+* Usage_
+* Options_
+* Configuration_
+* `Upload with SCP`_
+* `Upload to Index Server`_
+* `Using GnuPG`_
+* Requirements_
+* Related_
+* Changelog_
 
 Installation
 ============
 
-mkrelease works with Python 2.7 - 3.7 and all released versions of setuptools
-and distribute.
+mkrelease works with Python 2.7 - 3.10 and all released versions of
+distribute and setuptools.
 
 Use ``pip install jarn.mkrelease`` to install the ``mkrelease`` script.
 
@@ -120,30 +132,13 @@ Options
     The URL of a remote SCM repository. The optional ``rev``
     argument specifies a branch or tag to check out.
 
-Examples
-========
-
-Release mypackage and upload it to PyPI::
-
-  $ mkrelease -d pypi src/mypackage
-
-Release mypackage using the repository URL instead of a local working copy::
-
-  $ mkrelease -d pypi git@github.com:Jarn/mypackage
-
-Release mypackage and upload it via scp to the jarn.com server::
-
-  $ mkrelease -d jarn.com:/var/dist/public src/mypackage
-
-Release a development egg of mypackage while suppressing setuptools output::
-
-  $ mkrelease -qed stefan@jarn.com:eggs src/mypackage
-
 Configuration
 =============
 
 mkrelease reads available index servers from the distutils_ configuration
-file ``~/.pypirc``. This file must contain your PyPI account information::
+file ``~/.pypirc``. This file must contain your PyPI account information:
+
+.. code:: cfg
 
   [distutils]
   index-servers =
@@ -154,8 +149,21 @@ file ``~/.pypirc``. This file must contain your PyPI account information::
   username = fred
   password = secret
 
-mkrelease also reads its own configuration file ``~/.mkrelease``.
-Here's an example::
+Next, mkrelease reads its own configuration file ``~/.mkrelease``. As of 2022,
+the file should contain at least:
+
+.. code:: cfg
+
+  [mkrelease]
+  push = yes
+  register = no
+  upload = no
+  formats = gztar wheel
+  manifest-only = yes
+
+A more complete example may look like:
+
+.. code:: cfg
 
   [mkrelease]
   # Release steps
@@ -163,22 +171,22 @@ Here's an example::
   tag = yes
   push = yes
   register = no
-  upload = yes
-
-  # Default dist-location
-  dist-location =
+  upload = no
 
   # One or more of: zip gztar egg wheel
-  formats = zip
+  formats = gztar wheel
+
+  # Setuptools options
+  manifest-only = yes
+  develop = no
+  quiet = no
 
   # Sign with GnuPG
   sign = no
   identity =
 
-  # Setuptools options
-  manifest-only = no
-  develop = no
-  quiet = no
+  # Default dist-location
+  dist-location =
 
   [aliases]
   # Map name to one or more dist-locations
@@ -190,93 +198,74 @@ Here's an example::
       pypi
       public
 
-The ``register``, ``sign``, and ``identity`` options may be overridden on a
-per-server basis by placing them in the respective server sections in
-``~/.pypirc``.
-
 .. _distutils: https://docs.python.org/3/distutils/packageindex.html#pypirc
 
 Upload with SCP
-================
+===============
 
 The simplest distribution location is a server directory shared through
 Apache. Releasing a package means scp-ing it to the appropriate place
 on the server::
 
-  $ mkrelease -d jarn.com:/var/dist/customerB src/mypackage
+  $ mkrelease -d customerA
+  $ mkrelease -d jarn.com:/var/dist/customerB
+  $ mkrelease -d scp://jarn.com/var/dist/customerC
+  $ mkrelease -d stefan@jarn.com:eggs -e -q
 
-To upload via sftp instead of scp, specify the destination in URL form::
+To upload via sftp instead of scp, use the ``sftp`` URL scheme::
 
-  $ mkrelease -d sftp://jarn.com/var/dist/customerB src/mypackage
-
-For consistency scp URLs are supported as well::
-
-  $ mkrelease -d scp://jarn.com/var/dist/customerB src/mypackage
+  $ mkrelease -d sftp://jarn.com/var/dist/customerD
 
 Note: Unlike scp, the sftp client does not prompt for login credentials.
 This means that non-interactive login must be configured on the
 destination server or the upload will fail.
 
-Upload to Index Servers
-==========================
+Upload to Index Server
+======================
 
-Another way of distributing Python packages is by uploading them to dedicated
-index servers, notably PyPI. Given the ``~/.pypirc`` file from above
-we can release to PyPI by typing::
+Another way of publishing a Python package is by uploading it to a dedicated
+index server like PyPI.
+Given the ``~/.pypirc`` and ``~/.mkrelease``
+files from above, we can release to PyPI by typing::
 
-  $ mkrelease -d pypi src/mypackage
+  $ mkrelease && twine upload dist/*
 
-Index servers are not limited to PyPI though.
+Index servers are not limited to PyPI.
 There is `test.pypi.org`_, and there are alternative index servers like
 `devpi`_.
+We extend our ``~/.pypirc``:
 
-.. _`test.pypi.org`: https://test.pypi.org/
-.. _`devpi`: https://www.devpi.net
-
-We extend our ``~/.pypirc`` to add an additional server::
+.. code:: cfg
 
   [distutils]
   index-servers =
       pypi
-      test
+      testpypi
 
   [pypi]
   repository = https://upload.pypi.org/legacy/
   username = fred
   password = secret
 
-  [test]
+  [testpypi]
   repository = https://test.pypi.org/legacy/
   username = fred
   password = secret
 
-This allows us to release to test.pypi.org by typing::
+We can now release to TestPyPI with::
 
-  $ mkrelease -CT -d test src/mypackage
+  $ mkrelease -ne && twine upload -r testpypi dist/*
 
-Note: Setuptools rebuilds the package for every index server it uploads it to.
-This means that SHA sums and GnuPG signatures will differ between servers.
-If this is not what you want, upload to only one server or use an upload tool
-like `twine`_::
-
-    $ mkrelease -RS -z -w src/mypackage
-    $ twine upload src/mypackage/dist/*
-
-.. _`twine`: https://twine.readthedocs.io
-
-Releasing a Tag
-===============
-
-Release mypackage from an existing tag::
-
-  $ mkrelease -T -d pypi git@github.com:Jarn/mypackage 1.0
+.. _`test.pypi.org`: https://test.pypi.org/
+.. _`devpi`: https://www.devpi.net
+.. _`twine`: https://twine.readthedocs.io/en/stable/
 
 Using GnuPG
 ===========
 
-Release mypackage and sign the archive with GnuPG::
+Release a package and sign the distributions with GnuPG::
 
-  $ mkrelease -s -i fred@bedrock.com -d pypi src/mypackage
+  $ mkrelease && twine upload -s -i fred@bedrock.com dist/*
 
 The ``-i`` flag is optional and GnuPG will pick your default
 key if not given.
@@ -299,20 +288,7 @@ what you plan to use):
 
 * gpg
 
-Keyring Support
-===============
-
-On Mac OS X, mkrelease installs the `keyring`_ module which provides access
-to the Mac OS X Keychain. To store your PyPI password in the Keychain type::
-
-  $ keyring set https://upload.pypi.org/legacy/ <pypi-username>
-
-Then delete the password line from ``~/.pypirc``.
-
-Note: `keyring`_ works on other platforms but because of C-language
-dependencies you have to install it yourself.
-
-.. _`keyring`: https://github.com/jaraco/keyring
+* twine
 
 Related
 =======
