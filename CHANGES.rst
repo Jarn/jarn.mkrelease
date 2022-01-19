@@ -4,6 +4,26 @@ Changelog
 4.4 - Unreleased
 ----------------
 
+- Support Python 2.7 - 3.10.
+  [stefan]
+
+- Support local distutils in setuptools >= 60.0.0.
+  [stefan]
+
+- Add output colors.
+  [stefan]
+
+- Clear the build directory before and after builds.
+  [stefan]
+
+- Move metadata to setup.cfg.
+  [stefan]
+
+- Move tests out of jarn.mkrelease.
+  [stefan]
+
+- Include tests in sdists but not in wheels.
+  [stefan]
 
 4.3 - 2019-01-28
 ----------------
