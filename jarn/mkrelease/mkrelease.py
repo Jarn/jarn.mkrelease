@@ -21,6 +21,7 @@ from itertools import chain
 
 from .python import Python
 from .setuptools import Setuptools
+from .twine import Twine
 from .scp import SCP
 from .scm import SCMFactory
 from .urlparser import URLParser
@@ -255,6 +256,7 @@ class ReleaseMaker(object):
         self.locations = Locations(self.defaults)
         self.python = Python()
         self.setuptools = Setuptools()
+        self.twine = Twine()
         self.scp = SCP()
         self.scms = SCMFactory()
         self.urlparser = URLParser()
@@ -558,16 +560,28 @@ class ReleaseMaker(object):
 
                 for location in self.locations:
                     if self.locations.is_server(location):
+                        distfiles = [distfile]
                         if not self.get_skipregister(location):
-                            self.setuptools.run_register(
-                                directory, infoflags, location, scmtype, self.quiet)
+                            self.twine.run_register(
+                                directory, distfiles, location, self.quiet)
                         if not self.get_skipupload():
                             uploadflags = self.get_uploadflags(location)
                             if '--sign' in uploadflags and isfile(distfile+'.asc'):
                                 os.remove(distfile+'.asc')
-                            self.setuptools.run_upload(
-                                directory, infoflags, distcmd, distflags, location, uploadflags,
-                                scmtype, self.quiet)
+                            self.twine.run_upload(
+                                directory, distfiles, location, uploadflags, self.quiet)
+
+                        #if not self.get_skipregister(location):
+                        #    self.setuptools.run_register(
+                        #        directory, infoflags, location, scmtype, self.quiet)
+                        #if not self.get_skipupload():
+                        #    uploadflags = self.get_uploadflags(location)
+                        #    if '--sign' in uploadflags and isfile(distfile+'.asc'):
+                        #        os.remove(distfile+'.asc')
+                        #    self.setuptools.run_upload(
+                        #        directory, infoflags, distcmd, distflags, location, uploadflags,
+                        #        scmtype, self.quiet)
+
                     else:
                         if not self.skipupload:
                             if self.locations.is_ssh_url(location):
