@@ -16,13 +16,16 @@ Changelog
 - Clear the build directory before and after builds.
   [stefan]
 
+- Require twine_ for register and upload operations.
+  [stefan]
+
 - Move metadata to setup.cfg.
   [stefan]
 
 - Move tests out of jarn.mkrelease.
   [stefan]
 
-- Include tests in sdists but not in wheels.
+- Include tests in sdist but not in wheel.
   [stefan]
 
 4.3 - 2019-01-28
