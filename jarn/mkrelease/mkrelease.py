@@ -552,38 +552,30 @@ class ReleaseMaker(object):
             if self.manifest:
                 scmtype = 'none'
 
+            distfiles = []
             for distcmd, distflags in self.distributions:
                 manifest = self.setuptools.run_egg_info(
                     directory, infoflags, scmtype, self.quiet)
                 distfile = self.setuptools.run_dist(
                     directory, infoflags, distcmd, distflags, scmtype, self.quiet)
+                distfiles.append(distfile)
 
-                for location in self.locations:
-                    if self.locations.is_server(location):
-                        distfiles = [distfile]
-                        if not self.get_skipregister(location):
-                            self.twine.run_register(
-                                directory, distfiles, location, self.quiet)
-                        if not self.get_skipupload():
-                            uploadflags = self.get_uploadflags(location)
-                            if '--sign' in uploadflags and isfile(distfile+'.asc'):
-                                os.remove(distfile+'.asc')
-                            self.twine.run_upload(
-                                directory, distfiles, location, uploadflags, self.quiet)
-
-                        #if not self.get_skipregister(location):
-                        #    self.setuptools.run_register(
-                        #        directory, infoflags, location, scmtype, self.quiet)
-                        #if not self.get_skipupload():
-                        #    uploadflags = self.get_uploadflags(location)
-                        #    if '--sign' in uploadflags and isfile(distfile+'.asc'):
-                        #        os.remove(distfile+'.asc')
-                        #    self.setuptools.run_upload(
-                        #        directory, infoflags, distcmd, distflags, location, uploadflags,
-                        #        scmtype, self.quiet)
-
-                    else:
-                        if not self.skipupload:
+            for location in self.locations:
+                if self.locations.is_server(location):
+                    if not self.get_skipregister(location):
+                        self.twine.run_register(
+                            directory, distfiles, location, self.quiet)
+                    if not self.get_skipupload():
+                        uploadflags = self.get_uploadflags(location)
+                        if '--sign' in uploadflags:
+                            for distfile in distfiles:
+                                if isfile(distfile+'.asc'):
+                                    os.remove(distfile+'.asc')
+                        self.twine.run_upload(
+                            directory, distfiles, location, uploadflags, self.quiet)
+                else:
+                    if not self.skipupload:
+                        for distfile in distfiles:
                             if self.locations.is_ssh_url(location):
                                 scheme, location = self.urlparser.to_ssh_url(location)
                                 self.scp.run_upload(scheme, distfile, location)
