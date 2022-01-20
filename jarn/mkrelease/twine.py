@@ -65,5 +65,8 @@ class Twine(object):
         print(cmd)
         return 0, []
 
-        return self.process.popen(cmd, echo=echo, echo2=echo2)
+        try:
+            return self.process.popen(cmd, echo=echo, echo2=echo2)
+        except KeyboardInterrupt:
+            return 1, []
 
