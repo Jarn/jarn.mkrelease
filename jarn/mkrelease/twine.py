@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import os
+
 from .process import Process
 from .chdir import chdir
 from .exit import err_exit
@@ -59,7 +61,8 @@ class Twine(object):
         err_exit('ERROR: upload failed')
 
     def _run_twine(self, args, echo=True, echo2=True):
-        cmd = 'twine %s' % ' '.join(args)
+        twine = os.environ.get('TWINE') or 'twine'
+        cmd = '%s %s' % (twine, ' '.join(args))
 
         # XXX
         print(cmd)
