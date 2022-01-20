@@ -560,6 +560,7 @@ class ReleaseMaker(object):
                     directory, infoflags, distcmd, distflags, scmtype, self.quiet)
                 distfiles.append(distfile)
 
+            firstserver = True
             for location in self.locations:
                 if self.locations.is_server(location):
                     if not self.get_skipregister(location):
@@ -568,9 +569,13 @@ class ReleaseMaker(object):
                     if not self.get_skipupload():
                         uploadflags = self.get_uploadflags(location)
                         if '--sign' in uploadflags:
-                            for distfile in distfiles:
-                                if isfile(distfile+'.asc'):
-                                    os.remove(distfile+'.asc')
+                            if firstserver:
+                                for distfile in distfiles:
+                                    try:
+                                        os.remove(distfile+'.asc')
+                                    except (IOError, OSError):
+                                        pass
+                                firstserver = False
                         self.twine.run_upload(
                             directory, distfiles, location, uploadflags, self.quiet)
                 else:
