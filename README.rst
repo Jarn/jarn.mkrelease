@@ -33,9 +33,10 @@ Contents
 * Installation_
 * Usage_
 * Options_
+* Arguments_
 * Configuration_
 * `Upload with SCP`_
-* `Upload to Index Server`_
+* `Upload to Index Servers`_
 * `Using GnuPG`_
 * Requirements_
 * Related_
@@ -52,7 +53,7 @@ Use ``pip install jarn.mkrelease`` to install the ``mkrelease`` script.
 Usage
 =====
 
-``mkrelease [options] [scm-sandbox | scm-url [rev]]``
+``mkrelease [options] [scm-sandbox|scm-url [rev]]``
 
 Options
 =======
@@ -124,6 +125,9 @@ Options
 ``-v, --version``
     Print the version string and exit.
 
+Arguments
+=========
+
 ``scm-sandbox``
     A local SCM sandbox. Defaults to the current working
     directory.
@@ -149,15 +153,14 @@ file ``~/.pypirc``. This file must contain your PyPI account information:
   username = fred
   password = secret
 
-Next, mkrelease reads its own configuration file ``~/.mkrelease``. As of 2022,
-the file should contain at least:
+Next, mkrelease reads its own configuration file ``~/.mkrelease``.
+The file should contain at least:
 
 .. code:: cfg
 
   [mkrelease]
   push = yes
   register = no
-  upload = no
   formats = gztar wheel
   manifest-only = yes
 
@@ -171,7 +174,7 @@ A more complete example may look like:
   tag = yes
   push = yes
   register = no
-  upload = no
+  upload = yes
 
   # One or more of: zip gztar egg wheel
   formats = gztar wheel
@@ -190,10 +193,10 @@ A more complete example may look like:
 
   [aliases]
   # Map name to one or more dist-locations
-  public =
-      jarn.com:/var/dist/public
   customerA =
       jarn.com:/var/dist/customerA
+  public =
+      jarn.com:/var/dist/public
   world =
       pypi
       public
@@ -203,8 +206,8 @@ A more complete example may look like:
 Upload with SCP
 ===============
 
-The simplest distribution location is a server directory shared through
-Apache. Releasing a package means scp-ing it to the appropriate place
+The simplest distribution location is a server directory reachable with ssh.
+Releasing a package means scp-ing it to the appropriate place
 on the server::
 
   $ mkrelease -d customerA
@@ -220,17 +223,17 @@ Note: Unlike scp, the sftp client does not prompt for login credentials.
 This means that non-interactive login must be configured on the
 destination server or the upload will fail.
 
-Upload to Index Server
-======================
+Upload to Index Servers
+=======================
 
 Another way of publishing a Python package is by uploading it to a dedicated
 index server like PyPI.
 Given the ``~/.pypirc`` and ``~/.mkrelease``
-files from above, we can release to PyPI by typing::
+files from above, we can release to PyPI simply by typing::
 
-  $ mkrelease && twine upload dist/*
+  $ mkrelease -d pypi
 
-Index servers are not limited to PyPI.
+Index servers are not limited to PyPI though.
 There is `test.pypi.org`_, and there are alternative index servers like
 `devpi`_.
 We extend our ``~/.pypirc``:
@@ -254,7 +257,7 @@ We extend our ``~/.pypirc``:
 
 We can now release to TestPyPI with::
 
-  $ mkrelease -ne && twine upload -r testpypi dist/*
+  $ mkrelease -d testpypi -C -e
 
 .. _`test.pypi.org`: https://test.pypi.org/
 .. _`devpi`: https://www.devpi.net
@@ -265,7 +268,7 @@ Using GnuPG
 
 Release a package and sign the distributions with GnuPG::
 
-  $ mkrelease && twine upload -s -i fred@bedrock.com dist/*
+  $ mkrelease -d pypi -s -i fred@bedrock.com
 
 The ``-i`` flag is optional and GnuPG will pick your default
 key if not given.
@@ -282,13 +285,13 @@ what you plan to use):
 
 * git
 
+* twine
+
 * scp
 
 * sftp
 
 * gpg
-
-* twine
 
 Related
 =======
