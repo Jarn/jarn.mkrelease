@@ -28,6 +28,13 @@ class Twine(object):
         echo2 = True
 
         serverflags = ['--repository="%(location)s"' % locals()]
+
+        # Prefer sdists
+        sdistfiles = [x for x in distfiles if x.endswith(('.zip', '.tar.gz'))]
+        if sdistfiles:
+            distfiles = sdistfiles[:1]
+        else:
+            distfiles = distfiles[:1]
         distfiles = [('"%s"' % x) for x in distfiles]
 
         rc, lines = self._run_twine(
