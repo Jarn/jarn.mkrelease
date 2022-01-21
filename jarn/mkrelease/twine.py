@@ -23,7 +23,7 @@ class Twine(object):
 
         echo = NotEmpty()
         if quiet:
-            echo = False
+            echo = And(echo, StartsWith('Registering'))
 
         echo2 = True
 
@@ -55,7 +55,7 @@ class Twine(object):
 
         echo = NotEmpty()
         if quiet:
-            echo = False
+            echo = And(echo, StartsWith('Uploading'))
 
         echo2 = True
 
