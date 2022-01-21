@@ -77,10 +77,6 @@ class Twine(object):
         twine = os.environ.get('TWINE') or 'twine'
         cmd = '%s %s' % (twine, ' '.join(args))
 
-        # XXX
-        print(cmd)
-        return 0, []
-
         try:
             return self.process.popen(cmd, echo=echo, echo2=echo2)
         except KeyboardInterrupt:
