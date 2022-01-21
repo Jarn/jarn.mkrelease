@@ -21,7 +21,10 @@ class Twine(object):
         if not self.process.quiet:
             print(bold('running twine_register'))
 
-        echo = not quiet
+        echo = NotEmpty()
+        if quiet:
+            echo = False
+
         echo2 = True
 
         serverflags = ['--repository="%(location)s"' % locals()]
@@ -43,7 +46,10 @@ class Twine(object):
         if not self.process.quiet:
             print(bold('running twine_upload'))
 
-        echo = not quiet
+        echo = NotEmpty()
+        if quiet:
+            echo = False
+
         echo2 = True
 
         serverflags = ['--repository="%(location)s"' % locals()]
