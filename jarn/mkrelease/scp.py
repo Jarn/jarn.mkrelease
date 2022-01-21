@@ -42,8 +42,6 @@ class SCP(object):
                 'scp "%(distfile)s" "%(location)s"' % locals(),
                 echo=False)
             if rc == 0:
-                if not self.process.quiet:
-                    print('OK')
                 return rc
         except KeyboardInterrupt:
             pass
@@ -69,8 +67,6 @@ class SCP(object):
                     'sftp -b "%(cmdfile)s" "%(location)s"' % locals(),
                     echo=False)
                 if rc == 0:
-                    if not self.process.quiet:
-                        print('OK')
                     return rc
             except KeyboardInterrupt:
                 pass

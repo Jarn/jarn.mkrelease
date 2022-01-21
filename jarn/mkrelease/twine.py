@@ -43,8 +43,6 @@ class Twine(object):
             echo2=echo2)
 
         if rc == 0:
-            if not self.process.quiet and quiet:
-                print('OK')
             return rc
         err_exit('ERROR: register failed')
 
@@ -68,8 +66,6 @@ class Twine(object):
             echo2=echo2)
 
         if rc == 0:
-            if not self.process.quiet and quiet:
-                print('OK')
             return rc
         err_exit('ERROR: upload failed')
 
