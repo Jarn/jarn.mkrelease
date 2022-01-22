@@ -580,12 +580,11 @@ class ReleaseMaker(object):
                             directory, distfiles, location, uploadflags, self.quiet)
                 else:
                     if not self.skipupload:
-                        for distfile in distfiles:
-                            if self.locations.is_ssh_url(location):
-                                scheme, location = self.urlparser.to_ssh_url(location)
-                                self.scp.run_upload(scheme, distfile, location)
-                            else:
-                                self.scp.run_upload('scp', distfile, location)
+                        if self.locations.is_ssh_url(location):
+                            scheme, location = self.urlparser.to_ssh_url(location)
+                            self.scp.run_upload(scheme, distfiles, location)
+                        else:
+                            self.scp.run_upload('scp', distfiles, location)
         finally:
             shutil.rmtree(tempdir)
 

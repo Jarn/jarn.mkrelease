@@ -20,22 +20,26 @@ class SCP(object):
     def __init__(self, process=None):
         self.process = process or Process()
 
-    def delay(self):
-        # Reduce output jerkiness
-        time.sleep(random.choice([0.3, 0.4]))
-
-    def run_upload(self, scheme, distfile, location):
+    def run_upload(self, scheme, distfiles, location):
+        distfiles = sorted(distfiles, key=len, reverse=True)
         if scheme == 'sftp':
-            return self.run_sftp(distfile, location)
+            if not self.process.quiet:
+                print(bold('running sftp_upload'))
+                print('Uploading distributions to %(location)s' % locals())
+            for distfile in distfiles:
+                self.run_sftp(distfile, location)
         else:
-            return self.run_scp(distfile, location)
+            if not self.process.quiet:
+                print(bold('running scp_upload'))
+                print('Uploading distributions to %(location)s' % locals())
+            for distfile in distfiles:
+                self.run_scp(distfile, location)
+        return 0
 
     def run_scp(self, distfile, location):
         if not self.process.quiet:
-            print(bold('running scp_upload'))
-            self.delay()
             name = basename(distfile)
-            print('Uploading dist/%(name)s to %(location)s' % locals())
+            print('Uploading %(name)s' % locals())
 
         try:
             rc, lines = self.process.popen(
@@ -49,10 +53,8 @@ class SCP(object):
 
     def run_sftp(self, distfile, location):
         if not self.process.quiet:
-            print(bold('running sftp_upload'))
-            self.delay()
             name = basename(distfile)
-            print('Uploading dist/%(name)s to %(location)s' % locals())
+            print('Uploading %(name)s' % locals())
 
         with tempfile.NamedTemporaryFile() as file:
             cmds = 'put "%(distfile)s"\nbye\n' % locals()
