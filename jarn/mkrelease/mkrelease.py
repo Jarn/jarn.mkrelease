@@ -112,6 +112,7 @@ class Defaults(object):
         self.manifest = parser.getboolean(main_section, 'manifest-only', False)
         self.develop = parser.getboolean(main_section, 'develop', False)
         self.quiet = parser.getboolean(main_section, 'quiet', False)
+        self.twine = parser.getstring(main_section, 'twine', '')
 
         for format in self.formats:
             if format not in ('zip', 'gztar', 'egg', 'wheel'):
@@ -256,7 +257,7 @@ class ReleaseMaker(object):
         self.locations = Locations(self.defaults)
         self.python = Python()
         self.setuptools = Setuptools()
-        self.twine = Twine()
+        self.twine = Twine(defaults=self.defaults)
         self.scp = SCP()
         self.scms = SCMFactory()
         self.urlparser = URLParser()
@@ -300,7 +301,7 @@ class ReleaseMaker(object):
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
                  'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
-                 'manifest-only', 'trace', 'egg', 'no-push'))
+                 'manifest-only', 'trace', 'egg', 'no-push', 'twine='))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
 
@@ -349,6 +350,8 @@ class ReleaseMaker(object):
                 self.formats.append('wheel')
             elif name in ('--trace',):          # undocumented
                 os.environ['JARN_TRACE'] = '1'
+            elif name in ('--twine',):
+                self.twine.twine = expanduser(value)
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(expanduser(value))
                 return self.parse_options(args, depth+1)
