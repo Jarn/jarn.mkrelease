@@ -5,9 +5,13 @@ import os
 from .tee import run
 from .exit import trace
 
+catch_keyboard_interrupts = True
+
 
 class Process(object):
     """Process related functions using the tee module."""
+
+    rc_keyboard_interrupt = 54321
 
     def __init__(self, quiet=False, env=None):
         self.quiet = quiet
@@ -18,7 +22,12 @@ class Process(object):
         trace(cmd)
         if self.quiet:
             echo = echo2 = False
-        return run(cmd, echo, echo2, shell=True, env=self.env)
+        try:
+            return run(cmd, echo, echo2, shell=True, env=self.env)
+        except KeyboardInterrupt:
+            if catch_keyboard_interrupts:
+                return self.rc_keyboard_interrupt, []
+            raise
 
     def pipe(self, cmd):
         rc, lines = self.popen(cmd, echo=False)
