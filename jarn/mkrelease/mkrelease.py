@@ -468,11 +468,6 @@ class ReleaseMaker(object):
         if not self.locations:
             self.locations.extend(self.locations.get_default_location())
 
-        if not (self.skipregister and self.skipupload):
-            if not (self.get_skipregister() and self.get_skipupload()):
-                self.locations.check_empty_locations()
-            self.locations.check_valid_locations()
-
         if len(args) > 1:
             if self.urlparser.is_url(self.directory):
                 self.branch = args[1]
@@ -483,6 +478,11 @@ class ReleaseMaker(object):
 
         if len(args) > 2:
             err_exit('mkrelease: Too many arguments\n%s' % USAGE)
+
+        if not (self.skipregister and self.skipupload):
+            if not (self.get_skipregister() and self.get_skipupload()):
+                self.locations.check_empty_locations()
+            self.locations.check_valid_locations()
 
     def get_package(self):
         """Get the URL or sandbox to release.
