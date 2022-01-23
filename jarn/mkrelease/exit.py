@@ -16,7 +16,11 @@ def msg_exit(msg, rc=0):
 def err_exit(msg, rc=1):
     """Print msg to stderr and exit with rc.
     """
-    print(red(msg), file=sys.stderr)
+    if '\033[' not in msg:
+        lines = msg.split('\n')
+        lines[0] = red(lines[0])
+        msg = '\n'.join(lines)
+    print(msg, file=sys.stderr)
     sys.exit(rc)
 
 
