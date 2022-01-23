@@ -28,17 +28,21 @@ def tee(process, filter):
     lines = []
 
     while True:
-        line = process.stdout.readline()
-        if line:
-            if sys.version_info[0] >= 3:
-                line = decode(line)
-            stripped_line = line.rstrip()
-            if filter(stripped_line):
-                sys.stdout.write(line)
-            lines.append(stripped_line)
-        elif process.poll() is not None:
-            process.stdout.close()
-            break
+        try:
+            line = process.stdout.readline()
+            if line:
+                if sys.version_info[0] >= 3:
+                    line = decode(line)
+                stripped_line = line.rstrip()
+                if filter(stripped_line):
+                    sys.stdout.write(line)
+                lines.append(stripped_line)
+            elif process.poll() is not None:
+                process.stdout.close()
+                break
+        except KeyboardInterrupt:
+            process.returncode = 1
+            raise
     return lines
 
 
