@@ -116,7 +116,7 @@ class Defaults(object):
 
         for format in self.formats:
             if format not in ('zip', 'gztar', 'egg', 'wheel'):
-                parser.warn('Unknown format: %(format)r' % locals())
+                warn("Ignoring unknown format '%(format)s'" % locals())
 
         self.aliases = {}
         for key, value in parser.items('aliases', []):
@@ -134,7 +134,7 @@ class Defaults(object):
 
         if os.environ.get('JARN_RUN') == '1':
             if parser.warnings:
-                err_exit('mkrelease: exiting')
+                err_exit('mkrelease: Bad configuration')
 
     def get_known_locations(self):
         """Return a set of known locations.
@@ -199,14 +199,14 @@ class Locations(object):
         if location in self.aliases:
             res = []
             if depth > MAXALIASDEPTH:
-                err_exit('Maximum alias depth exceeded: %(location)s' % locals())
+                err_exit('mkrelease: Maximum alias depth exceeded: %(location)s' % locals())
             for loc in self.aliases[location]:
                 res.extend(self.get_location(loc, depth+1))
             return res
         if self.is_server(location):
             return [location]
         if location == 'pypi':
-            err_exit('No configuration found for server: pypi\n'
+            err_exit('mkrelease: No configuration found for server: pypi\n'
                      'Please create a ~/.pypirc file')
         if self.urlparser.is_url(location):
             return [location]
@@ -228,7 +228,7 @@ class Locations(object):
         if locations is None:
             locations = self.locations
         if not locations:
-            err_exit('mkrelease: option -d is required\n%s' % USAGE)
+            err_exit('mkrelease: Option -d is required\n%s' % USAGE)
 
     def check_valid_locations(self, locations=None):
         """Fail if 'locations' contains bad destinations.
@@ -284,11 +284,11 @@ class ReleaseMaker(object):
         """Reset defaults.
         """
         if not exists(config_file):
-            err_exit('No such file: %(config_file)s' % locals())
+            err_exit('mkrelease: No such file: %(config_file)s' % locals())
         if not isfile(config_file):
-            err_exit('Not a file: %(config_file)s' % locals())
+            err_exit('mkrelease: Not a file: %(config_file)s' % locals())
         if not os.access(config_file, os.R_OK):
-            err_exit('File cannot be read: %(config_file)s' % locals())
+            err_exit('mkrelease: Cannot read %(config_file)s' % locals())
         self.set_defaults(config_file)
 
     def parse_options(self, args, depth=0):
@@ -303,7 +303,7 @@ class ReleaseMaker(object):
                  'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
                  'manifest-only', 'trace', 'egg', 'no-push', 'twine='))
         except getopt.GetoptError as e:
-            err_exit('mkrelease: %s\n%s' % (e.msg, USAGE))
+            err_exit('mkrelease: %s\n%s' % (e.msg.capitalize(), USAGE))
 
         for name, value in options:
             if name in ('-C', '--no-commit'):
@@ -366,7 +366,8 @@ class ReleaseMaker(object):
             if default not in known:
                 known.add(default)
         if not known:
-            err_exit('No locations', 0)
+            err_exit('mkrelease: No server configuration found\n'
+                     'Please create a ~/.pypirc file')
         for location in sorted(known):
             if location in self.defaults.distdefault:
                 print(location, '(default)')
@@ -476,10 +477,10 @@ class ReleaseMaker(object):
             elif self.urlparser.is_ssh_url(self.directory):
                 self.branch = args[1]
             else:
-                err_exit('mkrelease: invalid arguments\n%s' % USAGE)
+                err_exit('mkrelease: Invalid arguments\n%s' % USAGE)
 
         if len(args) > 2:
-            err_exit('mkrelease: too many arguments\n%s' % USAGE)
+            err_exit('mkrelease: Too many arguments\n%s' % USAGE)
 
     def get_package(self):
         """Get the URL or sandbox to release.

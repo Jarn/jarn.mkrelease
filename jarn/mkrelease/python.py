@@ -20,5 +20,5 @@ class Python(object):
 
     def check_valid_python(self):
         if not self.is_valid_python():
-            err_exit('Python >= 2.7 required')
+            err_exit('mkrelease: Python >= 2.7 required')
 

@@ -49,7 +49,7 @@ class SCP(object):
                 return rc
         except KeyboardInterrupt:
             pass
-        err_exit('ERROR: scp failed')
+        err_exit('ERROR: upload failed')
 
     def run_sftp(self, distfile, location):
         if not self.process.quiet:
@@ -72,5 +72,5 @@ class SCP(object):
                     return rc
             except KeyboardInterrupt:
                 pass
-            err_exit('ERROR: sftp failed')
+            err_exit('ERROR: upload failed')
 

@@ -62,7 +62,7 @@ class Setuptools(object):
 
     def check_valid_package(self, dir):
         if not self.is_valid_package(dir):
-            err_exit('No setup.py found in %(dir)s' % locals())
+            err_exit('mkrelease: No setup.py in %(dir)s' % locals())
 
     @chdir
     def get_package_info(self, dir, develop=False):
@@ -71,12 +71,18 @@ class Setuptools(object):
             '"%(python)s" setup.py --name --version' % locals(), echo=False)
         if rc == 0 and len(lines) == 2:
             name, version = lines
+            if name == 'UNKNOWN':
+                err_exit('mkrelease: Bad name metadata in %(dir)s' % locals())
+            if version == '0.0.0':
+                err_exit('mkrelease: Bad version metadata in %(dir)s' % locals())
             if develop:
                 parser = ConfigParser(warn)
                 parser.read('setup.cfg')
                 version += parser.get('egg_info', 'tag_build', '').strip()
             return name, pkg_resources.safe_version(version)
-        err_exit('Bad setup.py')
+        if rc == self.process.rc_keyboard_interrupt:
+            err_exit('ERROR: package_info failed')
+        err_exit('mkrelease: Bad setup.py in %(dir)s' % locals())
 
     @chdir
     def run_egg_info(self, dir, infoflags, ff='', quiet=False):
@@ -96,7 +102,7 @@ class Setuptools(object):
             filename = self._parse_egg_info_results(lines)
             if filename and isfile(filename):
                 return abspath(filename)
-        err_exit('egg_info failed')
+        err_exit('ERROR: egg_info failed')
 
     @chdir
     def run_dist(self, dir, infoflags, distcmd, distflags, ff='', quiet=False):
@@ -139,7 +145,7 @@ class Setuptools(object):
                 filename = self._parse_dist_results(lines)
             if filename and isfile(filename):
                 return abspath(filename)
-        err_exit('%(distcmd)s failed' % locals())
+        err_exit('ERROR: %(distcmd)s failed' % locals())
 
     @chdir
     def run_register(self, dir, infoflags, location, ff='', quiet=False):

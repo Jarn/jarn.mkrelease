@@ -13,7 +13,11 @@ from .process import Process
 from .urlparser import URLParser
 from .chdir import ChdirStack, chdir
 from .tee import NotEmpty
-from .exit import err_exit, warn
+from .exit import err_exit as _err_exit, warn
+
+
+def err_exit(msg, rc=1):
+    _err_exit('mkrelease: '+msg, rc)
 
 
 class SCM(object):
