@@ -239,7 +239,9 @@ class Locations(object):
             if (not self.is_server(location) and
                 not self.is_ssh_url(location) and
                 not self.has_host(location)):
-                err_exit('Unknown location: %(location)s' % locals())
+                err_exit("mkrelease: Unknown location: %(location)s\n"
+                         "Try 'mkrelease --list-locations' to list known servers "
+                         "and aliases" % locals())
 
 
 class ReleaseMaker(object):
