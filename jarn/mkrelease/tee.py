@@ -11,7 +11,7 @@ try:
 except NameError:
     from .utils import callable
 
-__all__ = ['run', 'On', 'Off', 'NotEmpty', 'Equals', 'Contains',
+__all__ = ['On', 'Off', 'NotEmpty', 'Equals', 'Contains',
            'StartsWith', 'EndsWith', 'Before', 'NotAfter',
            'After', 'NotBefore', 'Not', 'And', 'Or']
 
