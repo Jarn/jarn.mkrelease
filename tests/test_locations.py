@@ -157,4 +157,5 @@ class CheckLocationsTests(unittest.TestCase):
         self.assertRaises(SystemExit, locations.check_valid_locations, ['bar'])
         self.assertRaises(SystemExit, locations.check_valid_locations, ['http://jarn.com'])
         self.assertRaises(SystemExit, locations.check_valid_locations, ['ssh://jarn.com'])
+        self.assertRaises(SystemExit, locations.check_valid_locations, ['scp://'])
 

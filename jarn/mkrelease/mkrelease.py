@@ -173,9 +173,15 @@ class Locations(object):
         return location in self.servers
 
     def is_ssh_url(self, location):
-        """Return True if 'location' is an scp or sftp URL.
+        """Return True if 'location' is an scp:// or sftp:// URL.
         """
         return self.urlparser.get_scheme(location) in ('scp', 'sftp')
+
+    def is_valid_ssh_url(self, location):
+        """Return True if 'location' is a valid scp:// or sftp:// URL.
+        """
+        scheme = self.urlparser.get_scheme(location)
+        return scheme in ('scp', 'sftp') and len(location) > len(scheme)+3
 
     def has_host(self, location):
         """Return True if 'location' contains a host part.
@@ -237,7 +243,7 @@ class Locations(object):
             locations = self.locations
         for location in locations:
             if (not self.is_server(location) and
-                not self.is_ssh_url(location) and
+                not self.is_valid_ssh_url(location) and
                 not self.has_host(location)):
                 err_exit("mkrelease: Unknown location: %(location)s\n"
                          "Try 'mkrelease --list-locations' to list known servers "
