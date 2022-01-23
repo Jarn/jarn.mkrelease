@@ -1,6 +1,10 @@
 import sys
 
 
+def plain(string):
+    return '\033[0m'+string if sys.stdout.isatty() else string
+
+
 def bold(string):
     return '\033[0;1m'+string+'\033[0m' if sys.stdout.isatty() else string
 
