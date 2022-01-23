@@ -99,8 +99,5 @@ class Twine(object):
     def _run_twine(self, args, echo=True, echo2=True):
         cmd = '%s %s' % (self.twine, ' '.join(args))
 
-        try:
-            return self.process.popen(cmd, echo=echo, echo2=echo2)
-        except KeyboardInterrupt:
-            return 1, []
+        return self.process.popen(cmd, echo=echo, echo2=echo2)
 
