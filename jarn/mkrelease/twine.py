@@ -19,9 +19,9 @@ class Twine(object):
     def __init__(self, process=None, twine=None, defaults=None):
         self.process = process or Process()
         self.python = Python()
-        self.twine = self._get_executable(twine, defaults, self.python)
+        self.twine = self._get_executable(twine, defaults)
 
-    def _get_executable(self, twine, defaults, python):
+    def _get_executable(self, twine, defaults):
         # 1. Value of --twine command line option, or
         # 2. Value of TWINE environment variable, or
         # 3. Value of 'twine' configuration file setting, or
@@ -35,7 +35,7 @@ class Twine(object):
             return expanduser(defaults.twine)
         try:
             import twine
-            return '%(python)s -m twine' % locals()
+            return 'python -m twine'
         except ImportError:
             return 'twine'
 
@@ -97,7 +97,15 @@ class Twine(object):
         err_exit('ERROR: upload failed')
 
     def _run_twine(self, args, echo=True, echo2=True):
-        cmd = '%s %s' % (self.twine, ' '.join(args))
+        twine = self.twine
+        python = self.python
+
+        if twine == 'python -m twine':
+            twine = '"%(python)s" -m twine' % locals()
+        else:
+            twine = '"%(twine)s"' % locals()
+
+        cmd = '%s %s' % (twine, ' '.join(args))
 
         return self.process.popen(cmd, echo=echo, echo2=echo2)
 
