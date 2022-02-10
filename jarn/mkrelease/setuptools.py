@@ -122,9 +122,7 @@ class Setuptools(object):
             checkcmd = ['check']
 
         if isdir('build') and distcmd != 'sdist':
-            if not self.process.quiet and not quiet:
-                print('removing build')
-            rmtree('build', True)
+            self._cleanup_libdir('build', quiet=True)
 
         rc, lines = self._run_setup_py(
             ['egg_info'] + infoflags + checkcmd +
@@ -132,11 +130,6 @@ class Setuptools(object):
             echo=echo,
             echo2=echo2,
             ff=ff)
-
-        if isdir('build') and self._parse_creating(lines, 'build/'):
-            if not self.process.quiet and not quiet:
-                print('removing build')
-            rmtree('build', True)
 
         if rc == 0:
             if distflags == ['--formats="gztar"']:
@@ -280,10 +273,12 @@ class Setuptools(object):
                     return True
         return False
 
-    def _parse_creating(self, lines, prefix=''):
-        expect = 'creating %(prefix)s' % locals()
-        for line in lines:
-            if line.startswith(expect):
-                return line[9:]
-        return ''
+    def _cleanup_libdir(self, dir, quiet):
+        for file in os.listdir(dir):
+             if file.startswith(('lib.',)) or file in ('lib',):
+                path = join(dir, file)
+                if isdir(path):
+                    if not quiet:
+                        print('removing %(path)s' % locals())
+                    rmtree(path)
 

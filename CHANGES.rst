@@ -13,9 +13,6 @@ Changelog
 - Add output colors.
   [stefan]
 
-- Clear the build directory before and after builds.
-  [stefan]
-
 - Require twine_ for register and upload operations.
   [stefan]
 
