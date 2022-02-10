@@ -50,6 +50,10 @@ distribute and setuptools.
 
 Use ``pip install jarn.mkrelease`` to install the ``mkrelease`` script.
 
+Since 4.4 mkrelease requires twine_ for register and upload operations.
+Twine may be installed as a global utility on the system PATH or into
+the same environment as jarn.mkrelease (``pip install twine``). [1]_
+
 Usage
 =====
 
@@ -112,6 +116,9 @@ Options
 
 ``-q, --quiet``
     Suppress output of setuptools commands.
+
+``-t twine, --twine=twine``
+    Override the twine executable used.
 
 ``-c config-file, --config-file=config-file``
     Use config-file instead of the default ``~/.mkrelease``.
@@ -285,13 +292,21 @@ what you plan to use):
 
 * git
 
-* twine
-
 * scp
 
 * sftp
 
 * gpg
+
+* twine [1]_
+
+.. [1] The twine executable is determined by trying in order:
+
+    1. Value of ``--twine`` command line option, or
+    2. Value of ``TWINE`` environment variable, or
+    3. Value of ``twine`` configuration file setting, or
+    4. ``python -m twine`` if twine is importable, or
+    5. ``twine``
 
 Related
 =======

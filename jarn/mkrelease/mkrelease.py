@@ -69,6 +69,9 @@ Options:
   -e, --develop         Allow setuptools build tags. Implies -T.
   -q, --quiet           Suppress output of setuptools commands.
 
+  -t twine, --twine=twine
+                        Override the twine executable used.
+
   -c config-file, --config-file=config-file
                         Use config-file instead of the default ~/.mkrelease.
 
@@ -76,6 +79,7 @@ Options:
   -h, --help            Print this help message and exit.
   -v, --version         Print the version string and exit.
 
+Arguments:
   scm-sandbox           A local SCM sandbox. Defaults to the current working
                         directory.
   scm-url [rev]         The URL of a remote SCM repository. The optional rev
@@ -304,7 +308,7 @@ class ReleaseMaker(object):
         """
         try:
             options, remaining_args = getopt.gnu_getopt(args,
-                'CPRSTbc:d:eghi:lmnpqsvwz',
+                'CPRSTbc:d:eghi:lmnpqst:vwz',
                 ('no-commit', 'no-tag', 'no-register', 'no-upload', 'dry-run',
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
@@ -358,7 +362,7 @@ class ReleaseMaker(object):
                 self.formats.append('wheel')
             elif name in ('--trace',):          # undocumented
                 os.environ['JARN_TRACE'] = '1'
-            elif name in ('--twine',):
+            elif name in ('-t', '--twine',):
                 self.twine.twine = expanduser(value)
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(expanduser(value))
