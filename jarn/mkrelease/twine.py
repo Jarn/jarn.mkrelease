@@ -5,6 +5,9 @@ import os
 
 from os.path import expanduser
 
+import setuptools
+import distutils.spawn
+
 from .process import Process
 from .python import Python
 from .chdir import chdir
@@ -38,6 +41,17 @@ class Twine(object):
             return 'python -m twine'
         except ImportError:
             return 'twine'
+
+    def is_valid_twine(self):
+        if self.twine == 'python -m twine':
+            return True
+        if distutils.spawn.find_executable(self.twine):
+            return True
+        return False
+
+    def check_valid_twine(self):
+        if not self.is_valid_twine():
+            err_exit('mkrelease: Command not found: %s' % (self.twine,))
 
     @chdir
     def run_register(self, directory, distfiles, location, quiet=False):
