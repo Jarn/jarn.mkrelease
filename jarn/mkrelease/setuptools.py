@@ -1,7 +1,9 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import sys
 import os
+
 import setuptools # XXX
 import distutils.command
 import pkg_resources
@@ -39,21 +41,8 @@ class Setuptools(object):
     def get_env(self):
         # Make sure setuptools and its extensions are found if mkrelease
         # has been installed with zc.buildout
-        path = []
-        for name in ('jarn.mkrelease',
-                     'setuptools',
-                     'setuptools-hg',
-                     'setuptools-git',
-                     'setuptools-subversion',
-                     'wheel',
-                     'keyring'):
-            try:
-                dist = pkg_resources.get_distribution(name)
-            except pkg_resources.DistributionNotFound:
-                continue
-            path.append(dist.location)
         env = os.environ.copy()
-        env['PYTHONPATH'] = ':'.join(path)
+        env['PYTHONPATH'] = ':'.join(sys.path)
         env['HG_SETUPTOOLS_FORCE_CMD'] = '1'
         return env
 
