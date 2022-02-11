@@ -19,7 +19,7 @@ Changelog
 - Move metadata to setup.cfg.
   [stefan]
 
-- Move tests out of jarn.mkrelease.
+- Move tests out of ``jarn.mkrelease`` namespace.
   [stefan]
 
 - Include tests in sdist but not in wheel.
