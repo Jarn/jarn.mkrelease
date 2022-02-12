@@ -6,10 +6,6 @@ import threading
 from subprocess import Popen, PIPE
 from .utils import decode
 
-try:
-    callable
-except NameError:
-    from .utils import callable
 
 __all__ = ['On', 'Off', 'NotEmpty', 'Equals', 'Contains',
            'StartsWith', 'EndsWith', 'Before', 'NotAfter',
