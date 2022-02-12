@@ -1,2 +1,3 @@
-include LICENSE buildout.cfg tox.ini *.rst
+include LICENSE buildout.cfg tox.ini
+include README.rst CHANGES.rst
 recursive-include tests *.py *.zip
