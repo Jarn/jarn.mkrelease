@@ -342,3 +342,37 @@ def appendlines(filename, lines):
         for line in lines:
             file.write(line+'\n')
 
+
+class setenv(object):
+    """Context manager to set an environment variable."""
+
+    def __init__(self, name, val):
+        self._name = name
+        self._val = val
+        self._saved = None
+
+    def __enter__(self):
+        self._saved = os.environ.get(self._name, None)
+        os.environ[self._name] = self._val
+
+    def __exit__(self, *ignored):
+        if self._saved is not None:
+            os.environ[self._name] = self._saved
+
+
+class delenv(object):
+    """Context manager to delete an environment variable."""
+
+    def __init__(self, name):
+        self._name = name
+        self._saved = None
+
+    def __enter__(self):
+        self._saved = os.environ.get(self._name, None)
+        if self._saved is not None:
+            del os.environ[self._name]
+
+    def __exit__(self, *ignored):
+        if self._saved is not None:
+            os.environ[self._name] = self._saved
+
