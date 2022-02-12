@@ -77,6 +77,9 @@ Options
 ``-T, --no-tag``
     Do not tag the release in SCM.
 
+``-P, --no-push``
+    Do not push commits and tags upstream.
+
 ``-R, --no-register``
     Do not register the release with dist-location.
 
@@ -84,7 +87,7 @@ Options
     Do not upload the release to dist-location.
 
 ``-n, --dry-run``
-    Dry-run; equivalent to ``-CTRS``. This flag turns mkrelease into a
+    Dry-run; equivalent to ``-CTPRS``. This flag turns mkrelease into a
     simple package builder.
 
 ``--svn, --hg, --git``
@@ -113,9 +116,6 @@ Options
 
 ``-w, --wheel``
     Release a wheel file.
-
-``-p, --push``
-    Push sandbox modifications upstream.
 
 ``-m, --manifest-only``
     Ignore setuptools file finder extensions and collect files via

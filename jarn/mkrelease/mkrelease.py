@@ -42,9 +42,10 @@ Python package releaser
 Options:
   -C, --no-commit       Do not commit modified files from the sandbox.
   -T, --no-tag          Do not tag the release in SCM.
+  -P, --no-push         Do not push commits and tags upstream.
   -R, --no-register     Do not register the release with dist-location.
   -S, --no-upload       Do not upload the release to dist-location.
-  -n, --dry-run         Dry-run; equivalent to -CTRS.
+  -n, --dry-run         Dry-run; equivalent to -CTPRS.
 
   --svn, --hg, --git    Select the SCM type. Only required if the SCM type
                         cannot be guessed from the argument.
@@ -63,7 +64,6 @@ Options:
   -b, --binary          Release a binary egg.
   -w, --wheel           Release a wheel file.
 
-  -p, --push            Push sandbox modifications upstream.
   -m, --manifest-only   Ignore setuptools extensions and collect files via
                         MANIFEST.in only.
   -e, --develop         Allow setuptools build tags. Implies -T.
@@ -114,7 +114,7 @@ class Defaults(object):
         self.formats = parser.getlist(main_section, 'formats', [])
         self.sign = parser.getboolean(main_section, 'sign', False)
         self.identity = parser.getstring(main_section, 'identity', '')
-        self.push = parser.getboolean(main_section, 'push', False)
+        self.push = parser.getboolean(main_section, 'push', True)
         self.manifest = parser.getboolean(main_section, 'manifest-only', False)
         self.develop = parser.getboolean(main_section, 'develop', False)
         self.quiet = parser.getboolean(main_section, 'quiet', False)
@@ -332,9 +332,9 @@ class ReleaseMaker(object):
                 self.skipupload = True
             elif name in ('-n', '--dry-run'):
                 self.skipcommit = self.skiptag = self.skipregister = self.skipupload = True
-            elif name in ('-p', '--push'):
+            elif name in ('-p', '--push'):      # undocumented
                 self.push = True
-            elif name in ('-P', '--no-push'):   # undocumented
+            elif name in ('-P', '--no-push'):
                 self.push = False
             elif name in ('-q', '--quiet'):
                 self.quiet = True
