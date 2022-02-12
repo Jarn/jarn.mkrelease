@@ -109,7 +109,7 @@ class Defaults(object):
 
         self.commit = parser.getboolean(main_section, 'commit', True)
         self.tag = parser.getboolean(main_section, 'tag', True)
-        self.register = parser.getboolean(main_section, 'register', True)
+        self.register = parser.getboolean(main_section, 'register', False)
         self.upload = parser.getboolean(main_section, 'upload', True)
         self.formats = parser.getlist(main_section, 'formats', [])
         self.sign = parser.getboolean(main_section, 'sign', False)
