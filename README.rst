@@ -50,9 +50,11 @@ distribute and setuptools.
 
 Use ``pip install jarn.mkrelease`` to install the ``mkrelease`` script.
 
-Since 4.4 mkrelease requires twine_ for register and upload operations.
-Twine may be installed as a global utility on the system PATH or into
-the same environment as jarn.mkrelease (``pip install twine``). [1]_
+Since version 4.4 mkrelease requires twine_ for register and upload
+operations. Twine may be installed as a global utility on the system PATH or
+into the same environment as jarn.mkrelease. [1]_
+
+Use ``pip install jarn.mkrelease[twine]`` to install mkrelease + twine.
 
 Usage
 =====
