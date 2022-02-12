@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import sys
 import os
 
 from os.path import expanduser
@@ -41,6 +42,13 @@ class Twine(object):
             return 'python -m twine'
         except ImportError:
             return 'twine'
+
+    def get_env(self):
+        # Make sure twine and its dependencies are found if mkrelease
+        # has been installed with zc.buildout
+        env = os.environ.copy()
+        env['PYTHONPATH'] = ':'.join(sys.path)
+        return env
 
     def is_valid_twine(self):
         if self.twine == 'python -m twine':
@@ -116,6 +124,7 @@ class Twine(object):
 
         if twine == 'python -m twine':
             twine = '"%(python)s" -m twine' % locals()
+            self.process.env = self.get_env()
         else:
             twine = '"%(twine)s"' % locals()
 
