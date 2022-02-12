@@ -55,6 +55,12 @@ into the same environment as jarn.mkrelease. [1]_
 
 Use ``pip install jarn.mkrelease[twine]`` to install mkrelease + twine.
 
+Since version 5.0 file finder extensions are no longer installed by default.
+If you still want to use file finders specify the ``filefinder`` extra.
+
+Use ``pip install jarn.mkrelease[filefinder]`` to install mkrelease + file
+finder extensions.
+
 .. _twine: https://twine.readthedocs.io/en/stable/
 
 Usage

@@ -4,6 +4,8 @@ Changelog
 5.0 - Unreleased
 ----------------
 
+- File finder extensions are no longer installed by default.
+  [stefan]
 
 4.4 - Unreleased
 ----------------
