@@ -7,6 +7,9 @@ Changelog
 - File finder extensions are no longer installed by default.
   [stefan]
 
+- Switch to the nose2 test runner for its fast multiprocessing plugin.
+  [stefan]
+
 4.4 - Unreleased
 ----------------
 
