@@ -111,7 +111,7 @@ Options
     Push sandbox modifications upstream.
 
 ``-m, --manifest-only``
-    Ignore setuptools extensions and collect files via
+    Ignore setuptools file finder extensions and collect files via
     ``MANIFEST.in`` only.
 
 ``-e, --develop``
