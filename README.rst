@@ -77,7 +77,8 @@ Options
     Do not upload the release to dist-location.
 
 ``-n, --dry-run``
-    Dry-run; equivalent to ``-CTRS``.
+    Dry-run; equivalent to ``-CTRS``. With this flag mkrelease turns into a
+    simple package builder.
 
 ``--svn, --hg, --git``
     Select the SCM type. Only required if the SCM type
@@ -266,7 +267,7 @@ We extend our ``~/.pypirc``:
 
 We can now release to TestPyPI with::
 
-  $ mkrelease -d testpypi -C -e
+  $ mkrelease -d testpypi -CT -e
 
 .. _`test.pypi.org`: https://test.pypi.org/
 .. _`devpi`: https://www.devpi.net
