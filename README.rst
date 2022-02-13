@@ -174,17 +174,8 @@ file ``~/.pypirc``. This file should contain your PyPI account information: [2]_
   password = secret
 
 Next, mkrelease reads its own configuration file ``~/.mkrelease``.
-The file should contain at least:
-
-.. code:: ini
-
-  [mkrelease]
-  push = yes
-  register = no
-  formats = gztar wheel
-  manifest-only = yes
-
-A more complete example may look like:
+It may be used to change defaults and to define location
+aliases:
 
 .. code:: ini
 
@@ -252,8 +243,8 @@ Upload to Index Servers
 
 Another way of publishing a Python package is by uploading it to a dedicated
 index server like PyPI.
-Given the ``~/.pypirc`` and ``~/.mkrelease``
-files from above, we can release to PyPI simply by typing:
+Given the ``~/.pypirc``
+file from above, we can release to PyPI simply by typing:
 
 .. code::
 
