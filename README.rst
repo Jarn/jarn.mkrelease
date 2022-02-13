@@ -106,16 +106,16 @@ Options
     The GnuPG identity to sign with. Implies ``-s``.
 
 ``-z, --zip``
-    Release a zip archive (the default).
+    Release a zip archive.
 
 ``-g, --gztar``
-    Release a tar.gz archive.
+    Release a tar.gz archive (default).
 
 ``-b, --binary``
     Release a binary egg.
 
 ``-w, --wheel``
-    Release a wheel file.
+    Release a wheel file (default).
 
 ``-m, --manifest-only``
     Ignore setuptools file finder extensions and collect files via

@@ -59,10 +59,10 @@ Options:
   -i identity, --identity=identity
                         The GnuPG identity to sign with. Implies -s.
 
-  -z, --zip             Release a zip archive (default).
-  -g, --gztar           Release a tar.gz archive.
+  -z, --zip             Release a zip archive.
+  -g, --gztar           Release a tar.gz archive (default).
   -b, --binary          Release a binary egg.
-  -w, --wheel           Release a wheel file.
+  -w, --wheel           Release a wheel file (default).
 
   -m, --manifest-only   Ignore setuptools extensions and collect files via
                         MANIFEST.in only.
@@ -473,7 +473,8 @@ class ReleaseMaker(object):
                 self.distributions.append(('bdist_wheel', []))
 
         if not self.distributions:
-            self.distributions.append(('sdist', ['--formats="zip"']))
+            self.distributions.append(('sdist', ['--formats="gztar"']))
+            self.distributions.append(('bdist_wheel', []))
 
         if self.list:
             self.list_locations()
