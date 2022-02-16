@@ -28,7 +28,7 @@ class Setuptools(object):
     """Interface to setuptools."""
 
     def __init__(self, process=None):
-        self.process = process or Process()
+        self.process = process or Process(env=self.get_env())
         self.python = Python()
 
         self.infoflags = ['--tag-build=""', '--no-date']
@@ -56,7 +56,6 @@ class Setuptools(object):
     @chdir
     def get_package_info(self, dir, develop=False):
         python = self.python
-        self.process.env = self.get_env()
         rc, lines = self.process.popen(
             '"%(python)s" setup.py --name --version' % locals(), echo=False)
         if rc == 0 and len(lines) == 2:
@@ -207,7 +206,6 @@ class Setuptools(object):
         else:
             setup_py = 'setup.py %s' % ' '.join(args)
 
-        self.process.env = self.get_env()
         rc, lines = self.process.popen(
             '"%(python)s" %(filterwarnings)s %(setup_py)s' % locals(),
             echo=echo,
