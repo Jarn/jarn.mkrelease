@@ -47,10 +47,9 @@ class SCM(object):
         raise NotImplementedError
 
     def get_env(self):
-        if 'PYTHONPATH' not in os.environ:
-            return os.environ
         env = os.environ.copy()
-        del env['PYTHONPATH']
+        if 'PYTHONPATH' in env:
+            del env['PYTHONPATH']
         return env
 
     def is_valid_url(self, url):
