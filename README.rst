@@ -78,7 +78,7 @@ Options
     Do not upload the release to dist-location.
 
 ``-n, --dry-run``
-    Dry-run; equivalent to ``-CTRS``. With this flag mkrelease turns into a
+    Dry-run; equivalent to ``-CTRS``. This flag turns mkrelease into a
     simple package builder.
 
 ``--svn, --hg, --git``
