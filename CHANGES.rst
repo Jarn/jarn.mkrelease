@@ -4,7 +4,16 @@ Changelog
 5.0 - Unreleased
 ----------------
 
-- File finder extensions are no longer installed by default.
+- NEW: File finder extensions are no longer installed by default.
+  [stefan]
+
+- NEW: push is now on by default
+  [stefan]
+
+- NEW: register is now off by default
+  [stefan]
+
+- NEW: formats now default to gztar + wheel
   [stefan]
 
 - Switch to the nose2 test runner for its fast multiprocessing plugin.
