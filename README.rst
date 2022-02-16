@@ -7,9 +7,7 @@ Python package releaser
 
 **mkrelease** is a no-frills Python package releaser. It is designed to take
 the cumber out of building and distributing Python packages.
-The releaser supports source distributions, eggs, and `wheels`_.
-
-.. _`wheels`: https://wheel.readthedocs.io/en/stable/
+The releaser supports source distributions, eggs, and wheels.
 
 Motivation
 ==========
@@ -39,6 +37,7 @@ Contents
 * `Upload to Index Servers`_
 * `Using GnuPG`_
 * Requirements_
+* Footnotes_
 * Related_
 * Changelog_
 
@@ -46,7 +45,7 @@ Installation
 ============
 
 mkrelease works with Python 2.7 - 3.10 and all released versions of
-distribute and setuptools.
+setuptools.
 
 Use ``pip install jarn.mkrelease`` to install the ``mkrelease`` script.
 
@@ -55,6 +54,8 @@ operations. Twine may be installed as a global utility on the system PATH or
 into the same environment as jarn.mkrelease. [1]_
 
 Use ``pip install jarn.mkrelease[twine]`` to install mkrelease + twine.
+
+.. _twine: https://twine.readthedocs.io/en/stable/
 
 Usage
 =====
@@ -150,9 +151,9 @@ Configuration
 =============
 
 mkrelease reads available index servers from the distutils_ configuration
-file ``~/.pypirc``. This file must contain your PyPI account information:
+file ``~/.pypirc``. This file should contain your PyPI account information: [2]_
 
-.. code:: cfg
+.. code:: ini
 
   [distutils]
   index-servers =
@@ -166,7 +167,7 @@ file ``~/.pypirc``. This file must contain your PyPI account information:
 Next, mkrelease reads its own configuration file ``~/.mkrelease``.
 The file should contain at least:
 
-.. code:: cfg
+.. code:: ini
 
   [mkrelease]
   push = yes
@@ -176,7 +177,7 @@ The file should contain at least:
 
 A more complete example may look like:
 
-.. code:: cfg
+.. code:: ini
 
   [mkrelease]
   # Release steps
@@ -211,21 +212,25 @@ A more complete example may look like:
       pypi
       public
 
-.. _distutils: https://docs.python.org/3/distutils/packageindex.html#pypirc
+.. _distutils: https://packaging.python.org/en/latest/specifications/pypirc/
 
 Upload with SCP
 ===============
 
-The simplest distribution location is a server directory reachable with ssh.
+The simplest distribution location is a server directory reachable by ssh.
 Releasing a package means scp-ing it to the appropriate place
-on the server::
+on the server:
+
+.. code::
 
   $ mkrelease -d customerA
   $ mkrelease -d jarn.com:/var/dist/customerB
   $ mkrelease -d scp://jarn.com/var/dist/customerC
   $ mkrelease -d stefan@jarn.com:eggs -e -q
 
-To upload via sftp instead of scp, use the ``sftp`` URL scheme::
+To upload via sftp instead of scp, use the ``sftp`` URL scheme:
+
+.. code::
 
   $ mkrelease -d sftp://jarn.com/var/dist/customerD
 
@@ -239,16 +244,18 @@ Upload to Index Servers
 Another way of publishing a Python package is by uploading it to a dedicated
 index server like PyPI.
 Given the ``~/.pypirc`` and ``~/.mkrelease``
-files from above, we can release to PyPI simply by typing::
+files from above, we can release to PyPI simply by typing:
+
+.. code::
 
   $ mkrelease -d pypi
 
 Index servers are not limited to PyPI though.
 There is `test.pypi.org`_, and there are alternative index servers like
-`devpi`_.
-We extend our ``~/.pypirc``:
+devpi_.
+We extend our ``~/.pypirc``: [2]_
 
-.. code:: cfg
+.. code:: ini
 
   [distutils]
   index-servers =
@@ -265,18 +272,21 @@ We extend our ``~/.pypirc``:
   username = fred
   password = secret
 
-We can now release to TestPyPI with::
+We can now release to TestPyPI with:
 
-  $ mkrelease -d testpypi -CT -e
+.. code::
+
+  $ mkrelease -d testpypi -C -e
 
 .. _`test.pypi.org`: https://test.pypi.org/
-.. _`devpi`: https://www.devpi.net
-.. _`twine`: https://twine.readthedocs.io/en/stable/
+.. _devpi: https://www.devpi.net
 
 Using GnuPG
 ===========
 
-Release a package and sign the distributions with GnuPG::
+Release a package and sign the distributions with GnuPG:
+
+.. code::
 
   $ mkrelease -d pypi -s -i fred@bedrock.com
 
@@ -303,6 +313,9 @@ what you plan to use):
 
 * twine [1]_
 
+Footnotes
+=========
+
 .. [1] The twine executable is determined by trying in order:
 
     1. Value of ``--twine`` command line option, or
@@ -310,6 +323,14 @@ what you plan to use):
     3. Value of ``twine`` configuration file setting, or
     4. ``python -m twine`` if twine is importable, or
     5. ``twine``
+
+.. [2] There are more secure ways to handle login credentials:
+
+    1. Generate an `API token`_ on PyPI, and/or
+    2. Make use of twine's `keyring support`_.
+
+.. _`API token`: https://pypi.org/help/#apitoken
+.. _`keyring support`: https://twine.readthedocs.io/en/stable/index.html#keyring-support
 
 Related
 =======
