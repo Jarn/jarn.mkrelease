@@ -363,7 +363,7 @@ class ReleaseMaker(object):
             elif name in ('--trace',):          # undocumented
                 os.environ['JARN_TRACE'] = '1'
             elif name in ('-t', '--twine',):
-                self.twine.twine = expanduser(value)
+                self.twine = Twine(twine=value)
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(expanduser(value))
                 return self.parse_options(args, depth+1)

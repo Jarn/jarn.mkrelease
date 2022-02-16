@@ -6,7 +6,7 @@ import os
 
 from os.path import expanduser
 
-import setuptools
+import setuptools # XXX
 import distutils.spawn
 
 from .process import Process
@@ -21,9 +21,9 @@ class Twine(object):
     """Interface to twine."""
 
     def __init__(self, process=None, twine=None, defaults=None):
-        self.process = process or Process()
         self.python = Python()
         self.twine = self._get_executable(twine, defaults)
+        self.process = process or Process(env=self.get_env())
 
     def _get_executable(self, twine, defaults):
         # 1. Value of --twine command line option, or
@@ -47,7 +47,10 @@ class Twine(object):
         # Make sure twine and its dependencies are found if mkrelease
         # has been installed with zc.buildout
         env = os.environ.copy()
-        env['PYTHONPATH'] = ':'.join(sys.path)
+        if self.twine == 'python -m twine':
+            env['PYTHONPATH'] = ':'.join(sys.path)
+        elif 'PYTHONPATH' in env:
+            del env['PYTHONPATH']
         return env
 
     def is_valid_twine(self):
@@ -124,7 +127,6 @@ class Twine(object):
 
         if twine == 'python -m twine':
             twine = '"%(python)s" -m twine' % locals()
-            self.process.env = self.get_env()
         else:
             twine = '"%(twine)s"' % locals()
 
