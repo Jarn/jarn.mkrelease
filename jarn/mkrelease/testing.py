@@ -119,21 +119,11 @@ class SubversionSetup(SCMSetup):
 
     @lazy
     def source(self):
-        if self.scm.version_info[:2] >= (1, 8):
-            return 'testrepo.svn18.zip'
-        elif self.scm.version_info[:2] >= (1, 7):
-            return 'testrepo.svn17.zip'
-        else:
-            return 'testrepo.svn16.zip'
+        return 'testrepo.svn18.zip'
 
     @lazy
     def _fake_source(self):
-        if self.scm.version_info[:2] >= (1, 8):
-            return 'testpackage.svn18.zip'
-        elif self.scm.version_info[:2] >= (1, 7):
-            return 'testpackage.svn17.zip'
-        else:
-            return 'testpackage.svn16.zip'
+        return 'testpackage.svn18.zip'
 
     def clone(self):
         process = Process(quiet=True)
@@ -149,10 +139,7 @@ class SubversionSetup(SCMSetup):
         archive.extractall()
         os.rename(source[:-4], 'testclone')
         self.dirstack.push('testclone')
-        if self.scm.version_info[:2] >= (1, 7):
-            url = process.popen('svn info')[1][2][5:]
-        else:
-            url = process.popen('svn info')[1][1][5:]
+        url = process.popen('svn info')[1][2][5:]
         process.system('svn switch --relocate %s file://%s/trunk' % (url, self.packagedir))
         self.dirstack.pop()
         self.clonedir = join(self.tempdir, 'testclone')
@@ -171,10 +158,7 @@ class SubversionSetup(SCMSetup):
     @chdir
     def modifyprop(self, dir):
         process = Process(quiet=True)
-        if self.scm.version_info[:2] >= (1, 8):
-            process.system('svn propset format "text/x-python" setup.py')
-        else:
-            process.system('svn propset svn:format "text/x-python" setup.py')
+        process.system('svn propset format "text/x-python" setup.py')
 
     @chdir
     def remove(self, dir):
