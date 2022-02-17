@@ -13,9 +13,10 @@ class Process(object):
 
     rc_keyboard_interrupt = 54321
 
-    def __init__(self, quiet=False, env=None):
+    def __init__(self, quiet=False, env=None, runner=run):
         self.quiet = quiet
         self.env = env
+        self.runner = runner
 
     def popen(self, cmd, echo=True, echo2=True):
         # env *replaces* os.environ
@@ -23,7 +24,7 @@ class Process(object):
         if self.quiet:
             echo = echo2 = False
         try:
-            return run(cmd, echo, echo2, shell=True, env=self.env)
+            return self.runner(cmd, echo, echo2, shell=True, env=self.env)
         except KeyboardInterrupt:
             if catch_keyboard_interrupts:
                 return self.rc_keyboard_interrupt, []
