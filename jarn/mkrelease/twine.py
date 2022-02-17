@@ -14,6 +14,7 @@ from .python import Python
 from .chdir import chdir
 from .exit import err_exit
 from .tee import *
+from .tee import system
 from .colors import bold
 
 
@@ -23,7 +24,7 @@ class Twine(object):
     def __init__(self, process=None, twine=None, defaults=None):
         self.python = Python()
         self.twine = self._get_executable(twine, defaults)
-        self.process = process or Process(env=self.get_env())
+        self.process = process or Process(env=self.get_env(), runner=system)
 
     def _get_executable(self, twine, defaults):
         # 1. Value of --twine command line option, or
@@ -129,6 +130,8 @@ class Twine(object):
             twine = '"%(python)s" -m twine' % locals()
         else:
             twine = '"%(twine)s"' % locals()
+
+        args = ['--no-color'] + args
 
         cmd = '%s %s' % (twine, ' '.join(args))
 
