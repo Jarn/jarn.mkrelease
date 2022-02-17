@@ -30,7 +30,7 @@ class GetOptionsTests(JailSetup):
         self.assertEqual(rm.skipregister, False)
         self.assertEqual(rm.skipupload, False)
         self.assertEqual(rm.sign, False)
-        self.assertEqual(rm.push, False)
+        self.assertEqual(rm.push, True)
         self.assertEqual(rm.develop, False)
         self.assertEqual(rm.quiet, False)
         self.assertEqual(rm.identity, '')
@@ -49,7 +49,7 @@ class GetOptionsTests(JailSetup):
         self.assertEqual(rm.skipregister, True)
         self.assertEqual(rm.skipupload, True)
         self.assertEqual(rm.sign, False)
-        self.assertEqual(rm.push, False)
+        self.assertEqual(rm.push, True)
         self.assertEqual(rm.develop, False)
         self.assertEqual(rm.quiet, False)
         self.assertEqual(rm.identity, '')
@@ -241,7 +241,7 @@ formats =
 
         self.assertEqual(rm.formats, [])
         # Fall back to zip
-        self.assertEqual(rm.distributions, [('sdist', ['--formats="zip"'])])
+        self.assertEqual(rm.distributions, [('sdist', ['--formats="gztar"']), ('bdist_wheel', [])])
 
     @quiet
     def test_bad_formats_from_config(self):
@@ -254,7 +254,7 @@ formats = rpm
 
         self.assertEqual(rm.formats, ['rpm'])
         # Fall back to zip
-        self.assertEqual(rm.distributions, [('sdist', ['--formats="zip"'])])
+        self.assertEqual(rm.distributions, [('sdist', ['--formats="gztar"']), ('bdist_wheel', [])])
 
     def test_develop(self):
         self.mkfile('my.cfg', """\

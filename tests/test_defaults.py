@@ -17,11 +17,11 @@ class DefaultsTests(JailSetup):
         self.assertEqual(defaults.distdefault, [])
         self.assertEqual(defaults.commit, True)
         self.assertEqual(defaults.tag, True)
-        self.assertEqual(defaults.register, True)
+        self.assertEqual(defaults.register, False)
         self.assertEqual(defaults.upload, True)
         self.assertEqual(defaults.sign, False)
         self.assertEqual(defaults.manifest, False)
-        self.assertEqual(defaults.push, False)
+        self.assertEqual(defaults.push, True)
         self.assertEqual(defaults.develop, False)
         self.assertEqual(defaults.quiet, False)
         self.assertEqual(defaults.identity, '')
@@ -53,11 +53,11 @@ formats =
         self.assertEqual(defaults.distdefault, [])
         self.assertEqual(defaults.commit, True)
         self.assertEqual(defaults.tag, True)
-        self.assertEqual(defaults.register, True)
+        self.assertEqual(defaults.register, False)
         self.assertEqual(defaults.upload, True)
         self.assertEqual(defaults.sign, False)
         self.assertEqual(defaults.manifest, False)
-        self.assertEqual(defaults.push, False)
+        self.assertEqual(defaults.push, True)
         self.assertEqual(defaults.develop, False)
         self.assertEqual(defaults.quiet, False)
         self.assertEqual(defaults.identity, '')
@@ -72,12 +72,12 @@ distbase = bedrock.com:
 distdefault = public
 commit = false
 tag = 0
-register = no
+register = yes
 upload = off
 sign = true
-push = 1
+push = 0
 manifest-only = yes
-develop = yes
+develop = 1
 quiet = on
 identity = fred@bedrock.com
 formats = zip wheel
@@ -89,11 +89,11 @@ public = bedrock.com:eggs
         self.assertEqual(defaults.distdefault, ['public'])
         self.assertEqual(defaults.commit, False)
         self.assertEqual(defaults.tag, False)
-        self.assertEqual(defaults.register, False)
+        self.assertEqual(defaults.register, True)
         self.assertEqual(defaults.upload, False)
         self.assertEqual(defaults.sign, True)
         self.assertEqual(defaults.manifest, True)
-        self.assertEqual(defaults.push, True)
+        self.assertEqual(defaults.push, False)
         self.assertEqual(defaults.develop, True)
         self.assertEqual(defaults.quiet, True)
         self.assertEqual(defaults.identity, 'fred@bedrock.com')
