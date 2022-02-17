@@ -136,6 +136,10 @@ class Defaults(object):
         for server in parser.getlist('distutils', 'index-servers', []):
             self.servers[server] = ServerInfo(server)
 
+        # pypi always works
+        if 'pypi' not in self.servers:
+            self.servers['pypi'] = ServerInfo('pypi')
+
         if os.environ.get('JARN_RUN') == '1':
             if parser.warnings:
                 err_exit('mkrelease: Bad configuration')
@@ -216,7 +220,9 @@ class Locations(object):
         if self.is_server(location):
             return [location]
         if location == 'pypi':
-            err_exit('mkrelease: No configuration found for server: pypi\n'
+            return [location]
+        if location == 'testpypi':
+            err_exit('mkrelease: No configuration found for server: testpypi\n'
                      'Please create a ~/.pypirc file')
         if self.urlparser.is_url(location):
             return [location]

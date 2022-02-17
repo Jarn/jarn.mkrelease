@@ -118,3 +118,10 @@ dist-location = jarn.com:eggs
         defaults = Defaults('my.cfg')
         self.assertEqual(defaults.distdefault, ['jarn.com:eggs'])
 
+    def test_pypi_is_server(self):
+        self.mkfile('my.cfg', """
+[mkrelease]
+""")
+        defaults = Defaults('my.cfg')
+        self.assertTrue('pypi' in defaults.servers)
+

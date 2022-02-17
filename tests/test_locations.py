@@ -80,10 +80,14 @@ class GetLocationTests(unittest.TestCase):
         locations = Locations(defaults(distbase='jarn.com:eggs', servers={'pypi': None}))
         self.assertEqual(locations.get_location('pypi'), ['pypi'])
 
-    @quiet
-    def test_no_pypi_config(self):
+    def test_pypi_is_server(self):
         locations = Locations(defaults(distbase='jarn.com:eggs'))
-        self.assertRaises(SystemExit, locations.get_location, 'pypi')
+        self.assertEqual(locations.get_location('pypi'), ['pypi'])
+
+    @quiet
+    def test_no_testpypi_config(self):
+        locations = Locations(defaults(distbase='jarn.com:eggs'))
+        self.assertRaises(SystemExit, locations.get_location, 'testpypi')
 
     def test_alias(self):
         locations = Locations(defaults(aliases={'foo': ['bar']}))
