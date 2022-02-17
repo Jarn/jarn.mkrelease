@@ -112,6 +112,30 @@ def run(args, echo=True, echo2=True, shell=False, cwd=None, env=None):
     return process.returncode, lines
 
 
+def system(args, echo=True, echo2=True, shell=False, cwd=None, env=None):
+    """Run 'args' and return a two-tuple of exit code and empty list.
+
+    Does not capture stdout and stderr.
+    'echo' and 'echo2' have no effect.
+
+    If 'shell' is True, args are executed via the shell.
+    The 'cwd' argument causes the child process to be executed in cwd.
+    The 'env' argument allows to pass a dict replacing os.environ.
+    """
+    process = Popen(
+        args,
+        stdout=None,
+        stderr=None,
+        shell=shell,
+        cwd=cwd,
+        env=env
+    )
+
+    process.communicate()
+
+    return process.returncode, []
+
+
 class On(object):
     """A tee filter printing all lines."""
 
