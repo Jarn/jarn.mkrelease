@@ -79,6 +79,8 @@ Options:
   -h, --help            Print this help message and exit.
   -v, --version         Print the version string and exit.
 
+  --no-color            Disable output colors.
+
 Arguments:
   scm-sandbox           A local SCM sandbox. Defaults to the current working
                         directory.
@@ -263,7 +265,6 @@ class ReleaseMaker(object):
         """Initialize.
         """
         self.args = args
-        self.set_defaults(expanduser('~/.mkrelease'))
 
     def set_defaults(self, config_file):
         """Set defaults.
@@ -316,7 +317,7 @@ class ReleaseMaker(object):
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
                  'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
-                 'manifest-only', 'trace', 'egg', 'no-push', 'twine='))
+                 'manifest-only', 'trace', 'egg', 'no-push', 'twine=', 'no-color'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg.capitalize(), USAGE))
 
@@ -365,6 +366,8 @@ class ReleaseMaker(object):
                 self.formats.append('wheel')
             elif name in ('--trace',):          # undocumented
                 os.environ['JARN_TRACE'] = '1'
+            elif name in ('--no-color',):
+                os.environ['JARN_NO_COLOR'] = '1'
             elif name in ('-t', '--twine',):
                 self.twine = Twine(twine=value)
             elif name in ('-c', '--config-file') and depth == 0:
@@ -604,8 +607,17 @@ class ReleaseMaker(object):
         finally:
             shutil.rmtree(tempdir)
 
-    def run(self):
+    def get_env(self):
         os.environ['JARN_RUN'] = '1'
+
+        for arg in self.args:
+            if arg in ('--no-col', '--no-colo', '--no-color'):
+                os.environ['JARN_NO_COLOR'] = '1'
+                break
+
+    def run(self):
+        self.get_env()
+        self.set_defaults(expanduser('~/.mkrelease'))
         self.get_python()
         self.get_options()
         self.get_package()
