@@ -550,7 +550,7 @@ class ReleaseMaker(object):
                     self.scm.switch_branch(directory, branch)
                 if scmtype != 'svn':
                     branch = self.scm.get_branch_from_sandbox(directory)
-                    print('Releasing branch', branch)
+                    print('Releasing revision', branch)
 
             self.setuptools.check_valid_package(directory)
 
