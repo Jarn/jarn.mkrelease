@@ -208,9 +208,9 @@ A more complete example may look like:
   [aliases]
   # Map name to one or more dist-locations
   customerA =
-      jarn.com:/var/dist/customerA
+      jarn.com:/var/dist/customerA/
   public =
-      jarn.com:/var/dist/public
+      jarn.com:/var/dist/public/
   world =
       pypi
       public
@@ -227,15 +227,15 @@ on the server:
 .. code::
 
   $ mkrelease -d customerA
-  $ mkrelease -d jarn.com:/var/dist/customerB
-  $ mkrelease -d scp://jarn.com/var/dist/customerC
+  $ mkrelease -d jarn.com:/var/dist/customerB/
+  $ mkrelease -d scp://jarn.com/var/dist/customerC/
   $ mkrelease -d stefan@jarn.com:eggs -e -q
 
 To upload via sftp instead of scp, use the ``sftp`` URL scheme:
 
 .. code::
 
-  $ mkrelease -d sftp://jarn.com/var/dist/customerD
+  $ mkrelease -d sftp://jarn.com/var/dist/customerD/
 
 Note: Unlike scp, the sftp client does not prompt for login credentials.
 This means that non-interactive login must be configured on the
