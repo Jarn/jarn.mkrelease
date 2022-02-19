@@ -229,7 +229,7 @@ on the server:
   $ mkrelease -d customerA
   $ mkrelease -d jarn.com:/var/dist/customerB/
   $ mkrelease -d scp://jarn.com/var/dist/customerC/
-  $ mkrelease -d stefan@jarn.com:eggs -e -q
+  $ mkrelease -d stefan@jarn.com:eggs -C -e -q
 
 To upload via sftp instead of scp, use the ``sftp`` URL scheme:
 
