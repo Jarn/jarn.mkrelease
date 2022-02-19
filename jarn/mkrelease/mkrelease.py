@@ -221,9 +221,6 @@ class Locations(object):
             return [location]
         if location == 'pypi':
             return [location]
-        if location == 'testpypi':
-            err_exit('mkrelease: No configuration found for server: testpypi\n'
-                     'Please create a ~/.pypirc file')
         if self.urlparser.is_url(location):
             return [location]
         if not self.has_host(location) and self.distbase:
@@ -383,9 +380,6 @@ class ReleaseMaker(object):
         for default in self.defaults.distdefault:
             if default not in known:
                 known.add(default)
-        if not known:
-            err_exit('mkrelease: No server configuration found\n'
-                     'Please create a ~/.pypirc file')
         for location in sorted(known):
             if location in self.defaults.distdefault:
                 print(location, '(default)')
