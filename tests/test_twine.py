@@ -104,6 +104,15 @@ echo ok
             tw = Twine(twine='my.exe')
             self.assertEqual(tw.is_valid_twine(), False)
 
+    def testFullPathValid(self):
+        self.mkexe('my.exe')
+        tw = Twine(twine=join(self.tempdir, 'my.exe'))
+        self.assertEqual(tw.is_valid_twine(), True)
+
+    def testFullPathInvalid(self):
+        tw = Twine(twine=join(self.tempdir, 'my.exe'))
+        self.assertEqual(tw.is_valid_twine(), False)
+
     @quiet
     def testCheckRaises(self):
         with setenv('PATH', self.tempdir):
