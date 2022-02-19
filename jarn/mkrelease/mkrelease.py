@@ -368,7 +368,7 @@ class ReleaseMaker(object):
                 os.environ['JARN_TRACE'] = '1'
             elif name in ('--no-color',):
                 os.environ['JARN_NO_COLOR'] = '1'
-            elif name in ('-t', '--twine',):
+            elif name in ('-t', '--twine'):
                 self.twine = Twine(twine=value)
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(expanduser(value))
