@@ -35,6 +35,7 @@ class SelectTwineTests(unittest.TestCase):
         with delenv('TWINE'):
             class config:
                 twine = 'my.exe'
+                interactive = True
             tw = Twine(defaults=config)
             self.assertEqual(tw.twine, 'my.exe')
 
@@ -51,6 +52,7 @@ class SelectTwineTests(unittest.TestCase):
         with delenv('TWINE'):
             class config:
                 twine = '~/my.exe'
+                interactive = True
             tw = Twine(defaults=config)
             self.assertEqual(tw.twine, expanduser('~/my.exe'))
 
@@ -63,6 +65,7 @@ class SelectTwineTests(unittest.TestCase):
         with setenv('TWINE', 'my.exe'):
             class config:
                 twine = 'other.exe'
+                interactive = True
             tw = Twine(defaults=config)
             self.assertEqual(tw.twine, 'my.exe')
 
@@ -70,6 +73,7 @@ class SelectTwineTests(unittest.TestCase):
         with delenv('TWINE'):
             class config:
                 twine = 'my.exe'
+                interactive = True
             tw = Twine(defaults=config)
             self.assertEqual(tw.twine, 'my.exe')
 

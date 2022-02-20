@@ -28,6 +28,8 @@ class DefaultsTests(JailSetup):
         self.assertEqual(defaults.formats, [])
         self.assertEqual(defaults.aliases, {})
         #self.assertEqual(defaults.servers, {})
+        self.assertEqual(defaults.twine, '')
+        self.assertEqual(defaults.interactive, True)
 
     @quiet
     def test_empty_defaults(self):
@@ -46,6 +48,8 @@ develop =
 quiet =
 identity =
 formats =
+twine =
+interactive =
 [aliases]
 """)
         defaults = Defaults('my.cfg')
@@ -64,6 +68,8 @@ formats =
         self.assertEqual(defaults.formats, [])
         self.assertEqual(defaults.aliases, {})
         #self.assertEqual(defaults.servers, {})
+        self.assertEqual(defaults.twine, '')
+        self.assertEqual(defaults.interactive, True)
 
     def test_read_defaults(self):
         self.mkfile('my.cfg', """
@@ -81,6 +87,8 @@ develop = 1
 quiet = on
 identity = fred@bedrock.com
 formats = zip wheel
+twine = /usr/local/bin/twine
+interactive = FALSE
 [aliases]
 public = bedrock.com:eggs
 """)
@@ -100,6 +108,8 @@ public = bedrock.com:eggs
         self.assertEqual(defaults.formats, ['zip', 'wheel'])
         self.assertEqual(defaults.aliases, {'public': ['bedrock.com:eggs']})
         #self.assertEqual(defaults.servers, {})
+        self.assertEqual(defaults.twine, '/usr/local/bin/twine')
+        self.assertEqual(defaults.interactive, False)
 
     def test_dist_location_replaces_distdefault(self):
         self.mkfile('my.cfg', """
