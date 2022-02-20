@@ -79,6 +79,8 @@ class Twine(object):
         echo2 = True
 
         serverflags = ['--repository="%(location)s"' % locals()]
+        if quiet:
+            serverflags = ['--disable-progress-bar'] + serverflags
 
         # Prefer sdists
         sdistfiles = [x for x in distfiles if x.endswith(('.zip', '.tar.gz'))]
@@ -111,6 +113,9 @@ class Twine(object):
         echo2 = True
 
         serverflags = ['--repository="%(location)s"' % locals()]
+        if quiet:
+            serverflags = ['--disable-progress-bar'] + serverflags
+
         distfiles = [('"%s"' % x) for x in distfiles]
 
         rc, lines = self._run_twine(
