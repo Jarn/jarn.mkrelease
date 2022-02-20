@@ -119,6 +119,7 @@ class Defaults(object):
         self.develop = parser.getboolean(main_section, 'develop', False)
         self.quiet = parser.getboolean(main_section, 'quiet', False)
         self.twine = parser.getstring(main_section, 'twine', '')
+        self.interactive = parser.getboolean(main_section, 'interactive', True)
 
         for format in self.formats:
             if format not in ('zip', 'gztar', 'egg', 'wheel'):
@@ -369,7 +370,7 @@ class ReleaseMaker(object):
             elif name in ('--no-color',):
                 os.environ['JARN_NO_COLOR'] = '1'
             elif name in ('-t', '--twine'):
-                self.twine = Twine(twine=value)
+                self.twine = Twine(twine=value, defaults=self.defaults)
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(expanduser(value))
                 return self.parse_options(args, depth+1)

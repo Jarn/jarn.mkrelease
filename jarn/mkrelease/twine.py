@@ -14,6 +14,7 @@ from .python import Python
 from .chdir import chdir
 from .exit import err_exit
 from .tee import *
+from .tee import run
 from .tee import system
 from .colors import bold
 
@@ -24,7 +25,15 @@ class Twine(object):
     def __init__(self, process=None, twine=None, defaults=None):
         self.python = Python()
         self.twine = self._get_executable(twine, defaults)
-        self.process = process or Process(env=self.get_env(), runner=system)
+
+        if defaults and not defaults.interactive:
+            self.interactive = False
+            runner = run
+        else:
+            self.interactive = True
+            runner = system
+
+        self.process = process or Process(env=self.get_env(), runner=runner)
 
     def _get_executable(self, twine, defaults):
         # 1. Value of --twine command line option, or
@@ -79,7 +88,9 @@ class Twine(object):
         echo2 = True
 
         serverflags = ['--repository="%(location)s"' % locals()]
-        if quiet:
+        if not self.interactive:
+            serverflags = ['--non-interactive'] + serverflags
+        elif quiet:
             serverflags = ['--disable-progress-bar'] + serverflags
 
         # Prefer sdists
@@ -113,7 +124,9 @@ class Twine(object):
         echo2 = True
 
         serverflags = ['--repository="%(location)s"' % locals()]
-        if quiet:
+        if not self.interactive:
+            serverflags = ['--non-interactive'] + serverflags
+        elif quiet:
             serverflags = ['--disable-progress-bar'] + serverflags
 
         distfiles = [('"%s"' % x) for x in distfiles]
