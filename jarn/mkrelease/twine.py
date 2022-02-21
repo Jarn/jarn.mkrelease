@@ -23,17 +23,36 @@ class Twine(object):
     """Interface to twine."""
 
     def __init__(self, process=None, twine=None, defaults=None):
+        self._twine = None
+        self._interactive = None
+        self._defaults = defaults
+        self._process = process
+
+        self.process = None
         self.python = Python()
-        self.twine = self._get_executable(twine, defaults)
+        self.twine = twine
 
         if defaults and not defaults.interactive:
             self.interactive = False
-            runner = run
         else:
             self.interactive = True
-            runner = system
 
-        self.process = process or Process(env=self.get_env(), runner=runner)
+    @property
+    def twine(self):
+        return self._twine
+
+    @twine.setter
+    def twine(self, value):
+        self._twine = self._get_executable(value, self._defaults)
+
+    @property
+    def interactive(self):
+        return self._interactive
+
+    @interactive.setter
+    def interactive(self, value):
+        self._interactive = value
+        self.process = self._process or self._get_process(value)
 
     def _get_executable(self, twine, defaults):
         # 1. Value of --twine command line option, or
@@ -52,6 +71,11 @@ class Twine(object):
             return 'python -m twine'
         except ImportError:
             return 'twine'
+
+    def _get_process(self, interactive):
+        return Process(
+            env=self.get_env(),
+            runner=system if interactive else run)
 
     def get_env(self):
         # Make sure twine and its dependencies are found if mkrelease

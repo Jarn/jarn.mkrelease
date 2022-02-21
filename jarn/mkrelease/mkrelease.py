@@ -271,7 +271,7 @@ class ReleaseMaker(object):
         """Set defaults.
         """
         self.defaults = Defaults(config_file)
-        self.locations = Locations(self.defaults)
+        self.locations = Locations(defaults=self.defaults)
         self.python = Python()
         self.setuptools = Setuptools()
         self.twine = Twine(defaults=self.defaults)
@@ -318,7 +318,8 @@ class ReleaseMaker(object):
                  'sign', 'identity=', 'dist-location=', 'version', 'help',
                  'push', 'quiet', 'svn', 'hg', 'git', 'develop', 'binary',
                  'list-locations', 'config-file=', 'wheel', 'zip', 'gztar',
-                 'manifest-only', 'trace', 'egg', 'no-push', 'twine=', 'no-color'))
+                 'manifest-only', 'trace', 'egg', 'no-push', 'twine=',
+                 'no-color', 'non-interactive'))
         except getopt.GetoptError as e:
             err_exit('mkrelease: %s\n%s' % (e.msg.capitalize(), USAGE))
 
@@ -370,7 +371,9 @@ class ReleaseMaker(object):
             elif name in ('--no-color',):
                 os.environ['JARN_NO_COLOR'] = '1'
             elif name in ('-t', '--twine'):
-                self.twine = Twine(twine=value, defaults=self.defaults)
+                self.twine.twine = expanduser(value)
+            elif name in ('--non-interactive',):    # undocumented
+                self.twine.interactive = False
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(expanduser(value))
                 return self.parse_options(args, depth+1)
