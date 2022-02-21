@@ -4,6 +4,7 @@ import unittest
 
 from os.path import join, expanduser
 
+from jarn.mkrelease.tee import run, system
 from jarn.mkrelease.twine import Twine
 
 from jarn.mkrelease.testing import JailSetup
@@ -129,4 +130,45 @@ echo ok
             tw = Twine()
             self.assertEqual(tw.twine, 'python -m twine' if importable else 'twine')
             self.assertEqual(tw.is_valid_twine(), True)
+
+
+class NonInteractiveTests(unittest.TestCase):
+
+    def testInteractive(self):
+        class config:
+            twine = 'my.exe'
+            interactive = True
+        tw = Twine(defaults=config)
+        self.assertEqual(tw.interactive, True)
+        self.assertEqual(tw.process.runner, system)
+
+    def testNonInteractive(self):
+        class config:
+            twine = 'my.exe'
+            interactive = False
+        tw = Twine(defaults=config)
+        self.assertEqual(tw.interactive, False)
+        self.assertEqual(tw.process.runner, run)
+
+    def testSwitchOffInteractive(self):
+        class config:
+            twine = 'my.exe'
+            interactive = True
+        tw = Twine(defaults=config)
+        self.assertEqual(tw.interactive, True)
+        self.assertEqual(tw.process.runner, system)
+        tw.interactive = False
+        self.assertEqual(tw.interactive, False)
+        self.assertEqual(tw.process.runner, run)
+
+    def testSwitchOnInteractive(self):
+        class config:
+            twine = 'my.exe'
+            interactive = False
+        tw = Twine(defaults=config)
+        self.assertEqual(tw.interactive, False)
+        self.assertEqual(tw.process.runner, run)
+        tw.interactive = True
+        self.assertEqual(tw.interactive, True)
+        self.assertEqual(tw.process.runner, system)
 
