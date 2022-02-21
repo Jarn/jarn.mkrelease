@@ -90,6 +90,10 @@ def run(args, ff=''):
     import distutils
     distutils.log.set_verbosity(1)
 
+    # Required in setuptools >= 60.6.0, <= 60.9.1
+    import distutils.dist
+    distutils.dist.log.set_verbosity(1)
+
     import setuptools.command.egg_info
     if ff == 'none':
         setuptools.command.egg_info.walk_revctrl = no_walk_revctrl
