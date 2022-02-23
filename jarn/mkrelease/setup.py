@@ -9,7 +9,7 @@ import setuptools # XXX
 import distutils
 import pkg_resources
 
-from os.path import basename, isdir, join
+from os.path import basename, isdir, join, exists
 from functools import partial
 
 
@@ -101,7 +101,11 @@ def run(args, ff=''):
         setuptools.command.egg_info.walk_revctrl = partial(walk_revctrl, ff=ff)
 
     sys.argv = ['setup.py'] + args
-    import setup
-
-    cleanup_pycache()
+    try:
+        if exists('setup.py'):
+            import setup
+        else:
+            setuptools.setup()
+    finally:
+        cleanup_pycache()
 

@@ -16,6 +16,9 @@ Changelog
 - NEW: formats now default to gztar + wheel
   [stefan]
 
+- Do not require setup.py if setup.cfg exists.
+  [stefan]
+
 - Switch to the nose2 test runner for its fast multiprocessing plugin.
   [stefan]
 

@@ -47,7 +47,7 @@ class Setuptools(object):
         return env
 
     def is_valid_package(self, dir):
-        return isfile(join(dir, 'setup.py'))
+        return isfile(join(dir, 'setup.py')) or isfile(join(dir, 'setup.cfg'))
 
     def check_valid_package(self, dir):
         if not self.is_valid_package(dir):
@@ -55,23 +55,29 @@ class Setuptools(object):
 
     @chdir
     def get_package_info(self, dir, develop=False):
-        python = self.python
-        rc, lines = self.process.popen(
-            '"%(python)s" setup.py --name --version' % locals(), echo=False)
+        parser = ConfigParser(warn)
+        parser.read('setup.cfg')
+        if parser.warnings:
+            err_exit('mkrelease: Bad setup in %(dir)s' % locals())
+
+        rc, lines = self._run_setup_py(
+            ['--name', '--version'],
+            echo=False)
+
         if rc == 0 and len(lines) == 2:
             name, version = lines
             if name == 'UNKNOWN':
-                err_exit('mkrelease: Bad name metadata in %(dir)s' % locals())
+                parser.warn('Missing metadata: name')
             if version == '0.0.0':
-                err_exit('mkrelease: Bad version metadata in %(dir)s' % locals())
+                parser.warn('Missing metadata: version')
             if develop:
-                parser = ConfigParser(warn)
-                parser.read('setup.cfg')
                 version += parser.get('egg_info', 'tag_build', '').strip()
-            return name, pkg_resources.safe_version(version)
+            if not parser.warnings:
+                return name, pkg_resources.safe_version(version)
+
         if rc == self.process.rc_keyboard_interrupt:
             err_exit('ERROR: package_info failed')
-        err_exit('mkrelease: Bad setup.py in %(dir)s' % locals())
+        err_exit('mkrelease: Bad setup in %(dir)s' % locals())
 
     @chdir
     def run_egg_info(self, dir, infoflags, ff='', quiet=False):
@@ -192,8 +198,6 @@ class Setuptools(object):
         """Run setup.py with monkey-patched setuptools.
 
         The patch forces setuptools to use the file-finder 'ff'.
-        If 'ff' is the empty string, the patch is not applied.
-
         'args' is the list of arguments that should be passed to
         setup.py.
         """
@@ -201,10 +205,7 @@ class Setuptools(object):
         run_setup = 'from jarn.mkrelease import setup; setup.run(%(args)r, ff=%(ff)r)'
         filterwarnings = '-W "ignore:setup.py install is deprecated"'
 
-        if ff:
-            setup_py = '-c"%s"' % (run_setup % locals())
-        else:
-            setup_py = 'setup.py %s' % ' '.join(args)
+        setup_py = '-c"%s"' % (run_setup % locals())
 
         rc, lines = self.process.popen(
             '"%(python)s" %(filterwarnings)s %(setup_py)s' % locals(),
