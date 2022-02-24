@@ -1,5 +1,6 @@
 # THIS SHOULD BE DOCTESTS
 import sys
+import os
 
 from os import listdir
 from os.path import join
@@ -62,7 +63,25 @@ tag_build = dev0
 
     @quiet
     def test_no_setup_py(self):
-        self.delete('testpackage')
+        os.remove(join('testpackage', 'setup.py'))
         rc = self.mkrelease(['-n', '-q', 'testpackage'])
         self.assertEqual(rc, 1)
+
+    @quiet
+    def test_no_setup_py_but_setup_cfg(self):
+        os.remove(join('testpackage', 'setup.py'))
+        self.mkfile(join('testpackage', 'setup.cfg'), """\
+[metadata]
+name = testpackage
+version = 2.7
+url = https://github.com/me/testpackage
+author = My Name
+author_email = me@example.com
+
+[options]
+packages = find:
+""")
+        rc = self.mkrelease(['-n', '-q', '-m', '-g', 'testpackage'])
+        self.assertEqual(rc, 0)
+        self.assertEqual(listdir(join('testpackage', 'dist')), ['testpackage-2.7.tar.gz'])
 
