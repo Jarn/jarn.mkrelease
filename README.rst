@@ -55,11 +55,11 @@ into the same environment as jarn.mkrelease. [1]_
 
 Use ``pip install jarn.mkrelease[twine]`` to install mkrelease + twine.
 
-Since version 5.0 file finder extensions are no longer installed by default.
-If you still want to use file finders specify the ``filefinder`` extra.
+Since version 5.0 file-finder extensions are no longer installed by default.
+If you still want to use file-finders specify the ``filefinder`` extra.
 
-Use ``pip install jarn.mkrelease[filefinder]`` to install mkrelease + file
-finder extensions.
+Use ``pip install jarn.mkrelease[filefinder]`` to install mkrelease + file-finder
+extensions.
 
 .. _twine: https://twine.readthedocs.io/en/stable/
 
@@ -118,7 +118,7 @@ Options
     Release a wheel file (default).
 
 ``-m, --manifest-only``
-    Ignore setuptools file finder extensions and collect files via
+    Ignore setuptools file-finder extensions and collect files via
     ``MANIFEST.in`` only.
 
 ``-e, --develop``
@@ -242,7 +242,7 @@ Upload to Index Servers
 =======================
 
 Another way of publishing a Python package is by uploading it to a dedicated
-index server like PyPI.
+index server like PyPI_.
 Given the ``~/.pypirc``
 file from above, we can release to PyPI simply by typing:
 
@@ -251,7 +251,7 @@ file from above, we can release to PyPI simply by typing:
   $ mkrelease -d pypi
 
 Index servers are not limited to PyPI though.
-There is `test.pypi.org`_, and there are alternative index servers like
+There is TestPyPI_, and there are alternative index servers like
 devpi_.
 We extend our ``~/.pypirc``: [2]_
 
@@ -278,7 +278,8 @@ We can now release to TestPyPI with:
 
   $ mkrelease -d testpypi -C -e
 
-.. _`test.pypi.org`: https://test.pypi.org/
+.. _PyPI: https://pypi.org/
+.. _TestPyPI: https://test.pypi.org/
 .. _devpi: https://www.devpi.net
 
 Using GnuPG
