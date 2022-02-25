@@ -275,7 +275,7 @@ class ReleaseMaker(object):
         self.python = Python()
         self.setuptools = Setuptools()
         self.twine = Twine(defaults=self.defaults)
-        self.scp = SCP()
+        self.scp = SCP(defaults=self.defaults)
         self.scms = SCMFactory()
         self.urlparser = URLParser()
         self.skipcommit = not self.defaults.commit
@@ -374,6 +374,7 @@ class ReleaseMaker(object):
                 self.twine.twine = expanduser(value)
             elif name in ('--non-interactive',):    # undocumented
                 self.twine.interactive = False
+                self.scp.interactive = False
             elif name in ('-c', '--config-file') and depth == 0:
                 self.reset_defaults(expanduser(value))
                 return self.parse_options(args, depth+1)
