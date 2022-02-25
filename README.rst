@@ -148,6 +148,10 @@ Options
 ``--no-color``
     Disable output colors.
 
+``--non-interactive``
+    Do not prompt for username and password if the
+    required credentials are missing.
+
 Arguments
 =========
 

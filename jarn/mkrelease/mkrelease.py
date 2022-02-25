@@ -80,6 +80,8 @@ Options:
   -v, --version         Print the version string and exit.
 
   --no-color            Disable output colors.
+  --non-interactive     Do not prompt for username and password if the
+                        required credentials are missing.
 
 Arguments:
   scm-sandbox           A local SCM sandbox. Defaults to the current working
@@ -372,7 +374,7 @@ class ReleaseMaker(object):
                 os.environ['JARN_NO_COLOR'] = '1'
             elif name in ('-t', '--twine'):
                 self.twine.twine = expanduser(value)
-            elif name in ('--non-interactive',):    # undocumented
+            elif name in ('--non-interactive',):
                 self.twine.interactive = False
                 self.scp.interactive = False
             elif name in ('-c', '--config-file') and depth == 0:
