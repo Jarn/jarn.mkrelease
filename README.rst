@@ -114,7 +114,7 @@ Options
 ``-g, --gztar``
     Release a tar.gz archive (default).
 
-``-b, --binary``
+``-b, --egg``
     Release a binary egg.
 
 ``-w, --wheel``

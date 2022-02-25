@@ -61,7 +61,7 @@ Options:
 
   -z, --zip             Release a zip archive.
   -g, --gztar           Release a tar.gz archive (default).
-  -b, --binary          Release a binary egg.
+  -b, --egg             Release a binary egg.
   -w, --wheel           Release a wheel file (default).
 
   -m, --manifest-only   Ignore setuptools extensions and collect files via
