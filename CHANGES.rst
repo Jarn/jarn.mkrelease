@@ -13,7 +13,7 @@ Changelog
 - NEW: register is now off by default
   [stefan]
 
-- NEW: formats now default to gztar + wheel
+- NEW: formats now defaults to gztar + wheel
   [stefan]
 
 - Do not require setup.py if setup.cfg exists.

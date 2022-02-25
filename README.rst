@@ -61,6 +61,9 @@ If you still want to use file-finders specify the ``filefinder`` extra.
 Use ``pip install jarn.mkrelease[filefinder]`` to install mkrelease + file-finder
 extensions.
 
+Use ``pip uninstall setuptools-subversion setuptools-hg setuptools-git`` to
+uninstall file-finder extensions.
+
 .. _twine: https://twine.readthedocs.io/en/stable/
 
 Usage
