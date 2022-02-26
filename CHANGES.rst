@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0 - Unreleased
+5.0 - 2022-02-26
 ----------------
 
 - NEW: File finder extensions are no longer installed by default.
@@ -22,7 +22,7 @@ Changelog
 - Switch to the nose2 test runner for its fast multiprocessing plugin.
   [stefan]
 
-4.4 - Unreleased
+4.4 - 2022-02-26
 ----------------
 
 - Support Python 2.7 - 3.10.
