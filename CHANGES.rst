@@ -10,6 +10,9 @@ Changelog
 - Do not require setup.py or setup.cfg if pyproject.toml exists.
   [stefan]
 
+- Filter some deprecation warnings.
+  [stefan]
+
 5.0 - 2022-02-26
 ----------------
 
