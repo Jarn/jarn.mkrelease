@@ -23,6 +23,11 @@ from .colors import bold
 OK_RESPONSE = 'Server response (200): OK'
 GONE_RESPONSE = 'Server response (410):'
 
+FILTERWARNINGS = ('-W "ignore:setup.py install is deprecated" '
+                  '-W "ignore:easy_install command is deprecated" '
+                  '-W "ignore:Support for \`[tool.setuptools]\` in \`pyproject.toml\`" '
+                  '-W "ignore:The namespace_packages parameter is deprecated"')
+
 
 class Setuptools(object):
     """Interface to setuptools."""
@@ -202,9 +207,9 @@ class Setuptools(object):
         setup.py.
         """
         python = self.python
-        run_setup = 'from jarn.mkrelease import setup; setup.run(%(args)r, ff=%(ff)r)'
-        filterwarnings = '-W "ignore:setup.py install is deprecated"'
+        filterwarnings = FILTERWARNINGS
 
+        run_setup = 'from jarn.mkrelease import setup; setup.run(%(args)r, ff=%(ff)r)'
         setup_py = '-c"%s"' % (run_setup % locals())
 
         rc, lines = self.process.popen(
