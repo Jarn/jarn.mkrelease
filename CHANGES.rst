@@ -13,6 +13,9 @@ Changelog
 - Filter some deprecation warnings.
   [stefan]
 
+- Disable twine progress bars in non-interactive mode.
+  [stefan]
+
 5.0 - 2022-02-26
 ----------------
 

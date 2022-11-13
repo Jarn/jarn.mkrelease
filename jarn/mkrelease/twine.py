@@ -103,18 +103,16 @@ class Twine(object):
         if not self.process.quiet:
             print(bold('running twine_register'))
 
-        echo = NotEmpty()
+        echo = And(NotEmpty(), Before('View at:'))
         if quiet:
-            echo = And(echo, StartsWith('Registering'))
-        else:
-            echo = And(echo, Before('View at:'))
+            echo = StartsWith('Registering')
 
-        echo2 = True
+        echo2 = On()
 
         serverflags = ['--repository="%(location)s"' % locals()]
         if not self.interactive:
             serverflags = ['--non-interactive'] + serverflags
-        elif quiet:
+        if quiet or not self.interactive:
             serverflags = ['--disable-progress-bar'] + serverflags
 
         # Prefer sdists
@@ -139,18 +137,16 @@ class Twine(object):
         if not self.process.quiet:
             print(bold('running twine_upload'))
 
-        echo = NotEmpty()
+        echo = And(NotEmpty(), Before('View at:'))
         if quiet:
-            echo = And(echo, StartsWith('Uploading'))
-        else:
-            echo = And(echo, Before('View at:'))
+            echo = StartsWith('Uploading')
 
-        echo2 = True
+        echo2 = On()
 
         serverflags = ['--repository="%(location)s"' % locals()]
         if not self.interactive:
             serverflags = ['--non-interactive'] + serverflags
-        elif quiet:
+        if quiet or not self.interactive:
             serverflags = ['--disable-progress-bar'] + serverflags
 
         distfiles = [('"%s"' % x) for x in distfiles]
