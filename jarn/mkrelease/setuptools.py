@@ -52,11 +52,14 @@ class Setuptools(object):
         return env
 
     def is_valid_package(self, dir):
-        return isfile(join(dir, 'setup.py')) or isfile(join(dir, 'setup.cfg'))
+        return (isfile(join(dir, 'setup.py')) or
+                isfile(join(dir, 'setup.cfg')) or
+                isfile(join(dir, 'pyproject.toml')))
 
     def check_valid_package(self, dir):
         if not self.is_valid_package(dir):
-            err_exit('mkrelease: No setup.py in %(dir)s' % locals())
+            err_exit('mkrelease: No setup in %(dir)s\n'
+                     'Expected setup.py and/or setup.cfg and/or pyproject.toml' % locals())
 
     @chdir
     def get_package_info(self, dir, develop=False):

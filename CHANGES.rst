@@ -4,6 +4,8 @@ Changelog
 5.1 - Unreleased
 ----------------
 
+- Do not require setup.py or setup.cfg if pyproject.toml exists.
+  [stefan]
 
 5.0 - 2022-02-26
 ----------------
