@@ -4,7 +4,11 @@ import blessed
 
 
 def color(func):
-    functools.wraps(func)
+    assignments = functools.WRAPPER_ASSIGNMENTS
+    if not hasattr(func, '__name__'):
+        assignments = [x for x in assignments if x != '__name__']
+
+    @functools.wraps(func, assignments)
     def wrapper(string):
         if os.environ.get('JARN_NO_COLOR') == '1':
             return string
