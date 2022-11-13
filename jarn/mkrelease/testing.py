@@ -342,6 +342,8 @@ class setenv(object):
     def __exit__(self, *ignored):
         if self._saved is not None:
             os.environ[self._name] = self._saved
+        else:
+            del os.environ[self._name]
 
 
 class delenv(object):

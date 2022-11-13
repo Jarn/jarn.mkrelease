@@ -9,6 +9,7 @@ from jarn.mkrelease.mkrelease import main
 
 from jarn.mkrelease.testing import GitSetup
 from jarn.mkrelease.testing import quiet
+from jarn.mkrelease.testing import setenv
 
 PY = sys.version_info[0]
 
@@ -16,7 +17,8 @@ PY = sys.version_info[0]
 class FunctionalTests(GitSetup):
 
     def mkrelease(self, args):
-        return main(args)
+        with setenv('JARN_RUN', '1'):
+            return main(args)
 
     @quiet
     def test_gztar_release(self):
