@@ -471,9 +471,9 @@ class CodespeakTagIdTests(SubversionSetup):
     def setUp(self):
         SubversionSetup.setUp(self)
         process = Process(quiet=True)
-        process.system('svn mv -m"Rename" "file://%s/tags" "file://%s/tag"' %
+        process.popen('svn mv -m"Rename" "file://%s/tags" "file://%s/tag"' %
             (self.packagedir, self.packagedir))
-        process.system('svn mv -m"Rename" "file://%s/branches" "file://%s/branch"' %
+        process.popen('svn mv -m"Rename" "file://%s/branches" "file://%s/branch"' %
             (self.packagedir, self.packagedir))
 
     def testTagIdFromTrunk(self):

@@ -127,7 +127,7 @@ class SubversionSetup(SCMSetup):
 
     def clone(self):
         process = Process(quiet=True)
-        process.system('svn checkout file://%s/trunk testclone' % self.packagedir)
+        process.popen('svn checkout file://%s/trunk testclone' % self.packagedir)
         self.clonedir = join(self.tempdir, 'testclone')
 
     def _fake_clone(self):
@@ -140,7 +140,7 @@ class SubversionSetup(SCMSetup):
         os.rename(source[:-4], 'testclone')
         self.dirstack.push('testclone')
         url = process.popen('svn info')[1][2][5:]
-        process.system('svn switch --relocate %s file://%s/trunk' % (url, self.packagedir))
+        process.popen('svn switch --relocate %s file://%s/trunk' % (url, self.packagedir))
         self.dirstack.pop()
         self.clonedir = join(self.tempdir, 'testclone')
 
@@ -158,28 +158,28 @@ class SubversionSetup(SCMSetup):
     @chdir
     def modifyprop(self, dir):
         process = Process(quiet=True)
-        process.system('svn propset format "text/x-python" setup.py')
+        process.popen('svn propset format "text/x-python" setup.py')
 
     @chdir
     def remove(self, dir):
         process = Process(quiet=True)
-        process.system('svn remove setup.py')
+        process.popen('svn remove setup.py')
 
     @chdir
     def update(self, dir):
         process = Process(quiet=True)
-        process.system('svn update')
+        process.popen('svn update')
 
     def tag(self, dir, tagid):
         process = Process(quiet=True)
-        process.system('svn cp -m"Tag" file://%s/trunk %s' % (self.packagedir, tagid))
-        process.system('svn co %s testtag' % tagid)
+        process.popen('svn cp -m"Tag" file://%s/trunk %s' % (self.packagedir, tagid))
+        process.popen('svn co %s testtag' % tagid)
         self.tagdir = join(self.tempdir, 'testtag')
 
     def branch(self, dir, branchid):
         process = Process(quiet=True)
-        process.system('svn cp -m"Branch" file://%s/trunk %s' % (self.packagedir, branchid))
-        process.system('svn co %s testbranch' % branchid)
+        process.popen('svn cp -m"Branch" file://%s/trunk %s' % (self.packagedir, branchid))
+        process.popen('svn co %s testbranch' % branchid)
         self.branchdir = join(self.tempdir, 'testbranch')
 
 
@@ -191,29 +191,29 @@ class MercurialSetup(SCMSetup):
 
     def clone(self):
         process = Process(quiet=True)
-        process.system('hg clone testpackage testclone')
+        process.popen('hg clone testpackage testclone')
         self.clonedir = join(self.tempdir, 'testclone')
 
     @chdir
     def remove(self, dir):
         process = Process(quiet=True)
-        process.system('hg remove setup.py')
+        process.popen('hg remove setup.py')
 
     @chdir
     def update(self, dir):
         process = Process(quiet=True)
-        process.system('hg update')
+        process.popen('hg update')
 
     @chdir
     def tag(self, dir, tagid):
         process = Process(quiet=True)
-        process.system('hg tag %s' % tagid)
-        process.system('hg update %s' % tagid)
+        process.popen('hg tag %s' % tagid)
+        process.popen('hg update %s' % tagid)
 
     @chdir
     def branch(self, dir, branchid):
         process = Process(quiet=True)
-        process.system('hg branch %s' % branchid)
+        process.popen('hg branch %s' % branchid)
 
 
 class GitSetup(SCMSetup):
@@ -226,46 +226,46 @@ class GitSetup(SCMSetup):
         SCMSetup.setUp(self)
         process = Process(quiet=True)
         self.dirstack.push('testpackage')
-        process.system('git config user.name "Your Name"')
-        process.system('git config user.email "you@example.com"')
+        process.popen('git config user.name "Your Name"')
+        process.popen('git config user.email "you@example.com"')
         self.dirstack.pop()
 
     def clone(self):
         process = Process(quiet=True)
-        process.system('git clone testpackage testclone')
+        process.popen('git clone testpackage testclone')
         self.clonedir = join(self.tempdir, 'testclone')
         # Park the server on a branch
         self.dirstack.push('testpackage')
-        process.system('git checkout parking')
+        process.popen('git checkout parking')
         self.dirstack.pop()
         # Make sure the clone is on master
         self.dirstack.push('testclone')
-        process.system('git checkout master')
-        process.system('git config user.name "Your Name"')
-        process.system('git config user.email "you@example.com"')
+        process.popen('git checkout master')
+        process.popen('git config user.name "Your Name"')
+        process.popen('git config user.email "you@example.com"')
         self.dirstack.pop()
 
     @chdir
     def remove(self, dir):
         process = Process(quiet=True)
-        process.system('git rm setup.py')
+        process.popen('git rm setup.py')
 
     @chdir
     def update(self, dir):
         process = Process(quiet=True)
-        process.system('git checkout master')
+        process.popen('git checkout master')
 
     @chdir
     def tag(self, dir, tagid):
         process = Process(quiet=True)
-        process.system('git tag %s' % tagid)
-        process.system('git checkout %s' % tagid)
+        process.popen('git tag %s' % tagid)
+        process.popen('git checkout %s' % tagid)
 
     @chdir
     def branch(self, dir, branchid):
         process = Process(quiet=True)
-        process.system('git branch %s' % branchid)
-        process.system('git checkout %s' % branchid)
+        process.popen('git branch %s' % branchid)
+        process.popen('git checkout %s' % branchid)
 
 
 class MockProcessError(Exception):

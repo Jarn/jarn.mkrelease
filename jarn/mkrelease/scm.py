@@ -245,14 +245,14 @@ class Subversion(SCM):
         err_exit('Failed to get URL from %(dir)s' % locals())
 
     def commit_sandbox(self, dir, name, version, push):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'svn commit -m"Prepare %(name)s %(version)s." "%(dir)s"' % locals())
         if rc != 0:
             err_exit('Commit failed')
         return rc
 
     def clone_url(self, url, dir):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'svn checkout "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
             err_exit('Checkout failed')
@@ -265,7 +265,7 @@ class Subversion(SCM):
 
     @chdir
     def switch_branch(self, dir, branch):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'svn switch "%(branch)s"' % locals())
         if rc != 0:
             err_exit('Switch failed')
@@ -383,14 +383,14 @@ class Mercurial(SCM):
 
     @chdir
     def commit_sandbox(self, dir, name, version, push):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'hg commit -v -m"Prepare %(name)s %(version)s." .' % locals())
         if rc not in (0, 1):    # 1 means empty commit
             err_exit('Commit failed')
         rc = 0
         if push:
             if self.is_remote_sandbox(dir):
-                rc = self.process.system(
+                rc, lines = self.process.popen(
                     'hg push default')
                 if rc not in (0, 1):    # 1 means empty push (2.1)
                     err_exit('Push failed')
@@ -400,7 +400,7 @@ class Mercurial(SCM):
         return rc
 
     def clone_url(self, url, dir):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'hg clone "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
             err_exit('Clone failed')
@@ -411,7 +411,7 @@ class Mercurial(SCM):
 
     @chdir
     def switch_branch(self, dir, branch):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'hg update "%(branch)s"' % locals())
         if rc != 0:
             err_exit('Update failed')
@@ -433,13 +433,13 @@ class Mercurial(SCM):
 
     @chdir
     def create_tag(self, dir, tagid, name, version, push):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'hg tag -m"Tagged %(name)s %(version)s." "%(tagid)s"' % locals())
         if rc != 0:
             err_exit('Tag failed')
         if push:
             if self.is_remote_sandbox(dir):
-                rc = self.process.system(
+                rc, lines = self.process.popen(
                     'hg push default')
                 if rc != 0:
                     err_exit('Push failed')
@@ -568,7 +568,7 @@ class Git(SCM):
 
     @chdir
     def commit_sandbox(self, dir, name, version, push):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'git commit -m"Prepare %(name)s %(version)s." .' % locals())
         if rc not in (0, 1):    # 1 means empty commit
             err_exit('Commit failed')
@@ -579,7 +579,7 @@ class Git(SCM):
             if remote:
                 tracked = self.get_tracked_branch_from_sandbox(dir)
                 if tracked:
-                    rc = self.process.system(
+                    rc, lines = self.process.popen(
                         'git push "%(remote)s" "%(branch)s:%(tracked)s"' % locals())
                     if rc != 0:
                         err_exit('Push failed')
@@ -589,7 +589,7 @@ class Git(SCM):
         return rc
 
     def clone_url(self, url, dir):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'git clone "%(url)s" "%(dir)s"' % locals())
         if rc != 0:
             err_exit('Clone failed')
@@ -600,7 +600,7 @@ class Git(SCM):
 
     @chdir
     def switch_branch(self, dir, branch):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'git checkout -q "%(branch)s"' % locals())
         if rc != 0:
             err_exit('Checkout failed')
@@ -622,7 +622,7 @@ class Git(SCM):
 
     @chdir
     def create_tag(self, dir, tagid, name, version, push):
-        rc = self.process.system(
+        rc, lines = self.process.popen(
             'git tag -m"Tagged %(name)s %(version)s." "%(tagid)s"' % locals())
         if rc != 0:
             err_exit('Tag failed')
@@ -632,7 +632,7 @@ class Git(SCM):
             if remote:
                 tracked = self.get_tracked_branch_from_sandbox(dir)
                 if tracked:
-                    rc = self.process.system(
+                    rc, lines = self.process.popen(
                         'git push "%(remote)s" tag "%(tagid)s"' % locals())
                     if rc != 0:
                         err_exit('Push failed')
