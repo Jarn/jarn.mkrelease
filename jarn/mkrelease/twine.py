@@ -14,8 +14,7 @@ from .python import Python
 from .chdir import chdir
 from .exit import err_exit
 from .tee import *
-from .tee import run
-from .tee import system
+from .tee import run, system
 from .colors import bold
 
 
