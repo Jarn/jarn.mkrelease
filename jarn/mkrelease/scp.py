@@ -53,14 +53,11 @@ class SCP(object):
             print('Uploading %(name)s' % locals())
 
         options = self.get_options()
-        try:
-            rc, lines = self.process.popen(
-                'scp %(options)s "%(distfile)s" "%(location)s"' % locals(),
-                echo=False)
-            if rc == 0:
-                return rc
-        except KeyboardInterrupt:
-            pass
+        rc, lines = self.process.popen(
+            'scp %(options)s "%(distfile)s" "%(location)s"' % locals(),
+            echo=False)
+        if rc == 0:
+            return rc
         err_exit('ERROR: upload failed')
 
     def run_sftp(self, distfile, location):
@@ -77,13 +74,10 @@ class SCP(object):
             cmdfile = file.name
 
             options = self.get_options()
-            try:
-                rc, lines = self.process.popen(
-                    'sftp %(options)s -b "%(cmdfile)s" "%(location)s"' % locals(),
-                    echo=False)
-                if rc == 0:
-                    return rc
-            except KeyboardInterrupt:
-                pass
+            rc, lines = self.process.popen(
+                'sftp %(options)s -b "%(cmdfile)s" "%(location)s"' % locals(),
+                echo=False)
+            if rc == 0:
+                return rc
             err_exit('ERROR: upload failed')
 
