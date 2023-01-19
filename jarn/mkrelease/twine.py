@@ -171,7 +171,8 @@ class Twine(object):
 
         args = ['--no-color'] + args
 
-        cmd = '%s %s' % (twine, ' '.join(args))
-
-        return self.process.popen(cmd, echo=echo, echo2=echo2)
+        return self.process.popen(
+            '%s %s' % (twine, ' '.join(args)),
+            echo=echo,
+            echo2=echo2)
 

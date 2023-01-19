@@ -215,12 +215,10 @@ class Setuptools(object):
         run_setup = 'from jarn.mkrelease import setup; setup.run(%(args)r, ff=%(ff)r)'
         setup_py = '-c"%s"' % (run_setup % locals())
 
-        rc, lines = self.process.popen(
+        return self.process.popen(
             '"%(python)s" %(filterwarnings)s %(setup_py)s' % locals(),
             echo=echo,
             echo2=echo2)
-
-        return rc, lines
 
     def _parse_egg_info_results(self, lines):
         for line in lines:
