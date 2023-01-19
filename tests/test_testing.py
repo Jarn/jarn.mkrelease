@@ -128,26 +128,6 @@ class MockProcessTests(unittest.TestCase):
         process = MockProcess(rc=0, lines=['these', 'are', '4', 'lines'])
         self.assertEqual(process.popen(''), (0, ['these', 'are', '4', 'lines']))
 
-    def testSystemSuccess(self):
-        process = MockProcess(rc=0, lines=[])
-        self.assertEqual(process.system(''), 0)
-
-    def testSystemFailure(self):
-        process = MockProcess(rc=1, lines=[])
-        self.assertEqual(process.system(''), 1)
-
-    def testPipeSuccess(self):
-        process = MockProcess(rc=0, lines=['these', 'are', '4', 'lines'])
-        self.assertEqual(process.pipe(''), 'these')
-
-    def testPipeFailure(self):
-        process = MockProcess(rc=1, lines=['these', 'are', '4', 'lines'])
-        self.assertEqual(process.pipe(''), '')
-
-    def testPipeNoLines(self):
-        process = MockProcess(rc=0, lines=[])
-        self.assertEqual(process.pipe(''), '')
-
 
 class QuietTests(unittest.TestCase):
 

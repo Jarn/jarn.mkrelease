@@ -30,13 +30,3 @@ class Process(object):
                 return self.rc_keyboard_interrupt, []
             raise
 
-    def pipe(self, cmd):
-        rc, lines = self.popen(cmd, echo=False)
-        if rc == 0 and lines:
-            return lines[0]
-        return ''
-
-    def system(self, cmd):
-        rc, lines = self.popen(cmd)
-        return rc
-
