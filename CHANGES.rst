@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.2 - Unreleased
+5.2 - 2023-01-20
 ----------------
 
 - Support setuptools >= 65.6.0.
