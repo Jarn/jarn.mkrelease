@@ -4,6 +4,8 @@ Changelog
 5.2 - Unreleased
 ----------------
 
+- Support setuptools >= 65.6.0.
+  [stefan]
 
 5.1 - 2022-11-13
 ----------------
