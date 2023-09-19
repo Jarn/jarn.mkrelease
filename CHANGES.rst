@@ -4,6 +4,14 @@ Changelog
 5.3 - Unreleased
 ----------------
 
+- Update tox.ini for latest tox.
+  [stefan]
+
+- Filter deprecated config warning.
+  [stefan]
+
+- Fix invalid escape sequences.
+  [stefan]
 
 5.2 - 2023-01-20
 ----------------
