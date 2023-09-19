@@ -10,7 +10,11 @@ import distutils
 
 from os.path import basename, isdir, join, exists
 from functools import partial
-from importlib.metadata import entry_points
+
+try:
+    from importlib.metadata import entry_points
+except ImportError:
+    from importlib_metadata import entry_points
 
 
 class pythonpath_off(object):
