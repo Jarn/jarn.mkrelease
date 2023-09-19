@@ -26,7 +26,8 @@ GONE_RESPONSE = 'Server response (410):'
 FILTERWARNINGS = ('-W "ignore:setup.py install is deprecated" '
                   '-W "ignore:easy_install command is deprecated" '
                   '-W "ignore:Support for \`[tool.setuptools]\` in \`pyproject.toml\`" '
-                  '-W "ignore:The namespace_packages parameter is deprecated"')
+                  '-W "ignore:The namespace_packages parameter is deprecated" '
+                  '-W "ignore:Deprecated config in \`setup.cfg\`"')
 
 
 class Setuptools(object):
