@@ -7,10 +7,10 @@ import os
 import glob
 import setuptools # XXX
 import distutils
-import pkg_resources
 
 from os.path import basename, isdir, join, exists
 from functools import partial
+from importlib.metadata import entry_points
 
 
 class pythonpath_off(object):
@@ -27,6 +27,16 @@ class pythonpath_off(object):
             os.environ['PYTHONPATH'] = self.saved
 
 
+def iter_entry_points(group):
+    """Return entry points of group.
+    """
+    eps = entry_points()
+    if hasattr(eps, 'select'):
+        return eps.select(group=group)
+    else:
+        return eps.get(group, ())
+
+
 def walk_revctrl(dirname='', ff=''):
     """Return files found by the file-finder 'ff'.
     """
@@ -37,7 +47,7 @@ def walk_revctrl(dirname='', ff=''):
     #    distutils.log.error('No file-finder passed to walk_revctrl')
     #    sys.exit(1)
 
-    for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
+    for ep in iter_entry_points('setuptools.file_finders'):
         if ff == ep.name:
             distutils.log.info('using %s file-finder', ep.name)
             file_finder = ep.load()

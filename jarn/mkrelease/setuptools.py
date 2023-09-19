@@ -6,11 +6,11 @@ import os
 
 import setuptools # XXX
 import distutils.command
-import pkg_resources
 
 from os.path import abspath, join, isfile, isdir
 from os.path import basename, dirname
 from shutil import rmtree
+from setuptools._normalization import best_effort_version
 
 from .python import Python
 from .process import Process
@@ -82,7 +82,7 @@ class Setuptools(object):
             if develop:
                 version += parser.get('egg_info', 'tag_build', '').strip()
             if not parser.warnings:
-                return name, pkg_resources.safe_version(version)
+                return name, best_effort_version(version)
 
         if rc == self.process.rc_keyboard_interrupt:
             err_exit('ERROR: package_info failed')

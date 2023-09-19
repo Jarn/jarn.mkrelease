@@ -1,7 +1,6 @@
 import sys
 import os
 import zipfile
-import pkg_resources
 import unittest
 
 from os.path import join, isfile
@@ -9,6 +8,7 @@ from contextlib import closing
 
 from jarn.mkrelease.setuptools import Setuptools
 from jarn.mkrelease.process import Process
+from jarn.mkrelease.setup import iter_entry_points
 from jarn.mkrelease.utils import decode
 
 from jarn.mkrelease.testing import SubversionSetup
@@ -33,7 +33,7 @@ def get_manifest(archive):
 
 
 def get_finder(type):
-    for ep in pkg_resources.iter_entry_points('setuptools.file_finders'):
+    for ep in iter_entry_points('setuptools.file_finders'):
         if type == ep.name:
             return ep.load()
 

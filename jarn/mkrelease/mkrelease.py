@@ -7,8 +7,8 @@ try:
 except locale.Error:
     pass
 
-import pkg_resources
-__version__ = pkg_resources.get_distribution('jarn.mkrelease').version
+from importlib.metadata import version
+__version__ = version('jarn.mkrelease')
 
 import sys
 import os
