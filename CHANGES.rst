@@ -13,6 +13,12 @@ Changelog
 - Fix invalid escape sequences.
   [stefan]
 
+- Replace pkg_resources with importlib.metadata.
+  [stefan]
+
+- Drop Python < 3.8.
+  [stefan]
+
 5.2 - 2023-01-20
 ----------------
 
