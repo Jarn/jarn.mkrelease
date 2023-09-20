@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.3 - Unreleased
+6.0 - Unreleased
 ----------------
 
 - Update tox.ini for latest tox.
