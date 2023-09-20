@@ -25,8 +25,7 @@ def tee(process, filter):
         try:
             line = process.stdout.readline()
             if line:
-                if sys.version_info[0] >= 3:
-                    line = decode(line)
+                line = decode(line)
                 stripped_line = line.rstrip()
                 if filter(stripped_line):
                     sys.stdout.write(line)
@@ -50,8 +49,7 @@ def tee2(process, filter):
     while True:
         line = process.stderr.readline()
         if line:
-            if sys.version_info[0] >= 3:
-                line = decode(line)
+            line = decode(line)
             stripped_line = line.rstrip()
             if filter(stripped_line):
                 sys.stderr.write(line)

@@ -1,4 +1,3 @@
-import sys
 import tempfile
 import time
 import random
@@ -64,8 +63,7 @@ class SCP(object):
 
         with tempfile.NamedTemporaryFile() as file:
             cmds = 'put "%(distfile)s"\nbye\n' % locals()
-            if sys.version_info[0] >= 3:
-                cmds = encode(cmds)
+            cmds = encode(cmds)
             file.write(cmds)
             file.flush()
             cmdfile = file.name

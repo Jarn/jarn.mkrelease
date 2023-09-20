@@ -1,18 +1,8 @@
-import sys
 import re
 
-if sys.version_info[:2] >= (3, 2):
-    from configparser import Error
-    from configparser import MissingSectionHeaderError
-    from configparser import ConfigParser as _BaseParser
-elif sys.version_info[0] >= 3:
-    from configparser import Error
-    from configparser import MissingSectionHeaderError
-    from configparser import SafeConfigParser as _BaseParser
-else:
-    from ConfigParser import Error
-    from ConfigParser import MissingSectionHeaderError
-    from ConfigParser import SafeConfigParser as _BaseParser
+from configparser import Error
+from configparser import MissingSectionHeaderError
+from configparser import ConfigParser as _BaseParser
 
 
 class MultipleValueError(Error):
@@ -37,7 +27,7 @@ class errors2warnings(object):
 
     def _reformat_exception(self, value):
         value.message = 'File contains no section headers: %r\n\t[line %2d]: %r' % (
-            value.source if sys.version_info >= (3, 2) else value.filename,
+            value.source,
             value.lineno,
             value.line)
 

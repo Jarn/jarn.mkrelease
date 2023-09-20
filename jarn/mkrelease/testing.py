@@ -6,11 +6,7 @@ import shutil
 import zipfile
 import functools
 
-if sys.version_info[0] >= 3:
-    from io import StringIO
-else:
-    from StringIO import StringIO
-
+from io import StringIO
 from os.path import realpath, join, isdir
 from lazy import lazy
 
