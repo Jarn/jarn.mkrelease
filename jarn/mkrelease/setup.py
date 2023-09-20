@@ -1,7 +1,5 @@
 # 'from jarn.mkrelease import setup; setup.run(%(args)r, ff=%(ff)r)'
 
-from __future__ import absolute_import
-
 import sys
 import os
 import glob
