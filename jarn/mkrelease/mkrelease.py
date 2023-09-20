@@ -1,9 +1,3 @@
-import locale
-try:
-    locale.setlocale(locale.LC_ALL, '')
-except locale.Error:
-    pass
-
 try:
     from importlib.metadata import version
 except ImportError:
