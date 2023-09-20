@@ -28,11 +28,11 @@ class PythonTests(unittest.TestCase):
 
     def test27IsValidPython(self):
         python = Python(version_info=(2, 7, 0))
-        self.assertEqual(python.is_valid_python(), True)
-
-    def test25IsInvalidPython(self):
-        python = Python(version_info=(2, 5, 0))
         self.assertEqual(python.is_valid_python(), False)
+
+    def test37IsValidPython(self):
+        python = Python(version_info=(3, 7, 0))
+        self.assertEqual(python.is_valid_python(), True)
 
     @quiet
     def testCheckValidPythonRaises(self):
