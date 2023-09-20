@@ -13,6 +13,9 @@ Changelog
 - Fix invalid escape sequences.
   [stefan]
 
+- Switch to PEP420 namespace packages. Please upgrade all jarn.* packages.
+  [stefan]
+
 - Replace pkg_resources with importlib.metadata.
   [stefan]
 
