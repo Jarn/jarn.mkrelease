@@ -4,15 +4,6 @@ Changelog
 6.0 - Unreleased
 ----------------
 
-- Update tox.ini for latest tox.
-  [stefan]
-
-- Filter deprecated config warning.
-  [stefan]
-
-- Fix invalid escape sequences.
-  [stefan]
-
 - Switch to PEP420 namespace packages. Please upgrade all jarn.* packages.
   [stefan]
 
@@ -20,6 +11,18 @@ Changelog
   [stefan]
 
 - Require Python >= 3.7.
+  [stefan]
+
+5.3 - Unreleased
+----------------
+
+- Update tox.ini for latest tox.
+  [stefan]
+
+- Filter deprecated config warning.
+  [stefan]
+
+- Fix invalid escape sequences.
   [stefan]
 
 5.2 - 2023-01-20
