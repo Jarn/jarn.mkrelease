@@ -25,6 +25,9 @@ Changelog
 - Fix invalid escape sequences.
   [stefan]
 
+- The ``rev`` part of Git URLs no longer defaults to 'master'.
+  [stefan]
+
 5.2 - 2023-01-20
 ----------------
 
