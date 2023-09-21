@@ -74,14 +74,16 @@ class JailSetupTests(unittest.TestCase):
         self.assertEqual(self.cwd, os.getcwd())
 
     def testUnrollDirStack(self):
-        suite = unittest.makeSuite(JailSetupTestCase, 'pushingTest')
+        test = JailSetupTestCase('pushingTest')
+        suite = unittest.TestSuite((test,))
         result = unittest.TestResult()
         suite.run(result)
         # We are back in the directory we started in
         self.assertEqual(self.cwd, os.getcwd())
 
     def testDestroyedFixture(self):
-        suite = unittest.makeSuite(JailSetupTestCase, 'doomingTest')
+        test = JailSetupTestCase('doomingTest')
+        suite = unittest.TestSuite((test,))
         result = unittest.TestResult()
         suite.run(result)
         # We are NOT back in the directory we started in. That's expected,
