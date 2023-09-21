@@ -437,7 +437,7 @@ class BranchIdTests(GitSetup):
 
     def testEmptyBranchId(self):
         scm = Git()
-        self.assertEqual(scm.make_branchid(self.packagedir, ''), 'master')
+        self.assertEqual(scm.make_branchid(self.packagedir, ''), '')
 
 
 class SwitchBranchTests(GitSetup):

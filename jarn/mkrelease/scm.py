@@ -596,7 +596,7 @@ class Git(SCM):
         return rc
 
     def make_branchid(self, dir, branch):
-        return branch or 'master'
+        return branch
 
     @chdir
     def switch_branch(self, dir, branch):
