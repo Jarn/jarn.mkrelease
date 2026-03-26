@@ -10,7 +10,7 @@ Changelog
 - Replace pkg_resources with importlib.metadata.
   [stefan]
 
-- Require Python >= 3.7.
+- Require Python >= 3.8.
   [stefan]
 
 5.3 - 2023-09-23
