@@ -48,8 +48,8 @@ mkrelease works with Python >= 3.8 and all recent versions of setuptools.
 
 Use ``pip install jarn.mkrelease`` to install the ``mkrelease`` script.
 
-Since version 4.4 mkrelease requires twine_ for register and upload
-operations. Twine may be installed as a global utility on the system PATH or
+Since version 4.4 mkrelease uses twine_ to implement the register and upload
+commands. Twine may be installed as a global utility on the system PATH or
 into the same environment as jarn.mkrelease. [1]_
 
 Use ``pip install jarn.mkrelease[twine]`` to install mkrelease + twine.
