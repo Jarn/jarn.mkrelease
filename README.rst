@@ -44,7 +44,7 @@ Contents
 Installation
 ============
 
-mkrelease works with Python >= 3.7 and all recent versions of setuptools.
+mkrelease works with Python >= 3.8 and all recent versions of setuptools.
 
 Use ``pip install jarn.mkrelease`` to install the ``mkrelease`` script.
 
