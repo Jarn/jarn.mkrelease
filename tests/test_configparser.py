@@ -365,11 +365,7 @@ s_val = barney
         self.assertEqual(len(parser.warnings), 0)
         parser.read('my.cfg')
         # New parser raises error on duplicate section
-        if sys.version_info >= (3, 2):
-            self.assertEqual(len(parser.warnings), 1)
-        else:
-            self.assertEqual(len(parser.warnings), 0)
-            self.assertEqual(parser.getstring('section', 's_val'), 'barney')
+        self.assertEqual(len(parser.warnings), 1)
 
     def test_warn_duplicate_option(self):
         self.mkfile('my.cfg', """
@@ -381,9 +377,5 @@ s_val = barney
         self.assertEqual(len(parser.warnings), 0)
         parser.read('my.cfg')
         # New parser raises error on duplicate option
-        if sys.version_info >= (3, 2):
-            self.assertEqual(len(parser.warnings), 1)
-        else:
-            self.assertEqual(len(parser.warnings), 0)
-            self.assertEqual(parser.getstring('section', 's_val'), 'barney')
+        self.assertEqual(len(parser.warnings), 1)
 

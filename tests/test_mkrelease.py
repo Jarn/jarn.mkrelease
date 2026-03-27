@@ -11,8 +11,6 @@ from jarn.mkrelease.testing import GitSetup
 from jarn.mkrelease.testing import quiet
 from jarn.mkrelease.testing import setenv
 
-PY = sys.version_info[0]
-
 
 class FunctionalTests(GitSetup):
 
@@ -36,7 +34,7 @@ class FunctionalTests(GitSetup):
     def test_wheel_release(self):
         rc = self.mkrelease(['-n', '-q', '-m', '-w', 'testpackage'])
         self.assertEqual(rc, 0)
-        self.assertEqual(listdir(join('testpackage', 'dist')), ['testpackage-2.6-py%d-none-any.whl' % PY])
+        self.assertEqual(listdir(join('testpackage', 'dist')), ['testpackage-2.6-py3-none-any.whl'])
 
     @quiet
     def test_development_release(self):
