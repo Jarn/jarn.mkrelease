@@ -13,6 +13,9 @@ Changelog
 - Require Python >= 3.8.
   [stefan]
 
+- Remove deprecated license classifier.
+  [stefan]
+
 5.3 - 2023-09-23
 ----------------
 
