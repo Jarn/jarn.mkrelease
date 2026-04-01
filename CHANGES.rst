@@ -4,13 +4,16 @@ Changelog
 6.0 - Unreleased
 ----------------
 
+- Support Python 3.8 - 3.14.
+  [stefan]
+
+- Support setuptools >= 80.0.0.
+  [stefan]
+
 - Switch to PEP420 namespace packages. Please upgrade all jarn.* packages.
   [stefan]
 
 - Replace pkg_resources with importlib.metadata.
-  [stefan]
-
-- Require Python >= 3.8.
   [stefan]
 
 - Remove deprecated license classifier.
@@ -18,6 +21,9 @@ Changelog
 
 5.3 - 2023-09-23
 ----------------
+
+- Support Python 2.7 - 3.12.
+  [stefan]
 
 - Update tox.ini for latest tox.
   [stefan]
