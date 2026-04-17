@@ -1,7 +1,7 @@
 Changelog
 =========
 
-6.0 - Unreleased
+6.0 - 2026-04-17
 ----------------
 
 - Support Python 3.8 - 3.14.
