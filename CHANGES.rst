@@ -1,7 +1,7 @@
 Changelog
 =========
 
-6.1 - Unreleased
+6.1 - 2026-09-19
 ----------------
 
 - Replace blessed with termcolor. This avoids the XTGETTCAP terminal
