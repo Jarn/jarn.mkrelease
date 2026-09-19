@@ -4,6 +4,10 @@ Changelog
 6.1 - Unreleased
 ----------------
 
+- Replace blessed with termcolor. This avoids the XTGETTCAP terminal
+  capability queries that show up as garbage in terminals that don't
+  support DCS queries, notably under tox.
+  [stefan]
 
 6.0 - 2026-04-17
 ----------------
