@@ -9,6 +9,10 @@ Changelog
   support DCS queries, notably under tox.
   [stefan]
 
+- Honor the NO_COLOR convention instead of the JARN_NO_COLOR
+  environment variable.
+  [stefan]
+
 6.0 - 2026-04-17
 ----------------
 

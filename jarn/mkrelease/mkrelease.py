@@ -363,7 +363,7 @@ class ReleaseMaker(object):
             elif name in ('--trace',):          # undocumented
                 os.environ['JARN_TRACE'] = '1'
             elif name in ('--no-color',):
-                os.environ['JARN_NO_COLOR'] = '1'
+                os.environ['NO_COLOR'] = '1'
             elif name in ('-t', '--twine'):
                 self.twine.twine = expanduser(value)
             elif name in ('--non-interactive',):
@@ -612,7 +612,7 @@ class ReleaseMaker(object):
 
         for arg in self.args:
             if arg in ('--no-col', '--no-colo', '--no-color'):
-                os.environ['JARN_NO_COLOR'] = '1'
+                os.environ['NO_COLOR'] = '1'
                 break
 
     def run(self):
