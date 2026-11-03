@@ -4,7 +4,8 @@ Changelog
 6.2 - Unreleased
 ----------------
 
-
+- Support Subversion 1.15.
+  [stefan]
 
 6.1 - 2026-09-19
 ----------------

@@ -236,7 +236,9 @@ class Subversion(SCM):
         rc, lines = self.process.popen(
             'svn info "%(dir)s"' % locals(), echo=False)
         if rc == 0 and lines:
-            if self.version_info[:2] >= (1, 7):
+            if self.version_info[:2] >= (1, 15):
+                return lines[5][5:]
+            elif self.version_info[:2] >= (1, 7):
                 return lines[2][5:]
             else:
                 return lines[1][5:]
