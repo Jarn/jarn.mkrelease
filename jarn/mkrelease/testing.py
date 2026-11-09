@@ -191,10 +191,20 @@ class MercurialSetup(SCMSetup):
     name = 'hg'
     source = 'testpackage.hg.zip'
 
+    def setUp(self):
+        SCMSetup.setUp(self)
+        process = Process(quiet=True)
+        self.dirstack.push('testpackage')
+        process.popen("printf '[ui]\nusername = Your Name <you@example.com>\n' >> .hg/hgrc")
+        self.dirstack.pop()
+
     def clone(self):
         process = Process(quiet=True)
         process.popen('hg clone testpackage testclone')
         self.clonedir = join(self.tempdir, 'testclone')
+        self.dirstack.push('testclone')
+        process.popen("printf '[ui]\nusername = Your Name <you@example.com>\n' >> .hg/hgrc")
+        self.dirstack.pop()
 
     @chdir
     def remove(self, dir):
