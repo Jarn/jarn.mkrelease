@@ -135,7 +135,13 @@ class SubversionSetup(SCMSetup):
         archive.extractall()
         os.rename(source[:-4], 'testclone')
         self.dirstack.push('testclone')
-        url = process.popen('svn info')[1][5][5:] # svn >= 1.15
+        lines = process.popen('svn info')[1]
+        if lines[5].startswith('URL: '):
+            url = lines[5][5:] # svn >= 1.15
+        elif lines[2].startswith('URL: '):
+            url = lines[2][5:] # svn >= 1.7
+        else:
+            url = lines[1][5:]
         process.popen('svn switch --relocate %s file://%s/trunk' % (url, self.packagedir))
         self.dirstack.pop()
         self.clonedir = join(self.tempdir, 'testclone')
